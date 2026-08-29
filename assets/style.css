@@ -68,6 +68,17 @@ code{font-family:var(--mono)}
 .sb-nav{flex:1;overflow-y:auto;padding:8px 10px 40px}
 .sb-nav::-webkit-scrollbar{width:6px}
 .sb-nav::-webkit-scrollbar-thumb{background:var(--line);border-radius:3px}
+.sb-home{display:flex;align-items:center;gap:9px;margin:2px 0 4px;padding:9px 9px;border-radius:9px;
+  border:1px solid var(--line);background:var(--panel);transition:background .12s,border-color .12s}
+.sb-home:hover{background:var(--line-soft);border-color:var(--gold)}
+.sb-home-ico{width:24px;height:24px;flex:0 0 auto;border-radius:6px;display:flex;align-items:center;
+  justify-content:center;background:var(--gold-soft);color:var(--gold-deep);font-size:16px;line-height:1}
+.sb-home-text{flex:1;display:flex;flex-direction:column;line-height:1.3;min-width:0}
+.sb-home-text b{font-size:13.5px;font-weight:640}
+.sb-home-text i{font-style:normal;font-size:11px;color:var(--fg-mute)}
+.sb-home.current{border-color:var(--gold);background:var(--gold-soft)}
+.sb-home.current .sb-home-text b{color:var(--gold-deep)}
+.sb-sep{height:1px;background:var(--line-soft);margin:6px 4px 8px}
 .sb-group{margin-bottom:2px}
 .sb-group-title{display:flex;align-items:center;gap:9px;padding:8px 9px;border-radius:9px;
   cursor:pointer;transition:background .12s}
