@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>10 · 工具调用 · 深栈 DeepStack 课程文档</title>
+<meta name="description" content="本章你将学会
+
+ - 为什么需要工具：模型的知识停在下训那天，而「拾光书屋今天几点关门」是今天的事——工具就是模型伸向外部世界的手和脚
+ - @tool 装饰器：一个普通 Python 函数如何三分钟变身「模型能看懂的工…">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%23d9c39a' text-anchor='middle'%3EDS%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+<div class="progress" id="progress"></div>
+
+<div class="layout">
+<aside class="sidebar" id="sidebar">
+  <div class="sb-head">
+    <a class="brand" href="../index.html">
+      <span class="brand-mark">DS</span>
+      <span class="brand-text"><b>深栈 DeepStack</b><i>AI Agent 工程师转型训练营</i></span>
+    </a>
+    <button class="sb-close" id="sbClose" aria-label="关闭目录">✕</button>
+  </div>
+  <div class="sb-search"><input type="search" id="searchInput" placeholder="搜索 123 篇文档… ( / )" autocomplete="off">
+    <div class="sb-results" id="searchResults"></div></div>
+  <nav class="sb-nav">
+    <section class="sb-group" data-mod="python">
+      <a class="sb-group-title" href="../modules/python.html" data-toggle="python">
+        <span class="sb-num">01</span>
+        <span class="sb-group-text"><b>Python 与数据实践</b><i>31 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../python/01-huan-jing-da-jian-yu-ban-ben-guan-li.html"><span class="sb-item-num">01</span><span class="sb-item-title">环境搭建与版本管理</span></a>
+        <a class="sb-item" href="../python/02-bian-liang-biao-da-shi-yu-liu-cheng-kong-zhi.html"><span class="sb-item-num">02</span><span class="sb-item-title">变量、表达式与流程控制</span></a>
+        <a class="sb-item" href="../python/03-xu-lie-zi-dian-yu-ji-he.html"><span class="sb-item-num">03</span><span class="sb-item-title">序列、字典与集合</span></a>
+        <a class="sb-item" href="../python/04-han-shu-she-ji-yu-lambda.html"><span class="sb-item-num">04</span><span class="sb-item-title">函数设计与 lambda</span></a>
+        <a class="sb-item" href="../python/05-zuo-yong-yu-gui-ze-yu-bi-bao.html"><span class="sb-item-num">05</span><span class="sb-item-title">作用域规则与闭包</span></a>
+        <a class="sb-item" href="../python/06-lei-de-ding-yi-yu-shi-li-hua.html"><span class="sb-item-num">06</span><span class="sb-item-title">类的定义与实例化</span></a>
+        <a class="sb-item" href="../python/07-lei-xing-pan-ding-yu-chou-xiang-ji-lei.html"><span class="sb-item-num">07</span><span class="sb-item-title">类型判定与抽象基类</span></a>
+        <a class="sb-item" href="../python/08-mo-shu-fang-fa-quan-jing.html"><span class="sb-item-num">08</span><span class="sb-item-title">魔术方法全景</span></a>
+        <a class="sb-item" href="../python/09-miao-shu-fu-yu-yuan-lei.html"><span class="sb-item-num">09</span><span class="sb-item-title">描述符与元类</span></a>
+        <a class="sb-item" href="../python/10-zhuang-shi-qi.html"><span class="sb-item-num">10</span><span class="sb-item-title">装饰器</span></a>
+        <a class="sb-item" href="../python/11-die-dai-xie-yi-yu-sheng-cheng-qi.html"><span class="sb-item-num">11</span><span class="sb-item-title">迭代协议与生成器</span></a>
+        <a class="sb-item" href="../python/12-with-yu-shang-xia-wen-xie-yi.html"><span class="sb-item-num">12</span><span class="sb-item-title">with 与上下文协议</span></a>
+        <a class="sb-item" href="../python/13-yi-chang-ti-xi-yu-chu-li.html"><span class="sb-item-num">13</span><span class="sb-item-title">异常体系与处理</span></a>
+        <a class="sb-item" href="../python/14-lei-xing-biao-zhu.html"><span class="sb-item-num">14</span><span class="sb-item-title">类型标注</span></a>
+        <a class="sb-item" href="../python/15-mo-kuai-yu-bao-de-zu-zhi.html"><span class="sb-item-num">15</span><span class="sb-item-title">模块与包的组织</span></a>
+        <a class="sb-item" href="../python/16-biao-zhun-ku-xun-li.html"><span class="sb-item-num">16</span><span class="sb-item-title">标准库巡礼</span></a>
+        <a class="sb-item" href="../python/17-yi-lai-guan-li-yu-di-san-fang-ku.html"><span class="sb-item-num">17</span><span class="sb-item-title">依赖管理与第三方库</span></a>
+        <a class="sb-item" href="../python/18-xian-cheng-yu-jin-cheng.html"><span class="sb-item-num">18</span><span class="sb-item-title">线程与进程</span></a>
+        <a class="sb-item" href="../python/19-shi-jian-xun-huan.html"><span class="sb-item-num">19</span><span class="sb-item-title">事件循环</span></a>
+        <a class="sb-item" href="../python/20-future-yu-xie-cheng.html"><span class="sb-item-num">20</span><span class="sb-item-title">Future 与协程</span></a>
+        <a class="sb-item" href="../python/21-asyncio-shi-zhan.html"><span class="sb-item-num">21</span><span class="sb-item-title">asyncio 实战</span></a>
+        <a class="sb-item" href="../python/22-gou-jian-yu-fa-bu.html"><span class="sb-item-num">22</span><span class="sb-item-title">构建与发布</span></a>
+        <a class="sb-item" href="../python/23-gong-cheng-hua-gong-ju-lian.html"><span class="sb-item-num">23</span><span class="sb-item-title">工程化工具链</span></a>
+        <a class="sb-item" href="../python/24-monorepo-yu-tiao-shi.html"><span class="sb-item-num">24</span><span class="sb-item-title">monorepo 与调试</span></a>
+        <a class="sb-item" href="../python/25-jupyter-jiao-hu-huan-jing.html"><span class="sb-item-num">25</span><span class="sb-item-title">Jupyter 交互环境</span></a>
+        <a class="sb-item" href="../python/26-numpy-shu-zu-yu-xiang-liang-hua.html"><span class="sb-item-num">26</span><span class="sb-item-title">NumPy 数组与向量化</span></a>
+        <a class="sb-item" href="../python/27-pandas-shu-ju-jie-gou.html"><span class="sb-item-num">27</span><span class="sb-item-title">Pandas 数据结构</span></a>
+        <a class="sb-item" href="../python/28-pandas-shu-ju-qing-xi.html"><span class="sb-item-num">28</span><span class="sb-item-title">Pandas 数据清洗</span></a>
+        <a class="sb-item" href="../python/29-matplotlib-hui-tu-ti-xi.html"><span class="sb-item-num">29</span><span class="sb-item-title">Matplotlib 绘图体系</span></a>
+        <a class="sb-item" href="../python/30-matplotlib-dong-hua-yu-jiao-hu.html"><span class="sb-item-num">30</span><span class="sb-item-title">Matplotlib 动画与交互</span></a>
+        <a class="sb-item" href="../python/31-seaborn-tong-ji-ke-shi-hua.html"><span class="sb-item-num">31</span><span class="sb-item-title">Seaborn 统计可视化</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="agent">
+      <a class="sb-group-title" href="../modules/agent.html" data-toggle="agent">
+        <span class="sb-num">02</span>
+        <span class="sb-group-text"><b>Agent 核心</b><i>15 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../agent/01-token-yu-ci-qian-ru.html"><span class="sb-item-num">01</span><span class="sb-item-title">Token 与词嵌入</span></a>
+        <a class="sb-item" href="../agent/02-qian-xiang-chuan-bo-yu-fan-xiang-chuan-bo.html"><span class="sb-item-num">02</span><span class="sb-item-title">前向传播与反向传播</span></a>
+        <a class="sb-item" href="../agent/03-zhu-yi-li-ji-zhi-yu-transformer-jia-gou.html"><span class="sb-item-num">03</span><span class="sb-item-title">注意力机制与 Transformer 架构</span></a>
+        <a class="sb-item" href="../agent/04-yu-xun-lian-rlhf-yu-cai-yang-kv-cache.html"><span class="sb-item-num">04</span><span class="sb-item-title">预训练、RLHF 与采样（KV Cache）</span></a>
+        <a class="sb-item" href="../agent/05-ben-di-mo-xing-yu-xiao-xi-jie-gou.html"><span class="sb-item-num">05</span><span class="sb-item-title">本地模型与消息结构</span></a>
+        <a class="sb-item" href="../agent/06-hui-hua-guan-li-yu-json-shu-chu.html"><span class="sb-item-num">06</span><span class="sb-item-title">会话管理与 JSON 输出</span></a>
+        <a class="sb-item" href="../agent/07-tool-calling-xie-yi-yu-feng-zhuang.html"><span class="sb-item-num">07</span><span class="sb-item-title">Tool Calling：协议与封装</span></a>
+        <a class="sb-item" href="../agent/08-react-mo-shi-yu-zhu-xun-huan.html"><span class="sb-item-num">08</span><span class="sb-item-title">ReAct 模式与主循环</span></a>
+        <a class="sb-item" href="../agent/09-shi-zhan-deep-research-agent.html"><span class="sb-item-num">09</span><span class="sb-item-title">实战：Deep Research Agent</span></a>
+        <a class="sb-item" href="../agent/10-skill-yu-jian-jin-shi-pi-lu.html"><span class="sb-item-num">10</span><span class="sb-item-title">Skill 与渐进式披露</span></a>
+        <a class="sb-item" href="../agent/11-mcp-quan-jing.html"><span class="sb-item-num">11</span><span class="sb-item-title">MCP 全景</span></a>
+        <a class="sb-item" href="../agent/12-duo-agent-yu-xuan-xing-ce-lve.html"><span class="sb-item-num">12</span><span class="sb-item-title">多 Agent 与选型策略</span></a>
+        <a class="sb-item" href="../agent/13-ti-shi-ci-gong-cheng-yu-shang-xia-wen-gong.html"><span class="sb-item-num">13</span><span class="sb-item-title">提示词工程与上下文工程</span></a>
+        <a class="sb-item" href="../agent/14-xun-huan-tu-yu-gu-jia-gong-cheng.html"><span class="sb-item-num">14</span><span class="sb-item-title">循环、图与骨架工程</span></a>
+        <a class="sb-item" href="../agent/15-ji-yi-quan-xian-yu-ping-ce.html"><span class="sb-item-num">15</span><span class="sb-item-title">记忆、权限与评测</span></a>
+      </div>
+    </section>
+    <section class="sb-group open" data-mod="langchain">
+      <a class="sb-group-title" href="../modules/langchain.html" data-toggle="langchain">
+        <span class="sb-num">03</span>
+        <span class="sb-group-text"><b>LangChain 指南</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langchain/01-ren-shi-langchain.html"><span class="sb-item-num">01</span><span class="sb-item-title">认识 LangChain</span></a>
+        <a class="sb-item" href="../langchain/02-ti-shi-ci-mu-ban-yu-xiao-xi.html"><span class="sb-item-num">02</span><span class="sb-item-title">提示词模板与消息</span></a>
+        <a class="sb-item" href="../langchain/03-lcel-yu-runnable.html"><span class="sb-item-num">03</span><span class="sb-item-title">LCEL 与 Runnable</span></a>
+        <a class="sb-item" href="../langchain/04-liu-shi-yu-bing-fa.html"><span class="sb-item-num">04</span><span class="sb-item-title">流式与并发</span></a>
+        <a class="sb-item" href="../langchain/05-shu-chu-jie-xi-qi.html"><span class="sb-item-num">05</span><span class="sb-item-title">输出解析器</span></a>
+        <a class="sb-item" href="../langchain/06-wen-dang-jia-zai-yu-qie-ge.html"><span class="sb-item-num">06</span><span class="sb-item-title">文档加载与切割</span></a>
+        <a class="sb-item" href="../langchain/07-qian-ru-yu-xiang-liang-ku.html"><span class="sb-item-num">07</span><span class="sb-item-title">嵌入与向量库</span></a>
+        <a class="sb-item" href="../langchain/08-jian-suo-yu-rag.html"><span class="sb-item-num">08</span><span class="sb-item-title">检索与RAG</span></a>
+        <a class="sb-item" href="../langchain/09-dui-hua-ji-yi.html"><span class="sb-item-num">09</span><span class="sb-item-title">对话记忆</span></a>
+        <a class="sb-item current" href="../langchain/10-gong-ju-diao-yong.html"><span class="sb-item-num">10</span><span class="sb-item-title">工具调用</span></a>
+        <a class="sb-item" href="../langchain/11-agent.html"><span class="sb-item-num">11</span><span class="sb-item-title">Agent</span></a>
+        <a class="sb-item" href="../langchain/12-hui-diao-yu-tiao-shi-quan-ke-cheng-shou-guan.html"><span class="sb-item-num">12</span><span class="sb-item-title">回调与调试（全课程收官章）</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="langgraph">
+      <a class="sb-group-title" href="../modules/langgraph.html" data-toggle="langgraph">
+        <span class="sb-num">04</span>
+        <span class="sb-group-text"><b>LangGraph 框架指南</b><i>17 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langgraph/01-di-1-zhang-cong-yi-ge-shi-kong-de-jiao.html"><span class="sb-item-num">01</span><span class="sb-item-title">第 1 章 从一个失控的脚本说起</span></a>
+        <a class="sb-item" href="../langgraph/02-di-2-zhang-zui-xiao-ke-yun-xing-tu.html"><span class="sb-item-num">02</span><span class="sb-item-title">第 2 章 最小可运行图</span></a>
+        <a class="sb-item" href="../langgraph/03-di-3-zhang-zhuang-tai-tu-de-shu-ju-xin.html"><span class="sb-item-num">03</span><span class="sb-item-title">第 3 章 状态：图的数据心脏</span></a>
+        <a class="sb-item" href="../langgraph/04-di-4-zhang-rang-liu-cheng-xue-hui-jue-ce.html"><span class="sb-item-num">04</span><span class="sb-item-title">第 4 章 让流程学会决策</span></a>
+        <a class="sb-item" href="../langgraph/05-di-5-zhang-bing-xing-shi-jie-chao-bu-zhi.html"><span class="sb-item-num">05</span><span class="sb-item-title">第 5 章 并行世界：超步执行模型</span></a>
+        <a class="sb-item" href="../langgraph/06-di-6-zhang-command-ba-kong-zhi-quan-jiao-jin.html"><span class="sb-item-num">06</span><span class="sb-item-title">第 6 章 Command：把控制权交进节点</span></a>
+        <a class="sb-item" href="../langgraph/07-di-7-zhang-dong-tai-bing-xing-send-yu-mapreduce.html"><span class="sb-item-num">07</span><span class="sb-item-title">第 7 章 动态并行：Send 与 MapReduce</span></a>
+        <a class="sb-item" href="../langgraph/08-di-8-zhang-gei-tu-zhuang-shang-shou-jiao-gong.html"><span class="sb-item-num">08</span><span class="sb-item-title">第 8 章 给图装上手脚：工具调用</span></a>
+        <a class="sb-item" href="../langgraph/09-di-9-zhang-fu-yong-yu-feng-zhuang-zi-tu.html"><span class="sb-item-num">09</span><span class="sb-item-title">第 9 章 复用与封装：子图</span></a>
+        <a class="sb-item" href="../langgraph/10-di-10-zhang-cong-dan-tu-dao-tuan-dui-duo.html"><span class="sb-item-num">10</span><span class="sb-item-title">第 10 章 从单图到团队：多 Agent 架构</span></a>
+        <a class="sb-item" href="../langgraph/11-di-11-zhang-liu-shi-shu-chu.html"><span class="sb-item-num">11</span><span class="sb-item-title">第 11 章 流式输出</span></a>
+        <a class="sb-item" href="../langgraph/12-di-12-zhang-chi-jiu-hua-checkpointer-yu-xian-cheng.html"><span class="sb-item-num">12</span><span class="sb-item-title">第 12 章 持久化：Checkpointer 与线程</span></a>
+        <a class="sb-item" href="../langgraph/13-di-13-zhang-shi-jian-lv-xing.html"><span class="sb-item-num">13</span><span class="sb-item-title">第 13 章 时间旅行</span></a>
+        <a class="sb-item" href="../langgraph/14-di-14-zhang-zhong-duan-yu-ren-zai-hui-lu.html"><span class="sb-item-num">14</span><span class="sb-item-title">第 14 章 中断与人在回路</span></a>
+        <a class="sb-item" href="../langgraph/15-di-15-zhang-ji-yi-guan-li.html"><span class="sb-item-num">15</span><span class="sb-item-title">第 15 章 记忆管理</span></a>
+        <a class="sb-item" href="../langgraph/16-di-16-zhang-rong-cuo-zhong-shi-chao-shi-yu.html"><span class="sb-item-num">16</span><span class="sb-item-title">第 16 章 容错：重试、超时与兜底</span></a>
+        <a class="sb-item" href="../langgraph/17-di-17-zhang-quan-jing-hui-gu.html"><span class="sb-item-num">17</span><span class="sb-item-title">第 17 章 全景回顾</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="backend">
+      <a class="sb-group-title" href="../modules/backend.html" data-toggle="backend">
+        <span class="sb-num">05</span>
+        <span class="sb-group-text"><b>Python 框架指南</b><i>14 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../backend/01-fastapi-ru-men-yu-asgi.html"><span class="sb-item-num">01</span><span class="sb-item-title">FastAPI 入门与 ASGI</span></a>
+        <a class="sb-item" href="../backend/02-lu-you-yu-qing-qiu-xiang-ying.html"><span class="sb-item-num">02</span><span class="sb-item-title">路由与请求响应</span></a>
+        <a class="sb-item" href="../backend/03-pydantic-shu-ju-jiao-yan-yu-pei-zhi.html"><span class="sb-item-num">03</span><span class="sb-item-title">Pydantic 数据校验与配置</span></a>
+        <a class="sb-item" href="../backend/04-sqlalchemy-yi-bu-yin-qing-yu-hui-hua.html"><span class="sb-item-num">04</span><span class="sb-item-title">SQLAlchemy 异步引擎与会话</span></a>
+        <a class="sb-item" href="../backend/05-orm-jian-mo.html"><span class="sb-item-num">05</span><span class="sb-item-title">ORM 建模</span></a>
+        <a class="sb-item" href="../backend/06-sql-biao-da-shi-yu-shu-ju-cao-zuo.html"><span class="sb-item-num">06</span><span class="sb-item-title">SQL 表达式与数据操作</span></a>
+        <a class="sb-item" href="../backend/07-alembic-shu-ju-qian-yi.html"><span class="sb-item-num">07</span><span class="sb-item-title">Alembic 数据迁移</span></a>
+        <a class="sb-item" href="../backend/08-yi-lai-zhu-ru.html"><span class="sb-item-num">08</span><span class="sb-item-title">依赖注入</span></a>
+        <a class="sb-item" href="../backend/09-tong-yi-yi-chang-chu-li.html"><span class="sb-item-num">09</span><span class="sb-item-title">统一异常处理</span></a>
+        <a class="sb-item" href="../backend/10-zhong-jian-jian.html"><span class="sb-item-num">10</span><span class="sb-item-title">中间件</span></a>
+        <a class="sb-item" href="../backend/11-ren-zheng-yu-jwt.html"><span class="sb-item-num">11</span><span class="sb-item-title">认证与 JWT</span></a>
+        <a class="sb-item" href="../backend/12-pytest-ce-shi.html"><span class="sb-item-num">12</span><span class="sb-item-title">pytest 测试</span></a>
+        <a class="sb-item" href="../backend/13-ri-zhi-loguru.html"><span class="sb-item-num">13</span><span class="sb-item-title">日志 loguru</span></a>
+        <a class="sb-item" href="../backend/14-liu-shi-xiang-ying-sse-yu-websocket.html"><span class="sb-item-num">14</span><span class="sb-item-title">流式响应 SSE 与 WebSocket</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="interview">
+      <a class="sb-group-title" href="../modules/interview.html" data-toggle="interview">
+        <span class="sb-num">06</span>
+        <span class="sb-group-text"><b>面试题库</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../interview/01-llm-yuan-li-pian.html"><span class="sb-item-num">01</span><span class="sb-item-title">LLM 原理篇</span></a>
+        <a class="sb-item" href="../interview/02-rag-yu-jian-suo-pian.html"><span class="sb-item-num">02</span><span class="sb-item-title">RAG 与检索篇</span></a>
+        <a class="sb-item" href="../interview/03-agent-he-xin-pian.html"><span class="sb-item-num">03</span><span class="sb-item-title">Agent 核心篇</span></a>
+        <a class="sb-item" href="../interview/04-langgraph-pian.html"><span class="sb-item-num">04</span><span class="sb-item-title">LangGraph 篇</span></a>
+        <a class="sb-item" href="../interview/05-langchain-pian.html"><span class="sb-item-num">05</span><span class="sb-item-title">LangChain 篇</span></a>
+        <a class="sb-item" href="../interview/06-xi-tong-she-ji-pian.html"><span class="sb-item-num">06</span><span class="sb-item-title">系统设计篇</span></a>
+        <a class="sb-item" href="../interview/07-xiang-mu-shen-wa-pian.html"><span class="sb-item-num">07</span><span class="sb-item-title">项目深挖篇</span></a>
+        <a class="sb-item" href="../interview/08-gu-zhang-pai-cha-pian.html"><span class="sb-item-num">08</span><span class="sb-item-title">故障排查篇</span></a>
+        <a class="sb-item" href="../interview/09-python-ji-chu-pian.html"><span class="sb-item-num">09</span><span class="sb-item-title">Python 基础篇</span></a>
+        <a class="sb-item" href="../interview/10-fastapi-yu-hou-duan-pian.html"><span class="sb-item-num">10</span><span class="sb-item-title">FastAPI 与后端篇</span></a>
+        <a class="sb-item" href="../interview/11-ti-shi-ci-gong-cheng-yu-an-quan-pian.html"><span class="sb-item-num">11</span><span class="sb-item-title">提示词工程与安全篇</span></a>
+        <a class="sb-item" href="../interview/12-mo-xing-xuan-xing-yu-jiang-ben-pian.html"><span class="sb-item-num">12</span><span class="sb-item-title">模型选型与降本篇</span></a>
+      </div>
+    </section>
+  </nav>
+</aside>
+  <main class="main">
+    <header class="topbar">
+      <button class="menu-btn" id="menuBtn" aria-label="目录">☰</button>
+      <div class="crumbs"><a href="../index.html">首页</a><span>/</span><a href="../modules/langchain.html">LangChain 指南</a><span>/</span><span class="cur">工具调用</span></div>
+      <div class="topbar-actions">
+        <button class="icon-btn" id="themeBtn" title="切换深浅色" aria-label="切换深浅色">◐</button>
+      </div>
+    </header>
+    <div class="content">
+      <article class="article">
+
+<header class="page-head">
+  <div class="page-kicker">LangChain 指南 · 第 10 章</div>
+  <h1 class="page-title">工具调用</h1>
+  <p class="page-desc">本章你将学会
+
+ - 为什么需要工具：模型的知识停在下训那天，而「拾光书屋今天几点关门」是今天的事——工具就是模型伸向外部世界的手和脚
+ - @tool 装饰器：一个普通 Python 函数如何三分钟变身「模型能看懂的工…</p>
+  <div class="page-meta">
+    <span>约 45 分钟</span><span>18,086 字</span><span>19 个代码示例</span>
+  </div>
+</header>
+<div class="md"><blockquote>
+<p><strong>本章你将学会</strong></p>
+<ul>
+<li>为什么需要工具：模型的知识停在下训那天，而「拾光书屋今天几点关门」是<strong>今天</strong>的事——工具就是模型伸向外部世界的手和脚</li>
+<li><code>@tool</code> 装饰器：一个普通 Python 函数如何三分钟变身「模型能看懂的工具」（name、description、参数 schema 全自动生成）</li>
+<li>docstring 写法与 Pydantic <code>args_schema</code>：参数说明书写给谁看、怎么写才能让模型填参填得准</li>
+<li><code>Tool.from_function</code>：给「已经写好的现成函数」穿马甲的老钥匙</li>
+<li>name / description 的讲究：模型选不选你的工具，全看这块「柜台小牌子」</li>
+<li><code>bind_tools</code> 完整循环：模型绑定工具 → <code>invoke</code> → 解析 <code>AIMessage.tool_calls</code> → 手动执行 → <code>ToolMessage</code> 回填 → 再调模型拿最终回答——这是 11 章 Agent 循环的<strong>手动版预习</strong></li>
+<li>错误处理的黄金设计：工具报错<strong>返回字符串</strong>而不是抛异常，让循环活下来</li>
+<li><code>tool_choice</code> / <code>parallel_tool_calls</code> 这些 OpenAI 旋钮，到了 Ollama 这边哪些能拧、哪些是摆设</li>
+</ul>
+</blockquote>
+<p>05 章讲 <code>with_structured_output</code> 时埋过一句伏笔：它的底层就是<strong>工具调用协议</strong>——把 schema 包装成「工具」，让模型以为自己在填参数。当时我们只借了协议的壳，这章把壳里的肉全端上来：让模型真正「会说话还能动手」。09 章攒下的 messages 管理经验（消息列表就是对话的全部记忆）在本章会直接复用——工具调用的每一轮，本质都是往这个列表里追加消息。</p>
+<p><strong>比喻</strong>：把模型想成拾光书屋的<strong>坐堂老掌柜</strong>——满腹经纶、过目不忘，但一辈子没离开过柜台。「今天进了什么新书？」「会员卡还剩几次借阅？」这些他答不上来，因为他<strong>出不去</strong>。工具就是他手下的<strong>跑腿伙计</strong>。老掌柜不亲自跑腿，他只开<strong>取货单</strong>（tool_calls：找哪个伙计、带什么参数），伙计跑完把<strong>回执</strong>（ToolMessage）递回来，他看了回执再答复客人。记住这个画面，本章所有 API 都能对号入座。</p>
+<p><strong>技术基线</strong>：Python + LangChain 1.x（<code>langchain</code> + <code>langchain-ollama</code>），本地 Ollama 跑 <code>qwen3:4b</code>。工具函数全部用纯本地数据（书屋藏书表、营业时间表），不需要联网；模型环节 Ollama 不在线时 demo 会自动降级。</p>
+<hr />
+<h2 id="0-一张-js-python-对照表先收藏">0. 一张 JS → Python 对照表（先收藏）</h2>
+<table>
+<thead>
+<tr>
+<th>JS 版课程写法</th>
+<th>本章 Python 写法</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>手写 <code>tools</code> 数组（<code>type: "function"</code> + <code>function.name/description/parameters</code>）</td>
+<td><code>@tool</code> 装饰器自动生成</td>
+<td>JS 要手写 JSON Schema，Python 从函数签名 + 类型标注 + docstring 自动推断</td>
+</tr>
+<tr>
+<td><code>zodToJsonSchema(z.object({...}))</code></td>
+<td><code>class Xxx(BaseModel)</code> 传给 <code>args_schema</code></td>
+<td>Zod 的 Python 亲家是 Pydantic（05 章已混熟）</td>
+</tr>
+<tr>
+<td><code>model.withConfig({ tools: [...] })</code></td>
+<td><code>model.bind_tools([...])</code></td>
+<td>JS 侧也有 <code>.bindTools()</code>，<code>withConfig</code> 绑 tools 属于早期写法；Python 的地道姿势是 <code>bind_tools</code></td>
+</tr>
+<tr>
+<td><code>result.choices[0].message.tool_calls</code></td>
+<td><code>ai_msg.tool_calls</code></td>
+<td>返回的是 <code>AIMessage</code>，<code>tool_calls</code> 是现成的 <code>list[dict]</code></td>
+</tr>
+<tr>
+<td><code>call.function.name</code> / <code>JSON.parse(call.function.arguments)</code></td>
+<td><code>call["name"]</code> / <code>call["args"]</code></td>
+<td><strong>大差异</strong>：JS 的 <code>arguments</code> 是字符串要手动 parse；Python 的 <code>args</code> 已经是解析好的 <code>dict</code></td>
+</tr>
+<tr>
+<td><code>{ role: "tool", tool_call_id, content }</code></td>
+<td><code>ToolMessage(content=..., tool_call_id=...)</code></td>
+<td>消息类接管了 role 的拼装</td>
+</tr>
+<tr>
+<td><code>tool_choice: "none"</code> / 强制指定函数</td>
+<td>Ollama <strong>不支持</strong>，参数传了也被忽略</td>
+<td>绕路方案见第 8 节</td>
+</tr>
+<tr>
+<td><code>parallel_tool_calls: false</code></td>
+<td>Ollama 同样不支持</td>
+<td>是否并行发单，基本看模型自己的心情和能力</td>
+</tr>
+<tr>
+<td>——（JS 版没讲）</td>
+<td><code>ToolException</code> + <code>handle_tool_error</code></td>
+<td>框架级的「报错翻译」通道，见第 9 节</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="1-为什么需要工具老掌柜的边界">1. 为什么需要工具：老掌柜的边界</h2>
+<p>先看两个能把模型问住的问题：</p>
+<div class="highlight"><pre><span></span><code>拾光书屋今天营业到几点？
+书屋里现在还有《夜航船》的库存吗？
+</code></pre></div>
+<p>不是模型笨——是它的知识<strong>凝固在下训那一刻</strong>。营业时间今天可能刚调整，库存每一分钟都在变，这类「实时性问题」靠参数里的旧记忆永远答不准。早年的解法是 Function Calling：让模型在回答不了时，<strong>声明</strong>「我需要调用某个函数，参数如下」，由外部程序去执行、再把结果喂回来。后来这套机制统一更名为 <strong>Tools</strong>（各厂商叫法略有差异，机制同源）。</p>
+<p>完整的工具调用工作流是<strong>五步一循环</strong>：</p>
+<div class="highlight"><pre><span></span><code>1. 用户提问 ──────────► "书屋今天几点关门？"
+                              ↓
+2. 模型决策 ──► 不需要工具？直接回答（对话结束）
+              └─► 需要工具？返回 tool_calls：get_store_hours()
+                              ↓
+3. 你的代码执行工具 ──► 本地函数真正跑一遍，拿到 "22:00"
+                              ↓
+4. 结果回填 ──► 包成 ToolMessage，连同历史一起再发给模型
+                              ↓
+5. 模型综合回执 ──► "书屋今天营业到 22:00，欢迎来夜读。"
+</code></pre></div>
+<p><strong>一个必须刻进脑子的认知</strong>：模型从头到尾<strong>没有执行过任何工具</strong>。它只负责「下单」（说出工具名和参数），真正跑函数的永远是你的 Python 代码。所以工具函数写在本地、访问什么数据、怎么防注入，全在你的掌控之内——模型只是拿到了一张写满「可用工具清单」的说明书。</p>
+<p>还有个容易被忽略的推论：<strong>这个循环是可以转多圈的</strong>。第 5 步的模型如果发现回执不够（比如先查库存、再查物流），它可以再发一轮 tool_calls。手动转圈是本章的练习题，让它自动转起来就是 11 章 Agent 的全部秘密。</p>
+<hr />
+<h2 id="2-tool-装饰器普通函数三分钟变身工具">2. <code>@tool</code> 装饰器：普通函数三分钟变身工具</h2>
+<p><strong>作用</strong>：把一个带类型标注的普通函数，包装成模型能看懂的 <code>BaseTool</code> 对象——函数名变工具名、docstring 变描述、签名和类型标注变参数 schema，<strong>一份代码两份产出</strong>（Python 照常调用，模型照单选用）。</p>
+<p><strong>比喻</strong>：<code>@tool</code> 像给函数办了一张「上岗证」——证件上打印着姓名（name）、岗位说明（description）、携带物品清单（参数 schema）。模型招聘伙计时只看证件，不看人。</p>
+<p><strong>签名</strong>（langchain-core 1.x 实测，简化）：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.tools</span><span class="w"> </span><span class="kn">import</span> <span class="n">tool</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">tool</span><span class="p">(</span>
+    <span class="n">name_or_callable</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>  <span class="c1"># 直接装饰函数，或先传名字</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">description</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>        <span class="c1"># 不传就用 docstring</span>
+    <span class="n">args_schema</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">BaseModel</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>  <span class="c1"># 显式参数 schema（第 3 节）</span>
+    <span class="n">return_direct</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>           <span class="c1"># 结果直接返回、不再回炉模型（11 章细讲）</span>
+    <span class="n">parse_docstring</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>         <span class="c1"># 解析 Google 风格 docstring（第 3 节）</span>
+    <span class="n">response_format</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"content"</span><span class="p">,</span> <span class="s2">"content_and_artifact"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"content"</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BaseTool</span><span class="p">:</span> <span class="o">...</span>
+</code></pre></div>
+<p><strong>最小示例</strong>——拾光书屋的藏书检索工具：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.tools</span><span class="w"> </span><span class="kn">import</span> <span class="n">tool</span>
+
+
+<span class="nd">@tool</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">search_books</span><span class="p">(</span><span class="n">keyword</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">limit</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""按关键词检索拾光书屋的藏书，返回书名和库存信息。</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        keyword: 检索关键词，可以是书名片段、作者名或主题词</span>
+<span class="sd">        limit: 最多返回几条结果，默认 3</span>
+<span class="sd">    """</span>
+    <span class="n">catalog</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">"夜航船"</span><span class="p">:</span> <span class="s2">"张岱 · 明代百科 · 库存 2 本"</span><span class="p">,</span>
+        <span class="s2">"陶庵梦忆"</span><span class="p">:</span> <span class="s2">"张岱 · 散文回忆录 · 库存 1 本"</span><span class="p">,</span>
+        <span class="s2">"山月记"</span><span class="p">:</span> <span class="s2">"中岛敦 · 短篇小说集 · 库存 3 本"</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="n">hits</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">"《</span><span class="si">{</span><span class="n">t</span><span class="si">}</span><span class="s2">》</span><span class="si">{</span><span class="n">info</span><span class="si">}</span><span class="s2">"</span> <span class="k">for</span> <span class="n">t</span><span class="p">,</span> <span class="n">info</span> <span class="ow">in</span> <span class="n">catalog</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">keyword</span> <span class="ow">in</span> <span class="n">t</span> <span class="ow">or</span> <span class="n">keyword</span> <span class="ow">in</span> <span class="n">info</span><span class="p">]</span>
+    <span class="k">return</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">hits</span><span class="p">[:</span><span class="n">limit</span><span class="p">])</span> <span class="k">if</span> <span class="n">hits</span> <span class="k">else</span> <span class="sa">f</span><span class="s2">"没有找到与「</span><span class="si">{</span><span class="n">keyword</span><span class="si">}</span><span class="s2">」相关的藏书"</span>
+</code></pre></div>
+<p>装饰完它就不再只是个函数了——体检查三件套：</p>
+<div class="highlight"><pre><span></span><code><span class="nb">print</span><span class="p">(</span><span class="n">search_books</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>          <span class="c1"># search_books        ← 函数名即工具名</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">search_books</span><span class="o">.</span><span class="n">description</span><span class="p">)</span>   <span class="c1"># 整段 docstring      ← 模型看到的岗位说明</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">search_books</span><span class="o">.</span><span class="n">args</span><span class="p">)</span>          <span class="c1"># {'keyword': {'type': 'string'}, ...}  ← 参数 schema</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">search_books</span><span class="o">.</span><span class="n">invoke</span><span class="p">({</span><span class="s2">"keyword"</span><span class="p">:</span> <span class="s2">"张岱"</span><span class="p">,</span> <span class="s2">"limit"</span><span class="p">:</span> <span class="mi">2</span><span class="p">}))</span>
+<span class="c1"># 《夜航船》张岱 · 明代百科 · 库存 2 本</span>
+<span class="c1"># 《陶庵梦忆》张岱 · 散文回忆录 · 库存 1 本</span>
+</code></pre></div>
+<p>注意 <code>.invoke()</code> 收的是 <strong>dict</strong>（不是位置参数）——这正是后面模型回填 <code>tool_calls</code> 时的原生格式，两边天然对接。</p>
+<p><strong>docstring 写法的讲究</strong>：</p>
+<ul>
+<li><strong>首行是金句</strong>。<code>description</code> 会整段发给模型，但首行权重最高——「干什么」一句话说清，别绕弯子。</li>
+<li><code>Args:</code> 段落按 Google 风格写（<code>参数名: 描述</code>，四空格缩进），是参数说明的正规位置。</li>
+<li>没有 docstring？<code>@tool</code> 会直接拒绝（<code>error_on_invalid_docstring=True</code> 时报错）——工具没有说明书等于伙计没有上岗证。</li>
+</ul>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li><strong>docstring 写给模型看，不是写给自己看</strong>。「检索藏书」和「按关键词检索书屋在售藏书，适用于读者找书的场景，返回书名、作者与库存」对模型是两个完全不同的工具。写文档时脑补的画面应该是：一个只读过这块小牌子的陌生人，要判断该不该找这个伙计。</li>
+<li><strong><code>@tool</code> 装饰后调用方式变了</strong>。原函数 <code>search_books("张岱")</code> 的直呼方式失效（名字已被工具对象接管），要用 <code>search_books.invoke({...})</code>。想保留原函数，就把核心逻辑抽成普通函数、再包一层。</li>
+<li><strong>类型标注不能省</strong>。<code>def f(keyword):</code> 没有 <code>: str</code>，schema 推断不出类型，<code>infer_schema</code> 会报错或退化。参数没默认值 = 必填（required），有默认值 = 可选——和 Pydantic 规则一致。</li>
+<li>函数名就是工具名，别用 <code>f</code> / <code>tool1</code> 这种敷衍名——模型选工具时名字是第一线索。</li>
+</ul>
+<hr />
+<h2 id="3-pydantic-参数-schema给参数配说明书">3. Pydantic 参数 schema：给参数配「说明书」</h2>
+<p><strong>作用</strong>：第 2 节的自动推断给的是「参数骨架」（名字 + 类型），但参数的<strong>描述</strong>默认不在里面。模型填参填得准不准，很大程度取决于每个参数有没有一段像样的说明书——这正是原 JS 课程用 Zod <code>describe()</code> 解决的问题，Python 侧用 Pydantic <code>Field</code>。</p>
+<p><strong>两条路，按需选</strong>：</p>
+<h3 id="31-路线一parse_docstringtrue说明书就地取材">3.1 路线一：<code>parse_docstring=True</code>，说明书就地取材</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.tools</span><span class="w"> </span><span class="kn">import</span> <span class="n">tool</span>
+
+
+<span class="nd">@tool</span><span class="p">(</span><span class="n">parse_docstring</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">search_books</span><span class="p">(</span><span class="n">keyword</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">limit</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""按关键词检索拾光书屋的藏书，返回书名和库存信息。</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        keyword: 检索关键词，可以是书名片段、作者名或主题词</span>
+<span class="sd">        limit: 最多返回几条结果，默认 3</span>
+<span class="sd">    """</span>
+    <span class="o">...</span>
+</code></pre></div>
+<p>打开这个开关后，<code>Args:</code> 段落会被拆出来贴到对应参数上：docstring 首行单独成为 <code>description</code>，每个参数的说明进入 schema 的对应字段。</p>
+<h3 id="32-路线二显式-args_schema说明书单独成册">3.2 路线二：显式 <code>args_schema</code>，说明书单独成册</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.tools</span><span class="w"> </span><span class="kn">import</span> <span class="n">tool</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">Field</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">SearchBooksInput</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">keyword</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">"检索关键词，可以是书名片段、作者名或主题词"</span><span class="p">)</span>
+    <span class="n">limit</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">ge</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">le</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">"最多返回几条结果，1 到 10 之间，默认 3"</span><span class="p">)</span>
+
+
+<span class="nd">@tool</span><span class="p">(</span><span class="n">args_schema</span><span class="o">=</span><span class="n">SearchBooksInput</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">search_books</span><span class="p">(</span><span class="n">keyword</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">limit</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""按关键词检索拾光书屋的藏书，返回书名和库存信息。"""</span>
+    <span class="o">...</span>
+</code></pre></div>
+<p><strong>模型实际收到的</strong>，可以用一个透视函数看清（这就是发给模型的工具清单真身，等价于 JS 课程手写的那个 <code>tools</code> 数组）：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.utils.function_calling</span><span class="w"> </span><span class="kn">import</span> <span class="n">convert_to_openai_tool</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">convert_to_openai_tool</span><span class="p">(</span><span class="n">search_books</span><span class="p">),</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
+<span class="c1"># {</span>
+<span class="c1">#   "type": "function",</span>
+<span class="c1">#   "function": {</span>
+<span class="c1">#     "name": "search_books",</span>
+<span class="c1">#     "description": "按关键词检索拾光书屋的藏书，返回书名和库存信息。",</span>
+<span class="c1">#     "parameters": {</span>
+<span class="c1">#       "properties": {</span>
+<span class="c1">#         "keyword": { "description": "检索关键词，...", "type": "string" },</span>
+<span class="c1">#         "limit": { "default": 3, "description": "最多返回几条结果，...", "type": "integer" }</span>
+<span class="c1">#       },</span>
+<span class="c1">#       "required": ["keyword"],</span>
+<span class="c1">#       "type": "object"</span>
+<span class="c1">#     }</span>
+<span class="c1">#   }</span>
+<span class="c1"># }</span>
+</code></pre></div>
+<p><code>required</code> 列表由「有没有默认值」决定——没有默认值的参数进了 <code>required</code>，模型填参时漏了它，pydantic 校验会在 <code>.invoke()</code> 时当场拦下。</p>
+<p><strong>参数校验如何影响模型行为</strong>：schema 里的每条约束（类型、<code>default</code>、<code>ge</code>/<code>le</code> 边界、<code>description</code> 里的措辞）都会随工具清单发给模型，模型生成参数时是<strong>对着这份 schema 填表</strong>的。所以「说明书」写得越具体，参数回收质量越高——这和 05 章 <code>Field(description=...)</code> 影响结构化输出质量是同一个道理，因为底层是同一套协议。</p>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li><strong>默认 <code>parse_docstring=False</code> 时，<code>Args:</code> 段落整段躺在 description 里、参数却裸奔</strong>——参数没有各自的描述，模型只能靠参数名瞎猜。这是从 JS 资料迁过来最容易踩的差异：Zod 的 <code>.describe()</code> 在 Pydantic 对应物是 <code>Field(description=...)</code>，不会自动从 docstring 生成。</li>
+<li>两条路<strong>别同时铺</strong>：<code>args_schema</code> 优先级高，铺了它 docstring 的 <code>Args:</code> 段就只是注释。</li>
+<li>校验是<strong>收货时验的</strong>：模型传了 <code>limit: "三"</code>，<code>.invoke()</code> 才抛 <code>ValidationError</code>——模型自己不验，框架替你把关。验不过怎么办？看第 9 节的错误处理设计。</li>
+<li><code>args_schema</code> 里写了 <code>ge=1, le=10</code> 这类数值边界，会如实进入 JSON Schema——多数模型会遵守，但<strong>不是硬保证</strong>，关键业务在函数体内再验一次。</li>
+</ul>
+<hr />
+<h2 id="4-toolfrom_function给现成函数穿马甲的老钥匙">4. <code>Tool.from_function</code>：给现成函数穿马甲的老钥匙</h2>
+<p><strong>作用</strong>：函数已经写好了（比如团队里的公共库函数），不想在它头上加装饰器、改 docstring——<code>Tool.from_function</code> 让你<strong>在外面</strong>给它套上工具的壳。这是 LangChain 早期的经典做法，至今还能从 <code>langchain_core.tools</code> 里原样导入。</p>
+<p><strong>签名</strong>（1.x 实测）：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.tools</span><span class="w"> </span><span class="kn">import</span> <span class="n">Tool</span>
+
+<span class="n">Tool</span><span class="o">.</span><span class="n">from_function</span><span class="p">(</span>
+    <span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>   <span class="c1"># 现成的函数</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>                          <span class="c1"># 必须显式起名</span>
+    <span class="n">description</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>                   <span class="c1"># 必须显式写描述</span>
+    <span class="n">return_direct</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">args_schema</span><span class="p">:</span> <span class="n">ArgsSchema</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>   <span class="c1"># 传了才能收结构化参数</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tool</span>
+</code></pre></div>
+<p><strong>最小示例</strong>——把一个查询营业时间的现成函数包装成工具：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.tools</span><span class="w"> </span><span class="kn">import</span> <span class="n">Tool</span><span class="p">,</span> <span class="n">StructuredTool</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_hours</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>   <span class="c1"># 注意：单输入，收一个字符串</span>
+    <span class="k">return</span> <span class="s2">"拾光书屋今日营业时间：9:00 - 22:00"</span>
+
+
+<span class="n">legacy_tool</span> <span class="o">=</span> <span class="n">Tool</span><span class="o">.</span><span class="n">from_function</span><span class="p">(</span>
+    <span class="n">func</span><span class="o">=</span><span class="n">_hours</span><span class="p">,</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">"get_store_hours"</span><span class="p">,</span>
+    <span class="n">description</span><span class="o">=</span><span class="s2">"查询拾光书屋今日的营业时间段"</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">legacy_tool</span><span class="o">.</span><span class="n">invoke</span><span class="p">({</span><span class="s2">"tool_input"</span><span class="p">:</span> <span class="s2">"今天"</span><span class="p">}))</span>   <span class="c1"># 单输入工具的参数名固定叫 tool_input</span>
+</code></pre></div>
+<p><strong>它的现代接班人是 <code>StructuredTool.from_function</code></strong>——签名推断、多参数、Pydantic schema 全套都有，<code>@tool</code> 装饰器的功能它基本都继承了：</p>
+<div class="highlight"><pre><span></span><code><span class="n">structured</span> <span class="o">=</span> <span class="n">StructuredTool</span><span class="o">.</span><span class="n">from_function</span><span class="p">(</span>
+    <span class="n">func</span><span class="o">=</span><span class="n">_hours</span><span class="p">,</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">"get_store_hours"</span><span class="p">,</span>
+    <span class="n">description</span><span class="o">=</span><span class="s2">"查询拾光书屋今日的营业时间段"</span><span class="p">,</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>什么时候还用得上老钥匙？函数是第三方写的不能改、或者想把「函数定义」和「工具包装」放在两个文件里的时候。新代码一律推荐 <code>@tool</code>——少写两个必填参数，少踩一个单输入的坑。</p>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li><strong><code>Tool</code> 是「单输入」时代的产物</strong>：不传 <code>args_schema</code> 时，它把整个输入当作一个字符串参数（<code>tool_input</code>），多参数函数塞进去会被拍扁。要多参数，要么传 <code>args_schema</code>，要么直接用 <code>StructuredTool.from_function</code>。</li>
+<li><code>name</code> 和 <code>description</code> 在这条路上是<strong>必填项</strong>——没有 docstring 可以白嫖，全靠自己写。名字还必须和后续手动执行时查表用的 key 对得上（第 7 节）。</li>
+</ul>
+<hr />
+<h2 id="5-name-与-description-的讲究柜台上的小牌子">5. name 与 description 的讲究：柜台上的小牌子</h2>
+<p>原课程有一句话值得原样记住精神：<strong>description 是模型决定「是否调用这个工具」的唯一信息源</strong>。模型没读过你的源码，没见过你的数据库——它选工具时眼前只有一块小牌子：工具叫什么名字、干什么、什么时候该找它。</p>
+<p><strong>好 description 的三段式</strong>（对着自查）：</p>
+<ol>
+<li><strong>干什么</strong>：核心功能一句话（「按关键词检索书屋藏书」）；</li>
+<li><strong>什么时候用</strong>：适用场景（「读者询问有没有某本书、库存多少时使用」）；</li>
+<li><strong>边界与限制</strong>：不适用场景、返回什么（「只覆盖在售藏书，不含古籍仓库；返回书名、作者与库存数量」）。</li>
+</ol>
+<p><strong>多工具注册时，小牌子决定分工</strong>。给书屋挂两个长得很像的工具：</p>
+<div class="highlight"><pre><span></span><code><span class="nd">@tool</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">search_books</span><span class="p">(</span><span class="n">keyword</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""按关键词检索书屋在售藏书。读者找书、查库存时使用。"""</span>
+
+
+<span class="nd">@tool</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">search_events</span><span class="p">(</span><span class="n">keyword</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""按关键词检索书屋的线下活动。读者问读书会、签售、夜读沙龙时使用。"""</span>
+</code></pre></div>
+<p>参数一模一样，模型凭什么选对？全靠 description 里那句「什么时候用」。牌子含糊（两个都写「按关键词检索」），误选就是家常便饭——而误选的代价是真金白银：执行了错误的工具、浪费一轮循环、拿回风马牛不相及的回执。</p>
+<p><strong>name 的三条讲究</strong>：</p>
+<ul>
+<li><strong>动词或动宾开头</strong>：<code>search_books</code>、<code>get_store_hours</code>、<code>reserve_seat</code>，一眼看懂动作；</li>
+<li><strong>别怕长，怕歧义</strong>：<code>search</code> 不如 <code>search_books</code>；<code>get_info</code> 是反面教材；</li>
+<li><strong>全局唯一</strong>：两个工具重名，后面手动执行时查表（第 7 节的 <code>dict</code>）会互相覆盖，模型下单也会错乱。</li>
+</ul>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li>描述里写「获取数据」这种空话——模型不是猜谜选手，牌子越具体，下单越准。</li>
+<li>描述与实现不符（写着「查库存」，实际只查书目）——模型会理直气壮地在错误场景下单，锅最终扣在你头上。</li>
+<li>改了工具行为却忘了同步 description——工具清单发给模型的是 description，不是源码。<strong>文档漂移</strong>在工具调用里的杀伤力比普通项目大得多。</li>
+</ul>
+<hr />
+<h2 id="6-bind_tools把工具箱挂上模型">6. <code>bind_tools</code>：把工具箱挂上模型</h2>
+<p><strong>作用</strong>：把若干工具「绑定」到一个聊天模型上，返回一个<strong>带工具的新 Runnable</strong>——之后每次 <code>invoke</code>，工具清单都会随请求一起发给模型，模型便拥有了「下单」的能力。这是 JS 课程里 <code>withConfig({ tools })</code> 的 Python 对应物（JS 侧的 <code>.bindTools()</code> 是同一个东西的现代名）。</p>
+<p><strong>比喻</strong>：<code>bind_tools</code> 像给老掌柜的柜台挂上一排<strong>呼唤铃</strong>——每个铃铛上刻着伙计的名字和特长。掌柜回答不了的问题，他会按铃并附一张取货单；但他依然只是按铃，跑腿的还是你的代码。</p>
+<p><strong>签名</strong>（langchain-ollama 1.x 实测）：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_ollama</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChatOllama</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">ChatOllama</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="s2">"qwen3:4b"</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="n">bound</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">bind_tools</span><span class="p">(</span>
+    <span class="n">tools</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">dict</span> <span class="o">|</span> <span class="nb">type</span> <span class="o">|</span> <span class="n">Callable</span> <span class="o">|</span> <span class="n">BaseTool</span><span class="p">],</span>  <span class="c1"># 工具列表，格式很宽容</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">tool_choice</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"auto"</span><span class="p">,</span> <span class="s2">"any"</span><span class="p">]</span> <span class="o">|</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>  <span class="c1"># Ollama 忽略（第 8 节）</span>
+    <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Runnable</span><span class="p">[</span><span class="n">LanguageModelInput</span><span class="p">,</span> <span class="n">AIMessage</span><span class="p">]</span>
+</code></pre></div>
+<p><strong>最小示例</strong>——绑定 + 首轮调用 + 解析下单单据：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.messages</span><span class="w"> </span><span class="kn">import</span> <span class="n">HumanMessage</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain_ollama</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChatOllama</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">ChatOllama</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="s2">"qwen3:4b"</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">bound</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">bind_tools</span><span class="p">([</span><span class="n">search_books</span><span class="p">,</span> <span class="n">get_store_hours</span><span class="p">])</span>   <span class="c1"># 第 2、4 节定义的工具</span>
+
+<span class="n">ai_msg</span> <span class="o">=</span> <span class="n">bound</span><span class="o">.</span><span class="n">invoke</span><span class="p">([</span><span class="n">HumanMessage</span><span class="p">(</span><span class="n">content</span><span class="o">=</span><span class="s2">"书屋今天营业到几点？"</span><span class="p">)])</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">ai_msg</span><span class="p">))</span>       <span class="c1"># AIMessage</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">ai_msg</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>     <span class="c1"># ''（或思考性文字）——模型这轮不说话，只下单</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">ai_msg</span><span class="o">.</span><span class="n">tool_calls</span><span class="p">)</span>  <span class="c1"># 下单单据，见下</span>
+</code></pre></div>
+<p><code>tool_calls</code> 是本章最重要的数据结构，<strong>逐字段拆解</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="p">[{</span>
+    <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"get_store_hours"</span><span class="p">,</span>      <span class="c1"># 找哪个伙计 —— 对应你注册的工具名</span>
+    <span class="s2">"args"</span><span class="p">:</span> <span class="p">{},</span>                     <span class="c1"># 带什么参数 —— 已解析好的 dict（省了 JSON.parse）</span>
+    <span class="s2">"id"</span><span class="p">:</span> <span class="s2">"call_9f2c..."</span><span class="p">,</span>           <span class="c1"># 单据编号 —— 回执 ToolMessage 必须原样带回</span>
+    <span class="s2">"type"</span><span class="p">:</span> <span class="s2">"tool_call"</span><span class="p">,</span>            <span class="c1"># 固定标记</span>
+<span class="p">}]</span>
+</code></pre></div>
+<p>和 JS 版对照着记两个差异：</p>
+<ol>
+<li>JS 里参数是 <code>function.arguments</code> 的<strong> JSON 字符串</strong>，用前要 <code>JSON.parse()</code>；Python 的 <code>args</code> 已经是 <code>dict</code>，拿来就用。</li>
+<li>JS 里看 <code>finish_reason: "tool_calls"</code> 判断这轮以下单收尾；Python 侧约定俗成看 <code>ai_msg.tool_calls</code> 是否非空，更直接。</li>
+</ol>
+<p><strong>绑定是「生成新对象」，不动原模型</strong>——和 03 章 <code>with_config</code>、05 章 <code>with_structured_output</code> 一脉相承的不可变风格。你可以同一个模型绑出多个「专用分身」：绑检索工具的「找书分身」、绑活动查询的「活动分身」，互不干扰。</p>
+<p><strong>bind_tools 的入参很宽容</strong>：<code>BaseTool</code> 对象（<code>@tool</code> 的产物）、Pydantic 类、OpenAI 格式的裸 dict、甚至普通函数都能塞——内部统一走 <code>convert_to_openai_tool</code> 转换。但普通函数没有 docstring 时描述是空的，模型无从判断——<strong>优先用 <code>@tool</code> 的成品</strong>。</p>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li><strong>绑了工具 ≠ 模型必须用</strong>。默认策略是「auto」：模型自己判断该不该下单。问「推荐一本书」它可能直接回答、连工具都不碰——这是正常行为，代码要有分支（第 7 节的第一道判断）。</li>
+<li><code>tool_calls</code> 是<strong>列表</strong>——一次可能有多张单（并行调用），用 <code>for call in ai_msg.tool_calls</code> 遍历，别只取 <code>[0]</code>。</li>
+<li>别把「绑工具」和 05 章 <code>with_structured_output</code> 弄混：前者是<strong>真执行</strong>（模型下单、你跑函数、结果回炉），后者是<strong>借协议要结构</strong>（模型填表、直接拿结果）。一个管动手，一个管动嘴。</li>
+</ul>
+<hr />
+<h2 id="7-完整循环手动跑通下单-执行-回执-再答">7. 完整循环：手动跑通「下单 → 执行 → 回执 → 再答」</h2>
+<p>这是全章的<strong>主菜</strong>，也是 11 章 Agent 循环的手动版预习。JS 课堂代码完整演示了这条链路，Python 版一步不少——而且因为 <code>args</code> 已是 dict、<code>ToolMessage</code> 接管了消息拼装，代码更短。</p>
+<p><strong>比喻串场</strong>：客人发问 → 老掌柜开单（tool_calls）→ <strong>你</strong>把单子递给伙计（查表执行）→ 伙计写回执（ToolMessage，编号对齐）→ 掌柜看回执答客人（再 invoke）。六个步骤，一步都不能少：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.messages</span><span class="w"> </span><span class="kn">import</span> <span class="n">AIMessage</span><span class="p">,</span> <span class="n">HumanMessage</span><span class="p">,</span> <span class="n">ToolMessage</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">run_tool_loop</span><span class="p">(</span><span class="n">bound_model</span><span class="p">,</span> <span class="n">question</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">tools_by_name</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""手动版的工具调用循环：11 章 Agent 循环的预习课。</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        bound_model: bind_tools 之后的模型（或任何兼容 invoke 的 Runnable）</span>
+<span class="sd">        question: 用户的原始问题</span>
+<span class="sd">        tools_by_name: 工具名 -&gt; 工具对象 的查找表</span>
+<span class="sd">    """</span>
+    <span class="c1"># ① 用户提问</span>
+    <span class="n">messages</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[</span><span class="n">HumanMessage</span><span class="p">(</span><span class="n">content</span><span class="o">=</span><span class="n">question</span><span class="p">)]</span>
+
+    <span class="c1"># ② 模型第一轮：决定是否下单</span>
+    <span class="n">ai_msg</span><span class="p">:</span> <span class="n">AIMessage</span> <span class="o">=</span> <span class="n">bound_model</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span><span class="n">messages</span><span class="p">)</span>
+    <span class="n">messages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ai_msg</span><span class="p">)</span>                      <span class="c1"># ★ 关键：把带 tool_calls 的 AIMessage 存档</span>
+
+    <span class="c1"># ③ 分支：模型没下单，直接就是最终回答</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">ai_msg</span><span class="o">.</span><span class="n">tool_calls</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">ai_msg</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+
+    <span class="c1"># ④ 遍历单据：查表 → 执行 → 包回执</span>
+    <span class="k">for</span> <span class="n">call</span> <span class="ow">in</span> <span class="n">ai_msg</span><span class="o">.</span><span class="n">tool_calls</span><span class="p">:</span>
+        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">call</span><span class="p">[</span><span class="s2">"name"</span><span class="p">]</span>
+        <span class="n">args</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">call</span><span class="p">[</span><span class="s2">"args"</span><span class="p">]</span>
+        <span class="n">call_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">call</span><span class="p">[</span><span class="s2">"id"</span><span class="p">]</span>
+
+        <span class="n">tool_fn</span> <span class="o">=</span> <span class="n">tools_by_name</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">tool_fn</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>                      <span class="c1"># 模型点名了不存在的伙计</span>
+            <span class="n">observation</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"错误：工具 </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> 不存在，可用工具：</span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="n">tools_by_name</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">observation</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">tool_fn</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span><span class="n">args</span><span class="p">))</span>     <span class="c1"># 真正执行的是你的代码</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>                         <span class="c1"># 兜底：报错也变成回执（第 9 节）</span>
+                <span class="n">observation</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"错误：</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">exc</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">exc</span><span class="si">}</span><span class="s2">"</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"已执行 </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">args</span><span class="p">,</span><span class="w"> </span><span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="si">}</span><span class="s2">) -&gt; </span><span class="si">{</span><span class="n">observation</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="c1"># ⑤ 回执入档：tool_call_id 必须原样对齐单据编号</span>
+        <span class="n">messages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ToolMessage</span><span class="p">(</span><span class="n">content</span><span class="o">=</span><span class="n">observation</span><span class="p">,</span> <span class="n">tool_call_id</span><span class="o">=</span><span class="n">call_id</span><span class="p">))</span>
+
+    <span class="c1"># ⑥ 第二轮：模型看着完整对话（含回执）给出最终回答</span>
+    <span class="n">final_msg</span><span class="p">:</span> <span class="n">AIMessage</span> <span class="o">=</span> <span class="n">bound_model</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span><span class="n">messages</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">final_msg</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+
+
+<span class="n">answer</span> <span class="o">=</span> <span class="n">run_tool_loop</span><span class="p">(</span><span class="n">bound</span><span class="p">,</span> <span class="s2">"书屋今天营业到几点？还有张岱的书吗？"</span><span class="p">,</span> <span class="p">{</span>
+    <span class="s2">"search_books"</span><span class="p">:</span> <span class="n">search_books</span><span class="p">,</span>
+    <span class="s2">"get_store_hours"</span><span class="p">:</span> <span class="n">get_store_hours</span><span class="p">,</span>
+<span class="p">})</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">answer</span><span class="p">)</span>
+</code></pre></div>
+<p>跑起来的样子（示意）：</p>
+<div class="highlight"><pre><span></span><code>已执行 get_store_hours({}) -&gt; 拾光书屋今日营业时间：9:00 - 22:00
+已执行 search_books({"keyword": "张岱"}) -&gt; 《夜航船》张岱 · 明代百科 · 库存 2 本 ...
+书屋今天营业到 22:00；张岱的《夜航船》《陶庵梦忆》都有库存，欢迎来挑。
+</code></pre></div>
+<p>注意用户一句问话里带了两件事，模型<strong>一口气开了两张单</strong>（<code>tool_calls</code> 列表里两项）——这就是并行工具调用，两家伙计各跑各的，回执按 <code>tool_call_id</code> 各自对账。</p>
+<p><strong>为什么这段代码是 11 章的预习课</strong>：把上面的「一轮」套进 <code>while</code> 循环、允许模型多次下单直到不再下单，再配一个「什么算完成」的判断——那就是 Agent。你在此处手写的每一行，届时都有框架代劳；但<strong>循环里发生什么</strong>，永远值得亲手摸一遍。</p>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li><strong>忘了把 <code>ai_msg</code> append 进 messages</strong>（②步的 ★）。ToolMessage 是「对某张单据的回执」，单据本身不在对话里，模型看不懂回执在回什么——多数厂商 API 直接报 400 参数错误。这是全链路翻车率最高的一步。</li>
+<li><strong><code>tool_call_id</code> 抄错</strong>。回执的编号必须和单据上的 <code>call["id"]</code> 一字不差，多张单时张冠李戴，模型会把库存结果安到营业时间头上。</li>
+<li><strong>消息顺序不能乱</strong>：<code>user → ai(tool_calls) → tool → tool → ai(最终)</code>。回执必须紧跟在它回应的那张单据之后，中间不能插别的消息。</li>
+<li><strong><code>tools_by_name</code> 查表 miss 别抛异常</strong>。模型偶尔会幻觉出不存在的工具名——像示例那样回一句「工具不存在」的字符串，模型下一轮会自己修正；抛异常则是整个循环当场暴毙（第 9 节的主旨）。</li>
+<li>执行工具时<strong>别信任模型给的参数</strong>。<code>args</code> 来自模型生成，类型大体可靠（有 schema 兜底），但业务合法性（比如 <code>limit=999</code>）要自己在函数里把关。</li>
+</ul>
+<hr />
+<h2 id="8-配置旋钮tool_choice-与-parallel_tool_calls-的现实">8. 配置旋钮：<code>tool_choice</code> 与 <code>parallel_tool_calls</code> 的现实</h2>
+<p>原 JS 课程在 OpenAI 接口上演示了三个进阶需求：<strong>禁止调用工具</strong>、<strong>强制调用某个工具</strong>、<strong>注册多个工具</strong>。前两个靠 <code>tool_choice</code> 旋钮，到了 Ollama 这边要重新面对现实。</p>
+<h3 id="81-tool_choiceollama-的摆设参数">8.1 <code>tool_choice</code>：Ollama 的摆设参数</h3>
+<p><code>ChatOllama.bind_tools</code> 的签名里确实有 <code>tool_choice</code> 参数（支持 <code>"auto"</code> / <code>"none"</code> / <code>"any"</code> / 指定函数名），但源码里明确注释着：<strong>该参数当前被忽略，Ollama 不支持</strong>。传了不报错，但也不生效——这是从 OpenAI 代码迁移过来最容易「以为生效了」的暗坑。</p>
+<p>对照着 OpenAI 生态的三个用法，看 Ollama 侧的绕路方案：</p>
+<table>
+<thead>
+<tr>
+<th>需求</th>
+<th>OpenAI 写法（JS 课程）</th>
+<th>Ollama 侧的现实做法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>禁止调用（<code>tool_choice: "none"</code>）</td>
+<td>注册了但不许用</td>
+<td><strong>干脆不 bind</strong>——不绑工具的模型天然只能用嘴回答；或换用没绑工具的裸模型分身</td>
+</tr>
+<tr>
+<td>强制调用（指定函数名）</td>
+<td><code>tool_choice: {type: "function", function: {name: ...}}</code></td>
+<td><strong>换思路</strong>：固定调用、固定结构的场景，本质是要「填表」——用 05 章的 <code>with_structured_output(Model, method="function_calling")</code>，它底层就是把 schema 包成工具并强制走填表流程；或把「必须先调用 X」写进 system 消息软约束</td>
+</tr>
+<tr>
+<td>自动选择（默认）</td>
+<td><code>tool_choice: "auto"</code></td>
+<td>默认行为，无需配置</td>
+</tr>
+</tbody>
+</table>
+<p>原课程给「强制调用」列的场景（写日志埋点、强制翻译、表单信息抽取、统一 SQL 生成）其实有个共同点：<strong>要的不是模型的判断，而是模型的格式</strong>。这类需求在 Python 侧几乎都该路由到 05 章的结构化输出，而不是硬掰工具调用——同一个底层协议，选对入口。</p>
+<h3 id="82-parallel_tool_calls同样不支持">8.2 <code>parallel_tool_calls</code>：同样不支持</h3>
+<p>OpenAI 的这个旋钮关掉后，模型一次只开一张单（但<strong>不保证</strong>整轮就此收束，下一轮仍可能继续开单——原课程特意强调过这个语义）。Ollama 侧没有这个开关：一次回几张单，基本取决于模型自己的习惯（qwen3 系列常一口气开多张）。代码层面正确的姿势是：<strong>永远用 <code>for</code> 遍历 <code>tool_calls</code></strong>，单张多张都能接住——第 7 节的循环天然免疫。</p>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li><strong>把「忽略」当「生效」</strong>。<code>bind_tools([...], tool_choice="none")</code> 在 Ollama 上静默失效，模型照样下单——想验证某个旋钮，务必打日志看真实行为，别信参数名。</li>
+<li>强制工具的<strong>软约束</strong>（写进提示词「必须先调用 search_books」）对小模型只是「强烈建议」，<code>qwen3:4b</code> 偶尔会无视——重要流程别押注在提示词上。</li>
+<li>这些旋钮是<strong>厂商接口差异</strong>，不是 LangChain 差异。换回 <code>ChatOpenAI</code> 时 <code>tool_choice</code> 立刻恢复生效——写跨模型的代码时，这类参数要按集成逐个确认。</li>
+</ul>
+<hr />
+<h2 id="9-工具报错返回字符串别抛异常">9. 工具报错：返回字符串，别抛异常</h2>
+<p><strong>先立设计观</strong>：工具循环是一个「模型 ↔ 代码」的<strong>对话</strong>，不是一段「程序员 ↔ 代码」的<strong>程序</strong>。程序里抛异常天经地义——异常是给开发者看的；但循环里抛异常，砸的是整场对话：模型没了回执、循环断在半路、用户看到一屏 traceback。</p>
+<p><strong>比喻</strong>：伙计跑空一趟（书卖完了、接口超时了），正确动作是<strong>写张字条递回柜台</strong>——「《夜航船》今日售罄，预计周三补货」。掌柜看了字条，可以换家店问、或如实答复客人。<strong>掀桌子</strong>（抛异常）是最差的选择：掌柜、客人、伙计全僵在原地。</p>
+<p>所以黄金法则是：<strong>工具的报错，也是给模型的一种「返回值」</strong>——用字符串描述发生了什么、可能怎么办，让循环活下去。</p>
+<h3 id="91-方案一函数体内-tryexcept字条自己写最直接">9.1 方案一：函数体内 try/except，字条自己写（最直接）</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.tools</span><span class="w"> </span><span class="kn">import</span> <span class="n">tool</span>
+
+
+<span class="nd">@tool</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">lookup_member_card</span><span class="p">(</span><span class="n">member</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""查询会员的借阅卡信息：剩余借阅次数和有效期。</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        member: 会员姓名或卡号</span>
+<span class="sd">    """</span>
+    <span class="n">cards</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"陈读者"</span><span class="p">:</span> <span class="s2">"剩余 3 次，有效期至 2026-12-31"</span><span class="p">}</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">cards</span><span class="p">[</span><span class="n">member</span><span class="p">]</span>
+    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">"查询失败：找不到会员「</span><span class="si">{</span><span class="n">member</span><span class="si">}</span><span class="s2">」，请确认姓名或改用卡号重试"</span>
+</code></pre></div>
+<p>报错信息<strong>写给模型看</strong>：说清发生了什么（找不到）、给出下一步建议（换卡号）。模型下一轮看到这条回执，会自然地向用户追问卡号——循环没有断，体验没有崩。</p>
+<h3 id="92-方案二toolexception-handle_tool_error字条交给框架翻译">9.2 方案二：<code>ToolException</code> + <code>handle_tool_error</code>，字条交给框架翻译</h3>
+<p>如果工具是别人的代码、不方便在体内包 try/except，LangChain 提供了框架级通道：工具体内抛<strong>专用的</strong> <code>ToolException</code>，构造工具时配 <code>handle_tool_error</code>，框架会把异常翻译成字符串返回：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.tools</span><span class="w"> </span><span class="kn">import</span> <span class="n">StructuredTool</span><span class="p">,</span> <span class="n">ToolException</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_lookup</span><span class="p">(</span><span class="n">member</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="n">ToolException</span><span class="p">(</span><span class="sa">f</span><span class="s2">"查无此人：</span><span class="si">{</span><span class="n">member</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+
+<span class="n">safe_tool</span> <span class="o">=</span> <span class="n">StructuredTool</span><span class="o">.</span><span class="n">from_function</span><span class="p">(</span>
+    <span class="n">func</span><span class="o">=</span><span class="n">_lookup</span><span class="p">,</span>
+    <span class="n">handle_tool_error</span><span class="o">=</span><span class="s2">"查询失败：会员不存在，建议改用卡号重试"</span><span class="p">,</span>   <span class="c1"># 字符串：固定文案</span>
+<span class="p">)</span>
+<span class="c1"># handle_tool_error 也可以是函数：拿异常对象，动态生成字条</span>
+<span class="c1"># handle_tool_error=lambda err: f"[查询失败] {err}；建议改用卡号重试"</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">safe_tool</span><span class="o">.</span><span class="n">invoke</span><span class="p">({</span><span class="s2">"member"</span><span class="p">:</span> <span class="s2">"路人甲"</span><span class="p">}))</span>   <span class="c1"># 查询失败：会员不存在，建议改用卡号重试</span>
+</code></pre></div>
+<h3 id="93-1x-的硬边界handle_tool_error-只认-toolexception">9.3 1.x 的硬边界：<code>handle_tool_error</code> 只认 <code>ToolException</code></h3>
+<p>这是从旧资料迁移最容易翻车的点，<strong>实测行为</strong>（langchain-core 1.x）：</p>
+<ul>
+<li>工具体内抛 <code>ToolException</code> + 配了 <code>handle_tool_error</code> → ✅ 翻译成字符串返回；</li>
+<li>工具体内抛 <code>ToolException</code>、<strong>没</strong>配 <code>handle_tool_error</code> → ❌ 照样抛出（配置才是开关，异常类型只是门票）；</li>
+<li>工具体内抛<strong>普通异常</strong>（<code>KeyError</code> / <code>ValueError</code>…），<strong>配了 <code>handle_tool_error</code> 也不拦</strong> → ❌ 直接穿透抛出。早期版本拦所有异常，1.x 收紧成只认 <code>ToolException</code>——旧文章里「配了就能兜底」的说法已过时；</li>
+<li>模型给的<strong>参数不合法</strong>（类型对不上 schema）→ 抛 pydantic 的 <code>ValidationError</code>，走的是另一个开关 <code>handle_validation_error</code>，与 <code>handle_tool_error</code> 互不干涉。</li>
+</ul>
+<p>所以工程上的组合拳是：<strong>体内 try/except 兜业务错误</strong>（字条内容最可控），<strong><code>ToolException</code> + <code>handle_tool_error</code> 兜漏网之鱼</strong>（防止第三方代码裸抛），<strong>循环层再包一层 try/except</strong>（第 7 节④步）作为最后防线——三层下来，循环想断都难。</p>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li>字条别只写「出错了」。<code>"error"</code> 三个字母对模型毫无信息量——写清<strong>哪个环节、什么原因、怎么办</strong>，模型才能把话接下去。</li>
+<li>报错字符串里<strong>别带敏感信息</strong>（连接串、内部路径、堆栈）。它是要发给模型的——等于贴在了对话里。</li>
+<li>别用返回值里的「错误」<strong>伪装成功</strong>。字条开头的「查询失败：」这类明确标记很重要，让模型和日志都能一眼区分正常结果与异常回执。</li>
+</ul>
+<hr />
+<h2 id="10-本章小结">10. 本章小结</h2>
+<p>一张表带走全章：</p>
+<table>
+<thead>
+<tr>
+<th>你要做什么</th>
+<th>用什么</th>
+<th>一句话</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>普通函数变工具</td>
+<td><code>@tool</code> + docstring + 类型标注</td>
+<td>name/description/schema 全自动</td>
+</tr>
+<tr>
+<td>参数带说明书</td>
+<td><code>args_schema=PydanticModel</code> 或 <code>parse_docstring=True</code></td>
+<td><code>Field(description=...)</code> 直接影响填参质量</td>
+</tr>
+<tr>
+<td>包装现成函数</td>
+<td><code>StructuredTool.from_function</code>（老 <code>Tool.from_function</code> 仍可用）</td>
+<td>老钥匙是单输入，新钥匙全功能</td>
+</tr>
+<tr>
+<td>挂工具上模型</td>
+<td><code>model.bind_tools([...])</code></td>
+<td>返回新的 Runnable，不动原模型</td>
+</tr>
+<tr>
+<td>解析模型下单</td>
+<td><code>ai_msg.tool_calls</code> → <code>list[dict]</code>（name/args/id/type）</td>
+<td><code>args</code> 已是 dict，省了 JSON.parse</td>
+</tr>
+<tr>
+<td>回填执行结果</td>
+<td><code>ToolMessage(content=..., tool_call_id=...)</code></td>
+<td>编号对齐单据，顺序紧跟其后</td>
+</tr>
+<tr>
+<td>完整循环</td>
+<td>手写六步（第 7 节）</td>
+<td>11 章 Agent 循环的手动版</td>
+</tr>
+<tr>
+<td>禁止/强制调用</td>
+<td>Ollama 不支持 <code>tool_choice</code>；强制场景改走 <code>with_structured_output</code></td>
+<td>厂商旋钮按集成逐个确认</td>
+</tr>
+<tr>
+<td>工具报错</td>
+<td>返回字符串（体内 try/except / <code>ToolException</code> + <code>handle_tool_error</code>）</td>
+<td>字条递回柜台，别掀桌子</td>
+</tr>
+</tbody>
+</table>
+<p>三个心智锚点：</p>
+<ol>
+<li><strong>模型只下单，不执行</strong>——<code>tool_calls</code> 是取货单，跑腿的永远是你的 Python；安全、数据、副作用全在你手里。</li>
+<li><strong>messages 列表是对话的全部真相</strong>——带单据的 AIMessage、对编号的 ToolMessage，一个都不能少、一个都不能乱序（09 章的经验在这里直接变现）。</li>
+<li><strong>工具协议是一鱼两吃</strong>——要结构走 <code>with_structured_output</code>（05 章），要执行走 <code>bind_tools</code>（本章）；前者是后者的特例，Agent（11 章）是后者的全自动版。</li>
+</ol>
+<p>配套 demo（本章 <code>demo/</code> 目录）：</p>
+<ul>
+<li><code>demo_tool.py</code>：单文件演示 <code>@tool</code> 定义 → 参数 schema 对比 → <code>Tool.from_function</code> → <code>bind_tools</code> → <code>tool_calls</code> 解析 → 手动执行循环 → 错误处理全链路。工具全部是纯本地函数（查书屋藏书、查营业时间），<strong>离线可跑</strong>；模型环节自动探测本地 Ollama——在线走真模型（<code>qwen3:4b</code>），不在线自动降级为固定的假 <code>AIMessage.tool_calls</code>，解析与执行链路照样完整演示。设 <code>USE_MODEL=1</code> 可强制真模型、<code>USE_MODEL=0</code> 强制离线。</li>
+</ul>
+<p><strong>下一章</strong>：<a href="../langchain/11-agent.html">11 · Agent</a></p></div>
+
+      </article>
+<nav class="pager"><a class="pg-card pg-prev" href="../langchain/09-dui-hua-ji-yi.html"><span class="pg-label">← 上一篇</span><span class="pg-title">对话记忆</span><span class="pg-mod">LangChain 指南</span></a><a class="pg-card pg-next" href="../langchain/11-agent.html"><span class="pg-label">下一篇 →</span><span class="pg-title">Agent</span><span class="pg-mod">LangChain 指南</span></a></nav>
+    </div>
+    <footer class="foot">
+      <span>深栈 DeepStack · AI Agent 工程师转型训练营配套文档</span>
+    </footer>
+  </main>
+<nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#0-一张-js-python-对照表先收藏">0. 一张 JS → Python 对照表（先收藏）</a><a class="toc-link toc-h2" href="#1-为什么需要工具老掌柜的边界">1. 为什么需要工具：老掌柜的边界</a><a class="toc-link toc-h2" href="#2-tool-装饰器普通函数三分钟变身工具">2. @tool 装饰器：普通函数三分钟变身工具</a><a class="toc-link toc-h2" href="#3-pydantic-参数-schema给参数配说明书">3. Pydantic 参数 schema：给参数配「说明书」</a><a class="toc-link toc-h3" href="#31-路线一parse_docstringtrue说明书就地取材">3.1 路线一：parse_docstring=True，说明书就地取材</a><a class="toc-link toc-h3" href="#32-路线二显式-args_schema说明书单独成册">3.2 路线二：显式 args_schema，说明书单独成册</a><a class="toc-link toc-h2" href="#4-toolfrom_function给现成函数穿马甲的老钥匙">4. Tool.from_function：给现成函数穿马甲的老钥匙</a><a class="toc-link toc-h2" href="#5-name-与-description-的讲究柜台上的小牌子">5. name 与 description 的讲究：柜台上的小牌子</a><a class="toc-link toc-h2" href="#6-bind_tools把工具箱挂上模型">6. bind_tools：把工具箱挂上模型</a><a class="toc-link toc-h2" href="#7-完整循环手动跑通下单-执行-回执-再答">7. 完整循环：手动跑通「下单 → 执行 → 回执 → 再答」</a><a class="toc-link toc-h2" href="#8-配置旋钮tool_choice-与-parallel_tool_calls-的现实">8. 配置旋钮：tool_choice 与 parallel_tool_calls 的现实</a><a class="toc-link toc-h3" href="#81-tool_choiceollama-的摆设参数">8.1 tool_choice：Ollama 的摆设参数</a><a class="toc-link toc-h3" href="#82-parallel_tool_calls同样不支持">8.2 parallel_tool_calls：同样不支持</a><a class="toc-link toc-h2" href="#9-工具报错返回字符串别抛异常">9. 工具报错：返回字符串，别抛异常</a><a class="toc-link toc-h3" href="#91-方案一函数体内-tryexcept字条自己写最直接">9.1 方案一：函数体内 try/except，字条自己写（最直接）</a><a class="toc-link toc-h3" href="#92-方案二toolexception-handle_tool_error字条交给框架翻译">9.2 方案二：ToolException + handle_tool_error，字条交给框架翻译</a><a class="toc-link toc-h3" href="#93-1x-的硬边界handle_tool_error-只认-toolexception">9.3 1.x 的硬边界：handle_tool_error 只认 ToolException</a><a class="toc-link toc-h2" href="#10-本章小结">10. 本章小结</a></nav>
+</div>
+<div class="sb-mask" id="sbMask"></div>
+<script src="../assets/app.js"></script>
+</body>
+</html>

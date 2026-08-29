@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>28 · Pandas 数据清洗 · 深栈 DeepStack 课程文档</title>
+<meta name="description" content="上一章把 data/staff.csv 读成了 DataFrame，也留了一串悬念：dtype 清一色 object、员工号 E029 出现两次、月薪一列里同时住着 42k、20w/年、12k~15k 这些互不相识的写法…">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%23d9c39a' text-anchor='middle'%3EDS%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+<div class="progress" id="progress"></div>
+
+<div class="layout">
+<aside class="sidebar" id="sidebar">
+  <div class="sb-head">
+    <a class="brand" href="../index.html">
+      <span class="brand-mark">DS</span>
+      <span class="brand-text"><b>深栈 DeepStack</b><i>AI Agent 工程师转型训练营</i></span>
+    </a>
+    <button class="sb-close" id="sbClose" aria-label="关闭目录">✕</button>
+  </div>
+  <div class="sb-search"><input type="search" id="searchInput" placeholder="搜索 123 篇文档… ( / )" autocomplete="off">
+    <div class="sb-results" id="searchResults"></div></div>
+  <nav class="sb-nav">
+    <section class="sb-group open" data-mod="python">
+      <a class="sb-group-title" href="../modules/python.html" data-toggle="python">
+        <span class="sb-num">01</span>
+        <span class="sb-group-text"><b>Python 与数据实践</b><i>31 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../python/01-huan-jing-da-jian-yu-ban-ben-guan-li.html"><span class="sb-item-num">01</span><span class="sb-item-title">环境搭建与版本管理</span></a>
+        <a class="sb-item" href="../python/02-bian-liang-biao-da-shi-yu-liu-cheng-kong-zhi.html"><span class="sb-item-num">02</span><span class="sb-item-title">变量、表达式与流程控制</span></a>
+        <a class="sb-item" href="../python/03-xu-lie-zi-dian-yu-ji-he.html"><span class="sb-item-num">03</span><span class="sb-item-title">序列、字典与集合</span></a>
+        <a class="sb-item" href="../python/04-han-shu-she-ji-yu-lambda.html"><span class="sb-item-num">04</span><span class="sb-item-title">函数设计与 lambda</span></a>
+        <a class="sb-item" href="../python/05-zuo-yong-yu-gui-ze-yu-bi-bao.html"><span class="sb-item-num">05</span><span class="sb-item-title">作用域规则与闭包</span></a>
+        <a class="sb-item" href="../python/06-lei-de-ding-yi-yu-shi-li-hua.html"><span class="sb-item-num">06</span><span class="sb-item-title">类的定义与实例化</span></a>
+        <a class="sb-item" href="../python/07-lei-xing-pan-ding-yu-chou-xiang-ji-lei.html"><span class="sb-item-num">07</span><span class="sb-item-title">类型判定与抽象基类</span></a>
+        <a class="sb-item" href="../python/08-mo-shu-fang-fa-quan-jing.html"><span class="sb-item-num">08</span><span class="sb-item-title">魔术方法全景</span></a>
+        <a class="sb-item" href="../python/09-miao-shu-fu-yu-yuan-lei.html"><span class="sb-item-num">09</span><span class="sb-item-title">描述符与元类</span></a>
+        <a class="sb-item" href="../python/10-zhuang-shi-qi.html"><span class="sb-item-num">10</span><span class="sb-item-title">装饰器</span></a>
+        <a class="sb-item" href="../python/11-die-dai-xie-yi-yu-sheng-cheng-qi.html"><span class="sb-item-num">11</span><span class="sb-item-title">迭代协议与生成器</span></a>
+        <a class="sb-item" href="../python/12-with-yu-shang-xia-wen-xie-yi.html"><span class="sb-item-num">12</span><span class="sb-item-title">with 与上下文协议</span></a>
+        <a class="sb-item" href="../python/13-yi-chang-ti-xi-yu-chu-li.html"><span class="sb-item-num">13</span><span class="sb-item-title">异常体系与处理</span></a>
+        <a class="sb-item" href="../python/14-lei-xing-biao-zhu.html"><span class="sb-item-num">14</span><span class="sb-item-title">类型标注</span></a>
+        <a class="sb-item" href="../python/15-mo-kuai-yu-bao-de-zu-zhi.html"><span class="sb-item-num">15</span><span class="sb-item-title">模块与包的组织</span></a>
+        <a class="sb-item" href="../python/16-biao-zhun-ku-xun-li.html"><span class="sb-item-num">16</span><span class="sb-item-title">标准库巡礼</span></a>
+        <a class="sb-item" href="../python/17-yi-lai-guan-li-yu-di-san-fang-ku.html"><span class="sb-item-num">17</span><span class="sb-item-title">依赖管理与第三方库</span></a>
+        <a class="sb-item" href="../python/18-xian-cheng-yu-jin-cheng.html"><span class="sb-item-num">18</span><span class="sb-item-title">线程与进程</span></a>
+        <a class="sb-item" href="../python/19-shi-jian-xun-huan.html"><span class="sb-item-num">19</span><span class="sb-item-title">事件循环</span></a>
+        <a class="sb-item" href="../python/20-future-yu-xie-cheng.html"><span class="sb-item-num">20</span><span class="sb-item-title">Future 与协程</span></a>
+        <a class="sb-item" href="../python/21-asyncio-shi-zhan.html"><span class="sb-item-num">21</span><span class="sb-item-title">asyncio 实战</span></a>
+        <a class="sb-item" href="../python/22-gou-jian-yu-fa-bu.html"><span class="sb-item-num">22</span><span class="sb-item-title">构建与发布</span></a>
+        <a class="sb-item" href="../python/23-gong-cheng-hua-gong-ju-lian.html"><span class="sb-item-num">23</span><span class="sb-item-title">工程化工具链</span></a>
+        <a class="sb-item" href="../python/24-monorepo-yu-tiao-shi.html"><span class="sb-item-num">24</span><span class="sb-item-title">monorepo 与调试</span></a>
+        <a class="sb-item" href="../python/25-jupyter-jiao-hu-huan-jing.html"><span class="sb-item-num">25</span><span class="sb-item-title">Jupyter 交互环境</span></a>
+        <a class="sb-item" href="../python/26-numpy-shu-zu-yu-xiang-liang-hua.html"><span class="sb-item-num">26</span><span class="sb-item-title">NumPy 数组与向量化</span></a>
+        <a class="sb-item" href="../python/27-pandas-shu-ju-jie-gou.html"><span class="sb-item-num">27</span><span class="sb-item-title">Pandas 数据结构</span></a>
+        <a class="sb-item current" href="../python/28-pandas-shu-ju-qing-xi.html"><span class="sb-item-num">28</span><span class="sb-item-title">Pandas 数据清洗</span></a>
+        <a class="sb-item" href="../python/29-matplotlib-hui-tu-ti-xi.html"><span class="sb-item-num">29</span><span class="sb-item-title">Matplotlib 绘图体系</span></a>
+        <a class="sb-item" href="../python/30-matplotlib-dong-hua-yu-jiao-hu.html"><span class="sb-item-num">30</span><span class="sb-item-title">Matplotlib 动画与交互</span></a>
+        <a class="sb-item" href="../python/31-seaborn-tong-ji-ke-shi-hua.html"><span class="sb-item-num">31</span><span class="sb-item-title">Seaborn 统计可视化</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="agent">
+      <a class="sb-group-title" href="../modules/agent.html" data-toggle="agent">
+        <span class="sb-num">02</span>
+        <span class="sb-group-text"><b>Agent 核心</b><i>15 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../agent/01-token-yu-ci-qian-ru.html"><span class="sb-item-num">01</span><span class="sb-item-title">Token 与词嵌入</span></a>
+        <a class="sb-item" href="../agent/02-qian-xiang-chuan-bo-yu-fan-xiang-chuan-bo.html"><span class="sb-item-num">02</span><span class="sb-item-title">前向传播与反向传播</span></a>
+        <a class="sb-item" href="../agent/03-zhu-yi-li-ji-zhi-yu-transformer-jia-gou.html"><span class="sb-item-num">03</span><span class="sb-item-title">注意力机制与 Transformer 架构</span></a>
+        <a class="sb-item" href="../agent/04-yu-xun-lian-rlhf-yu-cai-yang-kv-cache.html"><span class="sb-item-num">04</span><span class="sb-item-title">预训练、RLHF 与采样（KV Cache）</span></a>
+        <a class="sb-item" href="../agent/05-ben-di-mo-xing-yu-xiao-xi-jie-gou.html"><span class="sb-item-num">05</span><span class="sb-item-title">本地模型与消息结构</span></a>
+        <a class="sb-item" href="../agent/06-hui-hua-guan-li-yu-json-shu-chu.html"><span class="sb-item-num">06</span><span class="sb-item-title">会话管理与 JSON 输出</span></a>
+        <a class="sb-item" href="../agent/07-tool-calling-xie-yi-yu-feng-zhuang.html"><span class="sb-item-num">07</span><span class="sb-item-title">Tool Calling：协议与封装</span></a>
+        <a class="sb-item" href="../agent/08-react-mo-shi-yu-zhu-xun-huan.html"><span class="sb-item-num">08</span><span class="sb-item-title">ReAct 模式与主循环</span></a>
+        <a class="sb-item" href="../agent/09-shi-zhan-deep-research-agent.html"><span class="sb-item-num">09</span><span class="sb-item-title">实战：Deep Research Agent</span></a>
+        <a class="sb-item" href="../agent/10-skill-yu-jian-jin-shi-pi-lu.html"><span class="sb-item-num">10</span><span class="sb-item-title">Skill 与渐进式披露</span></a>
+        <a class="sb-item" href="../agent/11-mcp-quan-jing.html"><span class="sb-item-num">11</span><span class="sb-item-title">MCP 全景</span></a>
+        <a class="sb-item" href="../agent/12-duo-agent-yu-xuan-xing-ce-lve.html"><span class="sb-item-num">12</span><span class="sb-item-title">多 Agent 与选型策略</span></a>
+        <a class="sb-item" href="../agent/13-ti-shi-ci-gong-cheng-yu-shang-xia-wen-gong.html"><span class="sb-item-num">13</span><span class="sb-item-title">提示词工程与上下文工程</span></a>
+        <a class="sb-item" href="../agent/14-xun-huan-tu-yu-gu-jia-gong-cheng.html"><span class="sb-item-num">14</span><span class="sb-item-title">循环、图与骨架工程</span></a>
+        <a class="sb-item" href="../agent/15-ji-yi-quan-xian-yu-ping-ce.html"><span class="sb-item-num">15</span><span class="sb-item-title">记忆、权限与评测</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="langchain">
+      <a class="sb-group-title" href="../modules/langchain.html" data-toggle="langchain">
+        <span class="sb-num">03</span>
+        <span class="sb-group-text"><b>LangChain 指南</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langchain/01-ren-shi-langchain.html"><span class="sb-item-num">01</span><span class="sb-item-title">认识 LangChain</span></a>
+        <a class="sb-item" href="../langchain/02-ti-shi-ci-mu-ban-yu-xiao-xi.html"><span class="sb-item-num">02</span><span class="sb-item-title">提示词模板与消息</span></a>
+        <a class="sb-item" href="../langchain/03-lcel-yu-runnable.html"><span class="sb-item-num">03</span><span class="sb-item-title">LCEL 与 Runnable</span></a>
+        <a class="sb-item" href="../langchain/04-liu-shi-yu-bing-fa.html"><span class="sb-item-num">04</span><span class="sb-item-title">流式与并发</span></a>
+        <a class="sb-item" href="../langchain/05-shu-chu-jie-xi-qi.html"><span class="sb-item-num">05</span><span class="sb-item-title">输出解析器</span></a>
+        <a class="sb-item" href="../langchain/06-wen-dang-jia-zai-yu-qie-ge.html"><span class="sb-item-num">06</span><span class="sb-item-title">文档加载与切割</span></a>
+        <a class="sb-item" href="../langchain/07-qian-ru-yu-xiang-liang-ku.html"><span class="sb-item-num">07</span><span class="sb-item-title">嵌入与向量库</span></a>
+        <a class="sb-item" href="../langchain/08-jian-suo-yu-rag.html"><span class="sb-item-num">08</span><span class="sb-item-title">检索与RAG</span></a>
+        <a class="sb-item" href="../langchain/09-dui-hua-ji-yi.html"><span class="sb-item-num">09</span><span class="sb-item-title">对话记忆</span></a>
+        <a class="sb-item" href="../langchain/10-gong-ju-diao-yong.html"><span class="sb-item-num">10</span><span class="sb-item-title">工具调用</span></a>
+        <a class="sb-item" href="../langchain/11-agent.html"><span class="sb-item-num">11</span><span class="sb-item-title">Agent</span></a>
+        <a class="sb-item" href="../langchain/12-hui-diao-yu-tiao-shi-quan-ke-cheng-shou-guan.html"><span class="sb-item-num">12</span><span class="sb-item-title">回调与调试（全课程收官章）</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="langgraph">
+      <a class="sb-group-title" href="../modules/langgraph.html" data-toggle="langgraph">
+        <span class="sb-num">04</span>
+        <span class="sb-group-text"><b>LangGraph 框架指南</b><i>17 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langgraph/01-di-1-zhang-cong-yi-ge-shi-kong-de-jiao.html"><span class="sb-item-num">01</span><span class="sb-item-title">第 1 章 从一个失控的脚本说起</span></a>
+        <a class="sb-item" href="../langgraph/02-di-2-zhang-zui-xiao-ke-yun-xing-tu.html"><span class="sb-item-num">02</span><span class="sb-item-title">第 2 章 最小可运行图</span></a>
+        <a class="sb-item" href="../langgraph/03-di-3-zhang-zhuang-tai-tu-de-shu-ju-xin.html"><span class="sb-item-num">03</span><span class="sb-item-title">第 3 章 状态：图的数据心脏</span></a>
+        <a class="sb-item" href="../langgraph/04-di-4-zhang-rang-liu-cheng-xue-hui-jue-ce.html"><span class="sb-item-num">04</span><span class="sb-item-title">第 4 章 让流程学会决策</span></a>
+        <a class="sb-item" href="../langgraph/05-di-5-zhang-bing-xing-shi-jie-chao-bu-zhi.html"><span class="sb-item-num">05</span><span class="sb-item-title">第 5 章 并行世界：超步执行模型</span></a>
+        <a class="sb-item" href="../langgraph/06-di-6-zhang-command-ba-kong-zhi-quan-jiao-jin.html"><span class="sb-item-num">06</span><span class="sb-item-title">第 6 章 Command：把控制权交进节点</span></a>
+        <a class="sb-item" href="../langgraph/07-di-7-zhang-dong-tai-bing-xing-send-yu-mapreduce.html"><span class="sb-item-num">07</span><span class="sb-item-title">第 7 章 动态并行：Send 与 MapReduce</span></a>
+        <a class="sb-item" href="../langgraph/08-di-8-zhang-gei-tu-zhuang-shang-shou-jiao-gong.html"><span class="sb-item-num">08</span><span class="sb-item-title">第 8 章 给图装上手脚：工具调用</span></a>
+        <a class="sb-item" href="../langgraph/09-di-9-zhang-fu-yong-yu-feng-zhuang-zi-tu.html"><span class="sb-item-num">09</span><span class="sb-item-title">第 9 章 复用与封装：子图</span></a>
+        <a class="sb-item" href="../langgraph/10-di-10-zhang-cong-dan-tu-dao-tuan-dui-duo.html"><span class="sb-item-num">10</span><span class="sb-item-title">第 10 章 从单图到团队：多 Agent 架构</span></a>
+        <a class="sb-item" href="../langgraph/11-di-11-zhang-liu-shi-shu-chu.html"><span class="sb-item-num">11</span><span class="sb-item-title">第 11 章 流式输出</span></a>
+        <a class="sb-item" href="../langgraph/12-di-12-zhang-chi-jiu-hua-checkpointer-yu-xian-cheng.html"><span class="sb-item-num">12</span><span class="sb-item-title">第 12 章 持久化：Checkpointer 与线程</span></a>
+        <a class="sb-item" href="../langgraph/13-di-13-zhang-shi-jian-lv-xing.html"><span class="sb-item-num">13</span><span class="sb-item-title">第 13 章 时间旅行</span></a>
+        <a class="sb-item" href="../langgraph/14-di-14-zhang-zhong-duan-yu-ren-zai-hui-lu.html"><span class="sb-item-num">14</span><span class="sb-item-title">第 14 章 中断与人在回路</span></a>
+        <a class="sb-item" href="../langgraph/15-di-15-zhang-ji-yi-guan-li.html"><span class="sb-item-num">15</span><span class="sb-item-title">第 15 章 记忆管理</span></a>
+        <a class="sb-item" href="../langgraph/16-di-16-zhang-rong-cuo-zhong-shi-chao-shi-yu.html"><span class="sb-item-num">16</span><span class="sb-item-title">第 16 章 容错：重试、超时与兜底</span></a>
+        <a class="sb-item" href="../langgraph/17-di-17-zhang-quan-jing-hui-gu.html"><span class="sb-item-num">17</span><span class="sb-item-title">第 17 章 全景回顾</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="backend">
+      <a class="sb-group-title" href="../modules/backend.html" data-toggle="backend">
+        <span class="sb-num">05</span>
+        <span class="sb-group-text"><b>Python 框架指南</b><i>14 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../backend/01-fastapi-ru-men-yu-asgi.html"><span class="sb-item-num">01</span><span class="sb-item-title">FastAPI 入门与 ASGI</span></a>
+        <a class="sb-item" href="../backend/02-lu-you-yu-qing-qiu-xiang-ying.html"><span class="sb-item-num">02</span><span class="sb-item-title">路由与请求响应</span></a>
+        <a class="sb-item" href="../backend/03-pydantic-shu-ju-jiao-yan-yu-pei-zhi.html"><span class="sb-item-num">03</span><span class="sb-item-title">Pydantic 数据校验与配置</span></a>
+        <a class="sb-item" href="../backend/04-sqlalchemy-yi-bu-yin-qing-yu-hui-hua.html"><span class="sb-item-num">04</span><span class="sb-item-title">SQLAlchemy 异步引擎与会话</span></a>
+        <a class="sb-item" href="../backend/05-orm-jian-mo.html"><span class="sb-item-num">05</span><span class="sb-item-title">ORM 建模</span></a>
+        <a class="sb-item" href="../backend/06-sql-biao-da-shi-yu-shu-ju-cao-zuo.html"><span class="sb-item-num">06</span><span class="sb-item-title">SQL 表达式与数据操作</span></a>
+        <a class="sb-item" href="../backend/07-alembic-shu-ju-qian-yi.html"><span class="sb-item-num">07</span><span class="sb-item-title">Alembic 数据迁移</span></a>
+        <a class="sb-item" href="../backend/08-yi-lai-zhu-ru.html"><span class="sb-item-num">08</span><span class="sb-item-title">依赖注入</span></a>
+        <a class="sb-item" href="../backend/09-tong-yi-yi-chang-chu-li.html"><span class="sb-item-num">09</span><span class="sb-item-title">统一异常处理</span></a>
+        <a class="sb-item" href="../backend/10-zhong-jian-jian.html"><span class="sb-item-num">10</span><span class="sb-item-title">中间件</span></a>
+        <a class="sb-item" href="../backend/11-ren-zheng-yu-jwt.html"><span class="sb-item-num">11</span><span class="sb-item-title">认证与 JWT</span></a>
+        <a class="sb-item" href="../backend/12-pytest-ce-shi.html"><span class="sb-item-num">12</span><span class="sb-item-title">pytest 测试</span></a>
+        <a class="sb-item" href="../backend/13-ri-zhi-loguru.html"><span class="sb-item-num">13</span><span class="sb-item-title">日志 loguru</span></a>
+        <a class="sb-item" href="../backend/14-liu-shi-xiang-ying-sse-yu-websocket.html"><span class="sb-item-num">14</span><span class="sb-item-title">流式响应 SSE 与 WebSocket</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="interview">
+      <a class="sb-group-title" href="../modules/interview.html" data-toggle="interview">
+        <span class="sb-num">06</span>
+        <span class="sb-group-text"><b>面试题库</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../interview/01-llm-yuan-li-pian.html"><span class="sb-item-num">01</span><span class="sb-item-title">LLM 原理篇</span></a>
+        <a class="sb-item" href="../interview/02-rag-yu-jian-suo-pian.html"><span class="sb-item-num">02</span><span class="sb-item-title">RAG 与检索篇</span></a>
+        <a class="sb-item" href="../interview/03-agent-he-xin-pian.html"><span class="sb-item-num">03</span><span class="sb-item-title">Agent 核心篇</span></a>
+        <a class="sb-item" href="../interview/04-langgraph-pian.html"><span class="sb-item-num">04</span><span class="sb-item-title">LangGraph 篇</span></a>
+        <a class="sb-item" href="../interview/05-langchain-pian.html"><span class="sb-item-num">05</span><span class="sb-item-title">LangChain 篇</span></a>
+        <a class="sb-item" href="../interview/06-xi-tong-she-ji-pian.html"><span class="sb-item-num">06</span><span class="sb-item-title">系统设计篇</span></a>
+        <a class="sb-item" href="../interview/07-xiang-mu-shen-wa-pian.html"><span class="sb-item-num">07</span><span class="sb-item-title">项目深挖篇</span></a>
+        <a class="sb-item" href="../interview/08-gu-zhang-pai-cha-pian.html"><span class="sb-item-num">08</span><span class="sb-item-title">故障排查篇</span></a>
+        <a class="sb-item" href="../interview/09-python-ji-chu-pian.html"><span class="sb-item-num">09</span><span class="sb-item-title">Python 基础篇</span></a>
+        <a class="sb-item" href="../interview/10-fastapi-yu-hou-duan-pian.html"><span class="sb-item-num">10</span><span class="sb-item-title">FastAPI 与后端篇</span></a>
+        <a class="sb-item" href="../interview/11-ti-shi-ci-gong-cheng-yu-an-quan-pian.html"><span class="sb-item-num">11</span><span class="sb-item-title">提示词工程与安全篇</span></a>
+        <a class="sb-item" href="../interview/12-mo-xing-xuan-xing-yu-jiang-ben-pian.html"><span class="sb-item-num">12</span><span class="sb-item-title">模型选型与降本篇</span></a>
+      </div>
+    </section>
+  </nav>
+</aside>
+  <main class="main">
+    <header class="topbar">
+      <button class="menu-btn" id="menuBtn" aria-label="目录">☰</button>
+      <div class="crumbs"><a href="../index.html">首页</a><span>/</span><a href="../modules/python.html">Python 与数据实践</a><span>/</span><span class="cur">Pandas 数据清洗</span></div>
+      <div class="topbar-actions">
+        <button class="icon-btn" id="themeBtn" title="切换深浅色" aria-label="切换深浅色">◐</button>
+      </div>
+    </header>
+    <div class="content">
+      <article class="article">
+
+<header class="page-head">
+  <div class="page-kicker">Python 与数据实践 · 第 28 章</div>
+  <h1 class="page-title">Pandas 数据清洗</h1>
+  <p class="page-desc">上一章把 data/staff.csv 读成了 DataFrame，也留了一串悬念：dtype 清一色 object、员工号 E029 出现两次、月薪一列里同时住着 42k、20w/年、12k~15k 这些互不相识的写法…</p>
+  <div class="page-meta">
+    <span>约 33 分钟</span><span>13,071 字</span><span>64 个代码示例</span>
+  </div>
+</header>
+<div class="md"><p>上一章把 <code>data/staff.csv</code> 读成了 DataFrame，也留了一串悬念：dtype 清一色 object、员工号 E029 出现两次、月薪一列里同时住着 <code>42k</code>、<code>20w/年</code>、<code>12k~15k</code> 这些互不相识的写法。这些毛病统称「脏数据」——它不是练习题里的故意刁难，而是真实世界的常态：各部门各填各的表、导出工具五花八门、人工录入随手一敲。业内流传一个说法，清洗要吃掉分析师 60% 以上的时间；学完本章你会信。</p>
+<p>本章的目标只有一句话：<strong>把 staff 花名册洗到「每个字段类型正确、写法统一、缺失有交代」</strong>，最后还能拿干净数据回答几个业务问题。所有代码从课程根目录运行，先导入三件套：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+<span class="n">staff</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">'data/staff.csv'</span><span class="p">)</span>
+</code></pre></div>
+<hr />
+<h2 id="1-动手之前先学会精准打击loc-与-iloc">1. 动手之前，先学会「精准打击」：loc 与 iloc</h2>
+<p>清洗过程里你会不断需要「只看某几行某几列」「只改符合条件的格子」，这靠两个定位器：</p>
+<ul>
+<li><code>loc</code>：<strong>按标签定位</strong>，<code>df.loc[行标签, 列标签]</code>——行号、列名、布尔条件都算标签；</li>
+<li><code>iloc</code>：<strong>按位置定位</strong>，<code>df.iloc[行位置, 列位置]</code>——纯整数序号，从 0 数起。</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="n">staff</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span> <span class="s1">'姓名'</span><span class="p">]</span>     <span class="c1"># 第 0~3 行的姓名（loc 切片含右端点）</span>
+<span class="n">staff</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span>      <span class="c1"># 前 3 行、前 2 列（iloc 切片不含右端点）</span>
+<span class="n">staff</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>          <span class="c1"># 左上角第一个值 → 'E001'</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code># staff.loc[0:3, '姓名']
+0    陈明远
+1    林晓彤
+2    赵启航
+3    孙一诺
+Name: 姓名, dtype: object
+
+# staff.iloc[0:3, 0:2]
+   员工号    姓名
+0   E001  陈明远
+1   E002  林晓彤
+2   E003  赵启航
+</code></pre></div>
+<p><code>loc</code> 更常见的打开方式是<strong>布尔筛选</strong>——把一个条件表达式塞进中括号：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 部门是「技术部」的所有行、所有列</span>
+<span class="n">staff</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">staff</span><span class="p">[</span><span class="s1">'部门'</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'技术部'</span><span class="p">]</span>
+
+<span class="c1"># 月薪里带 w 的（年薪写法），只看姓名和月薪两列</span>
+<span class="n">staff</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">staff</span><span class="p">[</span><span class="s1">'月薪'</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="s1">'w'</span><span class="p">,</span> <span class="n">na</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span> <span class="p">[</span><span class="s1">'姓名'</span><span class="p">,</span> <span class="s1">'月薪'</span><span class="p">]]</span>
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th></th>
+<th><code>loc</code></th>
+<th><code>iloc</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>定位依据</td>
+<td>标签（行号、列名、布尔条件）</td>
+<td>整数位置</td>
+</tr>
+<tr>
+<td>切片右端点</td>
+<td><strong>包含</strong></td>
+<td><strong>不包含</strong></td>
+</tr>
+<tr>
+<td>典型场景</td>
+<td>按条件筛选、按列名取数</td>
+<td>按位置批量截取</td>
+</tr>
+</tbody>
+</table>
+<p>两者最容易踩的坑就是切片端点：<code>loc[0:3]</code> 取 4 行，<code>iloc[0:3]</code> 取 3 行。记住口诀「<strong>loc 是闭区间，iloc 照抄 Python 习惯</strong>」。</p>
+<hr />
+<h2 id="2-数据体检先看清楚再动手">2. 数据体检：先看清楚，再动手</h2>
+<p>拿到脏数据，第一反应永远不是写清洗代码，而是「做体检」。三板斧：</p>
+<p><strong>第一斧：<code>info()</code> 总览</strong>——多少行、每列多少非空、什么类型：</p>
+<div class="highlight"><pre><span></span><code><span class="n">staff</span><span class="o">.</span><span class="n">info</span><span class="p">()</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>&lt;class 'pandas.DataFrame'&gt;
+RangeIndex: 37 entries, 0 to 36
+Data columns (total 7 columns):
+ #   Column  Non-Null Count  Dtype 
+---  ------  --------------  ----- 
+ 0   员工号     37 non-null     object
+ 1   姓名      36 non-null     object
+ 2   部门      36 non-null     object
+ 3   职级      37 non-null     object
+ 4   工作年限    37 non-null     object
+ 5   月薪      36 non-null     object
+ 6   绩效      35 non-null     object
+dtypes: object(7)
+memory usage: 2.1+ KB
+</code></pre></div>
+<p><strong>第二斧：<code>isna().sum()</code> 数缺失</strong>——比 info 更直接地列出每列的空值数：</p>
+<div class="highlight"><pre><span></span><code><span class="n">staff</span><span class="o">.</span><span class="n">isna</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>员工号      0
+姓名        1
+部门        1
+职级        0
+工作年限    0
+月薪        1
+绩效        2
+dtype: int64
+</code></pre></div>
+<p><strong>第三斧：<code>value_counts()</code> 查户口</strong>——每一列到底装了些什么值。比如员工号本该人人唯一：</p>
+<div class="highlight"><pre><span></span><code><span class="n">staff</span><span class="p">[</span><span class="s1">'员工号'</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>员工号
+E029    2
+E001    1
+E027    1
+Name: count, dtype: int64
+</code></pre></div>
+<p>E029 出现了两次。用 <code>duplicated</code> 把重复行揪出来看：</p>
+<div class="highlight"><pre><span></span><code><span class="n">staff</span><span class="p">[</span><span class="n">staff</span><span class="o">.</span><span class="n">duplicated</span><span class="p">(</span><span class="n">keep</span><span class="o">=</span><span class="kc">False</span><span class="p">)]</span>   <span class="c1"># keep=False：所有参与重复的行都标出来</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>    员工号    姓名    部门 职级 工作年限           月薪 绩效
+28   E029  晏清和  研发部   P7     12年  25k-&gt;22k-&gt;18k   A+
+31   E029  晏清和  研发部   P7     12年  25k-&gt;22k-&gt;18k   A+
+</code></pre></div>
+<p>体检报告汇总，接下来对症下药：</p>
+<ol>
+<li><strong>重复</strong>：E029 整行重复登记；</li>
+<li><strong>类型</strong>：工作年限、月薪是 object（字符串），没法计算；</li>
+<li><strong>混入</strong>：工作年限里混着「26届」「25届」「应届」——那是毕业届别，不是工龄；</li>
+<li><strong>分类不统一</strong>：部门 14 种写法、职级有 <code>p6</code>/<code>P6级</code>、绩效混着字母制和 <code>3.75</code> 数字制，还有「待定」；</li>
+<li><strong>缺失</strong>：姓名、部门、月薪、绩效各缺 1~2 个。</li>
+</ol>
+<hr />
+<h2 id="3-重复行先删为敬">3. 重复行：先删为敬</h2>
+<p>重复数据会让人数翻倍、均值失真，越早处理越好。<code>duplicated()</code> 返回布尔 Series（默认把第二次及以后出现的标 True），配合布尔筛选就能查看；直接删则用 <code>drop_duplicates()</code>：</p>
+<div class="highlight"><pre><span></span><code><span class="n">staff</span> <span class="o">=</span> <span class="n">staff</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">()</span>
+<span class="nb">len</span><span class="p">(</span><span class="n">staff</span><span class="p">)</span>   <span class="c1"># 37 → 36</span>
+</code></pre></div>
+<blockquote>
+<p><code>duplicated(keep=...)</code> 与 <code>drop_duplicates(keep=...)</code> 共享同一个参数：<code>'first'</code>（默认）保留第一次出现、<code>'last'</code> 保留最后一次、<code>False</code> 全部标记/全部删除。判断「重复」是看整行所有列；也可以传 <code>subset=['员工号']</code> 只按工号判重——业务上工号唯一，按它判重更稳。</p>
+</blockquote>
+<hr />
+<h2 id="4-把届别从工作年限里拆出来">4. 把「届别」从工作年限里拆出来</h2>
+<p>工作年限列里混着的 <code>26届</code>、<code>25届</code>、<code>应届</code>，本质是<strong>毕业年份</strong>信息，被填表人顺手塞错了列。正确姿势是把它拆成独立的一列，而不是简单删掉——信息本身没有错，只是放错了抽屉。</p>
+<p>先用 <code>str.contains</code> 圈出这些行（<code>astype(str)</code> 防止有非字符串值，<code>na=False</code> 让缺失值不炸）：</p>
+<div class="highlight"><pre><span></span><code><span class="n">mask</span> <span class="o">=</span> <span class="n">staff</span><span class="p">[</span><span class="s1">'工作年限'</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="s1">'届'</span><span class="p">,</span> <span class="n">na</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">staff</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">mask</span><span class="p">,</span> <span class="p">[</span><span class="s1">'员工号'</span><span class="p">,</span> <span class="s1">'工作年限'</span><span class="p">]]</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>    员工号 工作年限
+13   E014     26届
+18   E019     25届
+27   E028     应届
+36   E036     26届
+</code></pre></div>
+<p>再用 <code>str.extract()</code> 按正则把数字抠出来（括号是捕获组，<code>\d+</code> 表示一串数字）：</p>
+<div class="highlight"><pre><span></span><code><span class="n">staff</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">mask</span><span class="p">,</span> <span class="s1">'工作年限'</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="sa">r</span><span class="s1">'(\d+)\s*届'</span><span class="p">)</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>      0
+13   26
+18   25
+27  NaN
+36   26
+</code></pre></div>
+<p>注意「应届」提不出数字，得到 NaN——它只能告诉我们「还没毕业」，年份只能空着。接着三步落库：建新列、写入年份、把原列的届别值清为 0 年：</p>
+<div class="highlight"><pre><span></span><code><span class="n">years</span> <span class="o">=</span> <span class="n">staff</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">mask</span><span class="p">,</span> <span class="s1">'工作年限'</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="sa">r</span><span class="s1">'(\d+)\s*届'</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="n">staff</span><span class="p">[</span><span class="s1">'毕业年份'</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>                       <span class="c1"># 先整列置空</span>
+<span class="n">staff</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">mask</span><span class="p">,</span> <span class="s1">'毕业年份'</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2000</span> <span class="o">+</span> <span class="n">years</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>   <span class="c1"># 26 → 2026</span>
+<span class="n">staff</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">mask</span><span class="p">,</span> <span class="s1">'工作年限'</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>                <span class="c1"># 届别提走后，工龄按 0 记</span>
+
+<span class="n">staff</span><span class="p">[</span><span class="s1">'毕业年份'</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">(</span><span class="n">dropna</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>毕业年份
+NaN       33
+2026.0     2
+2025.0     1
+Name: count, dtype: int64
+</code></pre></div>
+<blockquote>
+<p>这里用 <code>2000 + 年份后两位</code> 是因为填表人习惯写缩写。真实数据里遇到「25 届 vs 2025 届」混写也很常见，思路相同：先统一格式，再转换类型。</p>
+</blockquote>
+<hr />
+<h2 id="5-分类列的标准化部门职级绩效">5. 分类列的标准化：部门、职级、绩效</h2>
+<p>分类列（值来自一个有限集合）的通病是<strong>同一个类别好几种写法</strong>。老规矩，先 <code>value_counts()</code> 看乱象：</p>
+<div class="highlight"><pre><span></span><code><span class="n">staff</span><span class="p">[</span><span class="s1">'部门'</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">(</span><span class="n">dropna</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>部门
+技术部       12
+市场部        4
+研发部        4
+技术研发      3
+人事部        2
+财务部        2
+产品设计      2
+用户运营      1
+研发          1
+财务          1
+Marketing     1
+人力资源      1
+技术          1
+NaN           1
+Name: count, dtype: int64
+</code></pre></div>
+<p>同一个公司，部门愣是写出了 14 种花样。处理配方是<strong>先 <code>str.strip()</code> 去掉首尾空白，再 <code>map()</code> 按字典归一</strong>。但映射表很难一次写全——凭印象列一版初稿，再用 <code>isin</code> 反查「不在名单里」的值，这是补全映射表的固定套路：</p>
+<div class="highlight"><pre><span></span><code><span class="n">draft</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">'技术部'</span><span class="p">:</span> <span class="s1">'技术部'</span><span class="p">,</span> <span class="s1">'研发部'</span><span class="p">:</span> <span class="s1">'研发部'</span><span class="p">,</span> <span class="s1">'市场部'</span><span class="p">:</span> <span class="s1">'市场部'</span><span class="p">,</span>
+    <span class="s1">'人事部'</span><span class="p">:</span> <span class="s1">'人事部'</span><span class="p">,</span> <span class="s1">'财务部'</span><span class="p">:</span> <span class="s1">'财务部'</span><span class="p">,</span> <span class="s1">'产品设计'</span><span class="p">:</span> <span class="s1">'产品部'</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="c1"># isin 反向筛选：列出初稿没收录的写法（~ 取反；注意 NaN 也会被筛出来）</span>
+<span class="n">staff</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="o">~</span><span class="n">staff</span><span class="p">[</span><span class="s1">'部门'</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">draft</span><span class="p">),</span> <span class="s1">'部门'</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>array(['技术研发', '用户运营', '研发', '财务', 'Marketing', '人力资源', '技术 ', nan], dtype=object)
+</code></pre></div>
+<p>果然漏了 7 种：把「技术研发」「研发」并进研发部，「技术」并进技术部，「财务」并进财务部，「Marketing」并进市场部，「人力资源」并进人事部，「用户运营」并进运营部——补全后的完整版如下：</p>
+<div class="highlight"><pre><span></span><code><span class="n">dept_map</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">'技术部'</span><span class="p">:</span> <span class="s1">'技术部'</span><span class="p">,</span> <span class="s1">'技术'</span><span class="p">:</span> <span class="s1">'技术部'</span><span class="p">,</span>
+    <span class="s1">'研发部'</span><span class="p">:</span> <span class="s1">'研发部'</span><span class="p">,</span> <span class="s1">'研发'</span><span class="p">:</span> <span class="s1">'研发部'</span><span class="p">,</span> <span class="s1">'技术研发'</span><span class="p">:</span> <span class="s1">'研发部'</span><span class="p">,</span>
+    <span class="s1">'市场部'</span><span class="p">:</span> <span class="s1">'市场部'</span><span class="p">,</span> <span class="s1">'Marketing'</span><span class="p">:</span> <span class="s1">'市场部'</span><span class="p">,</span>
+    <span class="s1">'产品设计'</span><span class="p">:</span> <span class="s1">'产品部'</span><span class="p">,</span>
+    <span class="s1">'用户运营'</span><span class="p">:</span> <span class="s1">'运营部'</span><span class="p">,</span>
+    <span class="s1">'人力资源'</span><span class="p">:</span> <span class="s1">'人事部'</span><span class="p">,</span> <span class="s1">'人事部'</span><span class="p">:</span> <span class="s1">'人事部'</span><span class="p">,</span>
+    <span class="s1">'财务部'</span><span class="p">:</span> <span class="s1">'财务部'</span><span class="p">,</span> <span class="s1">'财务'</span><span class="p">:</span> <span class="s1">'财务部'</span><span class="p">,</span>
+<span class="p">}</span>
+<span class="n">staff</span><span class="p">[</span><span class="s1">'部门'</span><span class="p">]</span> <span class="o">=</span> <span class="n">staff</span><span class="p">[</span><span class="s1">'部门'</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">dept_map</span><span class="p">)</span>
+<span class="n">staff</span><span class="p">[</span><span class="s1">'部门'</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">(</span><span class="n">dropna</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>部门
+技术部    13
+研发部     8
+市场部     5
+人事部     3
+财务部     3
+产品部     2
+运营部     1
+NaN        1
+Name: count, dtype: int64
+</code></pre></div>
+<p>14 种归成 7 种（外加 1 个真缺失）。注意 <code>map()</code> 的一个关键性质：<strong>字典里没登记的键，结果一律是 NaN</strong>——「不认识的值宁可置空，也不要瞎猜」。空着的部门后面单独处置。</p>
+<p>顺手转成 <code>category</code> 类型：类别数固定、还省内存，语义也更诚实：</p>
+<div class="highlight"><pre><span></span><code><span class="n">staff</span><span class="p">[</span><span class="s1">'部门'</span><span class="p">]</span> <span class="o">=</span> <span class="n">staff</span><span class="p">[</span><span class="s1">'部门'</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">'category'</span><span class="p">)</span>
+<span class="n">staff</span><span class="p">[</span><span class="s1">'部门'</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span>   <span class="c1"># category</span>
+</code></pre></div>
+<blockquote>
+<p>顺带记一个同门技法：遇上「市场-华东」「研发/前端组」这类<strong>带前缀的写法</strong>，<code>str.split('-').str[-1]</code>（或 <code>str.split('/')</code>）取末段就能剥掉前缀，再交给 <code>map</code> 收尾。本表的部门没有这毛病，但真实数据里它出镜率不低。</p>
+</blockquote>
+<p><strong>职级</strong>的毛病是小写、带后缀（<code>p6</code>、<code>P6级</code>、<code>M1级</code>），一条链式调用搞定：</p>
+<div class="highlight"><pre><span></span><code><span class="n">staff</span><span class="p">[</span><span class="s1">'职级'</span><span class="p">]</span> <span class="o">=</span> <span class="n">staff</span><span class="p">[</span><span class="s1">'职级'</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">'级'</span><span class="p">,</span> <span class="s1">''</span><span class="p">,</span> <span class="n">regex</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">staff</span><span class="p">[</span><span class="s1">'职级'</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>职级
+P5    11
+P6    10
+P4     7
+P7     4
+M1     3
+P8     1
+Name: count, dtype: int64
+</code></pre></div>
+<p><strong>绩效</strong>更热闹——字母制（S/A/A+/B/B+）和数字制（3.75/3.5）混用，还有「待定」：</p>
+<div class="highlight"><pre><span></span><code><span class="n">staff</span><span class="p">[</span><span class="s1">'绩效'</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">(</span><span class="n">dropna</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>绩效
+B       12
+A        6
+B+       6
+A+       4
+NaN      2
+S        2
+3.75     1
+3.5      1
+A        1
+待定     1
+Name: count, dtype: int64
+</code></pre></div>
+<p>（那个计数为 1 的 <code>A</code> 其实是 <code>'A '</code>——末尾带了个空格，和前面的 <code>A</code> 不是同一个值，<code>strip</code> 之后才会合流。）同样用映射表归一，两套打分制对齐到字母制：</p>
+<div class="highlight"><pre><span></span><code><span class="n">perf_map</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">'S'</span><span class="p">:</span> <span class="s1">'S'</span><span class="p">,</span> <span class="s1">'A+'</span><span class="p">:</span> <span class="s1">'A+'</span><span class="p">,</span> <span class="s1">'A'</span><span class="p">:</span> <span class="s1">'A'</span><span class="p">,</span> <span class="s1">'B+'</span><span class="p">:</span> <span class="s1">'B+'</span><span class="p">,</span> <span class="s1">'B'</span><span class="p">:</span> <span class="s1">'B'</span><span class="p">,</span>
+    <span class="s1">'3.75'</span><span class="p">:</span> <span class="s1">'A+'</span><span class="p">,</span> <span class="s1">'3.5'</span><span class="p">:</span> <span class="s1">'B+'</span><span class="p">,</span>          <span class="c1"># 数字制 → 字母制</span>
+<span class="p">}</span>
+<span class="n">staff</span><span class="p">[</span><span class="s1">'绩效'</span><span class="p">]</span> <span class="o">=</span> <span class="n">staff</span><span class="p">[</span><span class="s1">'绩效'</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">perf_map</span><span class="p">)</span>
+<span class="n">staff</span><span class="p">[</span><span class="s1">'绩效'</span><span class="p">]</span> <span class="o">=</span> <span class="n">staff</span><span class="p">[</span><span class="s1">'绩效'</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">'category'</span><span class="p">)</span>
+<span class="n">staff</span><span class="p">[</span><span class="s1">'绩效'</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">(</span><span class="n">dropna</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>绩效
+B      12
+A       7
+B+      7
+A+      5
+NaN     3
+S       2
+Name: count, dtype: int64
+</code></pre></div>
+<p>「待定」和空值一样被 map 归入 NaN——无法解析的绩效，宁缺毋滥。</p>
+<hr />
+<h2 id="6-工作年限从字符串到数值">6. 工作年限：从字符串到数值</h2>
+<p>轮到本章的重头戏：把文本列转成能算的数值。先看看工作年限还剩哪些写法：</p>
+<div class="highlight"><pre><span></span><code><span class="n">staff</span><span class="p">[</span><span class="s1">'工作年限'</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>工作年限
+0.0      4
+1年      3
+2年      3
+5年      3
+4年      2
+3年      2
+6年      2
+7年      2
+8年      1
+9.5年    1
+12年     1
+&lt;1年     1
+3.5年    1
+&lt;3年     1
+-        1
+8个月    1
+2.5年    1
+4.5年    1
+15年+    1
+6个月    1
+5.5年    1
+10+年    1
+10年     1
+Name: count, dtype: int64
+</code></pre></div>
+<p>写法五花八门，得给每类定一条翻译规则：</p>
+<table>
+<thead>
+<tr>
+<th>原始写法</th>
+<th>处理规则</th>
+<th>结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>8年</code>、<code>2.5年</code></td>
+<td>提取数字</td>
+<td>8.0、2.5</td>
+</tr>
+<tr>
+<td><code>8个月</code>、<code>6个月</code></td>
+<td>数字除以 12</td>
+<td>0.7、0.5</td>
+</tr>
+<tr>
+<td><code>10+年</code>、<code>15年+</code></td>
+<td>取下限</td>
+<td>10.0、15.0</td>
+</tr>
+<tr>
+<td><code>&lt;1年</code>、<code>&lt;3年</code></td>
+<td>取中间值（减 0.5，不为负）</td>
+<td>0.5、2.5</td>
+</tr>
+<tr>
+<td><code>-</code></td>
+<td>无法解析</td>
+<td>NaN</td>
+</tr>
+<tr>
+<td>数值（届别行上一步已置 0.0）</td>
+<td>直通</td>
+<td>0.0</td>
+</tr>
+</tbody>
+</table>
+<p>这种「一值一议」的活，正则 + 自定义函数 + <code>apply()</code> 是标准解法（第 4 章练的函数设计，在这里正式上岗——<code>apply</code> 会把列里每个值依次喂给你的函数，再把返回值拼成新列）：</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">to_years</span><span class="p">(</span><span class="n">val</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""把各种工作年限写法统一成「年」的浮点数"""</span>
+    <span class="k">if</span> <span class="n">pd</span><span class="o">.</span><span class="n">isna</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>        <span class="c1"># 已经是数值（如 0.0），直通</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">val</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">s</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">''</span><span class="p">,</span> <span class="s1">'-'</span><span class="p">):</span>                          <span class="c1"># 无信息</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s1">'(\d+(?:\.\d+)?)\s*(?:\+\s*年|年\s*\+)'</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span>   <span class="c1"># 10+年 / 15年+</span>
+    <span class="k">if</span> <span class="n">m</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s1">'&lt;\s*(\d+(?:\.\d+)?)\s*年'</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span>                 <span class="c1"># &lt;3年</span>
+    <span class="k">if</span> <span class="n">m</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span> <span class="o">-</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+    <span class="n">years</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="sa">r</span><span class="s1">'(\d+(?:\.\d+)?)\s*年'</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span>                <span class="c1"># N年</span>
+    <span class="k">if</span> <span class="n">years</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">years</span><span class="p">)</span>
+    <span class="n">months</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="sa">r</span><span class="s1">'(\d+(?:\.\d+)?)\s*个月'</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span>              <span class="c1"># N个月</span>
+    <span class="k">if</span> <span class="n">months</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">round</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">months</span><span class="p">)</span> <span class="o">/</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+
+
+<span class="n">staff</span><span class="p">[</span><span class="s1">'工作年限'</span><span class="p">]</span> <span class="o">=</span> <span class="n">staff</span><span class="p">[</span><span class="s1">'工作年限'</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">to_years</span><span class="p">)</span>
+</code></pre></div>
+<p>前后对照几行（去重后行索引保持原样，正好用来点名）：</p>
+<div class="highlight"><pre><span></span><code><span class="n">staff</span><span class="o">.</span><span class="n">loc</span><span class="p">[[</span><span class="mi">7</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">23</span><span class="p">,</span> <span class="mi">26</span><span class="p">],</span> <span class="p">[</span><span class="s1">'员工号'</span><span class="p">,</span> <span class="s1">'姓名'</span><span class="p">,</span> <span class="s1">'工作年限'</span><span class="p">]]</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>   员工号    姓名  工作年限
+7    E008  冯敬亭      10.0
+10   E011  杨知夏       0.5
+12   E013    秦朗       0.7
+23   E024  白若溪       2.5
+26   E027  丛一鸣       0.5
+</code></pre></div>
+<p>再统计一下，确认列已经「能算」：</p>
+<div class="highlight"><pre><span></span><code><span class="n">staff</span><span class="p">[</span><span class="s1">'工作年限'</span><span class="p">]</span><span class="o">.</span><span class="n">describe</span><span class="p">()</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>count    35.000000
+mean      4.248571
+std       3.748441
+min       0.000000
+25%       1.000000
+50%       3.500000
+75%       6.000000
+max      15.000000
+Name: 工作年限, dtype: float64
+</code></pre></div>
+<p><code>describe()</code> 一口气给出计数、均值、分位数——这些统计在 object 时代是想都别想的。平均工龄约 4.2 年，最长 15 年。</p>
+<hr />
+<h2 id="7-月薪解析难度再上一级">7. 月薪：解析难度再上一级</h2>
+<p>月薪是全表最「脏」的列，先把特殊写法的行请出来亮相：</p>
+<div class="highlight"><pre><span></span><code><span class="n">staff</span><span class="o">.</span><span class="n">loc</span><span class="p">[[</span><span class="mi">6</span><span class="p">,</span> <span class="mi">13</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">17</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">21</span><span class="p">,</span> <span class="mi">22</span><span class="p">,</span> <span class="mi">28</span><span class="p">],</span> <span class="p">[</span><span class="s1">'员工号'</span><span class="p">,</span> <span class="s1">'姓名'</span><span class="p">,</span> <span class="s1">'月薪'</span><span class="p">]]</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>   员工号    姓名           月薪
+6    E007  郑安然         20w/年
+13   E014  尤佳琪           实习
+16   E017  吕方旭         13k*15
+17   E018  施雅文        12k~15k
+20   E021  曹婉清  16k（含补贴）
+21   E022  严子墨           40k+
+22   E023  金书瑶           面议
+28   E029  晏清和  25k-&gt;22k-&gt;18k
+</code></pre></div>
+<p>逐条立规矩（目标单位统一为<strong>千元/月</strong>）：</p>
+<table>
+<thead>
+<tr>
+<th>写法</th>
+<th>含义</th>
+<th>规则</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>42k</code></td>
+<td>千元月薪</td>
+<td>直接取数</td>
+</tr>
+<tr>
+<td><code>20w/年</code></td>
+<td>年薪 20 万</td>
+<td><code>× 10 ÷ 12</code> 换算月薪</td>
+</tr>
+<tr>
+<td><code>13k*15</code></td>
+<td>13 薪</td>
+<td>取基本月薪 13</td>
+</tr>
+<tr>
+<td><code>12k~15k</code></td>
+<td>薪资区间</td>
+<td>取中间值</td>
+</tr>
+<tr>
+<td><code>40k+</code></td>
+<td>下限写法</td>
+<td>取下限 40</td>
+</tr>
+<tr>
+<td><code>16k（含补贴）</code></td>
+<td>带备注</td>
+<td>摘掉括号再取数</td>
+</tr>
+<tr>
+<td><code>25k-&gt;22k-&gt;18k</code></td>
+<td>调薪历史</td>
+<td>取最新一档 18</td>
+</tr>
+<tr>
+<td><code>实习</code>、<code>面议</code>、空</td>
+<td>无数值</td>
+<td>NaN</td>
+</tr>
+</tbody>
+</table>
+<p>规则多了，函数就长，但骨架和上一节完全一样——从特殊到一般逐层剥离：</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">to_monthly_k</span><span class="p">(</span><span class="n">val</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""把各种月薪写法统一成「千元/月」的浮点数"""</span>
+    <span class="k">if</span> <span class="n">pd</span><span class="o">.</span><span class="n">isna</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">val</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">s</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">''</span><span class="p">,</span> <span class="s1">'-'</span><span class="p">,</span> <span class="s1">'面议'</span><span class="p">,</span> <span class="s1">'实习'</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+    <span class="k">if</span> <span class="s1">'-&gt;'</span> <span class="ow">in</span> <span class="n">s</span><span class="p">:</span>                                     <span class="c1"># 调薪记录：取最新一档</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">'-&gt;'</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s1">'[（(][^)）]*[)）]'</span><span class="p">,</span> <span class="s1">''</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>    <span class="c1"># 摘掉括号备注</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s1">'(\d+(?:\.\d+)?)\s*w'</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">IGNORECASE</span><span class="p">)</span>      <span class="c1"># 年薪 w</span>
+    <span class="k">if</span> <span class="n">m</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span> <span class="o">*</span> <span class="mi">10</span> <span class="o">/</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s1">'(\d+(?:\.\d+)?)\s*k\s*[*x×]\s*\d+'</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">IGNORECASE</span><span class="p">)</span>  <span class="c1"># 13k*15</span>
+    <span class="k">if</span> <span class="n">m</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s1">'(\d+(?:\.\d+)?)\s*k\s*[~～至]\s*(\d+(?:\.\d+)?)\s*k'</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span>  <span class="c1"># 12k~15k</span>
+    <span class="k">if</span> <span class="n">m</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">round</span><span class="p">((</span><span class="nb">float</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span> <span class="o">+</span> <span class="nb">float</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">)))</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s1">'(\d+(?:\.\d+)?)\s*k\s*\+'</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">IGNORECASE</span><span class="p">)</span>  <span class="c1"># 40k+</span>
+    <span class="k">if</span> <span class="n">m</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s1">'(\d+(?:\.\d+)?)\s*k'</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">IGNORECASE</span><span class="p">)</span>       <span class="c1"># 42k</span>
+    <span class="k">if</span> <span class="n">m</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+
+
+<span class="n">staff</span><span class="p">[</span><span class="s1">'月薪'</span><span class="p">]</span> <span class="o">=</span> <span class="n">staff</span><span class="p">[</span><span class="s1">'月薪'</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">to_monthly_k</span><span class="p">)</span>
+</code></pre></div>
+<p>还是那批行，验收解析结果：</p>
+<div class="highlight"><pre><span></span><code><span class="n">staff</span><span class="o">.</span><span class="n">loc</span><span class="p">[[</span><span class="mi">6</span><span class="p">,</span> <span class="mi">13</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">17</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">21</span><span class="p">,</span> <span class="mi">22</span><span class="p">,</span> <span class="mi">28</span><span class="p">],</span> <span class="p">[</span><span class="s1">'员工号'</span><span class="p">,</span> <span class="s1">'姓名'</span><span class="p">,</span> <span class="s1">'月薪'</span><span class="p">]]</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>   员工号    姓名    月薪
+6    E007  郑安然   16.7
+13   E014  尤佳琪    NaN
+16   E017  吕方旭   13.0
+17   E018  施雅文   13.5
+20   E021  曹婉清   16.0
+21   E022  严子墨   40.0
+22   E023  金书瑶    NaN
+28   E029  晏清和   18.0
+</code></pre></div>
+<p><code>20w/年</code> → 16.7（20 万 ÷ 12 个月 ≈ 1.67 万）、<code>12k~15k</code> → 13.5、调薪记录取到最新的 18——规则全部按预期落地。整体分布：</p>
+<div class="highlight"><pre><span></span><code><span class="n">staff</span><span class="p">[</span><span class="s1">'月薪'</span><span class="p">]</span><span class="o">.</span><span class="n">describe</span><span class="p">()</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>count    33.000000
+mean     22.112121
+std      12.906122
+min       7.000000
+25%      13.500000
+50%      17.000000
+75%      27.000000
+max      65.000000
+Name: 月薪, dtype: float64
+</code></pre></div>
+<blockquote>
+<p>写这种解析函数的心法：<strong>先 <code>value_counts()</code> 摸清全部写法，一条写法定一条规则，从特殊到一般排列 if 分支，最后兜底返回 NaN</strong>。真实业务里没人能一次写对，跑一遍、看哪些值掉进了 NaN、再补规则，是常态。</p>
+</blockquote>
+<hr />
+<h2 id="8-缺失值三种处置按列施策">8. 缺失值：三种处置，按列施策</h2>
+<p>数值化完成后，重新盘点缺失：</p>
+<div class="highlight"><pre><span></span><code><span class="n">staff</span><span class="o">.</span><span class="n">isna</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>员工号       0
+姓名         1
+部门         1
+职级         0
+工作年限     1
+月薪         3
+绩效         3
+毕业年份    33
+dtype: int64
+</code></pre></div>
+<p>缺失值没有万能解法，按业务语义三选一：</p>
+<p><strong>策略一：填充 <code>fillna()</code>——值可推、可约定时用。</strong> 姓名缺失的员工补一个占位标记；绩效缺失按公司惯例记默认档 B：</p>
+<div class="highlight"><pre><span></span><code><span class="n">staff</span><span class="p">[</span><span class="s1">'姓名'</span><span class="p">]</span> <span class="o">=</span> <span class="n">staff</span><span class="p">[</span><span class="s1">'姓名'</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="s1">'（未登记）'</span><span class="p">)</span>
+<span class="n">staff</span><span class="p">[</span><span class="s1">'绩效'</span><span class="p">]</span> <span class="o">=</span> <span class="n">staff</span><span class="p">[</span><span class="s1">'绩效'</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="s1">'B'</span><span class="p">)</span>
+
+<span class="n">staff</span><span class="p">[</span><span class="s1">'绩效'</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>绩效
+B     15
+A      7
+B+     7
+A+     5
+S      2
+Name: count, dtype: int64
+</code></pre></div>
+<p><strong>策略二：删行 <code>dropna()</code>——关键列缺失、行失去意义时用。</strong> 部门缺失的那一行，既没法分组统计也没法归属成本，留着只会污染结果：</p>
+<div class="highlight"><pre><span></span><code><span class="n">staff</span> <span class="o">=</span> <span class="n">staff</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s1">'部门'</span><span class="p">])</span>
+<span class="nb">len</span><span class="p">(</span><span class="n">staff</span><span class="p">)</span>   <span class="c1"># 36 → 35</span>
+</code></pre></div>
+<p><code>subset</code> 限定「只看这几列」，只要指定列非空行就保留——没有它，月薪、毕业年份的 NaN 会连累大片无辜的行。</p>
+<p><strong>策略三：保留 NaN——信息不足时，诚实比好看重要。</strong> 实习生的 <code>实习</code>、待议的 <code>面议</code> 转成的月薪 NaN，硬填（比如填中位数）反而制造假数据。Pandas 的统计函数（mean、describe、groupby）默认自动跳过 NaN，保留它们不影响计算。真要填也有现成写法，但要先问自己一句「业务上说得通吗」：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 写法示例：本表不采用——给实习生填全员中位数月薪，纯属编数据</span>
+<span class="c1"># staff['月薪'] = staff['月薪'].fillna(staff['月薪'].median())</span>
+</code></pre></div>
+<p>毕业年份那 33 个 NaN 同理：老员工们的毕业年份本就无从得知，空着就是最准确的答案。</p>
+<hr />
+<h2 id="9-收尾改名排序类型与终检">9. 收尾：改名、排序、类型与终检</h2>
+<p>数据洗干净了，做点「门面整理」，让表自己会说话：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 单位写进列名，读者不用猜</span>
+<span class="n">staff</span> <span class="o">=</span> <span class="n">staff</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">'月薪'</span><span class="p">:</span> <span class="s1">'月薪(k)'</span><span class="p">,</span> <span class="s1">'工作年限'</span><span class="p">:</span> <span class="s1">'工作年限(年)'</span><span class="p">})</span>
+
+<span class="c1"># 调整列顺序：关键身份信息在前</span>
+<span class="n">staff</span> <span class="o">=</span> <span class="n">staff</span><span class="p">[[</span><span class="s1">'员工号'</span><span class="p">,</span> <span class="s1">'姓名'</span><span class="p">,</span> <span class="s1">'部门'</span><span class="p">,</span> <span class="s1">'职级'</span><span class="p">,</span> <span class="s1">'工作年限(年)'</span><span class="p">,</span> <span class="s1">'月薪(k)'</span><span class="p">,</span> <span class="s1">'绩效'</span><span class="p">,</span> <span class="s1">'毕业年份'</span><span class="p">]]</span>
+
+<span class="c1"># 可空整数类型：既能存整数，又能存 &lt;NA&gt;（普通 int64 做不到）</span>
+<span class="n">staff</span><span class="p">[</span><span class="s1">'毕业年份'</span><span class="p">]</span> <span class="o">=</span> <span class="n">staff</span><span class="p">[</span><span class="s1">'毕业年份'</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">'Int32'</span><span class="p">)</span>
+</code></pre></div>
+<p><code>Int32</code>（大写 I 开头）是 Pandas 的<strong>可空整数</strong>类型——普通 <code>int32</code> 不允许空值，遇到 NaN 会强制变 float，<code>2026.0</code> 这种尾巴就是那么来的。大写版本让年份显示成整数，缺失显示成 <code>&lt;NA&gt;</code>，两全其美。</p>
+<p>终检，和体检时的惨状对比着看：</p>
+<div class="highlight"><pre><span></span><code><span class="n">staff</span><span class="o">.</span><span class="n">info</span><span class="p">()</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>&lt;class 'pandas.core.frame.DataFrame'&gt;
+Index: 35 entries, 0 to 36
+Data columns (total 8 columns):
+ #   Column   Non-Null Count  Dtype  
+---  ------   --------------  -----  
+ 0   员工号      35 non-null     object 
+ 1   姓名       35 non-null     object 
+ 2   部门       35 non-null     category
+ 3   职级       35 non-null     object 
+ 4   工作年限(年)  34 non-null     float64
+ 5   月薪(k)    32 non-null     float64
+ 6   绩效       35 non-null     category
+ 7   毕业年份     3 non-null      Int32  
+dtypes: Int32(1), category(2), float64(2), object(3)
+memory usage: 2.4+ KB
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="n">staff</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>  员工号    姓名    部门 职级  工作年限(年)  月薪(k) 绩效  毕业年份
+0   E001  陈明远  技术部   P7           8.0     42.0    A      &lt;NA&gt;
+1   E002  林晓彤  技术部   P6           5.0     26.0   A+      &lt;NA&gt;
+2   E003  赵启航  研发部   P6           4.0     25.0   B+      &lt;NA&gt;
+3   E004  孙一诺  市场部   M1           3.0     18.0    B      &lt;NA&gt;
+4   E005  周慕云  人事部   M1           6.0     16.0    B      &lt;NA&gt;
+</code></pre></div>
+<p>分类是 category、年限和月薪是 float64、缺失各归各位——「干净、可用」四个字，落地了。</p>
+<hr />
+<h2 id="10-洗完的数据要能用分组聚合">10. 洗完的数据要能用：分组聚合</h2>
+<p>数据洗干净不是终点，能回答业务问题才算功德圆满。这类问题的标准句式是「<strong>按 X 分组，看 Y 的统计量</strong>」，在 Pandas 里就是 <code>groupby</code>：</p>
+<div class="highlight"><pre><span></span><code><span class="n">dept_stats</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">staff</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">'部门'</span><span class="p">,</span> <span class="n">observed</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="s1">'月薪(k)'</span><span class="p">]</span>   <span class="c1"># 按部门分组，取月薪列</span>
+    <span class="o">.</span><span class="n">agg</span><span class="p">([</span><span class="s1">'count'</span><span class="p">,</span> <span class="s1">'mean'</span><span class="p">,</span> <span class="s1">'max'</span><span class="p">])</span>                    <span class="c1"># 人数、均值、最大值一把出</span>
+    <span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="n">dept_stats</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>        count  mean   max
+部门                    
+产品部      2  20.0  24.0
+人事部      3  15.0  16.0
+市场部      3  12.8  18.0
+技术部     13  30.1  65.0
+研发部      8  20.4  33.0
+财务部      3  13.9  16.7
+运营部      0   NaN   NaN
+</code></pre></div>
+<p>一眼可读的结论：技术部人多（13 人）且平均月薪最高（30.1k）；运营部那一行 count 是 0——部门里唯一的员工月薪缺失，<code>count</code> 只数非空值。分组键是 category 类型时，显式传 <code>observed=True</code> 表示只显示实际出现的类别，省得空组来凑热闹。</p>
+<p>分组键也可以是加工出来的临时列。比如想知道 P 序列（专业路线）和 M 序列（管理路线）的薪资差：</p>
+<div class="highlight"><pre><span></span><code><span class="n">staff</span><span class="p">[</span><span class="s1">'序列'</span><span class="p">]</span> <span class="o">=</span> <span class="n">staff</span><span class="p">[</span><span class="s1">'职级'</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>        <span class="c1"># 取职级首字母：P 或 M</span>
+<span class="n">staff</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">'序列'</span><span class="p">)[</span><span class="s1">'月薪(k)'</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>序列
+M    16.9
+P    23.1
+Name: 月薪(k), dtype: float64
+</code></pre></div>
+<p>再比如各绩效档的薪资水平——上一节那句「宁缺毋滥」的回报在这里：</p>
+<div class="highlight"><pre><span></span><code><span class="n">staff</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">'绩效'</span><span class="p">,</span> <span class="n">observed</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="s1">'月薪(k)'</span><span class="p">]</span><span class="o">.</span><span class="n">agg</span><span class="p">([</span><span class="s1">'count'</span><span class="p">,</span> <span class="s1">'mean'</span><span class="p">])</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>      count  mean
+绩效            
+A         7  23.4
+A+        5  27.2
+B        13  15.2
+B+        5  21.5
+S         2  57.5
+</code></pre></div>
+<p>绩效和薪资的阶梯关系清清楚楚。这张表先存着——下一章学 Matplotlib，它就是现成的画图素材。</p>
+<hr />
+<h2 id="11-导出给干净数据一个家">11. 导出：给干净数据一个家</h2>
+<p>清洗成果要及时落盘，别让下一次分析从头再洗一遍：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># CSV：encoding='utf-8-sig' 带 BOM，Excel 双击打开中文不乱码</span>
+<span class="n">staff</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s1">'data/staff_clean.csv'</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">'utf-8-sig'</span><span class="p">)</span>
+
+<span class="c1"># Excel：给不写代码的同事</span>
+<span class="n">staff</span><span class="o">.</span><span class="n">to_excel</span><span class="p">(</span><span class="s1">'data/staff_clean.xlsx'</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</code></pre></div>
+<p><code>index=False</code> 的意思是不把行索引写进文件——默认编号没有信息量，写进去反而多出一列无名列。（上一章 <code>set_index</code> 过的表另说，那时索引是有业务含义的。）</p>
+<hr />
+<h2 id="12-小结">12. 小结</h2>
+<p>回顾这次完整的数据清洗，流程可以固化成一张清单，换任何数据集都适用：</p>
+<ol>
+<li><strong>体检</strong>：<code>info()</code> + <code>isna().sum()</code> + <code>value_counts()</code>，先看清楚再动手；</li>
+<li><strong>去重</strong>：<code>duplicated()</code> 查、<code>drop_duplicates()</code> 删，越早越好；</li>
+<li><strong>拆混入</strong>：<code>str.contains</code> 圈出异类，<code>str.extract</code> 提取成新列；</li>
+<li><strong>标准化分类</strong>：<code>str.strip</code> / <code>str.upper</code> 清理外观，<code>map()</code> 按字典归一，<code>astype('category')</code> 收尾；</li>
+<li><strong>数值化</strong>：写不清规则的用 <code>str</code> 方法，写得出规则的用 <code>apply</code> + 正则；</li>
+<li><strong>处置缺失</strong>：能填的 <code>fillna</code>，该删的 <code>dropna(subset=...)</code>，说不通的保留 NaN；</li>
+<li><strong>验证与导出</strong>：<code>rename</code> / 列排序 / 可空类型做门面，<code>info()</code> 终检，<code>to_csv</code> / <code>to_excel</code> 落盘。</li>
+</ol>
+<p>本章用到的高频 API 速查：</p>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>一句话</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>loc</code> / <code>iloc</code></td>
+<td>按标签 / 按位置定位，布尔筛选</td>
+</tr>
+<tr>
+<td><code>isna()</code> / <code>fillna()</code> / <code>dropna()</code></td>
+<td>缺失值的查、填、删</td>
+</tr>
+<tr>
+<td><code>duplicated()</code> / <code>drop_duplicates()</code></td>
+<td>重复行的查与删</td>
+</tr>
+<tr>
+<td><code>str.strip</code> / <code>str.upper</code> / <code>str.contains</code> / <code>str.extract</code></td>
+<td>列级字符串处理</td>
+</tr>
+<tr>
+<td><code>map()</code></td>
+<td>按字典或函数逐值映射，未命中得 NaN</td>
+</tr>
+<tr>
+<td><code>apply()</code></td>
+<td>自定义函数逐值转换（或逐行/列处理）</td>
+</tr>
+<tr>
+<td><code>astype()</code></td>
+<td>类型转换，<code>category</code>、<code>Int32</code> 各有妙用</td>
+</tr>
+<tr>
+<td><code>groupby().agg()</code></td>
+<td>分组聚合，统计量的流水线</td>
+</tr>
+</tbody>
+</table>
+<p>数据清洗没有标准答案，只有「业务上说得通」的判断——同一个月薪缺失，做薪酬报告时要删，做人员盘点时可以留。工具给你三把刀，用哪把、怎么用，永远是你的决定。</p>
+<p>洗好的 <code>staff_clean.csv</code> 静静躺在 data 目录里，正等着变成图表。下一章，Matplotlib 登场。</p>
+<hr />
+<p><strong>下一章</strong>：<a href="../python/29-matplotlib-hui-tu-ti-xi.html">29 · Matplotlib 绘图体系</a></p></div>
+
+      </article>
+<nav class="pager"><a class="pg-card pg-prev" href="../python/27-pandas-shu-ju-jie-gou.html"><span class="pg-label">← 上一篇</span><span class="pg-title">Pandas 数据结构</span><span class="pg-mod">Python 与数据实践</span></a><a class="pg-card pg-next" href="../python/29-matplotlib-hui-tu-ti-xi.html"><span class="pg-label">下一篇 →</span><span class="pg-title">Matplotlib 绘图体系</span><span class="pg-mod">Python 与数据实践</span></a></nav>
+    </div>
+    <footer class="foot">
+      <span>深栈 DeepStack · AI Agent 工程师转型训练营配套文档</span>
+    </footer>
+  </main>
+<nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#1-动手之前先学会精准打击loc-与-iloc">1. 动手之前，先学会「精准打击」：loc 与 iloc</a><a class="toc-link toc-h2" href="#2-数据体检先看清楚再动手">2. 数据体检：先看清楚，再动手</a><a class="toc-link toc-h2" href="#3-重复行先删为敬">3. 重复行：先删为敬</a><a class="toc-link toc-h2" href="#4-把届别从工作年限里拆出来">4. 把「届别」从工作年限里拆出来</a><a class="toc-link toc-h2" href="#5-分类列的标准化部门职级绩效">5. 分类列的标准化：部门、职级、绩效</a><a class="toc-link toc-h2" href="#6-工作年限从字符串到数值">6. 工作年限：从字符串到数值</a><a class="toc-link toc-h2" href="#7-月薪解析难度再上一级">7. 月薪：解析难度再上一级</a><a class="toc-link toc-h2" href="#8-缺失值三种处置按列施策">8. 缺失值：三种处置，按列施策</a><a class="toc-link toc-h2" href="#9-收尾改名排序类型与终检">9. 收尾：改名、排序、类型与终检</a><a class="toc-link toc-h2" href="#10-洗完的数据要能用分组聚合">10. 洗完的数据要能用：分组聚合</a><a class="toc-link toc-h2" href="#11-导出给干净数据一个家">11. 导出：给干净数据一个家</a><a class="toc-link toc-h2" href="#12-小结">12. 小结</a></nav>
+</div>
+<div class="sb-mask" id="sbMask"></div>
+<script src="../assets/app.js"></script>
+</body>
+</html>

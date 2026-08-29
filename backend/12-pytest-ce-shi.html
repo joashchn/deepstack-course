@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>12 · pytest 测试 · 深栈 DeepStack 课程文档</title>
+<meta name="description" content="上一章给墨集 inkhub 的接口上了 JWT 的锁。锁是上好了，可新问题跟着来：改了点赞逻辑，「发布」会不会被顺手改坏？加了新栏目，「列表筛选」还认不认旧参数？靠人肉一遍遍点接口，点到第三天人就麻了——而且人会累、会漏…">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%23d9c39a' text-anchor='middle'%3EDS%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+<div class="progress" id="progress"></div>
+
+<div class="layout">
+<aside class="sidebar" id="sidebar">
+  <div class="sb-head">
+    <a class="brand" href="../index.html">
+      <span class="brand-mark">DS</span>
+      <span class="brand-text"><b>深栈 DeepStack</b><i>AI Agent 工程师转型训练营</i></span>
+    </a>
+    <button class="sb-close" id="sbClose" aria-label="关闭目录">✕</button>
+  </div>
+  <div class="sb-search"><input type="search" id="searchInput" placeholder="搜索 123 篇文档… ( / )" autocomplete="off">
+    <div class="sb-results" id="searchResults"></div></div>
+  <nav class="sb-nav">
+    <section class="sb-group" data-mod="python">
+      <a class="sb-group-title" href="../modules/python.html" data-toggle="python">
+        <span class="sb-num">01</span>
+        <span class="sb-group-text"><b>Python 与数据实践</b><i>31 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../python/01-huan-jing-da-jian-yu-ban-ben-guan-li.html"><span class="sb-item-num">01</span><span class="sb-item-title">环境搭建与版本管理</span></a>
+        <a class="sb-item" href="../python/02-bian-liang-biao-da-shi-yu-liu-cheng-kong-zhi.html"><span class="sb-item-num">02</span><span class="sb-item-title">变量、表达式与流程控制</span></a>
+        <a class="sb-item" href="../python/03-xu-lie-zi-dian-yu-ji-he.html"><span class="sb-item-num">03</span><span class="sb-item-title">序列、字典与集合</span></a>
+        <a class="sb-item" href="../python/04-han-shu-she-ji-yu-lambda.html"><span class="sb-item-num">04</span><span class="sb-item-title">函数设计与 lambda</span></a>
+        <a class="sb-item" href="../python/05-zuo-yong-yu-gui-ze-yu-bi-bao.html"><span class="sb-item-num">05</span><span class="sb-item-title">作用域规则与闭包</span></a>
+        <a class="sb-item" href="../python/06-lei-de-ding-yi-yu-shi-li-hua.html"><span class="sb-item-num">06</span><span class="sb-item-title">类的定义与实例化</span></a>
+        <a class="sb-item" href="../python/07-lei-xing-pan-ding-yu-chou-xiang-ji-lei.html"><span class="sb-item-num">07</span><span class="sb-item-title">类型判定与抽象基类</span></a>
+        <a class="sb-item" href="../python/08-mo-shu-fang-fa-quan-jing.html"><span class="sb-item-num">08</span><span class="sb-item-title">魔术方法全景</span></a>
+        <a class="sb-item" href="../python/09-miao-shu-fu-yu-yuan-lei.html"><span class="sb-item-num">09</span><span class="sb-item-title">描述符与元类</span></a>
+        <a class="sb-item" href="../python/10-zhuang-shi-qi.html"><span class="sb-item-num">10</span><span class="sb-item-title">装饰器</span></a>
+        <a class="sb-item" href="../python/11-die-dai-xie-yi-yu-sheng-cheng-qi.html"><span class="sb-item-num">11</span><span class="sb-item-title">迭代协议与生成器</span></a>
+        <a class="sb-item" href="../python/12-with-yu-shang-xia-wen-xie-yi.html"><span class="sb-item-num">12</span><span class="sb-item-title">with 与上下文协议</span></a>
+        <a class="sb-item" href="../python/13-yi-chang-ti-xi-yu-chu-li.html"><span class="sb-item-num">13</span><span class="sb-item-title">异常体系与处理</span></a>
+        <a class="sb-item" href="../python/14-lei-xing-biao-zhu.html"><span class="sb-item-num">14</span><span class="sb-item-title">类型标注</span></a>
+        <a class="sb-item" href="../python/15-mo-kuai-yu-bao-de-zu-zhi.html"><span class="sb-item-num">15</span><span class="sb-item-title">模块与包的组织</span></a>
+        <a class="sb-item" href="../python/16-biao-zhun-ku-xun-li.html"><span class="sb-item-num">16</span><span class="sb-item-title">标准库巡礼</span></a>
+        <a class="sb-item" href="../python/17-yi-lai-guan-li-yu-di-san-fang-ku.html"><span class="sb-item-num">17</span><span class="sb-item-title">依赖管理与第三方库</span></a>
+        <a class="sb-item" href="../python/18-xian-cheng-yu-jin-cheng.html"><span class="sb-item-num">18</span><span class="sb-item-title">线程与进程</span></a>
+        <a class="sb-item" href="../python/19-shi-jian-xun-huan.html"><span class="sb-item-num">19</span><span class="sb-item-title">事件循环</span></a>
+        <a class="sb-item" href="../python/20-future-yu-xie-cheng.html"><span class="sb-item-num">20</span><span class="sb-item-title">Future 与协程</span></a>
+        <a class="sb-item" href="../python/21-asyncio-shi-zhan.html"><span class="sb-item-num">21</span><span class="sb-item-title">asyncio 实战</span></a>
+        <a class="sb-item" href="../python/22-gou-jian-yu-fa-bu.html"><span class="sb-item-num">22</span><span class="sb-item-title">构建与发布</span></a>
+        <a class="sb-item" href="../python/23-gong-cheng-hua-gong-ju-lian.html"><span class="sb-item-num">23</span><span class="sb-item-title">工程化工具链</span></a>
+        <a class="sb-item" href="../python/24-monorepo-yu-tiao-shi.html"><span class="sb-item-num">24</span><span class="sb-item-title">monorepo 与调试</span></a>
+        <a class="sb-item" href="../python/25-jupyter-jiao-hu-huan-jing.html"><span class="sb-item-num">25</span><span class="sb-item-title">Jupyter 交互环境</span></a>
+        <a class="sb-item" href="../python/26-numpy-shu-zu-yu-xiang-liang-hua.html"><span class="sb-item-num">26</span><span class="sb-item-title">NumPy 数组与向量化</span></a>
+        <a class="sb-item" href="../python/27-pandas-shu-ju-jie-gou.html"><span class="sb-item-num">27</span><span class="sb-item-title">Pandas 数据结构</span></a>
+        <a class="sb-item" href="../python/28-pandas-shu-ju-qing-xi.html"><span class="sb-item-num">28</span><span class="sb-item-title">Pandas 数据清洗</span></a>
+        <a class="sb-item" href="../python/29-matplotlib-hui-tu-ti-xi.html"><span class="sb-item-num">29</span><span class="sb-item-title">Matplotlib 绘图体系</span></a>
+        <a class="sb-item" href="../python/30-matplotlib-dong-hua-yu-jiao-hu.html"><span class="sb-item-num">30</span><span class="sb-item-title">Matplotlib 动画与交互</span></a>
+        <a class="sb-item" href="../python/31-seaborn-tong-ji-ke-shi-hua.html"><span class="sb-item-num">31</span><span class="sb-item-title">Seaborn 统计可视化</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="agent">
+      <a class="sb-group-title" href="../modules/agent.html" data-toggle="agent">
+        <span class="sb-num">02</span>
+        <span class="sb-group-text"><b>Agent 核心</b><i>15 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../agent/01-token-yu-ci-qian-ru.html"><span class="sb-item-num">01</span><span class="sb-item-title">Token 与词嵌入</span></a>
+        <a class="sb-item" href="../agent/02-qian-xiang-chuan-bo-yu-fan-xiang-chuan-bo.html"><span class="sb-item-num">02</span><span class="sb-item-title">前向传播与反向传播</span></a>
+        <a class="sb-item" href="../agent/03-zhu-yi-li-ji-zhi-yu-transformer-jia-gou.html"><span class="sb-item-num">03</span><span class="sb-item-title">注意力机制与 Transformer 架构</span></a>
+        <a class="sb-item" href="../agent/04-yu-xun-lian-rlhf-yu-cai-yang-kv-cache.html"><span class="sb-item-num">04</span><span class="sb-item-title">预训练、RLHF 与采样（KV Cache）</span></a>
+        <a class="sb-item" href="../agent/05-ben-di-mo-xing-yu-xiao-xi-jie-gou.html"><span class="sb-item-num">05</span><span class="sb-item-title">本地模型与消息结构</span></a>
+        <a class="sb-item" href="../agent/06-hui-hua-guan-li-yu-json-shu-chu.html"><span class="sb-item-num">06</span><span class="sb-item-title">会话管理与 JSON 输出</span></a>
+        <a class="sb-item" href="../agent/07-tool-calling-xie-yi-yu-feng-zhuang.html"><span class="sb-item-num">07</span><span class="sb-item-title">Tool Calling：协议与封装</span></a>
+        <a class="sb-item" href="../agent/08-react-mo-shi-yu-zhu-xun-huan.html"><span class="sb-item-num">08</span><span class="sb-item-title">ReAct 模式与主循环</span></a>
+        <a class="sb-item" href="../agent/09-shi-zhan-deep-research-agent.html"><span class="sb-item-num">09</span><span class="sb-item-title">实战：Deep Research Agent</span></a>
+        <a class="sb-item" href="../agent/10-skill-yu-jian-jin-shi-pi-lu.html"><span class="sb-item-num">10</span><span class="sb-item-title">Skill 与渐进式披露</span></a>
+        <a class="sb-item" href="../agent/11-mcp-quan-jing.html"><span class="sb-item-num">11</span><span class="sb-item-title">MCP 全景</span></a>
+        <a class="sb-item" href="../agent/12-duo-agent-yu-xuan-xing-ce-lve.html"><span class="sb-item-num">12</span><span class="sb-item-title">多 Agent 与选型策略</span></a>
+        <a class="sb-item" href="../agent/13-ti-shi-ci-gong-cheng-yu-shang-xia-wen-gong.html"><span class="sb-item-num">13</span><span class="sb-item-title">提示词工程与上下文工程</span></a>
+        <a class="sb-item" href="../agent/14-xun-huan-tu-yu-gu-jia-gong-cheng.html"><span class="sb-item-num">14</span><span class="sb-item-title">循环、图与骨架工程</span></a>
+        <a class="sb-item" href="../agent/15-ji-yi-quan-xian-yu-ping-ce.html"><span class="sb-item-num">15</span><span class="sb-item-title">记忆、权限与评测</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="langchain">
+      <a class="sb-group-title" href="../modules/langchain.html" data-toggle="langchain">
+        <span class="sb-num">03</span>
+        <span class="sb-group-text"><b>LangChain 指南</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langchain/01-ren-shi-langchain.html"><span class="sb-item-num">01</span><span class="sb-item-title">认识 LangChain</span></a>
+        <a class="sb-item" href="../langchain/02-ti-shi-ci-mu-ban-yu-xiao-xi.html"><span class="sb-item-num">02</span><span class="sb-item-title">提示词模板与消息</span></a>
+        <a class="sb-item" href="../langchain/03-lcel-yu-runnable.html"><span class="sb-item-num">03</span><span class="sb-item-title">LCEL 与 Runnable</span></a>
+        <a class="sb-item" href="../langchain/04-liu-shi-yu-bing-fa.html"><span class="sb-item-num">04</span><span class="sb-item-title">流式与并发</span></a>
+        <a class="sb-item" href="../langchain/05-shu-chu-jie-xi-qi.html"><span class="sb-item-num">05</span><span class="sb-item-title">输出解析器</span></a>
+        <a class="sb-item" href="../langchain/06-wen-dang-jia-zai-yu-qie-ge.html"><span class="sb-item-num">06</span><span class="sb-item-title">文档加载与切割</span></a>
+        <a class="sb-item" href="../langchain/07-qian-ru-yu-xiang-liang-ku.html"><span class="sb-item-num">07</span><span class="sb-item-title">嵌入与向量库</span></a>
+        <a class="sb-item" href="../langchain/08-jian-suo-yu-rag.html"><span class="sb-item-num">08</span><span class="sb-item-title">检索与RAG</span></a>
+        <a class="sb-item" href="../langchain/09-dui-hua-ji-yi.html"><span class="sb-item-num">09</span><span class="sb-item-title">对话记忆</span></a>
+        <a class="sb-item" href="../langchain/10-gong-ju-diao-yong.html"><span class="sb-item-num">10</span><span class="sb-item-title">工具调用</span></a>
+        <a class="sb-item" href="../langchain/11-agent.html"><span class="sb-item-num">11</span><span class="sb-item-title">Agent</span></a>
+        <a class="sb-item" href="../langchain/12-hui-diao-yu-tiao-shi-quan-ke-cheng-shou-guan.html"><span class="sb-item-num">12</span><span class="sb-item-title">回调与调试（全课程收官章）</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="langgraph">
+      <a class="sb-group-title" href="../modules/langgraph.html" data-toggle="langgraph">
+        <span class="sb-num">04</span>
+        <span class="sb-group-text"><b>LangGraph 框架指南</b><i>17 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langgraph/01-di-1-zhang-cong-yi-ge-shi-kong-de-jiao.html"><span class="sb-item-num">01</span><span class="sb-item-title">第 1 章 从一个失控的脚本说起</span></a>
+        <a class="sb-item" href="../langgraph/02-di-2-zhang-zui-xiao-ke-yun-xing-tu.html"><span class="sb-item-num">02</span><span class="sb-item-title">第 2 章 最小可运行图</span></a>
+        <a class="sb-item" href="../langgraph/03-di-3-zhang-zhuang-tai-tu-de-shu-ju-xin.html"><span class="sb-item-num">03</span><span class="sb-item-title">第 3 章 状态：图的数据心脏</span></a>
+        <a class="sb-item" href="../langgraph/04-di-4-zhang-rang-liu-cheng-xue-hui-jue-ce.html"><span class="sb-item-num">04</span><span class="sb-item-title">第 4 章 让流程学会决策</span></a>
+        <a class="sb-item" href="../langgraph/05-di-5-zhang-bing-xing-shi-jie-chao-bu-zhi.html"><span class="sb-item-num">05</span><span class="sb-item-title">第 5 章 并行世界：超步执行模型</span></a>
+        <a class="sb-item" href="../langgraph/06-di-6-zhang-command-ba-kong-zhi-quan-jiao-jin.html"><span class="sb-item-num">06</span><span class="sb-item-title">第 6 章 Command：把控制权交进节点</span></a>
+        <a class="sb-item" href="../langgraph/07-di-7-zhang-dong-tai-bing-xing-send-yu-mapreduce.html"><span class="sb-item-num">07</span><span class="sb-item-title">第 7 章 动态并行：Send 与 MapReduce</span></a>
+        <a class="sb-item" href="../langgraph/08-di-8-zhang-gei-tu-zhuang-shang-shou-jiao-gong.html"><span class="sb-item-num">08</span><span class="sb-item-title">第 8 章 给图装上手脚：工具调用</span></a>
+        <a class="sb-item" href="../langgraph/09-di-9-zhang-fu-yong-yu-feng-zhuang-zi-tu.html"><span class="sb-item-num">09</span><span class="sb-item-title">第 9 章 复用与封装：子图</span></a>
+        <a class="sb-item" href="../langgraph/10-di-10-zhang-cong-dan-tu-dao-tuan-dui-duo.html"><span class="sb-item-num">10</span><span class="sb-item-title">第 10 章 从单图到团队：多 Agent 架构</span></a>
+        <a class="sb-item" href="../langgraph/11-di-11-zhang-liu-shi-shu-chu.html"><span class="sb-item-num">11</span><span class="sb-item-title">第 11 章 流式输出</span></a>
+        <a class="sb-item" href="../langgraph/12-di-12-zhang-chi-jiu-hua-checkpointer-yu-xian-cheng.html"><span class="sb-item-num">12</span><span class="sb-item-title">第 12 章 持久化：Checkpointer 与线程</span></a>
+        <a class="sb-item" href="../langgraph/13-di-13-zhang-shi-jian-lv-xing.html"><span class="sb-item-num">13</span><span class="sb-item-title">第 13 章 时间旅行</span></a>
+        <a class="sb-item" href="../langgraph/14-di-14-zhang-zhong-duan-yu-ren-zai-hui-lu.html"><span class="sb-item-num">14</span><span class="sb-item-title">第 14 章 中断与人在回路</span></a>
+        <a class="sb-item" href="../langgraph/15-di-15-zhang-ji-yi-guan-li.html"><span class="sb-item-num">15</span><span class="sb-item-title">第 15 章 记忆管理</span></a>
+        <a class="sb-item" href="../langgraph/16-di-16-zhang-rong-cuo-zhong-shi-chao-shi-yu.html"><span class="sb-item-num">16</span><span class="sb-item-title">第 16 章 容错：重试、超时与兜底</span></a>
+        <a class="sb-item" href="../langgraph/17-di-17-zhang-quan-jing-hui-gu.html"><span class="sb-item-num">17</span><span class="sb-item-title">第 17 章 全景回顾</span></a>
+      </div>
+    </section>
+    <section class="sb-group open" data-mod="backend">
+      <a class="sb-group-title" href="../modules/backend.html" data-toggle="backend">
+        <span class="sb-num">05</span>
+        <span class="sb-group-text"><b>Python 框架指南</b><i>14 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../backend/01-fastapi-ru-men-yu-asgi.html"><span class="sb-item-num">01</span><span class="sb-item-title">FastAPI 入门与 ASGI</span></a>
+        <a class="sb-item" href="../backend/02-lu-you-yu-qing-qiu-xiang-ying.html"><span class="sb-item-num">02</span><span class="sb-item-title">路由与请求响应</span></a>
+        <a class="sb-item" href="../backend/03-pydantic-shu-ju-jiao-yan-yu-pei-zhi.html"><span class="sb-item-num">03</span><span class="sb-item-title">Pydantic 数据校验与配置</span></a>
+        <a class="sb-item" href="../backend/04-sqlalchemy-yi-bu-yin-qing-yu-hui-hua.html"><span class="sb-item-num">04</span><span class="sb-item-title">SQLAlchemy 异步引擎与会话</span></a>
+        <a class="sb-item" href="../backend/05-orm-jian-mo.html"><span class="sb-item-num">05</span><span class="sb-item-title">ORM 建模</span></a>
+        <a class="sb-item" href="../backend/06-sql-biao-da-shi-yu-shu-ju-cao-zuo.html"><span class="sb-item-num">06</span><span class="sb-item-title">SQL 表达式与数据操作</span></a>
+        <a class="sb-item" href="../backend/07-alembic-shu-ju-qian-yi.html"><span class="sb-item-num">07</span><span class="sb-item-title">Alembic 数据迁移</span></a>
+        <a class="sb-item" href="../backend/08-yi-lai-zhu-ru.html"><span class="sb-item-num">08</span><span class="sb-item-title">依赖注入</span></a>
+        <a class="sb-item" href="../backend/09-tong-yi-yi-chang-chu-li.html"><span class="sb-item-num">09</span><span class="sb-item-title">统一异常处理</span></a>
+        <a class="sb-item" href="../backend/10-zhong-jian-jian.html"><span class="sb-item-num">10</span><span class="sb-item-title">中间件</span></a>
+        <a class="sb-item" href="../backend/11-ren-zheng-yu-jwt.html"><span class="sb-item-num">11</span><span class="sb-item-title">认证与 JWT</span></a>
+        <a class="sb-item current" href="../backend/12-pytest-ce-shi.html"><span class="sb-item-num">12</span><span class="sb-item-title">pytest 测试</span></a>
+        <a class="sb-item" href="../backend/13-ri-zhi-loguru.html"><span class="sb-item-num">13</span><span class="sb-item-title">日志 loguru</span></a>
+        <a class="sb-item" href="../backend/14-liu-shi-xiang-ying-sse-yu-websocket.html"><span class="sb-item-num">14</span><span class="sb-item-title">流式响应 SSE 与 WebSocket</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="interview">
+      <a class="sb-group-title" href="../modules/interview.html" data-toggle="interview">
+        <span class="sb-num">06</span>
+        <span class="sb-group-text"><b>面试题库</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../interview/01-llm-yuan-li-pian.html"><span class="sb-item-num">01</span><span class="sb-item-title">LLM 原理篇</span></a>
+        <a class="sb-item" href="../interview/02-rag-yu-jian-suo-pian.html"><span class="sb-item-num">02</span><span class="sb-item-title">RAG 与检索篇</span></a>
+        <a class="sb-item" href="../interview/03-agent-he-xin-pian.html"><span class="sb-item-num">03</span><span class="sb-item-title">Agent 核心篇</span></a>
+        <a class="sb-item" href="../interview/04-langgraph-pian.html"><span class="sb-item-num">04</span><span class="sb-item-title">LangGraph 篇</span></a>
+        <a class="sb-item" href="../interview/05-langchain-pian.html"><span class="sb-item-num">05</span><span class="sb-item-title">LangChain 篇</span></a>
+        <a class="sb-item" href="../interview/06-xi-tong-she-ji-pian.html"><span class="sb-item-num">06</span><span class="sb-item-title">系统设计篇</span></a>
+        <a class="sb-item" href="../interview/07-xiang-mu-shen-wa-pian.html"><span class="sb-item-num">07</span><span class="sb-item-title">项目深挖篇</span></a>
+        <a class="sb-item" href="../interview/08-gu-zhang-pai-cha-pian.html"><span class="sb-item-num">08</span><span class="sb-item-title">故障排查篇</span></a>
+        <a class="sb-item" href="../interview/09-python-ji-chu-pian.html"><span class="sb-item-num">09</span><span class="sb-item-title">Python 基础篇</span></a>
+        <a class="sb-item" href="../interview/10-fastapi-yu-hou-duan-pian.html"><span class="sb-item-num">10</span><span class="sb-item-title">FastAPI 与后端篇</span></a>
+        <a class="sb-item" href="../interview/11-ti-shi-ci-gong-cheng-yu-an-quan-pian.html"><span class="sb-item-num">11</span><span class="sb-item-title">提示词工程与安全篇</span></a>
+        <a class="sb-item" href="../interview/12-mo-xing-xuan-xing-yu-jiang-ben-pian.html"><span class="sb-item-num">12</span><span class="sb-item-title">模型选型与降本篇</span></a>
+      </div>
+    </section>
+  </nav>
+</aside>
+  <main class="main">
+    <header class="topbar">
+      <button class="menu-btn" id="menuBtn" aria-label="目录">☰</button>
+      <div class="crumbs"><a href="../index.html">首页</a><span>/</span><a href="../modules/backend.html">Python 框架指南</a><span>/</span><span class="cur">pytest 测试</span></div>
+      <div class="topbar-actions">
+        <button class="icon-btn" id="themeBtn" title="切换深浅色" aria-label="切换深浅色">◐</button>
+      </div>
+    </header>
+    <div class="content">
+      <article class="article">
+
+<header class="page-head">
+  <div class="page-kicker">Python 框架指南 · 第 12 章</div>
+  <h1 class="page-title">pytest 测试</h1>
+  <p class="page-desc">上一章给墨集 inkhub 的接口上了 JWT 的锁。锁是上好了，可新问题跟着来：改了点赞逻辑，「发布」会不会被顺手改坏？加了新栏目，「列表筛选」还认不认旧参数？靠人肉一遍遍点接口，点到第三天人就麻了——而且人会累、会漏…</p>
+  <div class="page-meta">
+    <span>约 42 分钟</span><span>16,677 字</span><span>30 个代码示例</span>
+  </div>
+</header>
+<div class="md"><p>上一章给墨集 inkhub 的接口上了 JWT 的锁。锁是上好了，可新问题跟着来：改了点赞逻辑，「发布」会不会被顺手改坏？加了新栏目，「列表筛选」还认不认旧参数？靠人肉一遍遍点接口，点到第三天人就麻了——而且人会累、会漏，机器不会。这一章把「验证」这件事整体外包给 pytest。</p>
+<p>08 章埋的伏笔在这里兑现：<code>app.dependency_overrides</code> 换替身，正是为测试准备的；04 章的 <code>get_db</code>，也会在本章被换成测试会话。</p>
+<blockquote>
+<p><strong>本章你将学会</strong></p>
+<ul>
+<li>pytest 的发现规则与原生 assert：写测试比写业务代码还省事</li>
+<li><code>parametrize</code> 参数化：一组数据跑出一群用例</li>
+<li>fixture：测试的「道具间」——前备后收、作用域、互相依赖</li>
+<li>pytest-asyncio 与 <code>asyncio_mode = "auto"</code>：异步测试不再「假绿」</li>
+<li>TestClient（同步）与 httpx AsyncClient（异步）：两种姿势打自己的接口</li>
+<li>conftest.py：fixture 共享的家，同目录全免 import</li>
+<li>依赖覆盖：测试里把 <code>get_db</code>、认证依赖换成假实现</li>
+<li>Stub 与 Mock 的边界；单元 / 集成 / e2e 三层测试怎么分工</li>
+<li>常用命令与 Makefile：测试挂进日常，一条命令全跑</li>
+</ul>
+<p><strong>本章配套 demo</strong>：<code>demo/test_inkhub.py</code>（单文件自包含：内存假数据 app + 20 个测试，覆盖路由测试 / TestClient / 异步 / fixture / 参数化 / 依赖覆盖）+ <code>demo/conftest.py</code>（共享 fixture）。示例场景延续「墨集 inkhub 内容平台」。</p>
+<p><strong>运行方式</strong>（在本章目录下）：</p>
+<div class="highlight"><pre><span></span><code>uv<span class="w"> </span>add<span class="w"> </span>--dev<span class="w"> </span>pytest<span class="w"> </span>pytest-asyncio<span class="w"> </span>httpx
+uv<span class="w"> </span>run<span class="w"> </span>pytest<span class="w"> </span>demo/test_inkhub.py<span class="w"> </span>-v
+</code></pre></div>
+</blockquote>
+<p><strong>章节衔接</strong>：08 章 §11 的 <code>dependency_overrides</code> 在本章 §10 正式开工；04 章的 <code>get_db</code> 将在 §10 被换成测试会话；本章搭好的测试基建，13 章讲 loguru 时正好复用。</p>
+<hr />
+<h2 id="1-为什么写测试三笔账">1. 为什么写测试：三笔账</h2>
+<p>写测试前先算三笔账，算完就知道这时间花得值不值。</p>
+<p><strong>第一笔：改代码的胆气。</strong> 没有测试，每次重构都是赌博——改了 50 个文件，你只能「希望」没改坏。有了测试，改完跑一遍，全绿就是「没改坏」的收据。这不叫防 bug，这叫<strong>防回归</strong>：同一个坑，摔第二次是不可原谅的。</p>
+<p><strong>第二笔：接口的契约。</strong> 测试是一份「可执行的文档」。<code>test_create_title_length[空标题]</code> 白纸黑字锁死了契约：<code>/api/articles</code> 传空标题必须 422。将来谁手滑改坏了这条约定，测试当场翻脸——比用户在群里@你体面多了。</p>
+<p><strong>第三笔：验证的效率。</strong> 手动 curl 验证十条接口要一分钟，pytest 一秒钟。省下的还不只是时间：人是会看走眼的，<code>201</code> 和 <code>200</code> 瞄一眼就过去了；assert 不会。</p>
+<p>打个比方：测试套件是工地四周的安全网。平时你觉得它碍事——拉网子多花半天工期；等你从脚手架上摔下来那一刻（改坏线上功能），才知道网子值多少钱。<strong>测试的成本是线性的，回归的代价是指数的。</strong></p>
+<hr />
+<h2 id="2-pytest-三分钟上手发现规则与-assert">2. pytest 三分钟上手：发现规则与 assert</h2>
+<p><strong>作用</strong>：pytest 不需要注册、不需要类继承、不需要测试基类——它靠<strong>命名约定</strong>找到你的测试。</p>
+<p><strong>发现规则三条</strong>（背下来，「collect 到 0 个用例」的问题九成栽在这）：</p>
+<ol>
+<li><strong>文件</strong>：<code>test_*.py</code> 或 <code>*_test.py</code></li>
+<li><strong>类</strong>：<code>Test</code> 开头，且<strong>没有</strong> <code>__init__</code></li>
+<li><strong>函数 / 方法</strong>：<code>test_</code> 开头</li>
+</ol>
+<p><strong>原生 assert</strong>：直接写 <code>assert</code>，不用 <code>self.assertEqual</code> 那一套。pytest 会做「断言改写」——失败时自动把表达式两边的值都掏出来给你看。</p>
+<p><strong>最小示例</strong>（墨集的纯函数，demo 里真有这段）：</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">build_slug</span><span class="p">(</span><span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""标题转 URL slug：小写 + 空格换连字符"""</span>
+    <span class="k">return</span> <span class="s2">"-"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">title</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">test_build_slug</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">assert</span> <span class="n">build_slug</span><span class="p">(</span><span class="s2">"Hello InkHub World"</span><span class="p">)</span> <span class="o">==</span> <span class="s2">"hello-inkhub-world"</span>
+</code></pre></div>
+<p>运行：<code>uv run pytest demo/test_inkhub.py -v</code>。失败了你会看到：</p>
+<div class="highlight"><pre><span></span><code>&gt;       assert build_slug("Hello InkHub World") == "hello-inkhub-world"
+E       AssertionError: assert 'hello-inkhub-world' == 'hello world'
+E         - hello-inkhub-world
+E         + hello world
+</code></pre></div>
+<p>左右值自动展开，不用自己打 print。</p>
+<p><strong>断言异常</strong>用 <code>pytest.raises</code>：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">ValidationError</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">test_missing_title_rejected</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span><span class="n">ValidationError</span><span class="p">):</span>
+        <span class="n">ArticleIn</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">""</span><span class="p">)</span>   <span class="c1"># min_length=1 不放行</span>
+</code></pre></div>
+<p><strong>常见坑</strong></p>
+<ul>
+<li>文件起名 <code>check_inkhub.py</code> → 一个用例都收不到，pytest 沉默不语。</li>
+<li><code>Test</code> 类里手贱写了 <code>__init__</code> → 整个类被静默跳过（这是为了让收集阶段零成本）。</li>
+<li><code>assert resp.json()["likes"] == 3</code> 失败时只告诉你 <code>2 != 3</code>，想知道响应长啥样？给 assert 加个尾巴：<code>assert resp.json()["likes"] == 3, resp.text</code>——第二个参数是失败时打印的说明。</li>
+<li>测试函数<strong>别 return 值</strong>（pytest 会警告）；要产出，yield 给 fixture 或断言掉。</li>
+</ul>
+<hr />
+<h2 id="3-parametrize一组数据跑一群用例">3. parametrize：一组数据跑一群用例</h2>
+<p><strong>作用</strong>：同一套测试逻辑喂多组数据，每组数据算一个<strong>独立用例</strong>——哪组挂了只挂哪组，互不连坐。</p>
+<p><strong>签名</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+    <span class="n">argnames</span><span class="p">,</span>      <span class="c1"># "title, expected" 或 ("title", "expected")</span>
+    <span class="n">argvalues</span><span class="p">,</span>     <span class="c1"># [ (v1, v2), ... ] 每组一个元组，顺序对齐 argnames</span>
+    <span class="n">ids</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>      <span class="c1"># 每组的名字，-v 显示用（强烈建议写）</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_xxx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">client</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">expected</span><span class="p">):</span> <span class="o">...</span>
+</code></pre></div>
+<p><strong>最小示例</strong>（demo 实测代码：标题长度校验，一份数据三个用例）：</p>
+<div class="highlight"><pre><span></span><code><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span>
+    <span class="p">(</span><span class="s2">"title"</span><span class="p">,</span> <span class="s2">"expected_status"</span><span class="p">),</span>
+    <span class="p">[</span>
+        <span class="p">(</span><span class="s2">"标题正常"</span><span class="p">,</span> <span class="mi">201</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">""</span><span class="p">,</span> <span class="mi">422</span><span class="p">),</span>         <span class="c1"># 空：过不了 min_length=1</span>
+        <span class="p">(</span><span class="s2">"x"</span> <span class="o">*</span> <span class="mi">51</span><span class="p">,</span> <span class="mi">422</span><span class="p">),</span>   <span class="c1"># 超长：过不了 max_length=50</span>
+    <span class="p">],</span>
+    <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">"正常标题"</span><span class="p">,</span> <span class="s2">"空标题"</span><span class="p">,</span> <span class="s2">"超长标题"</span><span class="p">],</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_create_title_length</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">client</span><span class="p">:</span> <span class="n">TestClient</span><span class="p">,</span> <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">expected_status</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">resp</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">"/api/articles"</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="p">{</span><span class="s2">"title"</span><span class="p">:</span> <span class="n">title</span><span class="p">})</span>
+    <span class="k">assert</span> <span class="n">resp</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="n">expected_status</span>
+</code></pre></div>
+<p><code>-v</code> 跑出来的名字：<code>test_create_title_length[空标题]</code>——谁挂了一眼定位；不写 <code>ids</code>，你看到的是 <code>test_create_title_length[title2]</code>，还得数是第几个。</p>
+<p><strong>堆叠 = 笛卡尔积</strong>：两个 <code>parametrize</code> 装饰器叠着用，用例数相乘：</p>
+<div class="highlight"><pre><span></span><code><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"channel"</span><span class="p">,</span> <span class="p">[</span><span class="s2">"前沿速递"</span><span class="p">,</span> <span class="s2">"新手村"</span><span class="p">])</span>       <span class="c1"># 2 种栏目</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s2">"keyword"</span><span class="p">,</span> <span class="p">[</span><span class="s2">""</span><span class="p">,</span> <span class="s2">"Python"</span><span class="p">])</span>              <span class="c1"># × 2 种筛选</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_list</span><span class="p">(</span><span class="n">channel</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">keyword</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>           <span class="c1"># → 4 个用例</span>
+</code></pre></div>
+<p><strong>常见坑</strong></p>
+<ul>
+<li><code>argnames</code> 声明了 2 个，元组里只塞 1 个值 → 收集阶段直接 error。</li>
+<li><code>ids</code> 数量要和数据组数一致，错位了名字张冠李戴。</li>
+<li>笛卡尔积失控：两组各 10 条数据 = 100 个用例，跑一次泡杯茶。真需要组合才堆叠，否则拆成两个单维参数化。</li>
+</ul>
+<hr />
+<h2 id="4-fixture测试的道具间">4. fixture：测试的道具间</h2>
+<p><strong>作用</strong>：把「准备环境」从测试体里抽出去。测试体只剩业务断言，杂活全归 fixture。</p>
+<p>08 章说过 Depends 是 FastAPI 的「道具组」；fixture 就是 pytest 自己的道具间——<strong>一个伺候路由，一个伺候测试</strong>，连工作节奏都一样：开演前备好道具，散场后回收。</p>
+<p><strong>签名</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span>
+    <span class="n">scope</span><span class="o">=</span><span class="s2">"function"</span><span class="p">,</span>   <span class="c1"># 作用域，见下表</span>
+    <span class="n">autouse</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>      <span class="c1"># True = 同 scope 的测试自动使用，不用声明</span>
+    <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>          <span class="c1"># 改名，测试里用新名字取</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">my_fixture</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">SomeThing</span><span class="p">]:</span>
+    <span class="n">准备</span><span class="o">...</span>
+    <span class="k">yield</span> <span class="n">thing</span>          <span class="c1"># ⬅ 测试在这里跑</span>
+    <span class="n">清理</span><span class="o">...</span>              <span class="c1"># 测试结束才执行</span>
+</code></pre></div>
+<p><strong>最小示例</strong>（demo 里的同步客户端 fixture）：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Iterator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fastapi.testclient</span><span class="w"> </span><span class="kn">import</span> <span class="n">TestClient</span>
+
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">client</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">TestClient</span><span class="p">]:</span>
+    <span class="k">with</span> <span class="n">TestClient</span><span class="p">(</span><span class="n">app</span><span class="p">)</span> <span class="k">as</span> <span class="n">c</span><span class="p">:</span>   <span class="c1"># 进 with：触发 lifespan 启动</span>
+        <span class="k">yield</span> <span class="n">c</span>                  <span class="c1"># ⬅ 测试在这里用客户端</span>
+    <span class="c1"># 出 with：lifespan 关闭——清理自动完成</span>
+</code></pre></div>
+<p>yield 前是「备」，yield 后是「收」——和 08 章 yield 依赖的「借 / 还」是同一个节拍器。</p>
+<p><strong>作用域速查</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>scope</th>
+<th>活多久</th>
+<th>典型住户</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>function</code>（默认）</td>
+<td>每个测试重建一次</td>
+<td>干净的数据、临时目录、客户端</td>
+</tr>
+<tr>
+<td><code>class</code></td>
+<td>一个测试类共享</td>
+<td>类内共用的配置</td>
+</tr>
+<tr>
+<td><code>module</code></td>
+<td>一个文件共享</td>
+<td>一份种子数据</td>
+</tr>
+<tr>
+<td><code>session</code></td>
+<td>整个测试会话一次</td>
+<td>app 实例、连接池、只读样例数据</td>
+</tr>
+</tbody>
+</table>
+<p><strong>fixture 依赖 fixture</strong>：参数里直接写对方的名字，pytest 自动解析顺序：</p>
+<div class="highlight"><pre><span></span><code><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">async_client</span><span class="p">(</span><span class="n">app</span><span class="p">:</span> <span class="n">FastAPI</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AsyncClient</span><span class="p">:</span>
+    <span class="o">...</span>   <span class="c1"># app 是另一个 fixture，先建 app 再建客户端</span>
+</code></pre></div>
+<p><strong>autouse 实战</strong>（demo 的数据隔离——每个测试前后清空共享仓库）：</p>
+<div class="highlight"><pre><span></span><code><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">autouse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">clean_repo</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="kc">None</span><span class="p">]:</span>
+    <span class="n">_repo</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>      <span class="c1"># 前置：清场</span>
+    <span class="k">yield</span>
+    <span class="n">_repo</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>      <span class="c1"># 后置：再清场，别给下一个测试留垃圾</span>
+</code></pre></div>
+<p><strong>常见坑</strong></p>
+<ul>
+<li><strong>ScopeMismatch</strong>：大 scope 依赖小 scope 直接报错——session 级 fixture 不能依赖 function 级（它活得比人家久，后半程拿谁去？）。规则一句话：<strong>依赖只能向上找，不能向下找</strong>。</li>
+<li><strong>autouse 是全局魔法</strong>：滥用之后「这个测试为啥有数据？」能查半天。像 <code>clean_repo</code> 这种<strong>透明且无害</strong>的才配 autouse。</li>
+<li><strong>session 级塞可变状态</strong>：第一个测试改了，第二个测试「莫名」看到脏数据。共享的必须只读（demo 的 <code>sample_titles</code> 就是 session 级只读列表）。</li>
+<li>清理代码写在 <code>yield</code> 前面 = 演出还没开始就把道具收了——<strong>清理永远在 yield 后</strong>。</li>
+</ul>
+<hr />
+<h2 id="5-装依赖配-pytest让-pytest-认识-async">5. 装依赖、配 pytest：让 pytest 认识 async</h2>
+<p><strong>问题</strong>：FastAPI 路由是 <code>async def</code>，测它自然想写 <code>async def test_...</code>。但原生 pytest 不认识异步测试——它只会把测试函数「调用一下」，拿到一个没人 await 的 coroutine，测试根本没执行。新版 pytest 会甩一句 <code>PytestUnhandledCoroutineWarning</code>，一屏幕黄字；老版本更阴险，直接给你看个「假绿」。</p>
+<p><strong>pytest-asyncio</strong> 就是补这块拼图的。安装（本章统一走 dev 依赖组）：</p>
+<div class="highlight"><pre><span></span><code>uv<span class="w"> </span>add<span class="w"> </span>--dev<span class="w"> </span>pytest<span class="w"> </span>pytest-asyncio<span class="w"> </span>httpx
+</code></pre></div>
+<blockquote>
+<p>fastapi 本体在 <code>dependencies</code> 里；TestClient 底层靠 httpx 驱动，正好一起装。</p>
+</blockquote>
+<p><strong>配置</strong>写进 <code>pyproject.toml</code>（demo 同款，可直接抄）：</p>
+<div class="highlight"><pre><span></span><code><span class="k">[tool.pytest.ini_options]</span>
+<span class="n">asyncio_mode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"auto"</span><span class="w">                        </span><span class="c1"># 异步测试/fixture 全自动识别</span>
+<span class="n">asyncio_default_fixture_loop_scope</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"function"</span>
+<span class="n">testpaths</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">"demo"</span><span class="p">]</span><span class="w">                         </span><span class="c1"># 裸跑 pytest 时的默认目录</span>
+</code></pre></div>
+<p><strong>两种模式</strong>：</p>
+<ul>
+<li><code>strict</code>（默认）：每个异步测试、异步 fixture 都得打 <code>@pytest.mark.asyncio</code>——显式但啰嗦；</li>
+<li><code>auto</code>：全自动识别，写就是了。<strong>团队项目推荐 auto</strong>，省下的不是几行装饰器，是「忘了打标记导致假绿」的事故。</li>
+</ul>
+<p>配好之后，异步测试长这样（demo 原文）：</p>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">test_async_create_and_list</span><span class="p">(</span><span class="n">async_client</span><span class="p">:</span> <span class="n">AsyncClient</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">title</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"异步第一篇"</span><span class="p">,</span> <span class="s2">"异步第二篇"</span><span class="p">):</span>
+        <span class="n">resp</span> <span class="o">=</span> <span class="k">await</span> <span class="n">async_client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">"/api/articles"</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="p">{</span><span class="s2">"title"</span><span class="p">:</span> <span class="n">title</span><span class="p">})</span>
+        <span class="k">assert</span> <span class="n">resp</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">201</span>
+
+    <span class="n">resp</span> <span class="o">=</span> <span class="k">await</span> <span class="n">async_client</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"/api/articles"</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="p">[</span><span class="n">a</span><span class="p">[</span><span class="s2">"title"</span><span class="p">]</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">resp</span><span class="o">.</span><span class="n">json</span><span class="p">()]</span> <span class="o">==</span> <span class="p">[</span><span class="s2">"异步第一篇"</span><span class="p">,</span> <span class="s2">"异步第二篇"</span><span class="p">]</span>
+</code></pre></div>
+<p>启动 <code>-v</code> 时输出里有一行 <code>asyncio: mode=Mode.AUTO</code>，说明插件已接管——看到它心里才踏实。</p>
+<p><strong>常见坑</strong></p>
+<ul>
+<li>装了插件、没配 auto、又没打标记 → 异步测试仍被当普通函数调，黄字警告刷屏。</li>
+<li><code>pytest.ini</code> / <code>pyproject.toml</code> / <code>setup.cfg</code> 都能放 pytest 配置，但<strong>只认离测试文件最近的一份</strong>——两处都写，另一处就是摆设。</li>
+<li>配置改了不生效？pytest 对配置文件有缓存，重跑一次即可；实在诡异就 <code>--cache-clear</code>。</li>
+</ul>
+<hr />
+<h2 id="6-testclient同步打接口">6. TestClient：同步打接口</h2>
+<p><strong>作用</strong>：不发网络包，在进程内把 HTTP 请求直接递给 app。像大楼里的<strong>内部收发室</strong>——信不出大门，从三楼直接送到一楼收件人手里。</p>
+<p><strong>来源</strong>：<code>from fastapi.testclient import TestClient</code>（starlette 转手包装，底层驱动是 httpx——所以装依赖时 httpx 少不了）。</p>
+<p><strong>签名（常用参数）</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="n">TestClient</span><span class="p">(</span>
+    <span class="n">app</span><span class="p">,</span>                          <span class="c1"># 被测应用</span>
+    <span class="n">base_url</span><span class="o">=</span><span class="s2">"http://testserver"</span><span class="p">,</span> <span class="c1"># 占位域名，测试里用相对路径即可</span>
+    <span class="n">raise_server_exceptions</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="c1"># 路由抛的异常直接在测试里炸出来（默认）</span>
+<span class="p">)</span>
+</code></pre></div>
+<p><strong>最小示例</strong>（demo 原文节选）：</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">test_get_missing_returns_404</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">client</span><span class="p">:</span> <span class="n">TestClient</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">resp</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"/api/articles/999"</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">resp</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">404</span>
+    <span class="k">assert</span> <span class="n">resp</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s2">"detail"</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"文章不存在"</span>
+</code></pre></div>
+<p><code>client.get / post / put / delete</code> 的参数和 httpx 客户端一模一样：<code>json=</code>（请求体）、<code>params=</code>（query）、<code>headers=</code>（请求头）。</p>
+<p><strong>with 的意义</strong>——进触发 lifespan startup、出触发 shutdown：</p>
+<div class="highlight"><pre><span></span><code><span class="k">with</span> <span class="n">TestClient</span><span class="p">(</span><span class="n">app</span><span class="p">)</span> <span class="k">as</span> <span class="n">client</span><span class="p">:</span>
+    <span class="o">...</span>   <span class="c1"># app 若在 startup 里连数据库，必须这样包着用</span>
+</code></pre></div>
+<p>demo 里这件事由 <code>client</code> fixture 代劳，测试函数只管伸手要。</p>
+<p><strong>常见坑</strong></p>
+<ul>
+<li><strong>请求头的值只能 ASCII</strong>：<code>headers={"X-Inkhub-Editor": "林墨"}</code> 直接 <code>UnicodeEncodeError</code>——HTTP 头不吃中文。中文身份放请求体里传（demo 的 conftest 里注释了这条，实打实踩出来的）。想传中文头得自己 RFC 编码，犯不上。</li>
+<li>断言 5xx 场景：<code>raise_server_exceptions=True</code>（默认）时，服务端异常不会变成响应而是直接抛——想断言「返回 500」得先关掉它。</li>
+<li>同步 TestClient <strong>别在 async 测试里用</strong>（会卡死事件循环报错）。异步测试请用 §7 的 AsyncClient——demo 里两种客户端泾渭分明。</li>
+</ul>
+<hr />
+<h2 id="7-httpx-asyncclient-asgitransport异步打接口">7. httpx AsyncClient + ASGITransport：异步打接口</h2>
+<p><strong>作用</strong>：异步版的「内部收发室」。两种情况用它：测试本身是 async（配合 §5 的 auto 模式），或者一个测试里要并发打多个请求。</p>
+<p><strong>签名与最小示例</strong>（demo 原文）：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">AsyncIterator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">httpx</span><span class="w"> </span><span class="kn">import</span> <span class="n">ASGITransport</span><span class="p">,</span> <span class="n">AsyncClient</span>
+
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">async_client</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">AsyncIterator</span><span class="p">[</span><span class="n">AsyncClient</span><span class="p">]:</span>
+    <span class="n">transport</span> <span class="o">=</span> <span class="n">ASGITransport</span><span class="p">(</span><span class="n">app</span><span class="o">=</span><span class="n">app</span><span class="p">)</span>   <span class="c1"># 内线电话：请求直通 app，不走网络</span>
+    <span class="k">async</span> <span class="k">with</span> <span class="n">AsyncClient</span><span class="p">(</span><span class="n">transport</span><span class="o">=</span><span class="n">transport</span><span class="p">,</span> <span class="n">base_url</span><span class="o">=</span><span class="s2">"http://testserver"</span><span class="p">)</span> <span class="k">as</span> <span class="n">c</span><span class="p">:</span>
+        <span class="k">yield</span> <span class="n">c</span>
+</code></pre></div>
+<p>测试侧：</p>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">test_async_like_increments</span><span class="p">(</span><span class="n">async_client</span><span class="p">:</span> <span class="n">AsyncClient</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">created</span> <span class="o">=</span> <span class="p">(</span><span class="k">await</span> <span class="n">async_client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">"/api/articles"</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="p">{</span><span class="s2">"title"</span><span class="p">:</span> <span class="s2">"求点赞"</span><span class="p">}))</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+        <span class="n">resp</span> <span class="o">=</span> <span class="k">await</span> <span class="n">async_client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="sa">f</span><span class="s2">"/api/articles/</span><span class="si">{</span><span class="n">created</span><span class="p">[</span><span class="s1">'id'</span><span class="p">]</span><span class="si">}</span><span class="s2">/like"</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">resp</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span>
+
+    <span class="k">assert</span> <span class="n">resp</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s2">"likes"</span><span class="p">]</span> <span class="o">==</span> <span class="mi">3</span>
+</code></pre></div>
+<p><strong>选型一句话</strong>：同步测试用 TestClient（最省事），异步测试用 AsyncClient；一个项目两种共存完全正常——demo 里 <code>TestSyncRoutes</code> 和 <code>TestAsyncClient</code> 各用各的。</p>
+<p><strong>常见坑</strong></p>
+<ul>
+<li><strong>忘传 transport 是头号事故</strong>：<code>AsyncClient()</code> 默认走真网络，<code>base_url="http://testserver"</code> 又是个不存在的域名 → <code>ConnectError</code>。看到连接错误，先检查 <code>transport=ASGITransport(app=app)</code> 带没带。</li>
+<li>ASGITransport 测的是 <strong>app 本体</strong>：路由、依赖、中间件全部参与；但 uvicorn 进程层的东西（信号处理、真实端口、并发调度）不参与——那要 e2e 自己起服务（§12）。</li>
+<li>离开 <code>async with</code> 之后再发请求 → <code>already closed</code>。客户端的生命周期交给 fixture 管（§8），测试里别自己 <code>async with</code>。</li>
+</ul>
+<hr />
+<h2 id="8-用-fixture-管-app-与客户端">8. 用 fixture 管 app 与客户端</h2>
+<p><strong>作用</strong>：app、客户端、数据隔离三件事收进 fixture 之后，测试体里就只剩「调接口 + 断言」，一行杂活都没有。</p>
+<p><strong>标准模板</strong>（demo 的完整三件套，直接抄）：</p>
+<div class="highlight"><pre><span></span><code><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">autouse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">clean_repo</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="kc">None</span><span class="p">]:</span>
+    <span class="n">_repo</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>                     <span class="c1"># ① 数据隔离：每个测试开跑前清场</span>
+    <span class="k">yield</span>
+    <span class="n">_repo</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">client</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">TestClient</span><span class="p">]:</span>
+    <span class="k">with</span> <span class="n">TestClient</span><span class="p">(</span><span class="n">app</span><span class="p">)</span> <span class="k">as</span> <span class="n">c</span><span class="p">:</span>        <span class="c1"># ② 同步客户端</span>
+        <span class="k">yield</span> <span class="n">c</span>
+
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">async_client</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">AsyncIterator</span><span class="p">[</span><span class="n">AsyncClient</span><span class="p">]:</span>
+    <span class="n">transport</span> <span class="o">=</span> <span class="n">ASGITransport</span><span class="p">(</span><span class="n">app</span><span class="o">=</span><span class="n">app</span><span class="p">)</span>     <span class="c1"># ③ 异步客户端</span>
+    <span class="k">async</span> <span class="k">with</span> <span class="n">AsyncClient</span><span class="p">(</span><span class="n">transport</span><span class="o">=</span><span class="n">transport</span><span class="p">,</span> <span class="n">base_url</span><span class="o">=</span><span class="s2">"http://testserver"</span><span class="p">)</span> <span class="k">as</span> <span class="n">c</span><span class="p">:</span>
+        <span class="k">yield</span> <span class="n">c</span>
+</code></pre></div>
+<p><strong>分工原则</strong>：</p>
+<ul>
+<li><strong>app 全局一个</strong>（甚至可上 <code>scope="session"</code>）——它就是被测对象本体；</li>
+<li><strong>客户端 function 级</strong>——每次新拿一个，干干净净；</li>
+<li><strong>数据清场 autouse</strong>——测试互不串味是底线，demo 用 <code>test_repo_starts_empty_each_test</code> 专门盯这条底线。</li>
+</ul>
+<p><strong>常见坑</strong></p>
+<ul>
+<li>客户端也做成 session 级 → 中间某个测试把 app 状态改脏（比如 <code>dependency_overrides</code> 忘了清），殃及后面全体。</li>
+<li>在测试函数里直接 <code>TestClient(app)</code> 不走 fixture：能跑，但 lifespan 管理、清理逻辑全散装——文件一多必乱。</li>
+<li>造数逻辑（先 POST 三篇文章再测列表）每个测试重抄一遍？抽成 <code>_seed()</code> 辅助函数或 fixture（demo 用的 <code>_seed</code>）。</li>
+</ul>
+<hr />
+<h2 id="9-conftestpy共享-fixture-的家">9. conftest.py：共享 fixture 的家</h2>
+<p><strong>作用</strong>：多个测试文件共用的 fixture，集中安放在 conftest.py 里。<strong>生效规则</strong>：它所在目录及其所有子目录的测试文件自动可见——不需要（也不能）import。</p>
+<p>demo 里 <code>editor_headers</code>、<code>sample_titles</code> 都住在 <code>demo/conftest.py</code>，而 <code>test_inkhub.py</code> 里直接当参数用，文件顶部找不到一行相关 import——这就是 conftest 的全部魔法。</p>
+<p><strong>层级与就近覆盖</strong>（真实项目的经典布局）：</p>
+<div class="highlight"><pre><span></span><code>test/
+├── conftest.py          # 全局共享：app、client、db_session
+├── unit/
+│   ├── conftest.py      # 单元层专用；同名 fixture 覆盖父级
+│   └── test_slug.py
+└── integration/
+    ├── conftest.py      # 集成层专用：连测试库的 session
+    └── test_articles.py
+</code></pre></div>
+<ul>
+<li>父目录 conftest 对子目录一样生效；</li>
+<li>子目录定义<strong>同名</strong> fixture，就近覆盖——integration 可以有自己风格的 <code>client</code> 而不动别人。</li>
+</ul>
+<p><strong>什么该进 conftest</strong>：<strong>≥ 2 个文件共享</strong>的才搬进去。只有一个文件用的 fixture 留在文件里——conftest 不是垃圾抽屉，什么都塞的话它自己就会变成维护灾难。</p>
+<p><strong>常见坑</strong></p>
+<ul>
+<li>文件名是铁律：<code>conftest.py</code> 少一个字母、加一个 s，整个目录的共享全失效。</li>
+<li>在 conftest 里 import 测试模块是<strong>倒挂</strong>的：真实项目 app 住在独立模块（<code>app/main.py</code>），conftest import app 天经地义；但反过来 import 测试文件，加载顺序立刻成一锅粥。</li>
+<li>同名覆盖是特性也是坑：起名带上语境（<code>integration_client</code> 而不是也叫 <code>client</code>），别让「覆盖」悄悄发生。</li>
+</ul>
+<hr />
+<h2 id="10-dependency_overrides给测试换替身08-章伏笔兑现">10. dependency_overrides：给测试换替身（08 章伏笔兑现）</h2>
+<p>08 章 §11 卖的关子，这章正式开工。<code>app.dependency_overrides</code> 是一张<strong>全局替换表</strong>：key 是原依赖的函数对象，value 是替身。换上之后，路由毫无感知——它不知道递到手上的道具是真是假。</p>
+<p><strong>场景一：换掉 get_db（呼应 04 章）</strong>——集成测试不想动真库？给它一个测试会话：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">AsyncIterator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.ext.asyncio</span><span class="w"> </span><span class="kn">import</span> <span class="n">AsyncSession</span>
+
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">override_get_db</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">AsyncIterator</span><span class="p">[</span><span class="n">AsyncSession</span><span class="p">]:</span>
+    <span class="k">yield</span> <span class="n">test_session</span>          <span class="c1"># 测试专用会话：连测试库 / 每测回滚，随你设计</span>
+
+<span class="n">app</span><span class="o">.</span><span class="n">dependency_overrides</span><span class="p">[</span><span class="n">get_db</span><span class="p">]</span> <span class="o">=</span> <span class="n">override_get_db</span>
+</code></pre></div>
+<p>04 章的 <code>get_db</code> 是 yield 依赖，<strong>替身也得是生成器</strong>——形状对齐，行为才对齐。</p>
+<p><strong>场景二：换掉认证（呼应 11 章）</strong>——不想每个测试都先造 token？</p>
+<div class="highlight"><pre><span></span><code><span class="n">app</span><span class="o">.</span><span class="n">dependency_overrides</span><span class="p">[</span><span class="n">get_current_user</span><span class="p">]</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">User</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">"tester"</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s2">"editor"</span><span class="p">)</span>
+</code></pre></div>
+<p>一行，全部受保护接口在测试里畅通无阻。</p>
+<p><strong>场景三：换掉仓库（demo 实测）</strong>——预置好数据的假仓库直接挂上，一篇不用先创建：</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">test_override_repo_with_prefilled_fake</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">client</span><span class="p">:</span> <span class="n">TestClient</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">fake</span> <span class="o">=</span> <span class="n">MemoryRepo</span><span class="p">()</span>
+    <span class="n">fake</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">ArticleIn</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">"预置文章A"</span><span class="p">),</span> <span class="n">editor</span><span class="o">=</span><span class="s2">"历史编辑"</span><span class="p">)</span>
+    <span class="n">fake</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">ArticleIn</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">"预置文章B"</span><span class="p">),</span> <span class="n">editor</span><span class="o">=</span><span class="s2">"历史编辑"</span><span class="p">)</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_fake_repo</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">AsyncIterator</span><span class="p">[</span><span class="n">MemoryRepo</span><span class="p">]:</span>
+        <span class="k">yield</span> <span class="n">fake</span>
+
+    <span class="n">app</span><span class="o">.</span><span class="n">dependency_overrides</span><span class="p">[</span><span class="n">get_repo</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_fake_repo</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">resp</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"/api/articles"</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="p">[</span><span class="n">a</span><span class="p">[</span><span class="s2">"title"</span><span class="p">]</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">resp</span><span class="o">.</span><span class="n">json</span><span class="p">()]</span> <span class="o">==</span> <span class="p">[</span><span class="s2">"预置文章A"</span><span class="p">,</span> <span class="s2">"预置文章B"</span><span class="p">]</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="n">app</span><span class="o">.</span><span class="n">dependency_overrides</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+</code></pre></div>
+<p><strong>标准姿势一：try / finally</strong>（单测试临时换，如上）。</p>
+<p><strong>标准姿势二：fixture 收口</strong>（多个测试共用同一替身——登记和清理收进 fixture，测试体只管断言）：</p>
+<div class="highlight"><pre><span></span><code><span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">fake_editor_client</span><span class="p">(</span><span class="n">client</span><span class="p">:</span> <span class="n">TestClient</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">TestClient</span><span class="p">]:</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">dependency_overrides</span><span class="p">[</span><span class="n">get_current_editor</span><span class="p">]</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">:</span> <span class="s2">"替身编辑"</span>
+    <span class="k">yield</span> <span class="n">client</span>                        <span class="c1"># 测试期间：替身生效</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">dependency_overrides</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>    <span class="c1"># 测试结束：自动还原</span>
+</code></pre></div>
+<p><strong>常见坑</strong>（08 章划过重点，测试语境再敲一遍）</p>
+<ul>
+<li><strong>key 必须是传给 <code>Depends</code> 的那个函数对象本身</strong>。传错了（比如传了别名）替换<strong>静默失效</strong>——测试还在打真库，你还以为绿了。</li>
+<li><strong>全局字典，用完必还</strong>：不 <code>clear()</code>，替身顺着 app 泄漏给后面所有测试。测试顺序一变结果跟着变，这种「顺序依赖型失败」是排查地狱——要么 try/finally，要么 fixture 收口。</li>
+<li>替身签名尽量与原件一致（返回类型兼容、yield 依赖配生成器替身），否则错误出现在离现场很远的地方。</li>
+</ul>
+<hr />
+<h2 id="11-stub-与-mock替身的两副面孔">11. Stub 与 Mock：替身的两副面孔</h2>
+<p>§10 解决的是「<strong>怎么塞</strong>替身」，这节解决「替身<strong>长什么样</strong>」。</p>
+<p><strong>Stub（测试桩）</strong>：只会给固定答案的哑巴道具。你问它「通知发了吗」，它永远答「发了」。测试只关心<strong>我的代码在假答案下能不能走对路</strong>——验证的是<strong>结果</strong>。</p>
+<p><strong>Mock</strong>：带执法记录仪的替身。不但替你答，还把「谁、几点、问了什么」全记下来——测完回头能验证<strong>交互本身</strong>：调了几次、参数对不对、顺序乱没乱。</p>
+<p>墨集场景：文章过审后要给作者发站内通知，<code>NotifyService</code> 是外部服务，测试不能真发。</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">NotifyService</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">send</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">editor</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span> <span class="o">...</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">approve</span><span class="p">(</span><span class="n">article</span><span class="p">:</span> <span class="n">Article</span><span class="p">,</span> <span class="n">notify</span><span class="p">:</span> <span class="n">NotifyService</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">article</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="s2">"approved"</span>
+    <span class="n">notify</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">article</span><span class="o">.</span><span class="n">editor</span><span class="p">,</span> <span class="s2">"你的文章过审了"</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Stub 版</strong>——用 pytest 自带的 <code>monkeypatch</code>，零额外依赖：</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">test_approve_with_stub</span><span class="p">(</span><span class="n">monkeypatch</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="c1"># Stub：send 不真发、永远报成功——我只想验证 approve 自己的逻辑</span>
+    <span class="n">monkeypatch</span><span class="o">.</span><span class="n">setattr</span><span class="p">(</span><span class="n">NotifyService</span><span class="p">,</span> <span class="s2">"send"</span><span class="p">,</span> <span class="k">lambda</span> <span class="bp">self</span><span class="p">,</span> <span class="n">editor</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">article</span> <span class="o">=</span> <span class="n">Article</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">"异步指北"</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="s2">"draft"</span><span class="p">)</span>
+    <span class="n">approve</span><span class="p">(</span><span class="n">article</span><span class="p">,</span> <span class="n">NotifyService</span><span class="p">())</span>
+
+    <span class="k">assert</span> <span class="n">article</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="s2">"approved"</span>        <span class="c1"># 验证结果：状态流转对了</span>
+</code></pre></div>
+<p><strong>Mock 版</strong>——标准库 <code>unittest.mock.MagicMock</code>，同样零依赖：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">unittest.mock</span><span class="w"> </span><span class="kn">import</span> <span class="n">MagicMock</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">test_approve_with_mock</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">notify</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>                        <span class="c1"># 带「记录仪」的替身</span>
+
+    <span class="n">article</span> <span class="o">=</span> <span class="n">Article</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">"异步指北"</span><span class="p">,</span> <span class="n">editor</span><span class="o">=</span><span class="s2">"linmo"</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="s2">"draft"</span><span class="p">)</span>
+    <span class="n">approve</span><span class="p">(</span><span class="n">article</span><span class="p">,</span> <span class="n">notify</span><span class="p">)</span>
+
+    <span class="c1"># 验证行为：send 恰好被调用一次、参数一字不差</span>
+    <span class="n">notify</span><span class="o">.</span><span class="n">send</span><span class="o">.</span><span class="n">assert_called_once_with</span><span class="p">(</span><span class="s2">"linmo"</span><span class="p">,</span> <span class="s2">"你的文章过审了"</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>选型口诀：验证「结果」用 Stub，验证「行为」用 Mock。</strong> 绝大多数场景 Stub 就够。别为了炫技上 Mock——断言一堆调用细节的测试极脆，重构必红（参数改个名就崩）。</p>
+<p><strong>工具三选一</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>工具</th>
+<th>来源</th>
+<th>擅长</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>monkeypatch</code></td>
+<td>pytest 内置</td>
+<td>替换属性、环境变量、字典项，测试结束自动还原</td>
+</tr>
+<tr>
+<td><code>unittest.mock</code></td>
+<td>标准库</td>
+<td>断言交互（调用次数 / 参数 / 顺序）</td>
+</tr>
+<tr>
+<td><code>pytest-mock</code></td>
+<td>第三方插件</td>
+<td><code>mocker</code> fixture，包装前两者，语法更顺</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="12-测试分层单元-集成-e2e">12. 测试分层：单元 / 集成 / e2e</h2>
+<p>拿工厂出厂检验打比方，正好三道关：<strong>元器件抽检（单元）→ 主板通电联调（集成）→ 整机烤机（e2e）</strong>。</p>
+<table>
+<thead>
+<tr>
+<th>层</th>
+<th>测什么</th>
+<th>外部依赖</th>
+<th>速度</th>
+<th>数量</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>单元 unit/</strong></td>
+<td>一个函数 / 类 / Pydantic 模型</td>
+<td>全断（Stub / Mock / 纯内存）</td>
+<td>毫秒</td>
+<td>多</td>
+</tr>
+<tr>
+<td><strong>集成 integration/</strong></td>
+<td>路由 + 依赖 + 仓库 多模块协作</td>
+<td>测试库，或 override 成假仓库</td>
+<td>秒</td>
+<td>中</td>
+</tr>
+<tr>
+<td><strong>e2e/</strong></td>
+<td>真实起服务的完整业务链</td>
+<td>全真：真服务、真端口、真链路</td>
+<td>分钟</td>
+<td>少</td>
+</tr>
+</tbody>
+</table>
+<p><strong>各层在 demo 里的对应</strong>：<code>TestBuildSlug</code> 是单元（纯函数，毫秒级）；<code>TestSyncRoutes</code> / <code>TestAsyncClient</code> 是集成（走完整 HTTP 栈，但仓库是内存假的）。真 e2e 的典型做法——conftest 里用 subprocess 起真服务，等 <code>/docs</code> 就绪再打真端口：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># e2e/conftest.py 骨架：起真服务 → 等就绪 → 测完回收</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span><span class="o">,</span><span class="w"> </span><span class="nn">time</span><span class="o">,</span><span class="w"> </span><span class="nn">httpx</span>
+
+<span class="n">_server</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span>
+    <span class="p">[</span><span class="s2">"uv"</span><span class="p">,</span> <span class="s2">"run"</span><span class="p">,</span> <span class="s2">"fastapi"</span><span class="p">,</span> <span class="s2">"dev"</span><span class="p">,</span> <span class="s2">"app/main.py"</span><span class="p">,</span> <span class="s2">"--port"</span><span class="p">,</span> <span class="s2">"18000"</span><span class="p">]</span>
+<span class="p">)</span>
+
+<span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">50</span><span class="p">):</span>                       <span class="c1"># 最多等 5 秒</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">httpx</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"http://localhost:18000/docs"</span><span class="p">)</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span><span class="p">:</span>
+            <span class="k">break</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
+
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">real_client</span><span class="p">():</span>
+    <span class="k">async</span> <span class="k">with</span> <span class="n">httpx</span><span class="o">.</span><span class="n">AsyncClient</span><span class="p">(</span><span class="n">base_url</span><span class="o">=</span><span class="s2">"http://localhost:18000"</span><span class="p">)</span> <span class="k">as</span> <span class="n">c</span><span class="p">:</span>
+        <span class="k">yield</span> <span class="n">c</span>
+</code></pre></div>
+<p><strong>边界与取舍</strong>：</p>
+<ul>
+<li><strong>能单元就别集成，能集成就别 e2e</strong>——速度差三个数量级，稳定性差更多（e2e 挂了可能是环境问题，单元挂了几乎必然是代码问题）。</li>
+<li><strong>冒烟测试（smoke）</strong>：不是第四层，而是从各层里挑「挂了就是灾难」的用例打标记——登录、发文、支付这种核心链路。上线前只跑这批，几十秒出结果。做法：<code>pytest.mark.smoke</code> + 在配置里注册 marker，<code>pytest -m smoke</code> 单独跑。</li>
+<li><strong>覆盖率</strong>（<code>pytest-cov</code> 插件）当体检报告看：哪里从没被测过一目了然；当 KPI 硬凑就会逼出一堆 <code>assert resp.status_code == 200</code> 的废测。</li>
+<li>开发顺序顺带一提：<strong>TLD</strong>（先写代码后补测试，日常默认）与 <strong>TDD</strong>（先写测试再写实现，核心算法、复杂校验逻辑值得这么干）。</li>
+</ul>
+<hr />
+<h2 id="13-常用命令速查">13. 常用命令速查</h2>
+<p>demo 全部实测过，拿去就能用（把路径换成你自己的）：</p>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>干什么</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>uv run pytest</code></td>
+<td>全量跑（目录来自 <code>testpaths</code> 配置）</td>
+</tr>
+<tr>
+<td><code>uv run pytest demo/test_inkhub.py</code></td>
+<td>只跑一个文件</td>
+</tr>
+<tr>
+<td><code>uv run pytest demo/test_inkhub.py::TestSyncRoutes</code></td>
+<td>只跑一个类</td>
+</tr>
+<tr>
+<td><code>uv run pytest demo/test_inkhub.py::TestSyncRoutes::test_get_missing_returns_404</code></td>
+<td>只跑一个函数</td>
+</tr>
+<tr>
+<td><code>-v</code></td>
+<td>每条用例一行——谁过谁挂一目了然</td>
+</tr>
+<tr>
+<td><code>-s</code></td>
+<td>放行 print（默认会被捕获，想看中间变量时用）</td>
+</tr>
+<tr>
+<td><code>-k "async"</code></td>
+<td>按名字过滤：<code>-k "async and not like"</code> 也行</td>
+</tr>
+<tr>
+<td><code>-x</code></td>
+<td>第一个失败就停（修 bug 时省时间）</td>
+</tr>
+<tr>
+<td><code>--tb=short</code></td>
+<td>traceback 只留关键帧（默认 long 太啰嗦）</td>
+</tr>
+<tr>
+<td><code>--tb=line</code></td>
+<td>一行定位失败位置</td>
+</tr>
+<tr>
+<td><code>--lf</code></td>
+<td>只重跑上次失败的（改完代码二连击：<code>--lf</code> 验证）</td>
+</tr>
+<tr>
+<td><code>-m smoke</code></td>
+<td>只跑带标记的（需先注册 marker）</td>
+</tr>
+<tr>
+<td><code>--durations=5</code></td>
+<td>最慢的 5 条用例——揪耗时大户</td>
+</tr>
+</tbody>
+</table>
+<p>实测感受一下 <code>-k</code> 的过滤（demo 真实输出）：</p>
+<div class="highlight"><pre><span></span><code>$ uv run pytest demo/test_inkhub.py -k "async" -q
+2 passed, 18 deselected in 0.17s
+</code></pre></div>
+<p><strong>常见坑</strong>：<code>-k</code> 匹配的是<strong>用例全名</strong>（含参数化的 ids）——<code>-k 空标题</code> 能精确命中那组参数化用例；写 <code>-k test_xxx</code> 反而多余，直接给节点 ID 更快。</p>
+<hr />
+<h2 id="14-makefile把测试挂进日常">14. Makefile：把测试挂进日常</h2>
+<p>命令背不住没关系，Makefile 替你背。放在项目根目录：</p>
+<div class="highlight"><pre><span></span><code><span class="c"># Makefile —— 测试命令收编</span>
+<span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">test</span> <span class="n">test</span>-<span class="n">unit</span> <span class="n">test</span>-<span class="n">integration</span> <span class="n">test</span>-<span class="n">e</span>2<span class="n">e</span> <span class="n">test</span>-<span class="n">smoke</span>
+
+<span class="nf">test</span><span class="o">:</span>
+<span class="w">    </span>uv<span class="w"> </span>run<span class="w"> </span>pytest<span class="w"> </span>-v
+
+<span class="nf">test-unit</span><span class="o">:</span>
+<span class="w">    </span>uv<span class="w"> </span>run<span class="w"> </span>pytest<span class="w"> </span>test/unit/<span class="w"> </span>-v
+
+<span class="nf">test-integration</span><span class="o">:</span>
+<span class="w">    </span>uv<span class="w"> </span>run<span class="w"> </span>pytest<span class="w"> </span>test/integration/<span class="w"> </span>-v
+
+<span class="nf">test-e2e</span><span class="o">:</span>
+<span class="w">    </span>uv<span class="w"> </span>run<span class="w"> </span>pytest<span class="w"> </span>test/e2e/<span class="w"> </span>-v
+
+<span class="nf">test-smoke</span><span class="o">:</span>
+<span class="w">    </span>uv<span class="w"> </span>run<span class="w"> </span>pytest<span class="w"> </span>test/<span class="w"> </span>-m<span class="w"> </span>smoke<span class="w"> </span>-v
+</code></pre></div>
+<p>用法与回报：</p>
+<ul>
+<li>日常开发：<code>make test-unit</code>（秒级反馈，改个函数跑一遍）；</li>
+<li>提交前：<code>make test</code>（单元 + 集成全绿再提交）；</li>
+<li>发版前：<code>make test-e2e</code>（整条链路真实跑一遍）+ <code>make test-smoke</code>（核心生命线最后确认）。</li>
+</ul>
+<p>§12 讲的「分层」到这一步才真正兑现——<strong>分层的意义不只是组织代码，是让你在不同时机付得起不同的验证成本</strong>。</p>
+<p><strong>常见坑</strong>：Makefile 的缩进必须是 <strong>Tab</strong>，混进空格直接 <code>missing separator</code>；<code>.PHONY</code> 声明别省，否则目录里恰好有个叫 <code>test</code> 的文件夹时，<code>make test</code> 会以为「没事可做」。</p>
+<hr />
+<h2 id="15-本章速查表">15. 本章速查表</h2>
+<table>
+<thead>
+<tr>
+<th>要点</th>
+<th>一句话</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>发现规则</td>
+<td>文件 <code>test_*.py</code>、类 <code>Test*</code> 无 <code>__init__</code>、函数 <code>test_*</code>——差一个字母都收不到</td>
+</tr>
+<tr>
+<td>assert</td>
+<td>原生断言失败自动展开左右值；加消息 <code>assert x == y, resp.text</code></td>
+</tr>
+<tr>
+<td>parametrize</td>
+<td>一组数据一群用例；<code>ids</code> 让 <code>-v</code> 可读；堆叠 = 笛卡尔积</td>
+</tr>
+<tr>
+<td>fixture</td>
+<td>道具间：yield 前备、后收；scope 从 function 到 session；依赖只能向上找</td>
+</tr>
+<tr>
+<td>asyncio</td>
+<td>pytest-asyncio + <code>asyncio_mode = "auto"</code>，异步测试免标记不假绿</td>
+</tr>
+<tr>
+<td>TestClient</td>
+<td>进程内同步打接口；with 触发 lifespan；<strong>请求头值只能 ASCII</strong></td>
+</tr>
+<tr>
+<td>AsyncClient</td>
+<td><code>ASGITransport(app=app)</code> 内线直通；忘传 transport 就打真网络</td>
+</tr>
+<tr>
+<td>客户端 fixture</td>
+<td>app 全局一个、客户端 function 级、清场 autouse</td>
+</tr>
+<tr>
+<td>conftest</td>
+<td>同目录 + 子目录自动共享，免 import；同名就近覆盖；≥2 文件共用才进</td>
+</tr>
+<tr>
+<td>overrides</td>
+<td><code>app.dependency_overrides[原依赖] = 替身</code>；key 是函数对象；用完必 clear</td>
+</tr>
+<tr>
+<td>Stub / Mock</td>
+<td>验证结果用 Stub、验证行为用 Mock；monkeypatch / MagicMock / pytest-mock</td>
+</tr>
+<tr>
+<td>分层</td>
+<td>单元多而快、e2e 少而慢；冒烟是生命线；覆盖率先看没测过的角落</td>
+</tr>
+<tr>
+<td>命令</td>
+<td><code>-v</code> <code>-k</code> <code>-x</code> <code>--tb=short</code> <code>--lf</code>；单函数直接 <code>文件::类::函数</code></td>
+</tr>
+<tr>
+<td>Makefile</td>
+<td>分层兑现为不同时机的验证成本；缩进必须 Tab</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<p>测试全绿只说明「没改坏」；想知道服务<strong>运行时</strong>到底发生了什么——谁在什么时候调了哪个接口、慢在哪一步、哪个异常被吞了——你需要给系统装上「黑匣子」。下一章：loguru，十行配置换来一手看得见的运行现场。</p>
+<hr />
+<p><strong>下一章</strong>：<a href="../backend/13-ri-zhi-loguru.html">13 · 日志 loguru</a></p></div>
+
+      </article>
+<nav class="pager"><a class="pg-card pg-prev" href="../backend/11-ren-zheng-yu-jwt.html"><span class="pg-label">← 上一篇</span><span class="pg-title">认证与 JWT</span><span class="pg-mod">Python 框架指南</span></a><a class="pg-card pg-next" href="../backend/13-ri-zhi-loguru.html"><span class="pg-label">下一篇 →</span><span class="pg-title">日志 loguru</span><span class="pg-mod">Python 框架指南</span></a></nav>
+    </div>
+    <footer class="foot">
+      <span>深栈 DeepStack · AI Agent 工程师转型训练营配套文档</span>
+    </footer>
+  </main>
+<nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#1-为什么写测试三笔账">1. 为什么写测试：三笔账</a><a class="toc-link toc-h2" href="#2-pytest-三分钟上手发现规则与-assert">2. pytest 三分钟上手：发现规则与 assert</a><a class="toc-link toc-h2" href="#3-parametrize一组数据跑一群用例">3. parametrize：一组数据跑一群用例</a><a class="toc-link toc-h2" href="#4-fixture测试的道具间">4. fixture：测试的道具间</a><a class="toc-link toc-h2" href="#5-装依赖配-pytest让-pytest-认识-async">5. 装依赖、配 pytest：让 pytest 认识 async</a><a class="toc-link toc-h2" href="#6-testclient同步打接口">6. TestClient：同步打接口</a><a class="toc-link toc-h2" href="#7-httpx-asyncclient-asgitransport异步打接口">7. httpx AsyncClient + ASGITransport：异步打接口</a><a class="toc-link toc-h2" href="#8-用-fixture-管-app-与客户端">8. 用 fixture 管 app 与客户端</a><a class="toc-link toc-h2" href="#9-conftestpy共享-fixture-的家">9. conftest.py：共享 fixture 的家</a><a class="toc-link toc-h2" href="#10-dependency_overrides给测试换替身08-章伏笔兑现">10. dependency_overrides：给测试换替身（08 章伏笔兑现）</a><a class="toc-link toc-h2" href="#11-stub-与-mock替身的两副面孔">11. Stub 与 Mock：替身的两副面孔</a><a class="toc-link toc-h2" href="#12-测试分层单元-集成-e2e">12. 测试分层：单元 / 集成 / e2e</a><a class="toc-link toc-h2" href="#13-常用命令速查">13. 常用命令速查</a><a class="toc-link toc-h2" href="#14-makefile把测试挂进日常">14. Makefile：把测试挂进日常</a><a class="toc-link toc-h2" href="#15-本章速查表">15. 本章速查表</a></nav>
+</div>
+<div class="sb-mask" id="sbMask"></div>
+<script src="../assets/app.js"></script>
+</body>
+</html>

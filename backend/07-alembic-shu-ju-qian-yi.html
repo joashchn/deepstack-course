@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>07 · Alembic 数据迁移 · 深栈 DeepStack 课程文档</title>
+<meta name="description" content="本章你将学会
+
+ - 说清 createall 的三个硬伤：只建不改、不记版本、多环境不同步
+ - alembic init 生成的四大件各管什么：alembic.ini / env.py / script.py.mak…">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%23d9c39a' text-anchor='middle'%3EDS%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+<div class="progress" id="progress"></div>
+
+<div class="layout">
+<aside class="sidebar" id="sidebar">
+  <div class="sb-head">
+    <a class="brand" href="../index.html">
+      <span class="brand-mark">DS</span>
+      <span class="brand-text"><b>深栈 DeepStack</b><i>AI Agent 工程师转型训练营</i></span>
+    </a>
+    <button class="sb-close" id="sbClose" aria-label="关闭目录">✕</button>
+  </div>
+  <div class="sb-search"><input type="search" id="searchInput" placeholder="搜索 123 篇文档… ( / )" autocomplete="off">
+    <div class="sb-results" id="searchResults"></div></div>
+  <nav class="sb-nav">
+    <section class="sb-group" data-mod="python">
+      <a class="sb-group-title" href="../modules/python.html" data-toggle="python">
+        <span class="sb-num">01</span>
+        <span class="sb-group-text"><b>Python 与数据实践</b><i>31 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../python/01-huan-jing-da-jian-yu-ban-ben-guan-li.html"><span class="sb-item-num">01</span><span class="sb-item-title">环境搭建与版本管理</span></a>
+        <a class="sb-item" href="../python/02-bian-liang-biao-da-shi-yu-liu-cheng-kong-zhi.html"><span class="sb-item-num">02</span><span class="sb-item-title">变量、表达式与流程控制</span></a>
+        <a class="sb-item" href="../python/03-xu-lie-zi-dian-yu-ji-he.html"><span class="sb-item-num">03</span><span class="sb-item-title">序列、字典与集合</span></a>
+        <a class="sb-item" href="../python/04-han-shu-she-ji-yu-lambda.html"><span class="sb-item-num">04</span><span class="sb-item-title">函数设计与 lambda</span></a>
+        <a class="sb-item" href="../python/05-zuo-yong-yu-gui-ze-yu-bi-bao.html"><span class="sb-item-num">05</span><span class="sb-item-title">作用域规则与闭包</span></a>
+        <a class="sb-item" href="../python/06-lei-de-ding-yi-yu-shi-li-hua.html"><span class="sb-item-num">06</span><span class="sb-item-title">类的定义与实例化</span></a>
+        <a class="sb-item" href="../python/07-lei-xing-pan-ding-yu-chou-xiang-ji-lei.html"><span class="sb-item-num">07</span><span class="sb-item-title">类型判定与抽象基类</span></a>
+        <a class="sb-item" href="../python/08-mo-shu-fang-fa-quan-jing.html"><span class="sb-item-num">08</span><span class="sb-item-title">魔术方法全景</span></a>
+        <a class="sb-item" href="../python/09-miao-shu-fu-yu-yuan-lei.html"><span class="sb-item-num">09</span><span class="sb-item-title">描述符与元类</span></a>
+        <a class="sb-item" href="../python/10-zhuang-shi-qi.html"><span class="sb-item-num">10</span><span class="sb-item-title">装饰器</span></a>
+        <a class="sb-item" href="../python/11-die-dai-xie-yi-yu-sheng-cheng-qi.html"><span class="sb-item-num">11</span><span class="sb-item-title">迭代协议与生成器</span></a>
+        <a class="sb-item" href="../python/12-with-yu-shang-xia-wen-xie-yi.html"><span class="sb-item-num">12</span><span class="sb-item-title">with 与上下文协议</span></a>
+        <a class="sb-item" href="../python/13-yi-chang-ti-xi-yu-chu-li.html"><span class="sb-item-num">13</span><span class="sb-item-title">异常体系与处理</span></a>
+        <a class="sb-item" href="../python/14-lei-xing-biao-zhu.html"><span class="sb-item-num">14</span><span class="sb-item-title">类型标注</span></a>
+        <a class="sb-item" href="../python/15-mo-kuai-yu-bao-de-zu-zhi.html"><span class="sb-item-num">15</span><span class="sb-item-title">模块与包的组织</span></a>
+        <a class="sb-item" href="../python/16-biao-zhun-ku-xun-li.html"><span class="sb-item-num">16</span><span class="sb-item-title">标准库巡礼</span></a>
+        <a class="sb-item" href="../python/17-yi-lai-guan-li-yu-di-san-fang-ku.html"><span class="sb-item-num">17</span><span class="sb-item-title">依赖管理与第三方库</span></a>
+        <a class="sb-item" href="../python/18-xian-cheng-yu-jin-cheng.html"><span class="sb-item-num">18</span><span class="sb-item-title">线程与进程</span></a>
+        <a class="sb-item" href="../python/19-shi-jian-xun-huan.html"><span class="sb-item-num">19</span><span class="sb-item-title">事件循环</span></a>
+        <a class="sb-item" href="../python/20-future-yu-xie-cheng.html"><span class="sb-item-num">20</span><span class="sb-item-title">Future 与协程</span></a>
+        <a class="sb-item" href="../python/21-asyncio-shi-zhan.html"><span class="sb-item-num">21</span><span class="sb-item-title">asyncio 实战</span></a>
+        <a class="sb-item" href="../python/22-gou-jian-yu-fa-bu.html"><span class="sb-item-num">22</span><span class="sb-item-title">构建与发布</span></a>
+        <a class="sb-item" href="../python/23-gong-cheng-hua-gong-ju-lian.html"><span class="sb-item-num">23</span><span class="sb-item-title">工程化工具链</span></a>
+        <a class="sb-item" href="../python/24-monorepo-yu-tiao-shi.html"><span class="sb-item-num">24</span><span class="sb-item-title">monorepo 与调试</span></a>
+        <a class="sb-item" href="../python/25-jupyter-jiao-hu-huan-jing.html"><span class="sb-item-num">25</span><span class="sb-item-title">Jupyter 交互环境</span></a>
+        <a class="sb-item" href="../python/26-numpy-shu-zu-yu-xiang-liang-hua.html"><span class="sb-item-num">26</span><span class="sb-item-title">NumPy 数组与向量化</span></a>
+        <a class="sb-item" href="../python/27-pandas-shu-ju-jie-gou.html"><span class="sb-item-num">27</span><span class="sb-item-title">Pandas 数据结构</span></a>
+        <a class="sb-item" href="../python/28-pandas-shu-ju-qing-xi.html"><span class="sb-item-num">28</span><span class="sb-item-title">Pandas 数据清洗</span></a>
+        <a class="sb-item" href="../python/29-matplotlib-hui-tu-ti-xi.html"><span class="sb-item-num">29</span><span class="sb-item-title">Matplotlib 绘图体系</span></a>
+        <a class="sb-item" href="../python/30-matplotlib-dong-hua-yu-jiao-hu.html"><span class="sb-item-num">30</span><span class="sb-item-title">Matplotlib 动画与交互</span></a>
+        <a class="sb-item" href="../python/31-seaborn-tong-ji-ke-shi-hua.html"><span class="sb-item-num">31</span><span class="sb-item-title">Seaborn 统计可视化</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="agent">
+      <a class="sb-group-title" href="../modules/agent.html" data-toggle="agent">
+        <span class="sb-num">02</span>
+        <span class="sb-group-text"><b>Agent 核心</b><i>15 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../agent/01-token-yu-ci-qian-ru.html"><span class="sb-item-num">01</span><span class="sb-item-title">Token 与词嵌入</span></a>
+        <a class="sb-item" href="../agent/02-qian-xiang-chuan-bo-yu-fan-xiang-chuan-bo.html"><span class="sb-item-num">02</span><span class="sb-item-title">前向传播与反向传播</span></a>
+        <a class="sb-item" href="../agent/03-zhu-yi-li-ji-zhi-yu-transformer-jia-gou.html"><span class="sb-item-num">03</span><span class="sb-item-title">注意力机制与 Transformer 架构</span></a>
+        <a class="sb-item" href="../agent/04-yu-xun-lian-rlhf-yu-cai-yang-kv-cache.html"><span class="sb-item-num">04</span><span class="sb-item-title">预训练、RLHF 与采样（KV Cache）</span></a>
+        <a class="sb-item" href="../agent/05-ben-di-mo-xing-yu-xiao-xi-jie-gou.html"><span class="sb-item-num">05</span><span class="sb-item-title">本地模型与消息结构</span></a>
+        <a class="sb-item" href="../agent/06-hui-hua-guan-li-yu-json-shu-chu.html"><span class="sb-item-num">06</span><span class="sb-item-title">会话管理与 JSON 输出</span></a>
+        <a class="sb-item" href="../agent/07-tool-calling-xie-yi-yu-feng-zhuang.html"><span class="sb-item-num">07</span><span class="sb-item-title">Tool Calling：协议与封装</span></a>
+        <a class="sb-item" href="../agent/08-react-mo-shi-yu-zhu-xun-huan.html"><span class="sb-item-num">08</span><span class="sb-item-title">ReAct 模式与主循环</span></a>
+        <a class="sb-item" href="../agent/09-shi-zhan-deep-research-agent.html"><span class="sb-item-num">09</span><span class="sb-item-title">实战：Deep Research Agent</span></a>
+        <a class="sb-item" href="../agent/10-skill-yu-jian-jin-shi-pi-lu.html"><span class="sb-item-num">10</span><span class="sb-item-title">Skill 与渐进式披露</span></a>
+        <a class="sb-item" href="../agent/11-mcp-quan-jing.html"><span class="sb-item-num">11</span><span class="sb-item-title">MCP 全景</span></a>
+        <a class="sb-item" href="../agent/12-duo-agent-yu-xuan-xing-ce-lve.html"><span class="sb-item-num">12</span><span class="sb-item-title">多 Agent 与选型策略</span></a>
+        <a class="sb-item" href="../agent/13-ti-shi-ci-gong-cheng-yu-shang-xia-wen-gong.html"><span class="sb-item-num">13</span><span class="sb-item-title">提示词工程与上下文工程</span></a>
+        <a class="sb-item" href="../agent/14-xun-huan-tu-yu-gu-jia-gong-cheng.html"><span class="sb-item-num">14</span><span class="sb-item-title">循环、图与骨架工程</span></a>
+        <a class="sb-item" href="../agent/15-ji-yi-quan-xian-yu-ping-ce.html"><span class="sb-item-num">15</span><span class="sb-item-title">记忆、权限与评测</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="langchain">
+      <a class="sb-group-title" href="../modules/langchain.html" data-toggle="langchain">
+        <span class="sb-num">03</span>
+        <span class="sb-group-text"><b>LangChain 指南</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langchain/01-ren-shi-langchain.html"><span class="sb-item-num">01</span><span class="sb-item-title">认识 LangChain</span></a>
+        <a class="sb-item" href="../langchain/02-ti-shi-ci-mu-ban-yu-xiao-xi.html"><span class="sb-item-num">02</span><span class="sb-item-title">提示词模板与消息</span></a>
+        <a class="sb-item" href="../langchain/03-lcel-yu-runnable.html"><span class="sb-item-num">03</span><span class="sb-item-title">LCEL 与 Runnable</span></a>
+        <a class="sb-item" href="../langchain/04-liu-shi-yu-bing-fa.html"><span class="sb-item-num">04</span><span class="sb-item-title">流式与并发</span></a>
+        <a class="sb-item" href="../langchain/05-shu-chu-jie-xi-qi.html"><span class="sb-item-num">05</span><span class="sb-item-title">输出解析器</span></a>
+        <a class="sb-item" href="../langchain/06-wen-dang-jia-zai-yu-qie-ge.html"><span class="sb-item-num">06</span><span class="sb-item-title">文档加载与切割</span></a>
+        <a class="sb-item" href="../langchain/07-qian-ru-yu-xiang-liang-ku.html"><span class="sb-item-num">07</span><span class="sb-item-title">嵌入与向量库</span></a>
+        <a class="sb-item" href="../langchain/08-jian-suo-yu-rag.html"><span class="sb-item-num">08</span><span class="sb-item-title">检索与RAG</span></a>
+        <a class="sb-item" href="../langchain/09-dui-hua-ji-yi.html"><span class="sb-item-num">09</span><span class="sb-item-title">对话记忆</span></a>
+        <a class="sb-item" href="../langchain/10-gong-ju-diao-yong.html"><span class="sb-item-num">10</span><span class="sb-item-title">工具调用</span></a>
+        <a class="sb-item" href="../langchain/11-agent.html"><span class="sb-item-num">11</span><span class="sb-item-title">Agent</span></a>
+        <a class="sb-item" href="../langchain/12-hui-diao-yu-tiao-shi-quan-ke-cheng-shou-guan.html"><span class="sb-item-num">12</span><span class="sb-item-title">回调与调试（全课程收官章）</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="langgraph">
+      <a class="sb-group-title" href="../modules/langgraph.html" data-toggle="langgraph">
+        <span class="sb-num">04</span>
+        <span class="sb-group-text"><b>LangGraph 框架指南</b><i>17 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langgraph/01-di-1-zhang-cong-yi-ge-shi-kong-de-jiao.html"><span class="sb-item-num">01</span><span class="sb-item-title">第 1 章 从一个失控的脚本说起</span></a>
+        <a class="sb-item" href="../langgraph/02-di-2-zhang-zui-xiao-ke-yun-xing-tu.html"><span class="sb-item-num">02</span><span class="sb-item-title">第 2 章 最小可运行图</span></a>
+        <a class="sb-item" href="../langgraph/03-di-3-zhang-zhuang-tai-tu-de-shu-ju-xin.html"><span class="sb-item-num">03</span><span class="sb-item-title">第 3 章 状态：图的数据心脏</span></a>
+        <a class="sb-item" href="../langgraph/04-di-4-zhang-rang-liu-cheng-xue-hui-jue-ce.html"><span class="sb-item-num">04</span><span class="sb-item-title">第 4 章 让流程学会决策</span></a>
+        <a class="sb-item" href="../langgraph/05-di-5-zhang-bing-xing-shi-jie-chao-bu-zhi.html"><span class="sb-item-num">05</span><span class="sb-item-title">第 5 章 并行世界：超步执行模型</span></a>
+        <a class="sb-item" href="../langgraph/06-di-6-zhang-command-ba-kong-zhi-quan-jiao-jin.html"><span class="sb-item-num">06</span><span class="sb-item-title">第 6 章 Command：把控制权交进节点</span></a>
+        <a class="sb-item" href="../langgraph/07-di-7-zhang-dong-tai-bing-xing-send-yu-mapreduce.html"><span class="sb-item-num">07</span><span class="sb-item-title">第 7 章 动态并行：Send 与 MapReduce</span></a>
+        <a class="sb-item" href="../langgraph/08-di-8-zhang-gei-tu-zhuang-shang-shou-jiao-gong.html"><span class="sb-item-num">08</span><span class="sb-item-title">第 8 章 给图装上手脚：工具调用</span></a>
+        <a class="sb-item" href="../langgraph/09-di-9-zhang-fu-yong-yu-feng-zhuang-zi-tu.html"><span class="sb-item-num">09</span><span class="sb-item-title">第 9 章 复用与封装：子图</span></a>
+        <a class="sb-item" href="../langgraph/10-di-10-zhang-cong-dan-tu-dao-tuan-dui-duo.html"><span class="sb-item-num">10</span><span class="sb-item-title">第 10 章 从单图到团队：多 Agent 架构</span></a>
+        <a class="sb-item" href="../langgraph/11-di-11-zhang-liu-shi-shu-chu.html"><span class="sb-item-num">11</span><span class="sb-item-title">第 11 章 流式输出</span></a>
+        <a class="sb-item" href="../langgraph/12-di-12-zhang-chi-jiu-hua-checkpointer-yu-xian-cheng.html"><span class="sb-item-num">12</span><span class="sb-item-title">第 12 章 持久化：Checkpointer 与线程</span></a>
+        <a class="sb-item" href="../langgraph/13-di-13-zhang-shi-jian-lv-xing.html"><span class="sb-item-num">13</span><span class="sb-item-title">第 13 章 时间旅行</span></a>
+        <a class="sb-item" href="../langgraph/14-di-14-zhang-zhong-duan-yu-ren-zai-hui-lu.html"><span class="sb-item-num">14</span><span class="sb-item-title">第 14 章 中断与人在回路</span></a>
+        <a class="sb-item" href="../langgraph/15-di-15-zhang-ji-yi-guan-li.html"><span class="sb-item-num">15</span><span class="sb-item-title">第 15 章 记忆管理</span></a>
+        <a class="sb-item" href="../langgraph/16-di-16-zhang-rong-cuo-zhong-shi-chao-shi-yu.html"><span class="sb-item-num">16</span><span class="sb-item-title">第 16 章 容错：重试、超时与兜底</span></a>
+        <a class="sb-item" href="../langgraph/17-di-17-zhang-quan-jing-hui-gu.html"><span class="sb-item-num">17</span><span class="sb-item-title">第 17 章 全景回顾</span></a>
+      </div>
+    </section>
+    <section class="sb-group open" data-mod="backend">
+      <a class="sb-group-title" href="../modules/backend.html" data-toggle="backend">
+        <span class="sb-num">05</span>
+        <span class="sb-group-text"><b>Python 框架指南</b><i>14 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../backend/01-fastapi-ru-men-yu-asgi.html"><span class="sb-item-num">01</span><span class="sb-item-title">FastAPI 入门与 ASGI</span></a>
+        <a class="sb-item" href="../backend/02-lu-you-yu-qing-qiu-xiang-ying.html"><span class="sb-item-num">02</span><span class="sb-item-title">路由与请求响应</span></a>
+        <a class="sb-item" href="../backend/03-pydantic-shu-ju-jiao-yan-yu-pei-zhi.html"><span class="sb-item-num">03</span><span class="sb-item-title">Pydantic 数据校验与配置</span></a>
+        <a class="sb-item" href="../backend/04-sqlalchemy-yi-bu-yin-qing-yu-hui-hua.html"><span class="sb-item-num">04</span><span class="sb-item-title">SQLAlchemy 异步引擎与会话</span></a>
+        <a class="sb-item" href="../backend/05-orm-jian-mo.html"><span class="sb-item-num">05</span><span class="sb-item-title">ORM 建模</span></a>
+        <a class="sb-item" href="../backend/06-sql-biao-da-shi-yu-shu-ju-cao-zuo.html"><span class="sb-item-num">06</span><span class="sb-item-title">SQL 表达式与数据操作</span></a>
+        <a class="sb-item current" href="../backend/07-alembic-shu-ju-qian-yi.html"><span class="sb-item-num">07</span><span class="sb-item-title">Alembic 数据迁移</span></a>
+        <a class="sb-item" href="../backend/08-yi-lai-zhu-ru.html"><span class="sb-item-num">08</span><span class="sb-item-title">依赖注入</span></a>
+        <a class="sb-item" href="../backend/09-tong-yi-yi-chang-chu-li.html"><span class="sb-item-num">09</span><span class="sb-item-title">统一异常处理</span></a>
+        <a class="sb-item" href="../backend/10-zhong-jian-jian.html"><span class="sb-item-num">10</span><span class="sb-item-title">中间件</span></a>
+        <a class="sb-item" href="../backend/11-ren-zheng-yu-jwt.html"><span class="sb-item-num">11</span><span class="sb-item-title">认证与 JWT</span></a>
+        <a class="sb-item" href="../backend/12-pytest-ce-shi.html"><span class="sb-item-num">12</span><span class="sb-item-title">pytest 测试</span></a>
+        <a class="sb-item" href="../backend/13-ri-zhi-loguru.html"><span class="sb-item-num">13</span><span class="sb-item-title">日志 loguru</span></a>
+        <a class="sb-item" href="../backend/14-liu-shi-xiang-ying-sse-yu-websocket.html"><span class="sb-item-num">14</span><span class="sb-item-title">流式响应 SSE 与 WebSocket</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="interview">
+      <a class="sb-group-title" href="../modules/interview.html" data-toggle="interview">
+        <span class="sb-num">06</span>
+        <span class="sb-group-text"><b>面试题库</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../interview/01-llm-yuan-li-pian.html"><span class="sb-item-num">01</span><span class="sb-item-title">LLM 原理篇</span></a>
+        <a class="sb-item" href="../interview/02-rag-yu-jian-suo-pian.html"><span class="sb-item-num">02</span><span class="sb-item-title">RAG 与检索篇</span></a>
+        <a class="sb-item" href="../interview/03-agent-he-xin-pian.html"><span class="sb-item-num">03</span><span class="sb-item-title">Agent 核心篇</span></a>
+        <a class="sb-item" href="../interview/04-langgraph-pian.html"><span class="sb-item-num">04</span><span class="sb-item-title">LangGraph 篇</span></a>
+        <a class="sb-item" href="../interview/05-langchain-pian.html"><span class="sb-item-num">05</span><span class="sb-item-title">LangChain 篇</span></a>
+        <a class="sb-item" href="../interview/06-xi-tong-she-ji-pian.html"><span class="sb-item-num">06</span><span class="sb-item-title">系统设计篇</span></a>
+        <a class="sb-item" href="../interview/07-xiang-mu-shen-wa-pian.html"><span class="sb-item-num">07</span><span class="sb-item-title">项目深挖篇</span></a>
+        <a class="sb-item" href="../interview/08-gu-zhang-pai-cha-pian.html"><span class="sb-item-num">08</span><span class="sb-item-title">故障排查篇</span></a>
+        <a class="sb-item" href="../interview/09-python-ji-chu-pian.html"><span class="sb-item-num">09</span><span class="sb-item-title">Python 基础篇</span></a>
+        <a class="sb-item" href="../interview/10-fastapi-yu-hou-duan-pian.html"><span class="sb-item-num">10</span><span class="sb-item-title">FastAPI 与后端篇</span></a>
+        <a class="sb-item" href="../interview/11-ti-shi-ci-gong-cheng-yu-an-quan-pian.html"><span class="sb-item-num">11</span><span class="sb-item-title">提示词工程与安全篇</span></a>
+        <a class="sb-item" href="../interview/12-mo-xing-xuan-xing-yu-jiang-ben-pian.html"><span class="sb-item-num">12</span><span class="sb-item-title">模型选型与降本篇</span></a>
+      </div>
+    </section>
+  </nav>
+</aside>
+  <main class="main">
+    <header class="topbar">
+      <button class="menu-btn" id="menuBtn" aria-label="目录">☰</button>
+      <div class="crumbs"><a href="../index.html">首页</a><span>/</span><a href="../modules/backend.html">Python 框架指南</a><span>/</span><span class="cur">Alembic 数据迁移</span></div>
+      <div class="topbar-actions">
+        <button class="icon-btn" id="themeBtn" title="切换深浅色" aria-label="切换深浅色">◐</button>
+      </div>
+    </header>
+    <div class="content">
+      <article class="article">
+
+<header class="page-head">
+  <div class="page-kicker">Python 框架指南 · 第 07 章</div>
+  <h1 class="page-title">Alembic 数据迁移</h1>
+  <p class="page-desc">本章你将学会
+
+ - 说清 createall 的三个硬伤：只建不改、不记版本、多环境不同步
+ - alembic init 生成的四大件各管什么：alembic.ini / env.py / script.py.mak…</p>
+  <div class="page-meta">
+    <span>约 34 分钟</span><span>13,497 字</span><span>28 个代码示例</span>
+  </div>
+</header>
+<div class="md"><blockquote>
+<p><strong>本章你将学会</strong></p>
+<ul>
+<li>说清 <code>create_all</code> 的三个硬伤：只建不改、不记版本、多环境不同步</li>
+<li><code>alembic init</code> 生成的四大件各管什么：<code>alembic.ini</code> / <code>env.py</code> / <code>script.py.mako</code> / <code>versions/</code></li>
+<li>在 <code>env.py</code> 里接入自己的模型：<code>target_metadata</code> 一行定乾坤</li>
+<li><code>revision --autogenerate</code> 生成迁移，<code>revision</code> / <code>down_revision</code> 怎么串成一条链</li>
+<li>手写迁移：<code>op.create_table</code> / <code>op.add_column</code> / <code>op.drop_column</code> / <code>op.execute</code></li>
+<li>一套命令走天下：<code>upgrade</code> / <code>downgrade</code> / <code>history</code> / <code>current</code> / <code>heads</code></li>
+<li><code>alembic_version</code> 表怎么记「数据库干到第几页」</li>
+<li><code>--autogenerate</code> 的盲区，以及四条迁移纪律</li>
+</ul>
+</blockquote>
+<p>第 05 章结尾留了个扣子：<code>create_all</code> 是活动板房，Alembic 才是正规施工队。这一章施工队正式进场——墨集 inkhub 要从「自己机器上跑得欢」走向「多人协作、有测试环境有生产环境的正经项目」，表结构的每一次演进都得有据可查、有路可退。</p>
+<hr />
+<h2 id="1-先算旧账create_all-到底缺什么">1. 先算旧账：<code>create_all</code> 到底缺什么</h2>
+<p>把 <code>create_all</code> 的账算全，它有三个硬伤：</p>
+<p><strong>硬伤一：只建不改。</strong><code>checkfirst=True</code> 的真实含义是「表存在就跳过」。你给 <code>Article</code> 加了一列，重跑 <code>create_all</code>，它看一眼：表在，跳过——新列永远不会出现。开发期的土办法是删库重建，可库里的文章数据呢？陪着结构一起火化。</p>
+<p><strong>硬伤二：不记版本。</strong>数据库被改成了什么样、什么时候改的、为什么改——一概不知。出了问题想退回上个版本？没有历史，退个寂寞。</p>
+<p><strong>硬伤三：多环境无法同步。</strong>你本机改了模型，测试环境的库怎么跟上？生产的库呢？挨个环境手工执行 SQL？手工操作必出错，出了错还没法追溯是谁、在哪儿、改了什么。</p>
+<p>一句话：<code>create_all</code> 解决「从 0 到 1」，解决不了「从 1 到 1.1、1.2、2.0」。</p>
+<p>Alembic 干的就是这件事：把每一次表结构变更写成一个<strong>带版本号的脚本</strong>，脚本进版本库；任何环境执行同一串脚本，就能到达同一个版本。升级、回滚、多环境同步，全有据可查。</p>
+<p>比喻再升级一下：<code>create_all</code> 像街边刷墙的游击队，刷完就走不留痕迹；Alembic 是<strong>带施工日志的正规施工队</strong>——每次改造登记一页日志（迁移脚本），工地门口再挂一块进度牌（<code>alembic_version</code> 表），干到第几页，牌子上写得清清楚楚。本章要搞明白的就是：日志本怎么写、进度牌怎么翻。</p>
+<hr />
+<h2 id="2-施工队进场安装与-alembic-init">2. 施工队进场：安装与 <code>alembic init</code></h2>
+<p><strong>作用</strong>：安装 Alembic，在项目里生成它的工作目录。</p>
+<p><strong>最小示例</strong>：</p>
+<div class="highlight"><pre><span></span><code>uv<span class="w"> </span>add<span class="w"> </span>alembic<span class="w"> </span>psycopg2-binary
+alembic<span class="w"> </span>init<span class="w"> </span>migrations
+</code></pre></div>
+<p>第二个命令的参数 <code>migrations</code> 是目录名（想叫 <code>alembic</code> 也行），输出大致是：</p>
+<div class="highlight"><pre><span></span><code>Creating directory '.../migrations' ...  done
+Creating directory '.../migrations/versions' ...  done
+Generating '.../alembic.ini' ...  done
+Generating '.../migrations/env.py' ...  done
+Generating '.../migrations/script.py.mako' ...  done
+Please edit configuration/connection/logging settings in '.../alembic.ini' before proceeding.
+</code></pre></div>
+<p>落地后的目录结构（墨集的项目骨架）：</p>
+<div class="highlight"><pre><span></span><code>inkhub/
+├── alembic.ini            # 队里的制度手册（总配置）
+└── migrations/            # 施工队现场
+    ├── env.py            # 现场指挥部：连哪个库、照哪套图纸
+    ├── script.py.mako    # 空白日志页的模板
+    ├── README            # 无关紧要的占位说明，可删
+    └── versions/         # 施工日志本（此刻还是空的）
+</code></pre></div>
+<p>生成物还会包含一个叫 <code>README</code> 的占位文件，内容就一行「Generic single-database configuration」，没实际用途。真正的四大件是 <code>alembic.ini</code>、<code>env.py</code>、<code>script.py.mako</code>、<code>versions/</code>，接下来逐个拆。</p>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li><code>alembic init</code> 要在<strong>项目根目录</strong>执行——它和你项目的包结构是平级关系，跑错目录后面 import 会乱。</li>
+<li>用了异步驱动（asyncpg）的应用，Alembic 这边照样装<strong>同步驱动</strong>（<code>psycopg2-binary</code>），原因见下一节。</li>
+</ul>
+<hr />
+<h2 id="3-alembicini队里的制度手册">3. <code>alembic.ini</code>：队里的制度手册</h2>
+<p><strong>作用</strong>：Alembic 的总配置文件，ini 格式。管「日志放哪、连哪个库、文件叫什么名、输出什么日志」。多数项一辈子不用动。</p>
+<p>值得认识的三项：</p>
+<div class="highlight"><pre><span></span><code><span class="k">[alembic]</span>
+<span class="c1"># 迁移脚本目录在哪（%(here)s 指本文件所在目录）</span>
+<span class="na">script_location</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">%(here)s/migrations</span>
+
+<span class="c1"># 生成迁移文件名：版本号_说明文字（%%(rev)s_%%(slug)s）</span>
+<span class="c1"># file_template = %%(year)d_%%(month).2d_%%(day).2d_%%(rev)s_%%(slug)s</span>
+
+<span class="c1"># 把哪个目录加进 sys.path（让 env.py 能 import 到你的项目代码）</span>
+<span class="na">prepend_sys_path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">.</span>
+
+<span class="c1"># 数据库地址（占位写法，真实 URL 由 env.py 覆盖）</span>
+<span class="na">sqlalchemy.url</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">driver://user:pass@localhost/dbname</span>
+</code></pre></div>
+<p>文件后半段的 <code>[loggers]</code> / <code>[handlers]</code> 是 Python 标准 logging 配置，管 alembic 命令自己的日志输出，不用动。</p>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li><strong>别把真实密码留在 <code>sqlalchemy.url</code> 里</strong>——这个文件是要进版本库的。留占位符，真实 URL 在 env.py 里从项目配置（第 03 章的 Settings）读出来覆盖。</li>
+<li><code>prepend_sys_path = .</code> 决定 env.py 里能不能 import 到你的包。命令在别的目录跑、报 <code>ModuleNotFoundError</code>，先怀疑它。</li>
+<li>团队想统一迁移文件名带日期（好排序）：把 <code>file_template</code> 那行注释打开，新生成的文件就带年月日。</li>
+</ul>
+<hr />
+<h2 id="4-envpy现场指挥部本章唯一要大改的文件">4. <code>env.py</code>：现场指挥部（本章唯一要大改的文件）</h2>
+<p><strong>作用</strong>：每次执行任何 alembic 命令，这个脚本都会<strong>先跑一遍</strong>。它回答两个问题：连哪个数据库？照哪套图纸施工？图纸就是第 05 章说的 <code>Base.metadata</code> 档案柜。</p>
+<p>要改的就两处：导入你的模型、覆盖数据库 URL。</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># migrations/env.py 关键改动（完整版见本章 demo）</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">app.core.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">db_settings</span>   <span class="c1"># 第 03 章 Settings 的数据库配置</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">app.model</span><span class="w"> </span><span class="kn">import</span> <span class="n">Base</span>                 <span class="c1"># __init__. 里 import 了全部模型</span>
+
+<span class="n">config</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">config</span>
+
+<span class="c1"># 用项目配置覆盖 alembic.ini 里的占位 URL</span>
+<span class="c1"># 注意：同步驱动 postgresql:// —— 不带 +asyncpg</span>
+<span class="n">config</span><span class="o">.</span><span class="n">set_main_option</span><span class="p">(</span>
+    <span class="s2">"sqlalchemy.url"</span><span class="p">,</span>
+    <span class="sa">f</span><span class="s2">"postgresql://</span><span class="si">{</span><span class="n">db_settings</span><span class="o">.</span><span class="n">user</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">db_settings</span><span class="o">.</span><span class="n">password</span><span class="si">}</span><span class="s2">"</span>
+    <span class="sa">f</span><span class="s2">"@</span><span class="si">{</span><span class="n">db_settings</span><span class="o">.</span><span class="n">host</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">db_settings</span><span class="o">.</span><span class="n">port</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">db_settings</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># 关键一行：把模型档案柜交给 Alembic</span>
+<span class="n">target_metadata</span> <span class="o">=</span> <span class="n">Base</span><span class="o">.</span><span class="n">metadata</span>
+</code></pre></div>
+<p><code>target_metadata</code> 是 autogenerate 的输入之一：没有它，<code>--autogenerate</code> 直接罢工（报 <code>Can't locate revision</code> / <code>target_metadata</code> 未配置之类的错）。模型包的 <code>__init__.py</code> 要把所有模型文件 import 一遍，套路和第 05 章 <code>create_all</code> 完全一致——图纸没进档案柜，谁来施工都白搭。</p>
+<p>env.py 里还有两个函数不用动，认识即可：</p>
+<ul>
+<li><code>run_migrations_online()</code>：默认模式，真连数据库执行迁移；</li>
+<li><code>run_migrations_offline()</code>：离线模式，只把迁移渲染成 SQL 文本（<code>--sql</code> 时走这条路，交给 DBA 人工执行的场景用）。</li>
+</ul>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li><strong>URL 必须是同步驱动</strong>。应用跑 <code>postgresql+asyncpg://</code>，但 Alembic 默认用同步引擎干活，URL 写成 <code>postgresql://</code> 配 <code>psycopg2</code> 即可。新手最常撞的错：直接把 asyncpg 的 URL 塞进来，报 <code>asyncpg</code> 相关的 driver 错误。</li>
+<li>全异步项目想让 env.py 也 async？官方有异步模板：<code>alembic init -t async migrations</code>。能用，但同步驱动更省心，除非有特殊理由，建议保持同步。</li>
+<li>模型没被 import = autogenerate 生成的迁移<strong>缺表且不报错</strong>，跑到升级执行时才发现，甚至更晚。排查第一反应永远是 <code>app/model/__init__.py</code>。</li>
+<li>路径按你自己项目调整：示例是 <code>app.core.config</code> / <code>app.model</code>，你可能是 <code>inkhub.config</code> / 别的，道理不变。</li>
+</ul>
+<hr />
+<h2 id="5-scriptpymako空白日志页的模板">5. <code>script.py.mako</code>：空白日志页的模板</h2>
+<p><strong>作用</strong>：每次生成新的迁移脚本，Alembic 按这个 Mako 模板渲染出一个 py 文件。<code>${...}</code> 是模板占位符。</p>
+<p>几个关键占位符：</p>
+<table>
+<thead>
+<tr>
+<th>占位符</th>
+<th>渲染成什么</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>${up_revision}</code></td>
+<td>本页页码（随机 12 位十六进制，如 <code>a1b2c3d4e5f6</code>）</td>
+</tr>
+<tr>
+<td><code>${down_revision}</code></td>
+<td>上一页的页码（第一页渲染成 <code>None</code>）</td>
+</tr>
+<tr>
+<td><code>${message}</code></td>
+<td>你 <code>-m</code> 传的说明文字</td>
+</tr>
+<tr>
+<td><code>${upgrades}</code> / <code>${downgrades}</code></td>
+<td>autogenerate 对比出的差异代码（手写模式渲染成 <code>pass</code>）</td>
+</tr>
+</tbody>
+</table>
+<p>什么时候改它？想让全团队的迁移脚本统一风格——比如统一加 <code>from __future__ import annotations</code>、统一注释格式——改模板一处，之后所有生成页都变。不改也完全能用，本章不动它。</p>
+<p><strong>常见坑</strong>：别把它当业务文件改坏——<code>${}</code> 语法一旦残缺，之后每次 <code>revision</code> 生成脚本都会报模板渲染错误。</p>
+<hr />
+<h2 id="6-versions日志本与页码链">6. <code>versions/</code>：日志本与页码链</h2>
+<p><strong>作用</strong>：存放所有迁移脚本。每个脚本是一页施工日志，页脚的两个字段把整本日志串成一条链：</p>
+<div class="highlight"><pre><span></span><code><span class="n">revision</span> <span class="o">=</span> <span class="s2">"b2c3d4e5f6a7"</span>        <span class="c1"># 本页页码</span>
+<span class="n">down_revision</span> <span class="o">=</span> <span class="s2">"a1b2c3d4e5f6"</span>   <span class="c1"># 上一页页码（第一页是 None）</span>
+</code></pre></div>
+<p>墨集的日志本（本章 demo 的三个脚本）：</p>
+<div class="highlight"><pre><span></span><code>versions/
+├── a1b2c3d4e5f6_init.py              revision: a1b2c3d4e5f6   down_revision: None
+├── b2c3d4e5f6a7_add_review_score.py   revision: b2c3d4e5f6a7   down_revision: a1b2c3d4e5f6
+└── c3d4e5f6a7b8_drop_review_score.py revision: c3d4e5f6a7b8   down_revision: b2c3d4e5f6a7
+</code></pre></div>
+<p>把 <code>down_revision</code> 想成「上一站站名」：每一站只记得自己的上一站，但顺着站名一路往回数，能从任意一站数到起点。Alembic 的所有导航（升级、回滚、历史）都是沿着这条链走的。</p>
+<p>两个术语：</p>
+<ul>
+<li><code>head</code>：链的<strong>最后一页</strong>，即当前最新版本；</li>
+<li><code>base</code>：链之前的「虚无」，什么结构都还没有。</li>
+</ul>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li><strong>页码是身份标识，生成后别改</strong>。数据库 <code>alembic_version</code> 表里记的就是页码（第 10 节），你手痒改了页码，库里的记录就对不上了。</li>
+<li><strong>别复制文件伪造新迁移</strong>。新迁移必须用 <code>alembic revision</code> 生成——页码有随机性和唯一性要求，手抄文件改个 revision 看着能用，实际是埋雷。</li>
+<li>两个人同时生成分支会出现<strong>两个 head</strong>（链分叉），合并用 <code>alembic merge</code>。团队按顺序提交迁移、及时拉代码，一般碰不到；见到了知道是怎么回事即可。</li>
+</ul>
+<hr />
+<h2 id="7-生成迁移revision-autogenerate">7. 生成迁移：<code>revision --autogenerate</code></h2>
+<p><strong>作用</strong>：对比「图纸」（<code>Base.metadata</code>）和「工地现状」（数据库的实际结构），把差异写成一个新的迁移脚本。这是日常用得最频繁的命令。</p>
+<p><strong>签名</strong>：</p>
+<div class="highlight"><pre><span></span><code>alembic<span class="w"> </span>revision<span class="w"> </span>--autogenerate<span class="w"> </span>-m<span class="w"> </span><span class="s2">"说明文字"</span><span class="w">   </span><span class="c1"># 对比差异，生成脚本（不执行）</span>
+alembic<span class="w"> </span>revision<span class="w"> </span>-m<span class="w"> </span><span class="s2">"说明文字"</span><span class="w">                   </span><span class="c1"># 只给一页空白日志，内容自己写（第 8 节）</span>
+</code></pre></div>
+<p><strong>最小示例</strong>——墨集编辑部提需求：给文章版本记录审稿分。</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 第一步：改模型（第 05 章的姿势）</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ArticleVersion</span><span class="p">(</span><span class="n">Base</span><span class="p">,</span> <span class="n">IDMixin</span><span class="p">,</span> <span class="n">TimestampMixin</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""文章历史版本。"""</span>
+    <span class="o">...</span>
+    <span class="c1"># 新增：审稿分 0.0 ~ 10.0，老行由数据库端补 0</span>
+    <span class="n">review_score</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="n">Decimal</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapped_column</span><span class="p">(</span>
+        <span class="n">Numeric</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">server_default</span><span class="o">=</span><span class="n">text</span><span class="p">(</span><span class="s2">"0"</span><span class="p">)</span>
+    <span class="p">)</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="c1"># 第二步：生成迁移</span>
+alembic<span class="w"> </span>revision<span class="w"> </span>--autogenerate<span class="w"> </span>-m<span class="w"> </span><span class="s2">"add review_score"</span>
+<span class="c1"># Generating '.../versions/b2c3d4e5f6a7_add_review_score.py' ...  done</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="c1"># 第三步：打开生成的脚本审查（demo 同款，略有精简）</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">upgrade</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">op</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span>
+        <span class="s2">"article_version"</span><span class="p">,</span>
+        <span class="n">sa</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
+            <span class="s2">"review_score"</span><span class="p">,</span>
+            <span class="n">sa</span><span class="o">.</span><span class="n">Numeric</span><span class="p">(</span><span class="n">precision</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+            <span class="n">server_default</span><span class="o">=</span><span class="n">sa</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="s2">"0"</span><span class="p">),</span>
+            <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">downgrade</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">op</span><span class="o">.</span><span class="n">drop_column</span><span class="p">(</span><span class="s2">"article_version"</span><span class="p">,</span> <span class="s2">"review_score"</span><span class="p">)</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="c1"># 第四步：确认无误，执行</span>
+alembic<span class="w"> </span>upgrade<span class="w"> </span>head
+</code></pre></div>
+<p>真实生成的脚本里，op 调用被夹在 <code># ### commands auto generated by Alembic - please adjust! ###</code> 两行注释之间——<code>please adjust</code> 的言外之意就是「请审查我」。</p>
+<p><strong>它怎么知道要写什么</strong>：连上数据库反射出实际结构 → 和 <code>target_metadata</code> 里的图纸逐表逐列对比 → 差异翻译成 <code>op</code> 调用。所以第一次跑（数据库还是空的）生成的就是全量建表脚本——demo 里那页 <code>init</code> 就是这么来的。</p>
+<p><strong>存量库怎么接入</strong>：墨集开发库里已经用 <code>create_all</code> 建过表了，两条路——</p>
+<ul>
+<li>干净路线（开发环境）：删掉 schema，autogenerate 生成 <code>init</code> 建表迁移，<code>upgrade head</code> 重新建；</li>
+<li>存量路线（有数据的环境）：先在空库上生成好 <code>init</code> 迁移，再对已有库执行 <code>alembic stamp head</code>——只把进度牌翻到最新页，不真执行脚本（第 9 节）。</li>
+</ul>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li><strong>生成 ≠ 正确</strong>。autogenerate 是初稿不是答案：漏检（第 11 节）和误检都存在，生成后必须逐行审查再执行。</li>
+<li><code>revision</code> 只是「写日志」，没施工；忘了 <code>upgrade</code>，数据库还是老样子。模型、迁移脚本、数据库三样东西要两两对齐。</li>
+<li>改完模型忘了生成迁移，应用却在跑——新列在代码里存在、在库里不存在，一查询就炸。改模型和生成迁移，一个动作拆不开。</li>
+</ul>
+<hr />
+<h2 id="8-手写迁移op-三板斧">8. 手写迁移：<code>op</code> 三板斧</h2>
+<p><strong>作用</strong>：autogenerate 搞不定（改名、改类型）或不放心（数据回填）的场景，自己写。所有结构操作都通过 <code>op</code> 模块——Alembic 的「操作代理」，它负责把你的意图翻译成当前方言的 SQL。</p>
+<h3 id="opadd_column-opdrop_column"><code>op.add_column</code> / <code>op.drop_column</code></h3>
+<p><strong>签名</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="n">op</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">"表名"</span><span class="p">,</span> <span class="n">sa</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="s2">"列名"</span><span class="p">,</span> <span class="n">类型</span><span class="p">,</span> <span class="o">...</span><span class="p">))</span>
+<span class="n">op</span><span class="o">.</span><span class="n">drop_column</span><span class="p">(</span><span class="s2">"表名"</span><span class="p">,</span> <span class="s2">"列名"</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>最小示例</strong>——给已有数据的表加非空列（上一节的真实代码）：</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">upgrade</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="c1"># 表里已有历史版本行：加非空列必须给 server_default 兜底，</span>
+    <span class="c1"># 否则老行的新列填不上，迁移直接炸</span>
+    <span class="n">op</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span>
+        <span class="s2">"article_version"</span><span class="p">,</span>
+        <span class="n">sa</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span>
+            <span class="s2">"review_score"</span><span class="p">,</span>
+            <span class="n">sa</span><span class="o">.</span><span class="n">Numeric</span><span class="p">(</span><span class="n">precision</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+            <span class="n">server_default</span><span class="o">=</span><span class="n">sa</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="s2">"0"</span><span class="p">),</span>
+            <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">downgrade</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">op</span><span class="o">.</span><span class="n">drop_column</span><span class="p">(</span><span class="s2">"article_version"</span><span class="p">,</span> <span class="s2">"review_score"</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="opcreate_table-opdrop_table"><code>op.create_table</code> / <code>op.drop_table</code></h3>
+<p><strong>签名</strong>（高频形态）：</p>
+<div class="highlight"><pre><span></span><code><span class="n">op</span><span class="o">.</span><span class="n">create_table</span><span class="p">(</span>
+    <span class="s2">"表名"</span><span class="p">,</span>
+    <span class="n">sa</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="s2">"id"</span><span class="p">,</span> <span class="n">sa</span><span class="o">.</span><span class="n">Integer</span><span class="p">(),</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+    <span class="n">sa</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="s2">"name"</span><span class="p">,</span> <span class="n">sa</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="n">length</span><span class="o">=</span><span class="mi">50</span><span class="p">),</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+    <span class="n">sa</span><span class="o">.</span><span class="n">PrimaryKeyConstraint</span><span class="p">(</span><span class="s2">"id"</span><span class="p">),</span>
+    <span class="n">sa</span><span class="o">.</span><span class="n">UniqueConstraint</span><span class="p">(</span><span class="s2">"name"</span><span class="p">),</span>
+    <span class="n">sa</span><span class="o">.</span><span class="n">ForeignKeyConstraint</span><span class="p">([</span><span class="s2">"外键列"</span><span class="p">],</span> <span class="p">[</span><span class="s2">"目标表.目标列"</span><span class="p">],</span> <span class="n">ondelete</span><span class="o">=</span><span class="s2">"CASCADE"</span><span class="p">),</span>
+<span class="p">)</span>
+<span class="n">op</span><span class="o">.</span><span class="n">drop_table</span><span class="p">(</span><span class="s2">"表名"</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>最小示例</strong>：墨集五张表的完整建表代码在 demo 的 <code>a1b2c3d4e5f6_init.py</code>——就是这套 API 的堆叠，建表顺序（channel/tag → article → article_tag/article_version）由外键依赖决定。照着读一遍，胜过看十遍文档。</p>
+<h3 id="opexecute跑裸-sql"><code>op.execute</code>：跑裸 SQL</h3>
+<p><strong>签名</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="n">op</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">"任意 SQL 语句"</span><span class="p">)</span>   <span class="c1"># 建表删表之外的活，全靠它</span>
+</code></pre></div>
+<p><strong>最小示例</strong>——加列之后回填历史数据：</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">upgrade</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="c1"># 先以可空形式加列 → 回填 → 再收紧成非空，三步走最稳</span>
+    <span class="n">op</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">"article"</span><span class="p">,</span> <span class="n">sa</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="s2">"word_count"</span><span class="p">,</span> <span class="n">sa</span><span class="o">.</span><span class="n">Integer</span><span class="p">(),</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+    <span class="n">op</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">"UPDATE article SET word_count = 0 WHERE word_count IS NULL"</span><span class="p">)</span>
+    <span class="n">op</span><span class="o">.</span><span class="n">alter_column</span><span class="p">(</span><span class="s2">"article"</span><span class="p">,</span> <span class="s2">"word_count"</span><span class="p">,</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">downgrade</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">op</span><span class="o">.</span><span class="n">drop_column</span><span class="p">(</span><span class="s2">"article"</span><span class="p">,</span> <span class="s2">"word_count"</span><span class="p">)</span>
+</code></pre></div>
+<p>顺手认识 <code>op.alter_column</code>：改列类型、可空性、列名（<code>new_column_name=</code>）都归它管，第 11 节还会出场。</p>
+<p><strong>手写迁移的固定流程</strong>：</p>
+<div class="highlight"><pre><span></span><code>alembic<span class="w"> </span>revision<span class="w"> </span>-m<span class="w"> </span><span class="s2">"backfill word_count"</span><span class="w">   </span><span class="c1"># 拿一页带页码的空白日志</span>
+<span class="c1"># 打开生成的文件，把 upgrade / downgrade 补齐</span>
+alembic<span class="w"> </span>upgrade<span class="w"> </span>head<span class="w">                        </span><span class="c1"># 执行</span>
+</code></pre></div>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li><code>upgrade</code> 和 <code>downgrade</code> 尽量互逆。真不可逆的（如删列），<code>downgrade</code> 里写 <code>pass</code> 也行，但要注释清楚「回不来了」——demo 第三页就是这么做的。</li>
+<li>迁移脚本是<strong>历史快照</strong>，不是活代码：别回头改老脚本去配合新模型，理由见第 12 节军规二。</li>
+<li>新页永远用 <code>alembic revision</code> 生成，别手抄文件（第 6 节的雷）。</li>
+</ul>
+<hr />
+<h2 id="9-干活与回退upgrade-downgrade-查台账">9. 干活与回退：<code>upgrade</code> / <code>downgrade</code> / 查台账</h2>
+<h3 id="alembic-upgrade往后翻日志干活"><code>alembic upgrade</code>：往后翻日志干活</h3>
+<p><strong>作用</strong>：沿版本链向新版本执行迁移。</p>
+<p><strong>签名</strong>：</p>
+<div class="highlight"><pre><span></span><code>alembic<span class="w"> </span>upgrade<span class="w"> </span>head<span class="w">                </span><span class="c1"># 一口气干到最新</span>
+alembic<span class="w"> </span>upgrade<span class="w"> </span>+1<span class="w">                  </span><span class="c1"># 只往前一页</span>
+alembic<span class="w"> </span>upgrade<span class="w"> </span>a1b2c3d4e5f6<span class="w">        </span><span class="c1"># 干到指定页码</span>
+alembic<span class="w"> </span>upgrade<span class="w"> </span>head<span class="w"> </span>--sql<span class="w">           </span><span class="c1"># 只渲染 SQL 打印，不连库（离线模式）</span>
+</code></pre></div>
+<h3 id="alembic-downgrade倒着翻"><code>alembic downgrade</code>：倒着翻</h3>
+<p><strong>作用</strong>：沿版本链向老版本回退，逐页执行每个脚本的 <code>downgrade()</code>。</p>
+<p><strong>签名</strong>：</p>
+<div class="highlight"><pre><span></span><code>alembic<span class="w"> </span>downgrade<span class="w"> </span>-1<span class="w">                </span><span class="c1"># 回退一步</span>
+alembic<span class="w"> </span>downgrade<span class="w"> </span>a1b2c3d4e5f6<span class="w">      </span><span class="c1"># 回退到指定页码</span>
+alembic<span class="w"> </span>downgrade<span class="w"> </span>base<span class="w">              </span><span class="c1"># 全部退光（表删光，慎之又慎）</span>
+</code></pre></div>
+<h3 id="history-current-heads查台账"><code>history</code> / <code>current</code> / <code>heads</code>：查台账</h3>
+<div class="highlight"><pre><span></span><code>alembic<span class="w"> </span><span class="nb">history</span><span class="w">    </span><span class="c1"># 列出日志本每一页（从最新到最老）</span>
+alembic<span class="w"> </span>current<span class="w">   </span><span class="c1"># 数据库现在停在第几页（读 alembic_version 表）</span>
+alembic<span class="w"> </span>heads<span class="w">     </span><span class="c1"># 日志本的最新一页是哪页</span>
+</code></pre></div>
+<p><code>history</code> 的输出示意（格式从简，重点是每页的页码和说明，最新页标 head）：</p>
+<div class="highlight"><pre><span></span><code>c3d4e5f6a7b8 (head)  drop_review_score
+b2c3d4e5f6a7         add_review_score
+a1b2c3d4e5f6         init
+</code></pre></div>
+<p>日常排查的固定反射：<code>current</code> 和 <code>heads</code> 对不对得上——对不上，就是库落后于脚本，该 <code>upgrade</code> 了。</p>
+<h3 id="alembic-stamp只翻牌不施工"><code>alembic stamp</code>：只翻牌，不施工</h3>
+<p><strong>签名</strong>：</p>
+<div class="highlight"><pre><span></span><code>alembic<span class="w"> </span>stamp<span class="w"> </span>head<span class="w">     </span><span class="c1"># 把进度牌直接翻到最新页，不执行任何脚本</span>
+</code></pre></div>
+<p>存量库接入（第 7 节）用它；误删 <code>alembic_version</code> 表后对账也能用它。除此之外别碰——伪造进度等于跳过施工。</p>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li><code>downgrade</code> 是<strong>真删</strong>。<code>downgrade base</code> 会把整条链的表全删掉，回退前看清楚自己站在哪页、要退几页。</li>
+<li>回退之后，<strong>数据库和模型就不一致了</strong>（模型比库新）。这只能是暂时状态——要么重新 <code>upgrade</code> 回去，要么按当前模型生成新迁移对齐，绝不能长期「带伤运行」。</li>
+<li>生产环境执行前，先 <code>alembic current</code> 看清现状，再 <code>alembic history</code> 确认要跨过哪几页，心里有数再动手。</li>
+</ul>
+<hr />
+<h2 id="10-alembic_version-表门口的进度牌">10. <code>alembic_version</code> 表：门口的进度牌</h2>
+<p><strong>作用</strong>：Alembic 在数据库里自动创建的一张表（默认名 <code>alembic_version</code>），只有一列 <code>version_num</code>。它是工地门口的进度牌，回答唯一的问题：<strong>这个库干到第几页了</strong>。</p>
+<div class="highlight"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">alembic_version</span><span class="p">;</span>
+
+<span class="c1">--  version_num</span>
+<span class="c1">-- --------------</span>
+<span class="c1">--  b2c3d4e5f6a7     ← 这个库停在 add_review_score 这页</span>
+</code></pre></div>
+<p><strong>upgrade 的完整动作</strong>，就三步：</p>
+<ol>
+<li>读进度牌，找到当前页码；</li>
+<li>沿版本链从当前页走到目标页，逐页执行脚本的 <code>upgrade()</code>；</li>
+<li>每执行完一页，把牌子上的页码更新成这一页。</li>
+</ol>
+<p><code>downgrade</code> 反着来：从当前页往回走，逐页执行 <code>downgrade()</code>，牌子跟着往回翻。</p>
+<p><strong>多环境同步的本质</strong>就在这块牌子上：开发、测试、生产各有一块自己的进度牌，代码（迁移脚本）却只有一套。测试环境先 <code>upgrade</code> 验证，没问题再让生产 <code>upgrade</code>——同一个版本库，各自前进，永远知道彼此差几页。</p>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li><strong>别手动改、删这张表</strong>。改了等于伪造施工进度：跳页会漏建结构，倒着改会让 Alembic 重复执行已做过的操作。</li>
+<li>重建数据库后忘了跑迁移，应用一启动就报「表不存在」——这是好事，比静默错强多了。</li>
+<li>多库场景（多租户）可以给每个库配不同的 <code>version_table</code> 名字，进阶话题，知道有这回事即可。</li>
+</ul>
+<hr />
+<h2 id="11-autogenerate-的盲区它只是初稿">11. <code>--autogenerate</code> 的盲区：它只是初稿</h2>
+<p>autogenerate 对比的是「模型定义」和「数据库反射结果」，这个对比天生有盲区。按杀伤力排序：</p>
+<p><strong>盲区一：改列类型，常常检测不到。</strong><code>String(50)</code> 改 <code>String(200)</code>、<code>Integer</code> 改 <code>BigInteger</code>，旧版 Alembic 的 <code>compare_type</code> 默认是关的，一声不吭；新版（1.12 起）把它默认打开了，多数类型变化能检出，但「等价类型」的宽容比较、个别方言下的边角差异仍可能漏。稳妥结论：改类型别赌 autogenerate，审查时重点盯，必要时手写：</p>
+<div class="highlight"><pre><span></span><code><span class="n">op</span><span class="o">.</span><span class="n">alter_column</span><span class="p">(</span>
+    <span class="s2">"article"</span><span class="p">,</span> <span class="s2">"title"</span><span class="p">,</span>
+    <span class="n">existing_type</span><span class="o">=</span><span class="n">sa</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="n">length</span><span class="o">=</span><span class="mi">200</span><span class="p">),</span>
+    <span class="n">type_</span><span class="o">=</span><span class="n">sa</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="n">length</span><span class="o">=</span><span class="mi">500</span><span class="p">),</span>
+    <span class="n">existing_nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span>
+</code></pre></div>
+<p><strong>盲区二：改列名 = 删一列加一列。</strong>把 <code>title_snapshot</code> 改名 <code>snapshot_title</code>，autogenerate 生成的是 <code>drop_column</code> + <code>add_column</code>——照着执行，<strong>数据全没</strong>。正确姿势是手写改名：</p>
+<div class="highlight"><pre><span></span><code><span class="n">op</span><span class="o">.</span><span class="n">alter_column</span><span class="p">(</span>
+    <span class="s2">"article_version"</span><span class="p">,</span> <span class="s2">"title_snapshot"</span><span class="p">,</span>
+    <span class="n">new_column_name</span><span class="o">=</span><span class="s2">"snapshot_title"</span><span class="p">,</span>
+    <span class="n">existing_type</span><span class="o">=</span><span class="n">sa</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="n">length</span><span class="o">=</span><span class="mi">200</span><span class="p">),</span>
+<span class="p">)</span>
+</code></pre></div>
+<p><strong>盲区三：<code>server_default</code> 的变化默认不比。</strong><code>compare_server_default</code> 默认关（开了也容易误报），改默认值基本靠手写或人工核对。</p>
+<p><strong>盲区四：只管结构，不管数据。</strong>列加上了，老行的值怎么填？autogenerate 不管——<code>op.execute</code> 回填是自己的活（第 8 节）。</p>
+<p><strong>盲区五：改名表、部分索引、注释等边角。</strong>表改名同样识别为删表建表；一些方言特有的索引变化也未必检出。</p>
+<p>统一成一句话：<strong>autogenerate 给的是「待审查的草稿」，不是「可直接执行的答案」</strong>。生成之后逐行读一遍，是纪律，不是可选项。</p>
+<hr />
+<h2 id="12-迁移纪律四条军规">12. 迁移纪律：四条军规</h2>
+<p><strong>军规一：迁移脚本进版本库。</strong>它和业务代码同等地位——队友拉下代码，<code>alembic upgrade head</code> 一跑，环境就同步了。脚本只躺在某台机器上，等于没有。</p>
+<p><strong>军规二：已执行的脚本是不可变的常量。</strong>上线过的迁移脚本，永远不要回头改。原因：<code>alembic_version</code> 已经记下那页的页码——已执行过的环境（生产）和还没执行的环境（新同事的机器）手里拿着<strong>不同内容的同一页</strong>，链就裂了。发现老脚本有 bug？写一个<strong>新的迁移</strong>去修正它。上一章说模型是图纸，这一章补一条：迁移脚本是<strong>历史档案</strong>，档案只增不改。</p>
+<p><strong>军规三：生产 <code>upgrade</code> 之前，先备份。</strong><code>pg_dump</code> 一分钟，出事有退路。迁移是改结构的操作，再自信的脚本也值得一次备份；改列类型、批量回填这类大动作，先在测试环境完整演练一遍。</p>
+<p><strong>军规四：不可逆操作，三思后行。</strong><code>drop_column</code>、<code>drop_table</code>、缩窄类型，都是「数据跟着走」的操作——<code>downgrade</code> 只能恢复结构，恢复不了数据。执行前问自己三遍：这列的数据真没用了吗？备份导出了吗？能不能先软删除观察一阵？</p>
+<p>日常开发的节奏固定成四拍：</p>
+<div class="highlight"><pre><span></span><code>改模型 → revision --autogenerate → 人肉审查脚本 → upgrade head
+</code></pre></div>
+<p>两个高频追问：</p>
+<ul>
+<li><strong>上线后发现某页迁移有 bug？</strong>不改老脚本（军规二），写新迁移修正：让新迁移把结构对回正确的样子，审查后照常 <code>upgrade</code>。</li>
+<li><strong>什么时候该 downgrade？</strong>尽量别。回滚后库和模型不一致，可能按下葫芦浮起瓢。真要回滚，记得那只是暂时状态，尽快用新的 upgrade 或新迁移对齐。</li>
+</ul>
+<hr />
+<h2 id="13-本章-demomigrations_reference">13. 本章 demo：<code>migrations_reference</code></h2>
+<p>这一章不搭可运行的迁移工程，demo 换成一套「抄得走」的样例：</p>
+<div class="highlight"><pre><span></span><code>demo/migrations_reference/
+├── README.md                             # 起步命令 + 使用说明
+├── env.py                                # 接入墨集模型的 env.py 完整示例
+└── versions/
+    ├── a1b2c3d4e5f6_init.py               # 第一页：建五张表
+    ├── b2c3d4e5f6a7_add_review_score.py    # 第二页：article_version 加审稿分
+    └── c3d4e5f6a7b8_drop_review_score.py   # 第三页：删审稿分（downgrade 演示恢复写法）
+</code></pre></div>
+<p>建议的读法：先读 <code>env.py</code> 对照第 4 节；再按 init → add → drop 的顺序把三个脚本读一遍，配合第 6 节的链图，<code>down_revision</code> 的指向一看就懂。三个文件是真实迁移脚本的完整长相（docstring、revision 字段、upgrade/downgrade 一个不少），照着写自己的不会错。</p>
+<hr />
+<h2 id="14-小结速查">14. 小结速查</h2>
+<table>
+<thead>
+<tr>
+<th>需求</th>
+<th>命令 / 写法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>初始化</td>
+<td><code>alembic init migrations</code></td>
+</tr>
+<tr>
+<td>接入模型</td>
+<td>env.py：<code>target_metadata = Base.metadata</code> + 覆盖 URL（同步驱动）</td>
+</tr>
+<tr>
+<td>自动生成迁移</td>
+<td><code>alembic revision --autogenerate -m "说明"</code></td>
+</tr>
+<tr>
+<td>手写迁移</td>
+<td><code>alembic revision -m "说明"</code>，自己补 upgrade / downgrade</td>
+</tr>
+<tr>
+<td>加列 / 删列</td>
+<td><code>op.add_column("t", sa.Column(...))</code> / <code>op.drop_column("t", "col")</code></td>
+</tr>
+<tr>
+<td>建表 / 删表</td>
+<td><code>op.create_table("t", ...)</code> / <code>op.drop_table("t")</code></td>
+</tr>
+<tr>
+<td>改列</td>
+<td><code>op.alter_column("t", "col", type_=..., new_column_name=...)</code></td>
+</tr>
+<tr>
+<td>跑裸 SQL</td>
+<td><code>op.execute("UPDATE ...")</code></td>
+</tr>
+<tr>
+<td>升级到最新</td>
+<td><code>alembic upgrade head</code></td>
+</tr>
+<tr>
+<td>回退一步</td>
+<td><code>alembic downgrade -1</code></td>
+</tr>
+<tr>
+<td>查历史 / 当前版本 / 最新页</td>
+<td><code>alembic history</code> / <code>alembic current</code> / <code>alembic heads</code></td>
+</tr>
+<tr>
+<td>只翻牌不施工</td>
+<td><code>alembic stamp head</code></td>
+</tr>
+<tr>
+<td>只生成 SQL</td>
+<td><code>alembic upgrade head --sql</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>自测三问</strong>：</p>
+<ol>
+<li><code>create_all</code> 的三个硬伤分别是什么？哪一条让你在生产环境完全没法用？</li>
+<li><code>alembic_version</code> 表里存的是什么？执行 <code>upgrade head</code> 的过程中它是怎么被更新的？</li>
+<li>把模型里的列 <code>title_snapshot</code> 改名 <code>snapshot_title</code>，直接跑 <code>--autogenerate</code> 会生成什么？有什么后果？正确的做法是什么？</li>
+</ol>
+<p>数据库这条线到此收口：连接、会话、建模、查询、迁移都齐了。下一章回到 FastAPI 本身——依赖注入：路由函数之外，怎么把「每个接口都要用的东西」优雅地送进去。</p>
+<hr />
+<p><strong>下一章</strong>：<a href="../backend/08-yi-lai-zhu-ru.html">08 · 依赖注入</a></p></div>
+
+      </article>
+<nav class="pager"><a class="pg-card pg-prev" href="../backend/06-sql-biao-da-shi-yu-shu-ju-cao-zuo.html"><span class="pg-label">← 上一篇</span><span class="pg-title">SQL 表达式与数据操作</span><span class="pg-mod">Python 框架指南</span></a><a class="pg-card pg-next" href="../backend/08-yi-lai-zhu-ru.html"><span class="pg-label">下一篇 →</span><span class="pg-title">依赖注入</span><span class="pg-mod">Python 框架指南</span></a></nav>
+    </div>
+    <footer class="foot">
+      <span>深栈 DeepStack · AI Agent 工程师转型训练营配套文档</span>
+    </footer>
+  </main>
+<nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#1-先算旧账create_all-到底缺什么">1. 先算旧账：create_all 到底缺什么</a><a class="toc-link toc-h2" href="#2-施工队进场安装与-alembic-init">2. 施工队进场：安装与 alembic init</a><a class="toc-link toc-h2" href="#3-alembicini队里的制度手册">3. alembic.ini：队里的制度手册</a><a class="toc-link toc-h2" href="#4-envpy现场指挥部本章唯一要大改的文件">4. env.py：现场指挥部（本章唯一要大改的文件）</a><a class="toc-link toc-h2" href="#5-scriptpymako空白日志页的模板">5. script.py.mako：空白日志页的模板</a><a class="toc-link toc-h2" href="#6-versions日志本与页码链">6. versions/：日志本与页码链</a><a class="toc-link toc-h2" href="#7-生成迁移revision-autogenerate">7. 生成迁移：revision --autogenerate</a><a class="toc-link toc-h2" href="#8-手写迁移op-三板斧">8. 手写迁移：op 三板斧</a><a class="toc-link toc-h3" href="#opadd_column-opdrop_column">op.add_column / op.drop_column</a><a class="toc-link toc-h3" href="#opcreate_table-opdrop_table">op.create_table / op.drop_table</a><a class="toc-link toc-h3" href="#opexecute跑裸-sql">op.execute：跑裸 SQL</a><a class="toc-link toc-h2" href="#9-干活与回退upgrade-downgrade-查台账">9. 干活与回退：upgrade / downgrade / 查台账</a><a class="toc-link toc-h3" href="#alembic-upgrade往后翻日志干活">alembic upgrade：往后翻日志干活</a><a class="toc-link toc-h3" href="#alembic-downgrade倒着翻">alembic downgrade：倒着翻</a><a class="toc-link toc-h3" href="#history-current-heads查台账">history / current / heads：查台账</a><a class="toc-link toc-h3" href="#alembic-stamp只翻牌不施工">alembic stamp：只翻牌，不施工</a><a class="toc-link toc-h2" href="#10-alembic_version-表门口的进度牌">10. alembic_version 表：门口的进度牌</a><a class="toc-link toc-h2" href="#11-autogenerate-的盲区它只是初稿">11. --autogenerate 的盲区：它只是初稿</a><a class="toc-link toc-h2" href="#12-迁移纪律四条军规">12. 迁移纪律：四条军规</a><a class="toc-link toc-h2" href="#13-本章-demomigrations_reference">13. 本章 demo：migrations_reference</a><a class="toc-link toc-h2" href="#14-小结速查">14. 小结速查</a></nav>
+</div>
+<div class="sb-mask" id="sbMask"></div>
+<script src="../assets/app.js"></script>
+</body>
+</html>

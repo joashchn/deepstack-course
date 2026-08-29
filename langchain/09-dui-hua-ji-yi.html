@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>09 · 对话记忆 · 深栈 DeepStack 课程文档</title>
+<meta name="description" content="本章配套可运行示例：demo/demomemory.py。demo 从「手动维护 messages 列表」起步，一路跑到多会话隔离、trimmessages 开窗、摘要压缩、JSON 原子化持久化；本机没启动 Ollam…">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%23d9c39a' text-anchor='middle'%3EDS%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+<div class="progress" id="progress"></div>
+
+<div class="layout">
+<aside class="sidebar" id="sidebar">
+  <div class="sb-head">
+    <a class="brand" href="../index.html">
+      <span class="brand-mark">DS</span>
+      <span class="brand-text"><b>深栈 DeepStack</b><i>AI Agent 工程师转型训练营</i></span>
+    </a>
+    <button class="sb-close" id="sbClose" aria-label="关闭目录">✕</button>
+  </div>
+  <div class="sb-search"><input type="search" id="searchInput" placeholder="搜索 123 篇文档… ( / )" autocomplete="off">
+    <div class="sb-results" id="searchResults"></div></div>
+  <nav class="sb-nav">
+    <section class="sb-group" data-mod="python">
+      <a class="sb-group-title" href="../modules/python.html" data-toggle="python">
+        <span class="sb-num">01</span>
+        <span class="sb-group-text"><b>Python 与数据实践</b><i>31 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../python/01-huan-jing-da-jian-yu-ban-ben-guan-li.html"><span class="sb-item-num">01</span><span class="sb-item-title">环境搭建与版本管理</span></a>
+        <a class="sb-item" href="../python/02-bian-liang-biao-da-shi-yu-liu-cheng-kong-zhi.html"><span class="sb-item-num">02</span><span class="sb-item-title">变量、表达式与流程控制</span></a>
+        <a class="sb-item" href="../python/03-xu-lie-zi-dian-yu-ji-he.html"><span class="sb-item-num">03</span><span class="sb-item-title">序列、字典与集合</span></a>
+        <a class="sb-item" href="../python/04-han-shu-she-ji-yu-lambda.html"><span class="sb-item-num">04</span><span class="sb-item-title">函数设计与 lambda</span></a>
+        <a class="sb-item" href="../python/05-zuo-yong-yu-gui-ze-yu-bi-bao.html"><span class="sb-item-num">05</span><span class="sb-item-title">作用域规则与闭包</span></a>
+        <a class="sb-item" href="../python/06-lei-de-ding-yi-yu-shi-li-hua.html"><span class="sb-item-num">06</span><span class="sb-item-title">类的定义与实例化</span></a>
+        <a class="sb-item" href="../python/07-lei-xing-pan-ding-yu-chou-xiang-ji-lei.html"><span class="sb-item-num">07</span><span class="sb-item-title">类型判定与抽象基类</span></a>
+        <a class="sb-item" href="../python/08-mo-shu-fang-fa-quan-jing.html"><span class="sb-item-num">08</span><span class="sb-item-title">魔术方法全景</span></a>
+        <a class="sb-item" href="../python/09-miao-shu-fu-yu-yuan-lei.html"><span class="sb-item-num">09</span><span class="sb-item-title">描述符与元类</span></a>
+        <a class="sb-item" href="../python/10-zhuang-shi-qi.html"><span class="sb-item-num">10</span><span class="sb-item-title">装饰器</span></a>
+        <a class="sb-item" href="../python/11-die-dai-xie-yi-yu-sheng-cheng-qi.html"><span class="sb-item-num">11</span><span class="sb-item-title">迭代协议与生成器</span></a>
+        <a class="sb-item" href="../python/12-with-yu-shang-xia-wen-xie-yi.html"><span class="sb-item-num">12</span><span class="sb-item-title">with 与上下文协议</span></a>
+        <a class="sb-item" href="../python/13-yi-chang-ti-xi-yu-chu-li.html"><span class="sb-item-num">13</span><span class="sb-item-title">异常体系与处理</span></a>
+        <a class="sb-item" href="../python/14-lei-xing-biao-zhu.html"><span class="sb-item-num">14</span><span class="sb-item-title">类型标注</span></a>
+        <a class="sb-item" href="../python/15-mo-kuai-yu-bao-de-zu-zhi.html"><span class="sb-item-num">15</span><span class="sb-item-title">模块与包的组织</span></a>
+        <a class="sb-item" href="../python/16-biao-zhun-ku-xun-li.html"><span class="sb-item-num">16</span><span class="sb-item-title">标准库巡礼</span></a>
+        <a class="sb-item" href="../python/17-yi-lai-guan-li-yu-di-san-fang-ku.html"><span class="sb-item-num">17</span><span class="sb-item-title">依赖管理与第三方库</span></a>
+        <a class="sb-item" href="../python/18-xian-cheng-yu-jin-cheng.html"><span class="sb-item-num">18</span><span class="sb-item-title">线程与进程</span></a>
+        <a class="sb-item" href="../python/19-shi-jian-xun-huan.html"><span class="sb-item-num">19</span><span class="sb-item-title">事件循环</span></a>
+        <a class="sb-item" href="../python/20-future-yu-xie-cheng.html"><span class="sb-item-num">20</span><span class="sb-item-title">Future 与协程</span></a>
+        <a class="sb-item" href="../python/21-asyncio-shi-zhan.html"><span class="sb-item-num">21</span><span class="sb-item-title">asyncio 实战</span></a>
+        <a class="sb-item" href="../python/22-gou-jian-yu-fa-bu.html"><span class="sb-item-num">22</span><span class="sb-item-title">构建与发布</span></a>
+        <a class="sb-item" href="../python/23-gong-cheng-hua-gong-ju-lian.html"><span class="sb-item-num">23</span><span class="sb-item-title">工程化工具链</span></a>
+        <a class="sb-item" href="../python/24-monorepo-yu-tiao-shi.html"><span class="sb-item-num">24</span><span class="sb-item-title">monorepo 与调试</span></a>
+        <a class="sb-item" href="../python/25-jupyter-jiao-hu-huan-jing.html"><span class="sb-item-num">25</span><span class="sb-item-title">Jupyter 交互环境</span></a>
+        <a class="sb-item" href="../python/26-numpy-shu-zu-yu-xiang-liang-hua.html"><span class="sb-item-num">26</span><span class="sb-item-title">NumPy 数组与向量化</span></a>
+        <a class="sb-item" href="../python/27-pandas-shu-ju-jie-gou.html"><span class="sb-item-num">27</span><span class="sb-item-title">Pandas 数据结构</span></a>
+        <a class="sb-item" href="../python/28-pandas-shu-ju-qing-xi.html"><span class="sb-item-num">28</span><span class="sb-item-title">Pandas 数据清洗</span></a>
+        <a class="sb-item" href="../python/29-matplotlib-hui-tu-ti-xi.html"><span class="sb-item-num">29</span><span class="sb-item-title">Matplotlib 绘图体系</span></a>
+        <a class="sb-item" href="../python/30-matplotlib-dong-hua-yu-jiao-hu.html"><span class="sb-item-num">30</span><span class="sb-item-title">Matplotlib 动画与交互</span></a>
+        <a class="sb-item" href="../python/31-seaborn-tong-ji-ke-shi-hua.html"><span class="sb-item-num">31</span><span class="sb-item-title">Seaborn 统计可视化</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="agent">
+      <a class="sb-group-title" href="../modules/agent.html" data-toggle="agent">
+        <span class="sb-num">02</span>
+        <span class="sb-group-text"><b>Agent 核心</b><i>15 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../agent/01-token-yu-ci-qian-ru.html"><span class="sb-item-num">01</span><span class="sb-item-title">Token 与词嵌入</span></a>
+        <a class="sb-item" href="../agent/02-qian-xiang-chuan-bo-yu-fan-xiang-chuan-bo.html"><span class="sb-item-num">02</span><span class="sb-item-title">前向传播与反向传播</span></a>
+        <a class="sb-item" href="../agent/03-zhu-yi-li-ji-zhi-yu-transformer-jia-gou.html"><span class="sb-item-num">03</span><span class="sb-item-title">注意力机制与 Transformer 架构</span></a>
+        <a class="sb-item" href="../agent/04-yu-xun-lian-rlhf-yu-cai-yang-kv-cache.html"><span class="sb-item-num">04</span><span class="sb-item-title">预训练、RLHF 与采样（KV Cache）</span></a>
+        <a class="sb-item" href="../agent/05-ben-di-mo-xing-yu-xiao-xi-jie-gou.html"><span class="sb-item-num">05</span><span class="sb-item-title">本地模型与消息结构</span></a>
+        <a class="sb-item" href="../agent/06-hui-hua-guan-li-yu-json-shu-chu.html"><span class="sb-item-num">06</span><span class="sb-item-title">会话管理与 JSON 输出</span></a>
+        <a class="sb-item" href="../agent/07-tool-calling-xie-yi-yu-feng-zhuang.html"><span class="sb-item-num">07</span><span class="sb-item-title">Tool Calling：协议与封装</span></a>
+        <a class="sb-item" href="../agent/08-react-mo-shi-yu-zhu-xun-huan.html"><span class="sb-item-num">08</span><span class="sb-item-title">ReAct 模式与主循环</span></a>
+        <a class="sb-item" href="../agent/09-shi-zhan-deep-research-agent.html"><span class="sb-item-num">09</span><span class="sb-item-title">实战：Deep Research Agent</span></a>
+        <a class="sb-item" href="../agent/10-skill-yu-jian-jin-shi-pi-lu.html"><span class="sb-item-num">10</span><span class="sb-item-title">Skill 与渐进式披露</span></a>
+        <a class="sb-item" href="../agent/11-mcp-quan-jing.html"><span class="sb-item-num">11</span><span class="sb-item-title">MCP 全景</span></a>
+        <a class="sb-item" href="../agent/12-duo-agent-yu-xuan-xing-ce-lve.html"><span class="sb-item-num">12</span><span class="sb-item-title">多 Agent 与选型策略</span></a>
+        <a class="sb-item" href="../agent/13-ti-shi-ci-gong-cheng-yu-shang-xia-wen-gong.html"><span class="sb-item-num">13</span><span class="sb-item-title">提示词工程与上下文工程</span></a>
+        <a class="sb-item" href="../agent/14-xun-huan-tu-yu-gu-jia-gong-cheng.html"><span class="sb-item-num">14</span><span class="sb-item-title">循环、图与骨架工程</span></a>
+        <a class="sb-item" href="../agent/15-ji-yi-quan-xian-yu-ping-ce.html"><span class="sb-item-num">15</span><span class="sb-item-title">记忆、权限与评测</span></a>
+      </div>
+    </section>
+    <section class="sb-group open" data-mod="langchain">
+      <a class="sb-group-title" href="../modules/langchain.html" data-toggle="langchain">
+        <span class="sb-num">03</span>
+        <span class="sb-group-text"><b>LangChain 指南</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langchain/01-ren-shi-langchain.html"><span class="sb-item-num">01</span><span class="sb-item-title">认识 LangChain</span></a>
+        <a class="sb-item" href="../langchain/02-ti-shi-ci-mu-ban-yu-xiao-xi.html"><span class="sb-item-num">02</span><span class="sb-item-title">提示词模板与消息</span></a>
+        <a class="sb-item" href="../langchain/03-lcel-yu-runnable.html"><span class="sb-item-num">03</span><span class="sb-item-title">LCEL 与 Runnable</span></a>
+        <a class="sb-item" href="../langchain/04-liu-shi-yu-bing-fa.html"><span class="sb-item-num">04</span><span class="sb-item-title">流式与并发</span></a>
+        <a class="sb-item" href="../langchain/05-shu-chu-jie-xi-qi.html"><span class="sb-item-num">05</span><span class="sb-item-title">输出解析器</span></a>
+        <a class="sb-item" href="../langchain/06-wen-dang-jia-zai-yu-qie-ge.html"><span class="sb-item-num">06</span><span class="sb-item-title">文档加载与切割</span></a>
+        <a class="sb-item" href="../langchain/07-qian-ru-yu-xiang-liang-ku.html"><span class="sb-item-num">07</span><span class="sb-item-title">嵌入与向量库</span></a>
+        <a class="sb-item" href="../langchain/08-jian-suo-yu-rag.html"><span class="sb-item-num">08</span><span class="sb-item-title">检索与RAG</span></a>
+        <a class="sb-item current" href="../langchain/09-dui-hua-ji-yi.html"><span class="sb-item-num">09</span><span class="sb-item-title">对话记忆</span></a>
+        <a class="sb-item" href="../langchain/10-gong-ju-diao-yong.html"><span class="sb-item-num">10</span><span class="sb-item-title">工具调用</span></a>
+        <a class="sb-item" href="../langchain/11-agent.html"><span class="sb-item-num">11</span><span class="sb-item-title">Agent</span></a>
+        <a class="sb-item" href="../langchain/12-hui-diao-yu-tiao-shi-quan-ke-cheng-shou-guan.html"><span class="sb-item-num">12</span><span class="sb-item-title">回调与调试（全课程收官章）</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="langgraph">
+      <a class="sb-group-title" href="../modules/langgraph.html" data-toggle="langgraph">
+        <span class="sb-num">04</span>
+        <span class="sb-group-text"><b>LangGraph 框架指南</b><i>17 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langgraph/01-di-1-zhang-cong-yi-ge-shi-kong-de-jiao.html"><span class="sb-item-num">01</span><span class="sb-item-title">第 1 章 从一个失控的脚本说起</span></a>
+        <a class="sb-item" href="../langgraph/02-di-2-zhang-zui-xiao-ke-yun-xing-tu.html"><span class="sb-item-num">02</span><span class="sb-item-title">第 2 章 最小可运行图</span></a>
+        <a class="sb-item" href="../langgraph/03-di-3-zhang-zhuang-tai-tu-de-shu-ju-xin.html"><span class="sb-item-num">03</span><span class="sb-item-title">第 3 章 状态：图的数据心脏</span></a>
+        <a class="sb-item" href="../langgraph/04-di-4-zhang-rang-liu-cheng-xue-hui-jue-ce.html"><span class="sb-item-num">04</span><span class="sb-item-title">第 4 章 让流程学会决策</span></a>
+        <a class="sb-item" href="../langgraph/05-di-5-zhang-bing-xing-shi-jie-chao-bu-zhi.html"><span class="sb-item-num">05</span><span class="sb-item-title">第 5 章 并行世界：超步执行模型</span></a>
+        <a class="sb-item" href="../langgraph/06-di-6-zhang-command-ba-kong-zhi-quan-jiao-jin.html"><span class="sb-item-num">06</span><span class="sb-item-title">第 6 章 Command：把控制权交进节点</span></a>
+        <a class="sb-item" href="../langgraph/07-di-7-zhang-dong-tai-bing-xing-send-yu-mapreduce.html"><span class="sb-item-num">07</span><span class="sb-item-title">第 7 章 动态并行：Send 与 MapReduce</span></a>
+        <a class="sb-item" href="../langgraph/08-di-8-zhang-gei-tu-zhuang-shang-shou-jiao-gong.html"><span class="sb-item-num">08</span><span class="sb-item-title">第 8 章 给图装上手脚：工具调用</span></a>
+        <a class="sb-item" href="../langgraph/09-di-9-zhang-fu-yong-yu-feng-zhuang-zi-tu.html"><span class="sb-item-num">09</span><span class="sb-item-title">第 9 章 复用与封装：子图</span></a>
+        <a class="sb-item" href="../langgraph/10-di-10-zhang-cong-dan-tu-dao-tuan-dui-duo.html"><span class="sb-item-num">10</span><span class="sb-item-title">第 10 章 从单图到团队：多 Agent 架构</span></a>
+        <a class="sb-item" href="../langgraph/11-di-11-zhang-liu-shi-shu-chu.html"><span class="sb-item-num">11</span><span class="sb-item-title">第 11 章 流式输出</span></a>
+        <a class="sb-item" href="../langgraph/12-di-12-zhang-chi-jiu-hua-checkpointer-yu-xian-cheng.html"><span class="sb-item-num">12</span><span class="sb-item-title">第 12 章 持久化：Checkpointer 与线程</span></a>
+        <a class="sb-item" href="../langgraph/13-di-13-zhang-shi-jian-lv-xing.html"><span class="sb-item-num">13</span><span class="sb-item-title">第 13 章 时间旅行</span></a>
+        <a class="sb-item" href="../langgraph/14-di-14-zhang-zhong-duan-yu-ren-zai-hui-lu.html"><span class="sb-item-num">14</span><span class="sb-item-title">第 14 章 中断与人在回路</span></a>
+        <a class="sb-item" href="../langgraph/15-di-15-zhang-ji-yi-guan-li.html"><span class="sb-item-num">15</span><span class="sb-item-title">第 15 章 记忆管理</span></a>
+        <a class="sb-item" href="../langgraph/16-di-16-zhang-rong-cuo-zhong-shi-chao-shi-yu.html"><span class="sb-item-num">16</span><span class="sb-item-title">第 16 章 容错：重试、超时与兜底</span></a>
+        <a class="sb-item" href="../langgraph/17-di-17-zhang-quan-jing-hui-gu.html"><span class="sb-item-num">17</span><span class="sb-item-title">第 17 章 全景回顾</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="backend">
+      <a class="sb-group-title" href="../modules/backend.html" data-toggle="backend">
+        <span class="sb-num">05</span>
+        <span class="sb-group-text"><b>Python 框架指南</b><i>14 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../backend/01-fastapi-ru-men-yu-asgi.html"><span class="sb-item-num">01</span><span class="sb-item-title">FastAPI 入门与 ASGI</span></a>
+        <a class="sb-item" href="../backend/02-lu-you-yu-qing-qiu-xiang-ying.html"><span class="sb-item-num">02</span><span class="sb-item-title">路由与请求响应</span></a>
+        <a class="sb-item" href="../backend/03-pydantic-shu-ju-jiao-yan-yu-pei-zhi.html"><span class="sb-item-num">03</span><span class="sb-item-title">Pydantic 数据校验与配置</span></a>
+        <a class="sb-item" href="../backend/04-sqlalchemy-yi-bu-yin-qing-yu-hui-hua.html"><span class="sb-item-num">04</span><span class="sb-item-title">SQLAlchemy 异步引擎与会话</span></a>
+        <a class="sb-item" href="../backend/05-orm-jian-mo.html"><span class="sb-item-num">05</span><span class="sb-item-title">ORM 建模</span></a>
+        <a class="sb-item" href="../backend/06-sql-biao-da-shi-yu-shu-ju-cao-zuo.html"><span class="sb-item-num">06</span><span class="sb-item-title">SQL 表达式与数据操作</span></a>
+        <a class="sb-item" href="../backend/07-alembic-shu-ju-qian-yi.html"><span class="sb-item-num">07</span><span class="sb-item-title">Alembic 数据迁移</span></a>
+        <a class="sb-item" href="../backend/08-yi-lai-zhu-ru.html"><span class="sb-item-num">08</span><span class="sb-item-title">依赖注入</span></a>
+        <a class="sb-item" href="../backend/09-tong-yi-yi-chang-chu-li.html"><span class="sb-item-num">09</span><span class="sb-item-title">统一异常处理</span></a>
+        <a class="sb-item" href="../backend/10-zhong-jian-jian.html"><span class="sb-item-num">10</span><span class="sb-item-title">中间件</span></a>
+        <a class="sb-item" href="../backend/11-ren-zheng-yu-jwt.html"><span class="sb-item-num">11</span><span class="sb-item-title">认证与 JWT</span></a>
+        <a class="sb-item" href="../backend/12-pytest-ce-shi.html"><span class="sb-item-num">12</span><span class="sb-item-title">pytest 测试</span></a>
+        <a class="sb-item" href="../backend/13-ri-zhi-loguru.html"><span class="sb-item-num">13</span><span class="sb-item-title">日志 loguru</span></a>
+        <a class="sb-item" href="../backend/14-liu-shi-xiang-ying-sse-yu-websocket.html"><span class="sb-item-num">14</span><span class="sb-item-title">流式响应 SSE 与 WebSocket</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="interview">
+      <a class="sb-group-title" href="../modules/interview.html" data-toggle="interview">
+        <span class="sb-num">06</span>
+        <span class="sb-group-text"><b>面试题库</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../interview/01-llm-yuan-li-pian.html"><span class="sb-item-num">01</span><span class="sb-item-title">LLM 原理篇</span></a>
+        <a class="sb-item" href="../interview/02-rag-yu-jian-suo-pian.html"><span class="sb-item-num">02</span><span class="sb-item-title">RAG 与检索篇</span></a>
+        <a class="sb-item" href="../interview/03-agent-he-xin-pian.html"><span class="sb-item-num">03</span><span class="sb-item-title">Agent 核心篇</span></a>
+        <a class="sb-item" href="../interview/04-langgraph-pian.html"><span class="sb-item-num">04</span><span class="sb-item-title">LangGraph 篇</span></a>
+        <a class="sb-item" href="../interview/05-langchain-pian.html"><span class="sb-item-num">05</span><span class="sb-item-title">LangChain 篇</span></a>
+        <a class="sb-item" href="../interview/06-xi-tong-she-ji-pian.html"><span class="sb-item-num">06</span><span class="sb-item-title">系统设计篇</span></a>
+        <a class="sb-item" href="../interview/07-xiang-mu-shen-wa-pian.html"><span class="sb-item-num">07</span><span class="sb-item-title">项目深挖篇</span></a>
+        <a class="sb-item" href="../interview/08-gu-zhang-pai-cha-pian.html"><span class="sb-item-num">08</span><span class="sb-item-title">故障排查篇</span></a>
+        <a class="sb-item" href="../interview/09-python-ji-chu-pian.html"><span class="sb-item-num">09</span><span class="sb-item-title">Python 基础篇</span></a>
+        <a class="sb-item" href="../interview/10-fastapi-yu-hou-duan-pian.html"><span class="sb-item-num">10</span><span class="sb-item-title">FastAPI 与后端篇</span></a>
+        <a class="sb-item" href="../interview/11-ti-shi-ci-gong-cheng-yu-an-quan-pian.html"><span class="sb-item-num">11</span><span class="sb-item-title">提示词工程与安全篇</span></a>
+        <a class="sb-item" href="../interview/12-mo-xing-xuan-xing-yu-jiang-ben-pian.html"><span class="sb-item-num">12</span><span class="sb-item-title">模型选型与降本篇</span></a>
+      </div>
+    </section>
+  </nav>
+</aside>
+  <main class="main">
+    <header class="topbar">
+      <button class="menu-btn" id="menuBtn" aria-label="目录">☰</button>
+      <div class="crumbs"><a href="../index.html">首页</a><span>/</span><a href="../modules/langchain.html">LangChain 指南</a><span>/</span><span class="cur">对话记忆</span></div>
+      <div class="topbar-actions">
+        <button class="icon-btn" id="themeBtn" title="切换深浅色" aria-label="切换深浅色">◐</button>
+      </div>
+    </header>
+    <div class="content">
+      <article class="article">
+
+<header class="page-head">
+  <div class="page-kicker">LangChain 指南 · 第 09 章</div>
+  <h1 class="page-title">对话记忆</h1>
+  <p class="page-desc">本章配套可运行示例：demo/demomemory.py。demo 从「手动维护 messages 列表」起步，一路跑到多会话隔离、trimmessages 开窗、摘要压缩、JSON 原子化持久化；本机没启动 Ollam…</p>
+  <div class="page-meta">
+    <span>约 38 分钟</span><span>15,158 字</span><span>14 个代码示例</span>
+  </div>
+</header>
+<div class="md"><blockquote>
+<p>本章配套可运行示例：<a href="../code/langchain/09--dui-hua-ji-yi/demo/demo_memory.py">demo/demo_memory.py</a>。demo 从「手动维护 messages 列表」起步，一路跑到多会话隔离、<code>trim_messages</code> 开窗、摘要压缩、JSON 原子化持久化；本机没启动 Ollama 时自动降级——店员回复换成内置剧本、摘要换成截断式假摘要，历史管理逻辑全程照样跑。</p>
+<p><strong>本章你将学会</strong></p>
+<ul>
+<li>记忆的真相：模型没有记性，<code>messages</code> 列表才是记性——每轮对话都是把整本记录重新递给模型</li>
+<li>手动维护历史的三步循环：入账 → 调用 → 回账，以及把它封装成三行代码的 <code>chat()</code> 函数</li>
+<li>多会话管理：<code>dict[session_id, list]</code>，别让小雅和小周的记录本串台</li>
+<li><code>trim_messages</code>：按条数或 token 数开一扇滑动的窗，<code>include_system</code> 保人设、<code>start_on</code> 保合法开头</li>
+<li>长程记忆：手写摘要链，把几十条旧消息压成一张「便签」，渐进式摘要的失真怎么防</li>
+<li>持久化：<code>messages_to_dict</code> / <code>messages_from_dict</code> + 临时文件 + <code>os.replace</code> 原子写入</li>
+<li>第三方存储：什么时候该把记忆从 JSON 文件搬进 Redis / Postgres（概念）</li>
+<li>一张「老 API → 1.x 新做法」对照表——看老教程时看到 <code>ConversationBufferMemory</code> 不再迷路</li>
+</ul>
+</blockquote>
+<p><a href="../langchain/08-jian-suo-yu-rag.html">第 08 章</a>结尾留了一个缺口：读者每次提问都是孤立的。「接着刚才说的，那借期呢？」——RAG 链答不上来，因为上一轮聊过什么，它一无所知。本章补上这块拼图。</p>
+<p><strong>比喻</strong>：拾光书屋有位店员，业务水平一流，但记性只有七秒——你上句话说完，他已经忘了。幸运的是，他有个好习惯：只要开口前有人把「对话记录本」摊在他面前，他就能接着上文聊得头头是道。所谓「模型有记忆」，从来不是模型自己记住了什么，而是<strong>你的程序每次都把整本记录重新递过去</strong>。本章讲的全是这本记录本的学问：怎么记（列表）、怎么翻（裁剪）、怎么缩（摘要）、怎么存（持久化）。</p>
+<p>一条主线看全貌：</p>
+<div class="highlight"><pre><span></span><code>用户发言 ──► messages.append(HumanMessage)     入账
+                │
+                ▼
+        model.invoke(messages)                  整本记录递给模型
+                │
+                ▼
+        messages.append(reply)                  回账
+                │
+        ┌───────┴────────┐
+        ▼                ▼
+  记录太厚了？      进程要重启了？
+  trim_messages     save_messages（JSON）
+  （窗口裁剪）      （原子写入）
+        │
+        ▼
+  窗口丢信息？
+  摘要压缩（旧消息 → 便签）
+</code></pre></div>
+<p><strong>技术基线</strong>：Python + LangChain 1.x（<code>langchain</code> + <code>langchain-ollama</code>），本地 Ollama 跑 <code>qwen3:4b</code>。没装的话回 <a href="../langchain/01-ren-shi-langchain.html">第 01 章</a>看环境准备。</p>
+<p>后面示例共用一份起步代码：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.messages</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnyMessage</span><span class="p">,</span> <span class="n">HumanMessage</span><span class="p">,</span> <span class="n">SystemMessage</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain_ollama</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChatOllama</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">ChatOllama</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="s2">"qwen3:4b"</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">reasoning</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="n">system</span> <span class="o">=</span> <span class="n">SystemMessage</span><span class="p">(</span><span class="s2">"你是拾光书屋的店员，语气亲切，回答简洁。"</span><span class="p">)</span>
+</code></pre></div>
+<hr />
+<h2 id="1-记忆的真相模型没记性列表才是记性">1. 记忆的真相：模型没记性，列表才是记性</h2>
+<p><strong>比喻</strong>：把大模型想成一位「按页收费」的超强临时工。你递一页纸，他看一页纸——纸上是五分钟前聊的还是五年前聊的，对他毫无区别；纸上没有的内容，他就当没发生过。<code>messages</code> 列表就是你递过去的这沓纸。</p>
+<p><strong>作用</strong>：从根上理解「对话历史 = 消息列表」。模型每次调用都是无状态的：上一轮你告诉它会员号 2048，这一轮不递，它就不知道。所以「记住」的唯一办法，就是每一轮把从对话开始到现在的所有消息，原封不动地重新递一遍。</p>
+<p><strong>签名</strong>（<code>invoke</code> 的输入类型，记忆能跑起来的关键）：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># BaseChatModel.invoke 接受三类输入：</span>
+<span class="n">model</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span><span class="s2">"你好"</span><span class="p">)</span>                          <span class="c1"># 1. 纯字符串（当成一条 human 消息）</span>
+<span class="n">model</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span><span class="n">HumanMessage</span><span class="p">(</span><span class="s2">"你好"</span><span class="p">))</span>            <span class="c1"># 2. 单条消息</span>
+<span class="n">model</span><span class="o">.</span><span class="n">invoke</span><span class="p">([</span><span class="n">system</span><span class="p">,</span> <span class="n">HumanMessage</span><span class="p">(</span><span class="s2">"你好"</span><span class="p">)])</span>  <span class="c1"># 3. 消息列表 ← 对话记忆走的是这扇门</span>
+</code></pre></div>
+<p>消息列表里的常驻角色（<a href="../langchain/02-ti-shi-ci-mu-ban-yu-xiao-xi.html">第 02 章</a>的旧相识）：</p>
+<ul>
+<li><code>SystemMessage</code>：店员守则——人设、规矩，一般放列表开头</li>
+<li><code>HumanMessage</code>：用户发言</li>
+<li><code>AIMessage</code>：模型回复</li>
+</ul>
+<p><strong>最小示例</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.messages</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnyMessage</span><span class="p">,</span> <span class="n">HumanMessage</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain_ollama</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChatOllama</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">ChatOllama</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="s2">"qwen3:4b"</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">reasoning</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="c1"># 一切记忆，从这一个列表开始</span>
+<span class="n">messages</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">AnyMessage</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="c1"># 第 1 轮</span>
+<span class="n">messages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">HumanMessage</span><span class="p">(</span><span class="s2">"你好，我是小雅，刚办了拾光书屋的年卡，会员号 2048"</span><span class="p">))</span>
+<span class="n">reply</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span><span class="n">messages</span><span class="p">)</span>   <span class="c1"># 把「到目前为止的整本记录」递给模型</span>
+<span class="n">messages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">reply</span><span class="p">)</span>           <span class="c1"># invoke 的返回值就是 AIMessage，直接归档</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">reply</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+
+<span class="c1"># 第 2 轮：不传字符串，传整个列表</span>
+<span class="n">messages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">HumanMessage</span><span class="p">(</span><span class="s2">"你知道我的会员号吗？"</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span><span class="n">messages</span><span class="p">)</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>   <span class="c1"># 能答上 2048——不是它记性好，是记录本递全了</span>
+</code></pre></div>
+<p>注意第 1 轮那个顺手的小细节：<code>model.invoke(messages)</code> 的返回值<strong>本身就是 <code>AIMessage</code></strong>，直接 <code>append</code> 回列表即可，不需要再手动包一层。这是 Python 版比其他语言版本省事的地方之一。</p>
+<p>顺带一提：<code>model.stream(messages)</code> 的输入规则完全相同——第 04 章学的流式本领对「带记忆的对话」照常生效，把 <code>invoke</code> 换成 <code>stream</code>、把分片拼成完整回复再归档就行。</p>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li><strong>忘了回账</strong>：调完 <code>invoke</code> 拿到回复，只顾着 print，忘了 <code>messages.append(reply)</code>。下一轮模型立刻「失忆」——这是新手对话代码排第一的 bug。</li>
+<li><strong>把历史拼成一大坨字符串</strong>：<code>"用户：我叫小雅\nAI：你好\n用户：……"</code> 这种手工拼接丢掉了消息结构，system / human / ai 的角色信息全糊在一起，模型对格式的敏感度远超你的想象。消息就老老实实用消息对象装。</li>
+<li><strong>在循环里重建列表</strong>：<code>messages</code> 是列表引用，循环体里手滑写了 <code>messages = []</code>，前面攒的历史瞬间清零。</li>
+<li><strong>以为历史会自己变长</strong>：不会。你不 <code>append</code>，列表永远停在原地；你不传列表，模型永远只看到当前一句。</li>
+</ul>
+<hr />
+<h2 id="2-封装对话循环三行代码的自动记忆">2. 封装对话循环：三行代码的「自动记忆」</h2>
+<p><strong>比喻</strong>：上一节的三步循环——入账、调用、回账——就像每次泡茶都要现烧水、现洗杯、现抓茶叶。在家这么讲究没人管你，但店员一天要接待几十位会员，这套动作必须变成肌肉记忆：写一个函数，泡茶变按键。</p>
+<p><strong>作用</strong>：把「追加用户消息 → 调用模型 → 追加回复」封装成一次调用。很多老教程会把这一步交给框架组件（把整套历史自动注入链的包装器），LangChain 1.x 的态度变了：这点活儿自己写比学一套旧 API 更快，也更透明——出了问题，每一行都是你自己的，看得见摸得着。</p>
+<p><strong>签名</strong>（自己动手写的「自动记忆」）：</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">chat</span><span class="p">(</span><span class="n">messages</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">AnyMessage</span><span class="p">],</span> <span class="n">user_input</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""一轮对话：入账 → 调用 → 回账。"""</span>
+    <span class="n">messages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">HumanMessage</span><span class="p">(</span><span class="n">user_input</span><span class="p">))</span>
+    <span class="n">reply</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span><span class="n">messages</span><span class="p">)</span>
+    <span class="n">messages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">reply</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">reply</span><span class="o">.</span><span class="n">content</span>
+</code></pre></div>
+<p>三行，没有魔法。传进去的是列表本身（引用），函数内的两次 <code>append</code> 都落在同一个本子上——调用方不需要接收返回值来「更新历史」。</p>
+<p><strong>最小示例</strong>——书屋同时接待两位会员，记录本各管各的：</p>
+<div class="highlight"><pre><span></span><code><span class="n">sessions</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">AnyMessage</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">get_history</span><span class="p">(</span><span class="n">session_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">AnyMessage</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""取该会员的对话记录本；第一次来，发一本新的。"""</span>
+    <span class="k">if</span> <span class="n">session_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sessions</span><span class="p">:</span>
+        <span class="n">sessions</span><span class="p">[</span><span class="n">session_id</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">return</span> <span class="n">sessions</span><span class="p">[</span><span class="n">session_id</span><span class="p">]</span>
+
+<span class="c1"># 小雅的会话</span>
+<span class="n">xiaoya</span> <span class="o">=</span> <span class="n">get_history</span><span class="p">(</span><span class="s2">"member-2048"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">chat</span><span class="p">(</span><span class="n">xiaoya</span><span class="p">,</span> <span class="s2">"上周借的《山月记》什么时候到期？"</span><span class="p">))</span>
+
+<span class="c1"># 小周的会话，和小雅完全隔离</span>
+<span class="n">zhou</span> <span class="o">=</span> <span class="n">get_history</span><span class="p">(</span><span class="s2">"member-1024"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">chat</span><span class="p">(</span><span class="n">zhou</span><span class="p">,</span> <span class="s2">"推荐一本适合通勤路上读的书"</span><span class="p">))</span>
+
+<span class="c1"># 同一会话接着聊，历史自然延续</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">chat</span><span class="p">(</span><span class="n">xiaoya</span><span class="p">,</span> <span class="s2">"那我续借一次可以吗？"</span><span class="p">))</span>
+</code></pre></div>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li><strong>全员共用一个列表</strong>：把 <code>sessions</code> 写成全局单个 <code>messages</code>，小雅刚说完会员号，小周来问「我是谁」，模型把她当成小雅。多用户场景，会话隔离是底线——哪怕只是个 <code>dict</code>。</li>
+<li><strong>函数内 <code>return messages</code> 式的画蛇添足</strong>：列表是引用传递，返回它没有意义；真正会出 bug 的是函数内对列表整体赋值（<code>messages = [...]</code>），那会切断引用。</li>
+<li><strong>并发写同一本记录</strong>：两个请求同时往一个 <code>list</code> 里 <code>append</code>，顺序会乱（甚至触发 CPython 里罕见的异常）。单进程小流量随便用；真的要上并发，先加锁，或者直接上第 6 节的数据库。</li>
+<li><strong>别去找「自动注入历史」的旧组件了</strong>：老教程里那套「给链包一层、自动读写历史」的包装器，在新版里已经被官方归入遗留路线，新项目不再推荐。它的两个必填参数——「用户输入字段名」和「历史占位符字段名」——曾经是新手重灾区（名字对不上就静默失败）。手写方案里这两个坑天然不存在：历史就摊在列表里，没有占位符要你对齐。</li>
+</ul>
+<hr />
+<h2 id="3-trim_messages给记忆开一扇滑动的窗">3. trim_messages：给记忆开一扇滑动的窗</h2>
+<p><strong>比喻</strong>：记录本越写越厚，翻起来越来越慢，直到某天递给模型时超了上下文窗口，直接被拒收。滑动窗口的做法很朴素：<strong>白板只有这么长</strong>——写满一行，最上面的一行就被顶出去，桌上永远只摊最近几行。旧的一行不是被撕掉了，只是不摊给模型看了。</p>
+<p><strong>作用</strong>：<code>trim_messages</code> 是 LangChain 1.x 官方维护的核心工具，把消息列表裁到预算以内：从尾部往前装（<code>strategy="last"</code>，保最近的），装不下的旧消息直接丢弃。它是老教程里「窗口记忆」的现成替代品。</p>
+<p><strong>签名</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.messages</span><span class="w"> </span><span class="kn">import</span> <span class="n">trim_messages</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">trim_messages</span><span class="p">(</span>
+    <span class="n">messages</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">MessageLikeRepresentation</span><span class="p">]</span> <span class="o">|</span> <span class="n">PromptValue</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">max_tokens</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>                <span class="c1"># 预算上限（含义随 token_counter 变）</span>
+    <span class="n">token_counter</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">list</span><span class="p">[</span><span class="n">BaseMessage</span><span class="p">]],</span> <span class="nb">int</span><span class="p">]</span>
+                         <span class="o">|</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">BaseMessage</span><span class="p">],</span> <span class="nb">int</span><span class="p">]</span>
+                         <span class="o">|</span> <span class="n">BaseLanguageModel</span>
+                         <span class="o">|</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"approximate"</span><span class="p">],</span>
+    <span class="n">strategy</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"first"</span><span class="p">,</span> <span class="s2">"last"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"last"</span><span class="p">,</span>   <span class="c1"># 从哪头保（记忆用 last）</span>
+    <span class="n">allow_partial</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>   <span class="c1"># 装不下的那条要不要拦腰截断</span>
+    <span class="n">include_system</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>  <span class="c1"># system 是否无条件保留</span>
+    <span class="n">start_on</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">type</span><span class="p">[</span><span class="n">BaseMessage</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>  <span class="c1"># 强制窗口以谁开头</span>
+    <span class="n">end_on</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">type</span><span class="p">[</span><span class="n">BaseMessage</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">BaseMessage</span><span class="p">]:</span> <span class="o">...</span>
+</code></pre></div>
+<p><code>token_counter</code> 是计数器，决定「预算」按什么数。三档常用姿势：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># ① 按条数：一条消息算 1，max_tokens 的含义变成「最多留几条」</span>
+<span class="n">trim_messages</span><span class="p">(</span><span class="n">messages</span><span class="p">,</span> <span class="n">max_tokens</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">token_counter</span><span class="o">=</span><span class="nb">len</span><span class="p">)</span>
+
+<span class="c1"># ② 近似 token 数（推荐日常使用）：对中英混合文本做粗略估算，不依赖模型</span>
+<span class="n">trim_messages</span><span class="p">(</span><span class="n">messages</span><span class="p">,</span> <span class="n">max_tokens</span><span class="o">=</span><span class="mi">800</span><span class="p">,</span> <span class="n">token_counter</span><span class="o">=</span><span class="s2">"approximate"</span><span class="p">)</span>
+
+<span class="c1"># ③ 精确计数：把模型实例传进去，用它自带的分词器数（最准，也最慢）</span>
+<span class="n">trim_messages</span><span class="p">(</span><span class="n">messages</span><span class="p">,</span> <span class="n">max_tokens</span><span class="o">=</span><span class="mi">800</span><span class="p">,</span> <span class="n">token_counter</span><span class="o">=</span><span class="n">model</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>最小示例</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.messages</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnyMessage</span><span class="p">,</span> <span class="n">SystemMessage</span><span class="p">,</span> <span class="n">HumanMessage</span><span class="p">,</span> <span class="n">AIMessage</span><span class="p">,</span> <span class="n">trim_messages</span>
+
+<span class="n">system</span> <span class="o">=</span> <span class="n">SystemMessage</span><span class="p">(</span><span class="s2">"你是拾光书屋的店员，语气亲切，回答简洁。"</span><span class="p">)</span>
+<span class="n">messages</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">AnyMessage</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">system</span><span class="p">]</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>  <span class="c1"># 假装聊了 10 轮</span>
+    <span class="n">messages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">HumanMessage</span><span class="p">(</span><span class="sa">f</span><span class="s2">"第 </span><span class="si">{</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2"> 个问题：书屋有什么新书？"</span><span class="p">))</span>
+    <span class="n">messages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">AIMessage</span><span class="p">(</span><span class="sa">f</span><span class="s2">"第 </span><span class="si">{</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2"> 个回答：这周新到一批散文集。"</span><span class="p">))</span>
+
+<span class="c1"># 窗口记忆：只留最近 4 条，但 system 保住、且窗口从 human 开头</span>
+<span class="n">window</span> <span class="o">=</span> <span class="n">trim_messages</span><span class="p">(</span>
+    <span class="n">messages</span><span class="p">,</span>
+    <span class="n">max_tokens</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>            <span class="c1"># 配合 len 计数器 = 最多 4 条</span>
+    <span class="n">token_counter</span><span class="o">=</span><span class="nb">len</span><span class="p">,</span>
+    <span class="n">strategy</span><span class="o">=</span><span class="s2">"last"</span><span class="p">,</span>         <span class="c1"># 保最近的</span>
+    <span class="n">include_system</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>     <span class="c1"># 店员守则不能丢</span>
+    <span class="n">start_on</span><span class="o">=</span><span class="s2">"human"</span><span class="p">,</span>        <span class="c1"># 窗口第一条必须是用户消息（见下方坑 2）</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">window</span><span class="p">))</span>   <span class="c1"># 3（system + 最近 1 组问答，见下方实测说明）</span>
+<span class="c1"># 用窗口替代全量历史去调用</span>
+<span class="c1"># reply = model.invoke(window)</span>
+</code></pre></div>
+<p>上例有个值得掰扯的细节（实测）：21 条历史裁完只剩 <strong>3 条</strong>，不是直觉里的「4 + 1」。因为 <code>token_counter=len</code> 眼里 system 也占一个名额，预算 4 个位置被 system、A10、H10、A9 分掉，得到 <code>[S, A9, H10, A10]</code>；<code>start_on="human"</code> 再把开头的 A9 掐掉，最终 <code>[S, H10, A10]</code>。换句话说，<strong>system 占预算、start_on 会额外丢一条</strong>——想留满 4 条正文，预算要开到 5 以上。</p>
+<p><code>include_system=True</code> 和 <code>start_on="human"</code> 这两个参数为什么重要，看下面前两个坑——都是实测踩过的。</p>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li><strong><code>include_system</code> 默认是 <code>False</code>，裁着裁着人设没了</strong>。实测：带 system 的 6 条历史，<code>max_tokens=40</code> 裁完，默认参数下结果以 <code>AIMessage</code> 开头且 system 消失——店员守则被当旧账扔了，模型下一轮秒变「路人」。带上人设的对话，<code>include_system=True</code> 几乎是必选项。</li>
+<li><strong>裁完的列表可能以 <code>AIMessage</code> 开头——非法历史</strong>。实测：5 条消息 <code>[H, A, H, A, H]</code> 按 token 裁剪，结果可能是 <code>[A, H, A, H]</code>。多数聊天模型要求历史以 human 开头（或 system + human），AI 冷不丁起头会让部分模型直接报错、部分模型行为怪异。<code>start_on="human"</code> 一劳永逸——它会把开头的 AI 消息再丢一层，保证第一条（不算 system）是用户消息。</li>
+<li><strong><code>allow_partial=True</code> 会把消息拦腰截断</strong>。预算差一口气时，它允许把装不下的那条<strong>切一半</strong>塞进去：模型看到半句话，比看不到更迷惑。除非你明确知道自己在干什么，保持默认 <code>False</code>。</li>
+<li><strong><code>token_counter=len</code> 时，<code>max_tokens</code> 名字是骗人的</strong>——它数的是条数不是 token。代码评审时看到 <code>max_tokens=4</code> 别慌，先看 <code>token_counter</code> 是谁。</li>
+<li><strong><code>trim_messages</code> 返回新列表，不动原件</strong>。想真正替换历史，要显式 <code>messages[:] = window</code>（切片赋值，保持引用不变）；直接 <code>messages = window</code> 会让外部引用指向旧列表，白裁了。</li>
+</ul>
+<hr />
+<h2 id="4-长程记忆把旧对话压成一张便签">4. 长程记忆：把旧对话压成一张便签</h2>
+<p><strong>比喻</strong>：滑动窗够用，但有个天生缺陷——它是个「越新越好、越旧越忘」的家伙。会员号是第一轮说的，聊到第 20 轮早被顶出窗外，等她问「我的会员号是多少」，店员一脸茫然。长程记忆的解法像给白板<strong>贴便签</strong>：聊了十几页之后，把前面十几页开个「会议纪要」，压成一张便签贴在白板最上方——「此会员：小雅，会员号 2048，偏好短篇，正在等《山月记》到期提醒」。原稿归档收起，桌上只留便签 + 最近几页。信息量缩了十倍，关键事实还在。</p>
+<p><strong>作用</strong>：当历史超过阈值时，调用模型把旧消息压缩成一条摘要消息，用「摘要 + 最近几条」替代全量历史。窗口管「近处的清晰」，摘要管「远处的轮廓」，两者拼起来才是完整的长程记忆。</p>
+<p><strong>签名</strong>（手写实现——LangChain 1.x 没有现成摘要记忆类，而这也正是本章想让你体会的：它不难，值得亲手写一次）：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.prompts</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChatPromptTemplate</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.output_parsers</span><span class="w"> </span><span class="kn">import</span> <span class="n">StrOutputParser</span>
+
+<span class="n">SUMMARY_TEMPLATE</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="s2">"你是拾光书屋的店长助理。请把下面这段店员与会员的对话压缩成一份摘要，"</span>
+    <span class="s2">"务必保留：会员称呼、会员号、阅读偏好、借阅/预约状态、答应过会员的事。"</span>
+    <span class="s2">"不超过 5 句话。</span><span class="se">\n\n</span><span class="s2">【对话记录】</span><span class="se">\n</span><span class="si">{history}</span><span class="s2">"</span>
+<span class="p">)</span>
+
+<span class="n">summarizer</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">ChatPromptTemplate</span><span class="o">.</span><span class="n">from_template</span><span class="p">(</span><span class="n">SUMMARY_TEMPLATE</span><span class="p">)</span>
+    <span class="o">|</span> <span class="n">model</span>
+    <span class="o">|</span> <span class="n">StrOutputParser</span><span class="p">()</span>
+<span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">compress_history</span><span class="p">(</span>
+    <span class="n">messages</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">AnyMessage</span><span class="p">],</span>
+    <span class="n">keep_recent</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
+    <span class="n">trigger</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">AnyMessage</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""历史超过 trigger 条时：旧消息 → 摘要便签，最近 keep_recent 条原样保留。"""</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">messages</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">trigger</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">messages</span>                      <span class="c1"># 还不够长，不折腾</span>
+    <span class="n">system</span> <span class="o">=</span> <span class="n">messages</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">messages</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">SystemMessage</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span>
+    <span class="n">body</span> <span class="o">=</span> <span class="n">messages</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="k">if</span> <span class="n">system</span> <span class="k">else</span> <span class="n">messages</span>
+    <span class="n">old</span><span class="p">,</span> <span class="n">recent</span> <span class="o">=</span> <span class="n">body</span><span class="p">[:</span><span class="o">-</span><span class="n">keep_recent</span><span class="p">],</span> <span class="n">body</span><span class="p">[</span><span class="o">-</span><span class="n">keep_recent</span><span class="p">:]</span>
+    <span class="n">summary_text</span> <span class="o">=</span> <span class="n">summarizer</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span>
+        <span class="p">{</span><span class="s2">"history"</span><span class="p">:</span> <span class="n">get_buffer_string</span><span class="p">(</span><span class="n">old</span><span class="p">)}</span>  <span class="c1"># 把旧消息渲染成纯文本喂给摘要链</span>
+    <span class="p">)</span>
+    <span class="n">note</span> <span class="o">=</span> <span class="n">SystemMessage</span><span class="p">(</span><span class="sa">f</span><span class="s2">"【此前对话摘要】</span><span class="si">{</span><span class="n">summary_text</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">([</span><span class="n">system</span><span class="p">]</span> <span class="k">if</span> <span class="n">system</span> <span class="k">else</span> <span class="p">[])</span> <span class="o">+</span> <span class="p">[</span><span class="n">note</span><span class="p">]</span> <span class="o">+</span> <span class="n">recent</span>
+</code></pre></div>
+<p>其中 <code>get_buffer_string</code>（同样住在 <code>langchain_core.messages</code>）把消息列表渲染成 <code>Human: ...\nAI: ...</code> 的纯文本——正好是摘要模型想吃的形态。</p>
+<p><strong>最小示例</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.messages</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_buffer_string</span>
+
+<span class="c1"># 造一段 16 条的长历史（实际场景中它来自 chat() 循环的日积月累）</span>
+<span class="n">long_history</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">AnyMessage</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">system</span><span class="p">]</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">7</span><span class="p">):</span>
+    <span class="n">long_history</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">HumanMessage</span><span class="p">(</span><span class="sa">f</span><span class="s2">"第 </span><span class="si">{</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2"> 轮：我上次问的《山月记》借期是多久？"</span><span class="p">))</span>
+    <span class="n">long_history</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">AIMessage</span><span class="p">(</span><span class="sa">f</span><span class="s2">"第 </span><span class="si">{</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2"> 轮回答：借期 14 天，可以续借一次。"</span><span class="p">))</span>
+
+<span class="n">compressed</span> <span class="o">=</span> <span class="n">compress_history</span><span class="p">(</span><span class="n">long_history</span><span class="p">,</span> <span class="n">keep_recent</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">trigger</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"压缩前 </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">long_history</span><span class="p">)</span><span class="si">}</span><span class="s2"> 条 → 压缩后 </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">compressed</span><span class="p">)</span><span class="si">}</span><span class="s2"> 条"</span><span class="p">)</span>
+<span class="c1"># 16 → 6：system + 摘要便签 + 最近 4 条</span>
+</code></pre></div>
+<p>「摘要便签」也可以不另起一条消息，而是<strong>合并进店员守则</strong>：把摘要文本拼到 system 提示词末尾。两种做法都常见，后者少一条消息、前者结构更清晰，按口味选。</p>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li><strong>摘要丢事实，等于白干</strong>。会员号 2048 被模型「概括」没了，下一轮照样答不上。对策有两层：摘要提示词里<strong>点名要保留的字段</strong>（业务字段写死在提示词里，如上面那句「务必保留：会员称呼、会员号……」）；真正不能丢的关键事实（会员等级、办卡信息）压根别放进摘要链，直接写死在 system 或外部数据库里。</li>
+<li><strong>失真会累积——复印件的复印件</strong>。渐进式摘要（旧摘要 + 新挤出的消息 → 再摘要）每压一次都有损耗，几轮下来早期细节可能面目全非。触发阈值别设太低（别聊三轮就压缩），给「近处的原文」留足窗口。</li>
+<li><strong>每轮都跑摘要 = 每轮多一次模型调用</strong>。摘要只在「超过阈值」时触发，平时零开销——上面 <code>compress_history</code> 开头那行 <code>if</code> 就是干这个的。</li>
+<li><strong>摘要消息的角色</strong>：用 <code>SystemMessage</code> 承载摘要最省心（模型天然把它当背景资料）；有教程用 <code>HumanMessage</code> 开头写「以下是之前对话的总结」也行，但别用 <code>AIMessage</code>——历史里凭空多出一段「模型自言自语」。</li>
+<li><strong>压缩完记得替换原列表</strong>（同第 3 节最后一个坑）：<code>messages[:] = compress_history(messages)</code>。</li>
+</ul>
+<hr />
+<h2 id="5-持久化打烊前把白板拍照存档">5. 持久化：打烊前把白板拍照存档</h2>
+<p><strong>比喻</strong>：内存里的记录本，进程一退出就烧成灰——服务器半夜一重启，三百位会员的对话记录集体蒸发。持久化就是<strong>打烊前把白板拍照存档</strong>：明早开店（进程重启），照片一放（文件读回），店员接着昨天的上下文继续聊。</p>
+<p><strong>作用</strong>：把 <code>messages</code> 列表落成磁盘上的 JSON 文件，重启后原样读回。存取离不开一对现成的序列化工具：<code>messages_to_dict</code> 把消息列表变成可 JSON 化的 dict 列表，<code>messages_from_dict</code> 负责逆向还原（消息的 <code>id</code> 等元数据都能完整往返）。</p>
+<p><strong>签名</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.messages</span><span class="w"> </span><span class="kn">import</span> <span class="n">messages_to_dict</span><span class="p">,</span> <span class="n">messages_from_dict</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">save_messages</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">messages</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">AnyMessage</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""原子写入：先写临时文件，写完整体换页。"""</span>
+    <span class="n">tmp</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">.tmp"</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">tmp</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">messages_to_dict</span><span class="p">(</span><span class="n">messages</span><span class="p">),</span> <span class="n">f</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">fsync</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">fileno</span><span class="p">())</span>     <span class="c1"># 确保数据真的落了盘</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">tmp</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>        <span class="c1"># 原子换页：要么旧文件、要么新文件</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">load_messages</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">AnyMessage</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""读回历史；文件不存在就发新本子，坏了就报警并兜底。"""</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[]</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">messages_from_dict</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">))</span>
+    <span class="k">except</span> <span class="n">json</span><span class="o">.</span><span class="n">JSONDecodeError</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"[警告] </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2"> 已损坏，启用新记录本"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">[]</span>
+</code></pre></div>
+<p><code>messages_to_dict</code> 的产物长这样（一条用户消息）：</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span><span class="s2">"type"</span><span class="p">:</span> <span class="s2">"human"</span><span class="p">,</span> <span class="s2">"data"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"content"</span><span class="p">:</span> <span class="s2">"我叫小雅，会员号 2048"</span><span class="p">,</span> <span class="s2">"type"</span><span class="p">:</span> <span class="s2">"human"</span><span class="p">,</span>
+                           <span class="s2">"additional_kwargs"</span><span class="p">:</span> <span class="p">{},</span> <span class="s2">"id"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="o">...</span><span class="p">}}</span>
+</code></pre></div>
+<p><strong>最小示例</strong>——重启后记忆失而复得：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.messages</span><span class="w"> </span><span class="kn">import</span> <span class="n">AIMessage</span><span class="p">,</span> <span class="n">HumanMessage</span>
+
+<span class="n">path</span> <span class="o">=</span> <span class="s2">"demo/history_member-2048.json"</span>
+<span class="n">save_messages</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="p">[</span>
+    <span class="n">HumanMessage</span><span class="p">(</span><span class="s2">"我是小雅，会员号 2048，上周借了《山月记》"</span><span class="p">),</span>
+    <span class="n">AIMessage</span><span class="p">(</span><span class="s2">"已登记！《山月记》借期 14 天，下周三到期。"</span><span class="p">),</span>
+<span class="p">])</span>
+
+<span class="c1"># —— 模拟进程重启：内存清空 ——</span>
+<span class="n">restored</span> <span class="o">=</span> <span class="n">load_messages</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">restored</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>   <span class="c1"># '我是小雅，会员号 2048，上周借了《山月记》'</span>
+<span class="c1"># 接着聊：restored 就是新的 messages 列表，chat(restored, ...) 无缝续杯</span>
+</code></pre></div>
+<p><strong>为什么非要「临时文件 + <code>os.replace</code>」？</strong> 这是文件写入的原子化：直接 <code>open(path, "w")</code> 写原文件，等于<strong>站在梯子上现场改招牌</strong>——写到一半断电、崩溃、磁盘满，路人（下次 <code>load</code> 的你）看到的是「拾光书 屋」的半成品，<code>json.load</code> 直接抛 <code>JSONDecodeError</code>，整段会话报废。而「先写 <code>.tmp</code>、再整体换页」的套路里，<code>os.replace</code> 在操作系统层面是<strong>原子的</strong>：换页的那一瞬间只有新旧两种状态，不存在半新半旧的中间态。哪怕写 <code>.tmp</code> 时断电，坏的是临时文件，原档毫发无伤。</p>
+<p><strong>什么时候写盘？</strong> 不必每轮都写（磁盘和数据库都会嫌烦），常见的触发时机：</p>
+<table>
+<thead>
+<tr>
+<th>触发时机</th>
+<th>适合场景</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>每轮对话后</td>
+<td>客服/咨询等记录珍贵的场景，量级可控时最稳妥</td>
+</tr>
+<tr>
+<td>每隔 N 轮 / N 分钟</td>
+<td>普通闲聊，容忍丢最后几轮，换 I/O 大减</td>
+</tr>
+<tr>
+<td>会话结束 / 进程退出</td>
+<td>打烊统一存档，配 <code>atexit</code> 或信号处理兜底</td>
+</tr>
+<tr>
+<td>用户主动保存</td>
+<td>「保存本次咨询记录」这类显式动作</td>
+</tr>
+</tbody>
+</table>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li><strong><code>open(path, "w")</code> 裸写原文件</strong>——上面刚说完，这是持久化里最疼的一跤。标准姿势永远是：临时文件写好、<code>os.replace</code> 换页。</li>
+<li><strong>忘了 <code>ensure_ascii=False</code></strong>：<code>json.dump</code> 默认把中文转成 <code>\uXXXX</code> 转义。文件能读回没错，但你要人工翻看排查时，满屏转义码等于给自己上刑。</li>
+<li><strong>多进程同时写一个文件</strong>：两个 worker 都在「写 tmp → 换页」，后换的会覆盖先换的，对话记录悄悄丢半截。单进程随便玩；多进程要么加文件锁，要么直接升级到第 6 节的数据库方案。</li>
+<li><strong>坏文件没有兜底</strong>：<code>json.JSONDecodeError</code> 不捕获，一位会员的坏文件能让整个服务起不来。<code>load</code> 里 try/except 是廉价保险——坏了就备份原文件、发新本子，别让一条坏数据放倒全场。</li>
+</ul>
+<hr />
+<h2 id="6-第三方存储记忆住进总部档案室">6. 第三方存储：记忆住进总部档案室</h2>
+<p><strong>比喻</strong>：JSON 文件是<strong>单店账本</strong>——放在这家店的抽屉里，店关了账本还在，但隔壁分店看不到。拾光书屋开了三家分店（多进程/多机部署）之后，会员在小雅在 A 店聊的记录，走到 B 店就得从头再来。这时候记录本要搬进<strong>总部档案室</strong>（Redis / Postgres）：所有分店共享一个档案室，谁来都能调阅。</p>
+<p><strong>作用</strong>（本节是概念课，不写完整代码）：当出现以下任一信号，就该把第 5 节的 JSON 文件升级成数据库了——</p>
+<ul>
+<li><strong>多进程</strong>：Web 服务开了不止一个 worker（比如 <code>uvicorn --workers 4</code>），进程内存互不相通，第 2 节的 <code>sessions</code> dict 各自为政，会员的请求被分到不同 worker 就「间歇性失忆」；</li>
+<li><strong>多机</strong>：服务部署在多台服务器上，没有任何一台的本地文件是「全局」的；</li>
+<li><strong>要审计</strong>：聊天记录要留档、要检索、要给运营分析——文件翻起来太原始；</li>
+<li><strong>写冲突管不过来</strong>：第 5 节说的文件锁已经成了新瓶颈。</li>
+</ul>
+<p><strong>存的东西没变，变的是抽屉</strong>。无论存哪，记忆的形状始终是「消息列表序列化后的结构」（就是 <code>messages_to_dict</code> 产出的那种 dict）；换存储换的只是读和写两个函数的实现：</p>
+<ul>
+<li><strong>Redis</strong>：内存数据库，读写极快，天生适合「正在进行的会话」这种热数据。给每个 <code>session_id</code> 一个 key，value 存序列化后的消息列表；设个 TTL（比如 30 天），不来的会员记录自动过期，档案室不会被僵尸 key 撑爆。</li>
+<li><strong>Postgres</strong>：磁盘上的关系型数据库，适合长期留存、审计、分页翻阅历史——「调出这位会员过去三个月的全部对话」这种活儿它最在行。</li>
+</ul>
+<p>真正自己动手前，先认识一个词：<strong>LangGraph</strong>。它是官方给「记忆自动化」指定的继任方向——所谓 checkpointer（检查点器）就是框架级的「边聊边存」：你在图里每走一步，它自动把当时的完整状态（含消息列表）存进 <code>InMemorySaver</code>、<code>SqliteSaver</code>、<code>RedisSaver</code> 等容器之一。手写方案练的是内功，工程里想省事可以直接用它。<a href="../langchain/11-agent.html">第 11 章</a>搭 Agent 时会再遇到它。</p>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li><strong>教程项目急着上 Redis</strong>：单机跑得欢、用户个位数，JSON 文件绰绰有余，多出来的运维成本（连接、超时、部署）纯属给自己加戏。升级信号（上面四条）没亮之前，别动。</li>
+<li><strong>TTL 忘了设</strong>：Redis 里的会话 key 只进不出，一年后内存被几十万个「聊过一次就再没来」的僵尸会话吃光。</li>
+<li><strong>把历史存进了 SQL 却不建索引</strong>：按 <code>session_id</code> 查会话列表，没索引就是全表扫描——数据库不背这个锅。</li>
+</ul>
+<hr />
+<h2 id="7-新旧对照表看老教程不迷路">7. 新旧对照表：看老教程不迷路</h2>
+<p>LangChain 曾经有一整个 Memory 家族，老教程、老博客、老视频里到处是它们的身影。1.x 时代官方态度很明确：<strong>这些类已废弃或移出核心</strong>，正路只剩一条——<code>messages</code> 列表自己管，长了自己裁（第 3 节）、自己压（第 4 节）、自己存（第 5 节）。这张表帮你把新老世界对上号：</p>
+<table>
+<thead>
+<tr>
+<th>老教程里的名字</th>
+<th>它当年干什么</th>
+<th>1.x 里去哪了</th>
+<th>本章对应做法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ConversationBufferMemory</code></td>
+<td>全量记忆，一轮不落</td>
+<td><code>langchain_classic.memory</code>（遗留）</td>
+<td>手动维护 <code>messages</code> 列表（第 1、2 节）</td>
+</tr>
+<tr>
+<td><code>ConversationBufferWindowMemory</code></td>
+<td>滑动窗口，只记最近 k 轮</td>
+<td><code>langchain_classic.memory</code>（遗留）</td>
+<td><code>trim_messages</code> + <code>token_counter=len</code>（第 3 节）</td>
+</tr>
+<tr>
+<td><code>ConversationSummaryMemory</code></td>
+<td>摘要记忆，全程压缩</td>
+<td><code>langchain_classic.memory</code>（遗留）</td>
+<td>手写摘要链（第 4 节）</td>
+</tr>
+<tr>
+<td><code>ConversationSummaryBufferMemory</code></td>
+<td>摘要 + 窗口混合</td>
+<td><code>langchain_classic.memory</code>（遗留）</td>
+<td>第 4 节的「摘要便签 + 最近 N 条」正是它</td>
+</tr>
+<tr>
+<td><code>ChatMessageHistory</code></td>
+<td>消息历史容器</td>
+<td>核心里还有 <code>InMemoryChatMessageHistory</code>，但不再唱主角</td>
+<td>直接用 <code>list[AnyMessage]</code>（第 1 节）</td>
+</tr>
+<tr>
+<td><code>FileChatMessageHistory</code></td>
+<td>历史存文件</td>
+<td>classic / 社区包</td>
+<td>自己 JSON 读写 + 原子写入（第 5 节）</td>
+</tr>
+<tr>
+<td><code>RedisChatMessageHistory</code></td>
+<td>历史存 Redis</td>
+<td>classic + redis 依赖</td>
+<td>自存 Redis（第 6 节概念）</td>
+</tr>
+<tr>
+<td><code>RunnableWithMessageHistory</code></td>
+<td>给链自动注入历史</td>
+<td>core 里还在，官方文档已归入遗留路线</td>
+<td>封装 <code>chat()</code>（第 2 节）；框架级上 LangGraph checkpointer</td>
+</tr>
+</tbody>
+</table>
+<p>一眼识别的口诀：<strong>看到以 <code>Memory</code> 结尾的类名，基本可以断定是旧时代的遗产</strong>。遇到老教程不必绕道走——它的思路（缓冲、窗口、摘要、持久化）全都是好思路，本章的每一节就是这些思路在 1.x 里的转世。要的只是翻译：看到 <code>ConversationBufferWindowMemory</code>，心里默念「<code>trim_messages</code>，<code>token_counter=len</code>」。</p>
+<hr />
+<h2 id="8-本章小结">8. 本章小结</h2>
+<p>一张速查表带走本章：</p>
+<table>
+<thead>
+<tr>
+<th>需求</th>
+<th>做法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>记住多轮对话</td>
+<td><code>messages</code> 列表：<code>append(HumanMessage)</code> → <code>invoke(messages)</code> → <code>append(reply)</code></td>
+</tr>
+<tr>
+<td>封装对话循环</td>
+<td>三行 <code>chat()</code> 函数；多会话用 <code>dict[session_id, list]</code></td>
+</tr>
+<tr>
+<td>滑动窗口</td>
+<td><code>trim_messages(messages, max_tokens=k, token_counter=len, strategy="last")</code></td>
+</tr>
+<tr>
+<td>按 token 预算裁</td>
+<td><code>token_counter="approximate"</code>（近似）或 <code>token_counter=model</code>（精确）</td>
+</tr>
+<tr>
+<td>保住人设与合法开头</td>
+<td><code>include_system=True</code> + <code>start_on="human"</code></td>
+</tr>
+<tr>
+<td>替换原历史</td>
+<td><code>messages[:] = window</code>（切片赋值保引用）</td>
+</tr>
+<tr>
+<td>长程摘要</td>
+<td>摘要链 + <code>get_buffer_string(old)</code> → <code>SystemMessage</code> 便签 + 最近 N 条</td>
+</tr>
+<tr>
+<td>落盘</td>
+<td><code>messages_to_dict</code> + <code>json.dump</code> + <code>os.replace</code> 原子换页</td>
+</tr>
+<tr>
+<td>读回</td>
+<td><code>messages_from_dict(json.load(...))</code>，坏文件 try/except 兜底</td>
+</tr>
+<tr>
+<td>多进程 / 多机</td>
+<td>Redis（热会话 + TTL）/ Postgres（留存审计）；框架级用 LangGraph checkpointer</td>
+</tr>
+<tr>
+<td>看到老 API</td>
+<td>对照第 7 节的表翻译——<code>Memory</code> 结尾 = 旧时代遗产</td>
+</tr>
+</tbody>
+</table>
+<p>配套 demo（本章 <code>demo/</code> 目录）：</p>
+<ul>
+<li><code>demo_memory.py</code>：单文件走完记忆全流程——手动维护 messages → 多会话隔离 → <code>trim_messages</code> 开窗（含 <code>include_system</code> / <code>start_on</code> 的对比实验）→ 摘要压缩 → JSON 原子化持久化（含坏文件兜底演示）。<strong>历史管理逻辑不需要模型也能完整演示</strong>：本机 Ollama 未启动时，店员回复换成内置剧本（它真的会从历史里翻出会员号来回答——记忆机制本身被当场验证），摘要换成截断式假摘要；启动 Ollama 后重跑即为真实模型版。</li>
+</ul>
+<p>到这里，拾光书屋的店员已经「记得住」了。但读者接下来的请求越来越具体：「帮我查一下《山月记》还有没有库存」「把我的读书会报名改到下周」。店员嘴上答应得再漂亮，也变不出一个真实的查询动作——会说话与会干活之间，隔着「工具调用」这座桥。下一章，我们给店员发工具。</p>
+<p><strong>下一章</strong>：<a href="../langchain/10-gong-ju-diao-yong.html">10 · 工具调用</a></p></div>
+
+      </article>
+<nav class="pager"><a class="pg-card pg-prev" href="../langchain/08-jian-suo-yu-rag.html"><span class="pg-label">← 上一篇</span><span class="pg-title">检索与RAG</span><span class="pg-mod">LangChain 指南</span></a><a class="pg-card pg-next" href="../langchain/10-gong-ju-diao-yong.html"><span class="pg-label">下一篇 →</span><span class="pg-title">工具调用</span><span class="pg-mod">LangChain 指南</span></a></nav>
+    </div>
+    <footer class="foot">
+      <span>深栈 DeepStack · AI Agent 工程师转型训练营配套文档</span>
+    </footer>
+  </main>
+<nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#1-记忆的真相模型没记性列表才是记性">1. 记忆的真相：模型没记性，列表才是记性</a><a class="toc-link toc-h2" href="#2-封装对话循环三行代码的自动记忆">2. 封装对话循环：三行代码的「自动记忆」</a><a class="toc-link toc-h2" href="#3-trim_messages给记忆开一扇滑动的窗">3. trim_messages：给记忆开一扇滑动的窗</a><a class="toc-link toc-h2" href="#4-长程记忆把旧对话压成一张便签">4. 长程记忆：把旧对话压成一张便签</a><a class="toc-link toc-h2" href="#5-持久化打烊前把白板拍照存档">5. 持久化：打烊前把白板拍照存档</a><a class="toc-link toc-h2" href="#6-第三方存储记忆住进总部档案室">6. 第三方存储：记忆住进总部档案室</a><a class="toc-link toc-h2" href="#7-新旧对照表看老教程不迷路">7. 新旧对照表：看老教程不迷路</a><a class="toc-link toc-h2" href="#8-本章小结">8. 本章小结</a></nav>
+</div>
+<div class="sb-mask" id="sbMask"></div>
+<script src="../assets/app.js"></script>
+</body>
+</html>

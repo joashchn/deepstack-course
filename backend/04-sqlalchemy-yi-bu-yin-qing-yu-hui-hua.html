@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>04 · SQLAlchemy 异步引擎与会话 · 深栈 DeepStack 课程文档</title>
+<meta name="description" content="FastAPI 是异步框架，数据库这一层自然也得「异步到底」。本章搞定两件事：">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%23d9c39a' text-anchor='middle'%3EDS%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+<div class="progress" id="progress"></div>
+
+<div class="layout">
+<aside class="sidebar" id="sidebar">
+  <div class="sb-head">
+    <a class="brand" href="../index.html">
+      <span class="brand-mark">DS</span>
+      <span class="brand-text"><b>深栈 DeepStack</b><i>AI Agent 工程师转型训练营</i></span>
+    </a>
+    <button class="sb-close" id="sbClose" aria-label="关闭目录">✕</button>
+  </div>
+  <div class="sb-search"><input type="search" id="searchInput" placeholder="搜索 123 篇文档… ( / )" autocomplete="off">
+    <div class="sb-results" id="searchResults"></div></div>
+  <nav class="sb-nav">
+    <section class="sb-group" data-mod="python">
+      <a class="sb-group-title" href="../modules/python.html" data-toggle="python">
+        <span class="sb-num">01</span>
+        <span class="sb-group-text"><b>Python 与数据实践</b><i>31 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../python/01-huan-jing-da-jian-yu-ban-ben-guan-li.html"><span class="sb-item-num">01</span><span class="sb-item-title">环境搭建与版本管理</span></a>
+        <a class="sb-item" href="../python/02-bian-liang-biao-da-shi-yu-liu-cheng-kong-zhi.html"><span class="sb-item-num">02</span><span class="sb-item-title">变量、表达式与流程控制</span></a>
+        <a class="sb-item" href="../python/03-xu-lie-zi-dian-yu-ji-he.html"><span class="sb-item-num">03</span><span class="sb-item-title">序列、字典与集合</span></a>
+        <a class="sb-item" href="../python/04-han-shu-she-ji-yu-lambda.html"><span class="sb-item-num">04</span><span class="sb-item-title">函数设计与 lambda</span></a>
+        <a class="sb-item" href="../python/05-zuo-yong-yu-gui-ze-yu-bi-bao.html"><span class="sb-item-num">05</span><span class="sb-item-title">作用域规则与闭包</span></a>
+        <a class="sb-item" href="../python/06-lei-de-ding-yi-yu-shi-li-hua.html"><span class="sb-item-num">06</span><span class="sb-item-title">类的定义与实例化</span></a>
+        <a class="sb-item" href="../python/07-lei-xing-pan-ding-yu-chou-xiang-ji-lei.html"><span class="sb-item-num">07</span><span class="sb-item-title">类型判定与抽象基类</span></a>
+        <a class="sb-item" href="../python/08-mo-shu-fang-fa-quan-jing.html"><span class="sb-item-num">08</span><span class="sb-item-title">魔术方法全景</span></a>
+        <a class="sb-item" href="../python/09-miao-shu-fu-yu-yuan-lei.html"><span class="sb-item-num">09</span><span class="sb-item-title">描述符与元类</span></a>
+        <a class="sb-item" href="../python/10-zhuang-shi-qi.html"><span class="sb-item-num">10</span><span class="sb-item-title">装饰器</span></a>
+        <a class="sb-item" href="../python/11-die-dai-xie-yi-yu-sheng-cheng-qi.html"><span class="sb-item-num">11</span><span class="sb-item-title">迭代协议与生成器</span></a>
+        <a class="sb-item" href="../python/12-with-yu-shang-xia-wen-xie-yi.html"><span class="sb-item-num">12</span><span class="sb-item-title">with 与上下文协议</span></a>
+        <a class="sb-item" href="../python/13-yi-chang-ti-xi-yu-chu-li.html"><span class="sb-item-num">13</span><span class="sb-item-title">异常体系与处理</span></a>
+        <a class="sb-item" href="../python/14-lei-xing-biao-zhu.html"><span class="sb-item-num">14</span><span class="sb-item-title">类型标注</span></a>
+        <a class="sb-item" href="../python/15-mo-kuai-yu-bao-de-zu-zhi.html"><span class="sb-item-num">15</span><span class="sb-item-title">模块与包的组织</span></a>
+        <a class="sb-item" href="../python/16-biao-zhun-ku-xun-li.html"><span class="sb-item-num">16</span><span class="sb-item-title">标准库巡礼</span></a>
+        <a class="sb-item" href="../python/17-yi-lai-guan-li-yu-di-san-fang-ku.html"><span class="sb-item-num">17</span><span class="sb-item-title">依赖管理与第三方库</span></a>
+        <a class="sb-item" href="../python/18-xian-cheng-yu-jin-cheng.html"><span class="sb-item-num">18</span><span class="sb-item-title">线程与进程</span></a>
+        <a class="sb-item" href="../python/19-shi-jian-xun-huan.html"><span class="sb-item-num">19</span><span class="sb-item-title">事件循环</span></a>
+        <a class="sb-item" href="../python/20-future-yu-xie-cheng.html"><span class="sb-item-num">20</span><span class="sb-item-title">Future 与协程</span></a>
+        <a class="sb-item" href="../python/21-asyncio-shi-zhan.html"><span class="sb-item-num">21</span><span class="sb-item-title">asyncio 实战</span></a>
+        <a class="sb-item" href="../python/22-gou-jian-yu-fa-bu.html"><span class="sb-item-num">22</span><span class="sb-item-title">构建与发布</span></a>
+        <a class="sb-item" href="../python/23-gong-cheng-hua-gong-ju-lian.html"><span class="sb-item-num">23</span><span class="sb-item-title">工程化工具链</span></a>
+        <a class="sb-item" href="../python/24-monorepo-yu-tiao-shi.html"><span class="sb-item-num">24</span><span class="sb-item-title">monorepo 与调试</span></a>
+        <a class="sb-item" href="../python/25-jupyter-jiao-hu-huan-jing.html"><span class="sb-item-num">25</span><span class="sb-item-title">Jupyter 交互环境</span></a>
+        <a class="sb-item" href="../python/26-numpy-shu-zu-yu-xiang-liang-hua.html"><span class="sb-item-num">26</span><span class="sb-item-title">NumPy 数组与向量化</span></a>
+        <a class="sb-item" href="../python/27-pandas-shu-ju-jie-gou.html"><span class="sb-item-num">27</span><span class="sb-item-title">Pandas 数据结构</span></a>
+        <a class="sb-item" href="../python/28-pandas-shu-ju-qing-xi.html"><span class="sb-item-num">28</span><span class="sb-item-title">Pandas 数据清洗</span></a>
+        <a class="sb-item" href="../python/29-matplotlib-hui-tu-ti-xi.html"><span class="sb-item-num">29</span><span class="sb-item-title">Matplotlib 绘图体系</span></a>
+        <a class="sb-item" href="../python/30-matplotlib-dong-hua-yu-jiao-hu.html"><span class="sb-item-num">30</span><span class="sb-item-title">Matplotlib 动画与交互</span></a>
+        <a class="sb-item" href="../python/31-seaborn-tong-ji-ke-shi-hua.html"><span class="sb-item-num">31</span><span class="sb-item-title">Seaborn 统计可视化</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="agent">
+      <a class="sb-group-title" href="../modules/agent.html" data-toggle="agent">
+        <span class="sb-num">02</span>
+        <span class="sb-group-text"><b>Agent 核心</b><i>15 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../agent/01-token-yu-ci-qian-ru.html"><span class="sb-item-num">01</span><span class="sb-item-title">Token 与词嵌入</span></a>
+        <a class="sb-item" href="../agent/02-qian-xiang-chuan-bo-yu-fan-xiang-chuan-bo.html"><span class="sb-item-num">02</span><span class="sb-item-title">前向传播与反向传播</span></a>
+        <a class="sb-item" href="../agent/03-zhu-yi-li-ji-zhi-yu-transformer-jia-gou.html"><span class="sb-item-num">03</span><span class="sb-item-title">注意力机制与 Transformer 架构</span></a>
+        <a class="sb-item" href="../agent/04-yu-xun-lian-rlhf-yu-cai-yang-kv-cache.html"><span class="sb-item-num">04</span><span class="sb-item-title">预训练、RLHF 与采样（KV Cache）</span></a>
+        <a class="sb-item" href="../agent/05-ben-di-mo-xing-yu-xiao-xi-jie-gou.html"><span class="sb-item-num">05</span><span class="sb-item-title">本地模型与消息结构</span></a>
+        <a class="sb-item" href="../agent/06-hui-hua-guan-li-yu-json-shu-chu.html"><span class="sb-item-num">06</span><span class="sb-item-title">会话管理与 JSON 输出</span></a>
+        <a class="sb-item" href="../agent/07-tool-calling-xie-yi-yu-feng-zhuang.html"><span class="sb-item-num">07</span><span class="sb-item-title">Tool Calling：协议与封装</span></a>
+        <a class="sb-item" href="../agent/08-react-mo-shi-yu-zhu-xun-huan.html"><span class="sb-item-num">08</span><span class="sb-item-title">ReAct 模式与主循环</span></a>
+        <a class="sb-item" href="../agent/09-shi-zhan-deep-research-agent.html"><span class="sb-item-num">09</span><span class="sb-item-title">实战：Deep Research Agent</span></a>
+        <a class="sb-item" href="../agent/10-skill-yu-jian-jin-shi-pi-lu.html"><span class="sb-item-num">10</span><span class="sb-item-title">Skill 与渐进式披露</span></a>
+        <a class="sb-item" href="../agent/11-mcp-quan-jing.html"><span class="sb-item-num">11</span><span class="sb-item-title">MCP 全景</span></a>
+        <a class="sb-item" href="../agent/12-duo-agent-yu-xuan-xing-ce-lve.html"><span class="sb-item-num">12</span><span class="sb-item-title">多 Agent 与选型策略</span></a>
+        <a class="sb-item" href="../agent/13-ti-shi-ci-gong-cheng-yu-shang-xia-wen-gong.html"><span class="sb-item-num">13</span><span class="sb-item-title">提示词工程与上下文工程</span></a>
+        <a class="sb-item" href="../agent/14-xun-huan-tu-yu-gu-jia-gong-cheng.html"><span class="sb-item-num">14</span><span class="sb-item-title">循环、图与骨架工程</span></a>
+        <a class="sb-item" href="../agent/15-ji-yi-quan-xian-yu-ping-ce.html"><span class="sb-item-num">15</span><span class="sb-item-title">记忆、权限与评测</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="langchain">
+      <a class="sb-group-title" href="../modules/langchain.html" data-toggle="langchain">
+        <span class="sb-num">03</span>
+        <span class="sb-group-text"><b>LangChain 指南</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langchain/01-ren-shi-langchain.html"><span class="sb-item-num">01</span><span class="sb-item-title">认识 LangChain</span></a>
+        <a class="sb-item" href="../langchain/02-ti-shi-ci-mu-ban-yu-xiao-xi.html"><span class="sb-item-num">02</span><span class="sb-item-title">提示词模板与消息</span></a>
+        <a class="sb-item" href="../langchain/03-lcel-yu-runnable.html"><span class="sb-item-num">03</span><span class="sb-item-title">LCEL 与 Runnable</span></a>
+        <a class="sb-item" href="../langchain/04-liu-shi-yu-bing-fa.html"><span class="sb-item-num">04</span><span class="sb-item-title">流式与并发</span></a>
+        <a class="sb-item" href="../langchain/05-shu-chu-jie-xi-qi.html"><span class="sb-item-num">05</span><span class="sb-item-title">输出解析器</span></a>
+        <a class="sb-item" href="../langchain/06-wen-dang-jia-zai-yu-qie-ge.html"><span class="sb-item-num">06</span><span class="sb-item-title">文档加载与切割</span></a>
+        <a class="sb-item" href="../langchain/07-qian-ru-yu-xiang-liang-ku.html"><span class="sb-item-num">07</span><span class="sb-item-title">嵌入与向量库</span></a>
+        <a class="sb-item" href="../langchain/08-jian-suo-yu-rag.html"><span class="sb-item-num">08</span><span class="sb-item-title">检索与RAG</span></a>
+        <a class="sb-item" href="../langchain/09-dui-hua-ji-yi.html"><span class="sb-item-num">09</span><span class="sb-item-title">对话记忆</span></a>
+        <a class="sb-item" href="../langchain/10-gong-ju-diao-yong.html"><span class="sb-item-num">10</span><span class="sb-item-title">工具调用</span></a>
+        <a class="sb-item" href="../langchain/11-agent.html"><span class="sb-item-num">11</span><span class="sb-item-title">Agent</span></a>
+        <a class="sb-item" href="../langchain/12-hui-diao-yu-tiao-shi-quan-ke-cheng-shou-guan.html"><span class="sb-item-num">12</span><span class="sb-item-title">回调与调试（全课程收官章）</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="langgraph">
+      <a class="sb-group-title" href="../modules/langgraph.html" data-toggle="langgraph">
+        <span class="sb-num">04</span>
+        <span class="sb-group-text"><b>LangGraph 框架指南</b><i>17 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langgraph/01-di-1-zhang-cong-yi-ge-shi-kong-de-jiao.html"><span class="sb-item-num">01</span><span class="sb-item-title">第 1 章 从一个失控的脚本说起</span></a>
+        <a class="sb-item" href="../langgraph/02-di-2-zhang-zui-xiao-ke-yun-xing-tu.html"><span class="sb-item-num">02</span><span class="sb-item-title">第 2 章 最小可运行图</span></a>
+        <a class="sb-item" href="../langgraph/03-di-3-zhang-zhuang-tai-tu-de-shu-ju-xin.html"><span class="sb-item-num">03</span><span class="sb-item-title">第 3 章 状态：图的数据心脏</span></a>
+        <a class="sb-item" href="../langgraph/04-di-4-zhang-rang-liu-cheng-xue-hui-jue-ce.html"><span class="sb-item-num">04</span><span class="sb-item-title">第 4 章 让流程学会决策</span></a>
+        <a class="sb-item" href="../langgraph/05-di-5-zhang-bing-xing-shi-jie-chao-bu-zhi.html"><span class="sb-item-num">05</span><span class="sb-item-title">第 5 章 并行世界：超步执行模型</span></a>
+        <a class="sb-item" href="../langgraph/06-di-6-zhang-command-ba-kong-zhi-quan-jiao-jin.html"><span class="sb-item-num">06</span><span class="sb-item-title">第 6 章 Command：把控制权交进节点</span></a>
+        <a class="sb-item" href="../langgraph/07-di-7-zhang-dong-tai-bing-xing-send-yu-mapreduce.html"><span class="sb-item-num">07</span><span class="sb-item-title">第 7 章 动态并行：Send 与 MapReduce</span></a>
+        <a class="sb-item" href="../langgraph/08-di-8-zhang-gei-tu-zhuang-shang-shou-jiao-gong.html"><span class="sb-item-num">08</span><span class="sb-item-title">第 8 章 给图装上手脚：工具调用</span></a>
+        <a class="sb-item" href="../langgraph/09-di-9-zhang-fu-yong-yu-feng-zhuang-zi-tu.html"><span class="sb-item-num">09</span><span class="sb-item-title">第 9 章 复用与封装：子图</span></a>
+        <a class="sb-item" href="../langgraph/10-di-10-zhang-cong-dan-tu-dao-tuan-dui-duo.html"><span class="sb-item-num">10</span><span class="sb-item-title">第 10 章 从单图到团队：多 Agent 架构</span></a>
+        <a class="sb-item" href="../langgraph/11-di-11-zhang-liu-shi-shu-chu.html"><span class="sb-item-num">11</span><span class="sb-item-title">第 11 章 流式输出</span></a>
+        <a class="sb-item" href="../langgraph/12-di-12-zhang-chi-jiu-hua-checkpointer-yu-xian-cheng.html"><span class="sb-item-num">12</span><span class="sb-item-title">第 12 章 持久化：Checkpointer 与线程</span></a>
+        <a class="sb-item" href="../langgraph/13-di-13-zhang-shi-jian-lv-xing.html"><span class="sb-item-num">13</span><span class="sb-item-title">第 13 章 时间旅行</span></a>
+        <a class="sb-item" href="../langgraph/14-di-14-zhang-zhong-duan-yu-ren-zai-hui-lu.html"><span class="sb-item-num">14</span><span class="sb-item-title">第 14 章 中断与人在回路</span></a>
+        <a class="sb-item" href="../langgraph/15-di-15-zhang-ji-yi-guan-li.html"><span class="sb-item-num">15</span><span class="sb-item-title">第 15 章 记忆管理</span></a>
+        <a class="sb-item" href="../langgraph/16-di-16-zhang-rong-cuo-zhong-shi-chao-shi-yu.html"><span class="sb-item-num">16</span><span class="sb-item-title">第 16 章 容错：重试、超时与兜底</span></a>
+        <a class="sb-item" href="../langgraph/17-di-17-zhang-quan-jing-hui-gu.html"><span class="sb-item-num">17</span><span class="sb-item-title">第 17 章 全景回顾</span></a>
+      </div>
+    </section>
+    <section class="sb-group open" data-mod="backend">
+      <a class="sb-group-title" href="../modules/backend.html" data-toggle="backend">
+        <span class="sb-num">05</span>
+        <span class="sb-group-text"><b>Python 框架指南</b><i>14 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../backend/01-fastapi-ru-men-yu-asgi.html"><span class="sb-item-num">01</span><span class="sb-item-title">FastAPI 入门与 ASGI</span></a>
+        <a class="sb-item" href="../backend/02-lu-you-yu-qing-qiu-xiang-ying.html"><span class="sb-item-num">02</span><span class="sb-item-title">路由与请求响应</span></a>
+        <a class="sb-item" href="../backend/03-pydantic-shu-ju-jiao-yan-yu-pei-zhi.html"><span class="sb-item-num">03</span><span class="sb-item-title">Pydantic 数据校验与配置</span></a>
+        <a class="sb-item current" href="../backend/04-sqlalchemy-yi-bu-yin-qing-yu-hui-hua.html"><span class="sb-item-num">04</span><span class="sb-item-title">SQLAlchemy 异步引擎与会话</span></a>
+        <a class="sb-item" href="../backend/05-orm-jian-mo.html"><span class="sb-item-num">05</span><span class="sb-item-title">ORM 建模</span></a>
+        <a class="sb-item" href="../backend/06-sql-biao-da-shi-yu-shu-ju-cao-zuo.html"><span class="sb-item-num">06</span><span class="sb-item-title">SQL 表达式与数据操作</span></a>
+        <a class="sb-item" href="../backend/07-alembic-shu-ju-qian-yi.html"><span class="sb-item-num">07</span><span class="sb-item-title">Alembic 数据迁移</span></a>
+        <a class="sb-item" href="../backend/08-yi-lai-zhu-ru.html"><span class="sb-item-num">08</span><span class="sb-item-title">依赖注入</span></a>
+        <a class="sb-item" href="../backend/09-tong-yi-yi-chang-chu-li.html"><span class="sb-item-num">09</span><span class="sb-item-title">统一异常处理</span></a>
+        <a class="sb-item" href="../backend/10-zhong-jian-jian.html"><span class="sb-item-num">10</span><span class="sb-item-title">中间件</span></a>
+        <a class="sb-item" href="../backend/11-ren-zheng-yu-jwt.html"><span class="sb-item-num">11</span><span class="sb-item-title">认证与 JWT</span></a>
+        <a class="sb-item" href="../backend/12-pytest-ce-shi.html"><span class="sb-item-num">12</span><span class="sb-item-title">pytest 测试</span></a>
+        <a class="sb-item" href="../backend/13-ri-zhi-loguru.html"><span class="sb-item-num">13</span><span class="sb-item-title">日志 loguru</span></a>
+        <a class="sb-item" href="../backend/14-liu-shi-xiang-ying-sse-yu-websocket.html"><span class="sb-item-num">14</span><span class="sb-item-title">流式响应 SSE 与 WebSocket</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="interview">
+      <a class="sb-group-title" href="../modules/interview.html" data-toggle="interview">
+        <span class="sb-num">06</span>
+        <span class="sb-group-text"><b>面试题库</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../interview/01-llm-yuan-li-pian.html"><span class="sb-item-num">01</span><span class="sb-item-title">LLM 原理篇</span></a>
+        <a class="sb-item" href="../interview/02-rag-yu-jian-suo-pian.html"><span class="sb-item-num">02</span><span class="sb-item-title">RAG 与检索篇</span></a>
+        <a class="sb-item" href="../interview/03-agent-he-xin-pian.html"><span class="sb-item-num">03</span><span class="sb-item-title">Agent 核心篇</span></a>
+        <a class="sb-item" href="../interview/04-langgraph-pian.html"><span class="sb-item-num">04</span><span class="sb-item-title">LangGraph 篇</span></a>
+        <a class="sb-item" href="../interview/05-langchain-pian.html"><span class="sb-item-num">05</span><span class="sb-item-title">LangChain 篇</span></a>
+        <a class="sb-item" href="../interview/06-xi-tong-she-ji-pian.html"><span class="sb-item-num">06</span><span class="sb-item-title">系统设计篇</span></a>
+        <a class="sb-item" href="../interview/07-xiang-mu-shen-wa-pian.html"><span class="sb-item-num">07</span><span class="sb-item-title">项目深挖篇</span></a>
+        <a class="sb-item" href="../interview/08-gu-zhang-pai-cha-pian.html"><span class="sb-item-num">08</span><span class="sb-item-title">故障排查篇</span></a>
+        <a class="sb-item" href="../interview/09-python-ji-chu-pian.html"><span class="sb-item-num">09</span><span class="sb-item-title">Python 基础篇</span></a>
+        <a class="sb-item" href="../interview/10-fastapi-yu-hou-duan-pian.html"><span class="sb-item-num">10</span><span class="sb-item-title">FastAPI 与后端篇</span></a>
+        <a class="sb-item" href="../interview/11-ti-shi-ci-gong-cheng-yu-an-quan-pian.html"><span class="sb-item-num">11</span><span class="sb-item-title">提示词工程与安全篇</span></a>
+        <a class="sb-item" href="../interview/12-mo-xing-xuan-xing-yu-jiang-ben-pian.html"><span class="sb-item-num">12</span><span class="sb-item-title">模型选型与降本篇</span></a>
+      </div>
+    </section>
+  </nav>
+</aside>
+  <main class="main">
+    <header class="topbar">
+      <button class="menu-btn" id="menuBtn" aria-label="目录">☰</button>
+      <div class="crumbs"><a href="../index.html">首页</a><span>/</span><a href="../modules/backend.html">Python 框架指南</a><span>/</span><span class="cur">SQLAlchemy 异步引擎与会话</span></div>
+      <div class="topbar-actions">
+        <button class="icon-btn" id="themeBtn" title="切换深浅色" aria-label="切换深浅色">◐</button>
+      </div>
+    </header>
+    <div class="content">
+      <article class="article">
+
+<header class="page-head">
+  <div class="page-kicker">Python 框架指南 · 第 04 章</div>
+  <h1 class="page-title">SQLAlchemy 异步引擎与会话</h1>
+  <p class="page-desc">FastAPI 是异步框架，数据库这一层自然也得「异步到底」。本章搞定两件事：</p>
+  <div class="page-meta">
+    <span>约 30 分钟</span><span>12,066 字</span><span>25 个代码示例</span>
+  </div>
+</header>
+<div class="md"><p>FastAPI 是异步框架，数据库这一层自然也得「异步到底」。本章搞定两件事：</p>
+<ol>
+<li><strong>引擎（engine）</strong>——数据库连接的调度中心，怎么建、怎么配；</li>
+<li><strong>会话（session）</strong>——ORM 操作的工作台，怎么开、怎么提交、怎么还。</li>
+</ol>
+<p>主线按 <strong>PostgreSQL + asyncpg</strong> 讲（生产环境的主流选择），配套 demo 用 <strong>SQLite + aiosqlite</strong>——零安装零配置，clone 下来就能跑。两者对 SQLAlchemy 来说<strong>只差一行连接串</strong>，其余代码一个字不用改。</p>
+<blockquote>
+<p>本章配套 demo：
+- <code>demo/demo_engine.py</code>：异步引擎 + text() 裸 SQL，建表、插入、查询
+- <code>demo/demo_session.py</code>：会话工厂 + 三种提交方式对比</p>
+<p>示例业务统一用「墨集 inkhub 内容平台」：<code>channel</code>（栏目）和 <code>article</code>（文章）两张表。</p>
+</blockquote>
+<p><strong>章节分工提醒</strong>：<code>select()/where()/update()/delete()</code> 这些 SQL 表达式（Core 风格）是第 06 章的主场，本章查询一律用最简形式；ORM 模型怎么声明（<code>DeclarativeBase</code>、<code>Mapped</code>）是第 05 章的内容，本章直接借用一个极简模型。</p>
+<hr />
+<h2 id="1-安装一个方括号引发的血案">1. 安装：一个方括号引发的血案</h2>
+<p><strong>作用</strong>：装上 SQLAlchemy 的异步能力 + 一个异步数据库驱动。</p>
+<div class="highlight"><pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">"sqlalchemy[asyncio]"</span><span class="w"> </span>asyncpg
+<span class="c1"># 本章 demo 用 SQLite 则装：</span>
+pip<span class="w"> </span>install<span class="w"> </span><span class="s2">"sqlalchemy[asyncio]"</span><span class="w"> </span>aiosqlite
+</code></pre></div>
+<p>三样东西各司其职：</p>
+<table>
+<thead>
+<tr>
+<th>包</th>
+<th>角色</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>sqlalchemy</code></td>
+<td>ORM 框架本体</td>
+<td>引擎、会话、模型、表达式全在这</td>
+</tr>
+<tr>
+<td><code>[asyncio]</code></td>
+<td>附加依赖（extras）</td>
+<td>方括号语法，会额外装上 <code>greenlet</code>——异步引擎底层靠它做协程切换，<strong>不装必报错</strong></td>
+</tr>
+<tr>
+<td><code>asyncpg</code> / <code>aiosqlite</code></td>
+<td>数据库驱动</td>
+<td>光有框架没有驱动，等于有翻译没有快递员</td>
+</tr>
+</tbody>
+</table>
+<p><strong>常见坑</strong></p>
+<ul>
+<li><code>pip install sqlalchemy asyncpg</code> 少了方括号 → 运行时抛 <code>MissingGreenlet</code> 或 <code>InvalidRequestError: The asyncio extension requires greenlet</code>。记住了：<strong>异步用法，方括号不能省</strong>。</li>
+<li><code>psycopg2</code> 是同步驱动，配 <code>create_async_engine</code> 用不了。异步引擎只认异步驱动：PostgreSQL 用 <code>asyncpg</code>，SQLite 用 <code>aiosqlite</code>，MySQL 用 <code>asyncmy</code>。</li>
+</ul>
+<hr />
+<h2 id="2-create_async_engine先把调度中心建起来">2. create_async_engine：先把调度中心建起来</h2>
+<p><strong>作用</strong>：创建异步引擎。引擎是进程级单例，掌管连接池、方言翻译、SQL 日志——所有数据库操作的起点。</p>
+<p><strong>签名</strong>（挑常用的记）：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.ext.asyncio</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_async_engine</span>
+
+<span class="n">engine</span> <span class="o">=</span> <span class="n">create_async_engine</span><span class="p">(</span>
+    <span class="n">url</span><span class="p">,</span>                    <span class="c1"># 连接串：数据库必填</span>
+    <span class="n">echo</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>             <span class="c1"># 是否打印发出的 SQL（调试神器）</span>
+    <span class="n">echo_pool</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>        <span class="c1"># 是否打印连接池的借还日志</span>
+    <span class="n">pool_size</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>            <span class="c1"># 池内常驻连接数（PG 等服务型数据库用）</span>
+    <span class="n">max_overflow</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>        <span class="c1"># 池满后允许临时加开的连接数</span>
+    <span class="n">pool_pre_ping</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>    <span class="c1"># 借出前先发 ping 探活</span>
+    <span class="n">pool_timeout</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>        <span class="c1"># 借不到连接时最多等多久（秒）</span>
+<span class="p">)</span>
+</code></pre></div>
+<p><strong>连接串格式</strong>——<code>数据库类型+驱动://用户:密码@主机:端口/库名</code>：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># PostgreSQL + asyncpg（本章主线）</span>
+<span class="n">DATABASE_URL</span> <span class="o">=</span> <span class="s2">"postgresql+asyncpg://inkhub:secret@localhost:5432/inkhub"</span>
+
+<span class="c1"># SQLite + aiosqlite（demo 用，三根斜线接相对/绝对路径）</span>
+<span class="n">DATABASE_URL</span> <span class="o">=</span> <span class="s2">"sqlite+aiosqlite:///./inkhub.db"</span>
+
+<span class="c1"># 切换数据库 = 改这一行，业务代码零改动</span>
+</code></pre></div>
+<p><strong>最小示例</strong>——跑通「数据库心跳」：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy</span><span class="w"> </span><span class="kn">import</span> <span class="n">text</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.ext.asyncio</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_async_engine</span>
+
+<span class="n">engine</span> <span class="o">=</span> <span class="n">create_async_engine</span><span class="p">(</span><span class="n">DATABASE_URL</span><span class="p">,</span> <span class="n">echo</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">async</span> <span class="k">with</span> <span class="n">engine</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span> <span class="k">as</span> <span class="n">conn</span><span class="p">:</span>          <span class="c1"># 借一条连接</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">text</span><span class="p">(</span><span class="s2">"SELECT 1"</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">scalar</span><span class="p">())</span>                    <span class="c1"># 1，活着</span>
+
+    <span class="k">await</span> <span class="n">engine</span><span class="o">.</span><span class="n">dispose</span><span class="p">()</span>                        <span class="c1"># 进程收尾：放光所有连接</span>
+
+<span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">main</span><span class="p">())</span>
+</code></pre></div>
+<p><strong>常见坑</strong></p>
+<ul>
+<li><strong>每次请求 <code>create_async_engine</code> 一个新引擎</strong>——连接池就废了，每个池都是一次性的，连接风暴直接把数据库打挂。正确姿势：模块级建一个，全进程共用。</li>
+<li><code>echo=True</code> 只该出现在调试时。开着它，每条 SQL 连参数一起打进日志，线上既吵又可能泄敏感数据。</li>
+<li>连接串里密码有特殊字符（<code>@</code>、<code>:</code>、<code>/</code>）要 URL 编码，否则解析必乱。可用 <code>sqlalchemy.engine.URL.create()</code> 逐字段安全拼装。</li>
+<li>SQLite 是嵌入式文件库，没有「池」的概念，<code>pool_size</code>/<code>max_overflow</code> 传了也不起作用；这两位是给 PostgreSQL 这类服务型数据库准备的。</li>
+</ul>
+<hr />
+<h2 id="3-引擎连接池驱动一个柜台三家店">3. 引擎、连接池、驱动：一个柜台三家店</h2>
+<p>一张图讲清三者关系（记这张图，本章就懂一半了）：</p>
+<div class="highlight"><pre><span></span><code>              你的异步代码（await session.execute(...)）
+                        │
+                        ▼
+        ┌──────────────────────────────┐
+        │          引擎 engine            │  柜台：接单、排队、翻译方言，
+        │      create_async_engine()      │  把 Python 调用变成 SQL
+        └──────────────┬───────────────┘
+                       │ 借出 / 归还
+                       ▼
+        ┌──────────────────────────────┐
+        │          连接池 pool            │  充电宝柜子：连接用完不扔、
+        │   pool_size / max_overflow     │  放回柜子，下一位直接复用
+        └──────────────┬───────────────┘
+                       │ 持有真正的连接
+                       ▼
+        ┌──────────────────────────────┐
+        │        驱动 driver            │  线：asyncpg 只会插 PostgreSQL，
+        │   asyncpg / aiosqlite / ...   │  aiosqlite 只会插 SQLite，各认各的口
+        └──────────────┬───────────────┘
+                       ▼
+                ┌────────────┐
+                │   数据库服务器   │
+                └────────────┘
+</code></pre></div>
+<p>用共享充电宝再念一遍：</p>
+<ul>
+<li><strong>连接池是柜子</strong>：借出（<code>connect()</code>）、归还（退出 <code>async with</code>），避免每次都「造一根新线」（TCP 握手 + 认证，很贵）；</li>
+<li><strong>驱动是那根线</strong>：它只负责和特定数据库通信，不懂 SQL 怎么拼、事务怎么管——那是框架的事；</li>
+<li><strong>引擎是柜子的控制系统</strong>：决定借谁、还谁、池子多大、断线的充电宝要不要扔。</li>
+</ul>
+<p><strong>常见坑</strong></p>
+<ul>
+<li>连接池不是越大越好。<code>pool_size + max_overflow</code> 的总连接数要对着数据库的 <code>max_connections</code> 规划，池子开太大只会让数据库排队排到超时。</li>
+<li>数据库重启后，池里的旧连接全成了「僵尸」。<code>pool_pre_ping=True</code> 让每次借出前先 ping 一下，僵尸自动换新——代价是每次多一个轻量往返，生产环境建议开。</li>
+</ul>
+<hr />
+<h2 id="4-text裸-sql-的正确姿势">4. text()：裸 SQL 的正确姿势</h2>
+<p><strong>作用</strong>：把一个 SQL 字符串包装成 SQLAlchemy 认识的语句对象。引擎和连接不直接吃字符串，喂之前必须 <code>text()</code> 一下。</p>
+<p><strong>签名</strong>：<code>text(sql: str) -&gt; TextClause</code>，配合 <code>:参数名</code> 占位符 + 字典传参。</p>
+<p><strong>最小示例</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy</span><span class="w"> </span><span class="kn">import</span> <span class="n">text</span>
+
+<span class="k">async</span> <span class="k">with</span> <span class="n">engine</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span> <span class="k">as</span> <span class="n">conn</span><span class="p">:</span>
+    <span class="c1"># 1) 无参数：直接包一层</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">text</span><span class="p">(</span><span class="s2">"SELECT COUNT(*) FROM article"</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">scalar</span><span class="p">())</span>                                   <span class="c1"># 单值：scalar()</span>
+
+    <span class="c1"># 2) 命名参数：占位符 + 字典，框架自动做参数化绑定</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+        <span class="n">text</span><span class="p">(</span><span class="s2">"SELECT * FROM article WHERE channel_id = :cid"</span><span class="p">),</span>
+        <span class="p">{</span><span class="s2">"cid"</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span>
+    <span class="p">)</span>
+    <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">fetchall</span><span class="p">():</span>                            <span class="c1"># 多行：fetchall()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">row</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">row</span><span class="o">.</span><span class="n">title</span><span class="p">)</span>                             <span class="c1"># 按列名取值</span>
+
+    <span class="c1"># 3) 批量插入：传字典列表，一条语句插多行（executemany）</span>
+    <span class="k">await</span> <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+        <span class="n">text</span><span class="p">(</span><span class="s2">"INSERT INTO channel (name) VALUES (:name)"</span><span class="p">),</span>
+        <span class="p">[{</span><span class="s2">"name"</span><span class="p">:</span> <span class="s2">"前沿速递"</span><span class="p">},</span> <span class="p">{</span><span class="s2">"name"</span><span class="p">:</span> <span class="s2">"深度长文"</span><span class="p">}],</span>
+    <span class="p">)</span>
+</code></pre></div>
+<p><strong>常见坑（头号大坑：SQL 注入）</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># ❌ 千万别这样：用户输入直接进 SQL</span>
+<span class="n">keyword</span> <span class="o">=</span> <span class="s2">"' OR 1=1 --"</span>
+<span class="k">await</span> <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">text</span><span class="p">(</span><span class="sa">f</span><span class="s2">"SELECT * FROM article WHERE title LIKE '%</span><span class="si">{</span><span class="n">keyword</span><span class="si">}</span><span class="s2">%'"</span><span class="p">))</span>
+<span class="c1"># 拼出来的 SQL 恒真，全表数据裸奔；换成 DELETE 就是删库</span>
+
+<span class="c1"># ✅ 永远用占位符</span>
+<span class="k">await</span> <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+    <span class="n">text</span><span class="p">(</span><span class="s2">"SELECT * FROM article WHERE title LIKE :kw"</span><span class="p">),</span>
+    <span class="p">{</span><span class="s2">"kw"</span><span class="p">:</span> <span class="sa">f</span><span class="s2">"%</span><span class="si">{</span><span class="n">keyword</span><span class="si">}</span><span class="s2">%"</span><span class="p">},</span>   <span class="c1"># 整段被当成纯文本，注入无效</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>原理一句话：参数化绑定让数据库<strong>先解析 SQL 骨架、再单独收参数值</strong>，值永远不会被当成指令执行。另外两个小坑：<code>text()</code> 忘包（<code>conn.execute("SELECT 1")</code> 直接抛 <code>ArgumentError</code>）；PG 的 <code>%</code> 模糊匹配在 text 里不用像 psycopg2 那样写成 <code>%%</code>，占位符统一 <code>:name</code> 风格。</p>
+<p>裸 SQL 灵活但要手拼字符串、无类型检查、换数据库方言可能不兼容——所以第 06 章会请出 SQL 表达式。<strong>但在复杂聚合、特调优化的场景，裸 SQL 依然是最后一道底牌。</strong></p>
+<hr />
+<h2 id="5-connect-vs-begin借连接的两种方式">5. connect() vs begin()：借连接的两种方式</h2>
+<p>从引擎手里拿连接，两个入口：</p>
+<table>
+<thead>
+<tr>
+<th>入口</th>
+<th>事务行为</th>
+<th>适用场景</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>async with engine.connect() as conn</code></td>
+<td>借一条连接，<strong>不自动提交</strong>；要提交得手动 <code>await conn.commit()</code></td>
+<td>只读查询；想精细控制事务边界</td>
+</tr>
+<tr>
+<td><code>async with engine.begin() as conn</code></td>
+<td>进入即开事务，<strong>正常退出自动 commit，异常自动 rollback</strong></td>
+<td>写操作（INSERT/UPDATE/DELETE）的默认选择</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight"><pre><span></span><code><span class="c1"># 查询：connect 就够</span>
+<span class="k">async</span> <span class="k">with</span> <span class="n">engine</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span> <span class="k">as</span> <span class="n">conn</span><span class="p">:</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">text</span><span class="p">(</span><span class="s2">"SELECT * FROM channel"</span><span class="p">))</span>
+
+<span class="c1"># 写入：begin 省心，块里挂了自动回滚，整段同生共死</span>
+<span class="k">async</span> <span class="k">with</span> <span class="n">engine</span><span class="o">.</span><span class="n">begin</span><span class="p">()</span> <span class="k">as</span> <span class="n">conn</span><span class="p">:</span>
+    <span class="k">await</span> <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+        <span class="n">text</span><span class="p">(</span><span class="s2">"INSERT INTO article (title, channel_id) VALUES (:t, :c)"</span><span class="p">),</span>
+        <span class="p">{</span><span class="s2">"t"</span><span class="p">:</span> <span class="s2">"异步编程入门：事件循环是怎么回事"</span><span class="p">,</span> <span class="s2">"c"</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span>
+    <span class="p">)</span>
+    <span class="k">await</span> <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+        <span class="n">text</span><span class="p">(</span><span class="s2">"UPDATE channel SET name = :n WHERE id = :id"</span><span class="p">),</span>
+        <span class="p">{</span><span class="s2">"n"</span><span class="p">:</span> <span class="s2">"前沿速递·修订"</span><span class="p">,</span> <span class="s2">"id"</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span>
+    <span class="p">)</span>
+<span class="c1"># 走到这，两条改动一起提交；中间任何一步抛异常，两条一起回滚</span>
+</code></pre></div>
+<p><strong>常见坑</strong>：<code>connect()</code> 里执行了 INSERT 却忘了 <code>commit()</code>，退出上下文只还连接不提交，改动全部蒸发——而且不报错，纯静默丢失，排查起来最气人。</p>
+<hr />
+<h2 id="6-async_sessionmaker会话工厂">6. async_sessionmaker：会话工厂</h2>
+<p>引擎和 <code>text()</code> 解决了「能和数据库说话」，但真正干 ORM 活的是<strong>会话（session）</strong>。会话不能凭空 new，得从工厂里造——这就是 <code>async_sessionmaker</code>。</p>
+<p><strong>作用</strong>：把「引擎 + 一堆默认配置」打包成一个会话工厂，之后随取随用，配置不散落各处。</p>
+<p><strong>签名</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.ext.asyncio</span><span class="w"> </span><span class="kn">import</span> <span class="n">AsyncSession</span><span class="p">,</span> <span class="n">async_sessionmaker</span>
+
+<span class="n">session_factory</span> <span class="o">=</span> <span class="n">async_sessionmaker</span><span class="p">(</span>
+    <span class="n">engine</span><span class="p">,</span>                   <span class="c1"># 绑定的引擎</span>
+    <span class="n">class_</span><span class="o">=</span><span class="n">AsyncSession</span><span class="p">,</span>      <span class="c1"># 明确用异步会话类（写上，不靠默认）</span>
+    <span class="n">expire_on_commit</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>   <span class="c1"># 提交后对象属性是否过期（见第 10 节，FastAPI 场景常关）</span>
+    <span class="n">autoflush</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>           <span class="c1"># 查询前自动把挂起的改动 flush 掉</span>
+<span class="p">)</span>
+</code></pre></div>
+<p><strong>最小示例</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 工厂是进程级单例，建一次用到进程结束</span>
+<span class="n">session_factory</span> <span class="o">=</span> <span class="n">async_sessionmaker</span><span class="p">(</span><span class="n">engine</span><span class="p">,</span> <span class="n">class_</span><span class="o">=</span><span class="n">AsyncSession</span><span class="p">,</span> <span class="n">expire_on_commit</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="c1"># 用的时候像调用函数一样「造」一个会话</span>
+<span class="k">async</span> <span class="k">with</span> <span class="n">session_factory</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
+    <span class="o">...</span>
+</code></pre></div>
+<p><strong>常见坑</strong></p>
+<ul>
+<li>旧代码里的 <code>sessionmaker</code> 是同步版；异步世界认准 <code>async_sessionmaker</code>（从 <code>sqlalchemy.ext.asyncio</code> 导入）。</li>
+<li>会话 ≠ 连接。会话是「工作台」，用到数据库时才从引擎的池里<strong>临时借</strong>一条连接，用完就还。所以「多开会话」比「多开连接」便宜得多。</li>
+<li>一个会话同一时刻只服务一个协程，别多个请求共享同一个会话（FastAPI 里靠依赖注入保证一人一个，见第 11 节）。</li>
+</ul>
+<hr />
+<h2 id="7-会话上的增删查改">7. 会话上的增删查改</h2>
+<p>先借用一个极简模型（<strong>怎么建的第 05 章细讲</strong>，本章只要知道「Channel/Article 是两张表对应的两个 Python 类」即可）：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy</span><span class="w"> </span><span class="kn">import</span> <span class="n">ForeignKey</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.orm</span><span class="w"> </span><span class="kn">import</span> <span class="n">DeclarativeBase</span><span class="p">,</span> <span class="n">Mapped</span><span class="p">,</span> <span class="n">mapped_column</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Base</span><span class="p">(</span><span class="n">DeclarativeBase</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Channel</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+    <span class="n">__tablename__</span> <span class="o">=</span> <span class="s2">"channel"</span>
+    <span class="nb">id</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapped_column</span><span class="p">(</span><span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">name</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Article</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+    <span class="n">__tablename__</span> <span class="o">=</span> <span class="s2">"article"</span>
+    <span class="nb">id</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapped_column</span><span class="p">(</span><span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">title</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+    <span class="n">channel_id</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapped_column</span><span class="p">(</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s2">"channel.id"</span><span class="p">))</span>
+</code></pre></div>
+<h3 id="增add">增：add()</h3>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">with</span> <span class="n">session_factory</span><span class="o">.</span><span class="n">begin</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
+    <span class="n">article</span> <span class="o">=</span> <span class="n">Article</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">"拆解一个电商系统的订单链路"</span><span class="p">,</span> <span class="n">channel_id</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">article</span><span class="p">)</span>        <span class="c1"># 只是挂到工作台，还没发 SQL</span>
+    <span class="c1"># flush 之后主键自动回填：article.id 有值了</span>
+</code></pre></div>
+<p><code>add()</code> 像「把商品放进购物车」——只登记，不结账。SQL 要等 flush/commit（第 9 节）才真正发出。</p>
+<h3 id="查execute-scalars">查：execute() + scalars()</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy</span><span class="w"> </span><span class="kn">import</span> <span class="n">select</span>
+
+<span class="k">async</span> <span class="k">with</span> <span class="n">session_factory</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">session</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">select</span><span class="p">(</span><span class="n">Article</span><span class="p">))</span>   <span class="c1"># select 的完整玩法见 06 章</span>
+    <span class="n">articles</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">scalars</span><span class="p">()</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>                 <span class="c1"># scalars()：剥掉 Row 壳，直接拿模型对象</span>
+    <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">articles</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">a</span><span class="o">.</span><span class="n">title</span><span class="p">)</span>
+</code></pre></div>
+<p>一句话记住：<code>result</code> 装的是一行行的 <code>Row</code>（像小元组），<code>scalars()</code> 把每行的<strong>第一列</strong>抽出来——ORM 查询里第一列就是模型对象，所以 <code>scalars().all()</code> 到手的就是 <code>list[Article]</code>。</p>
+<h3 id="查一个scalar_one-scalar_one_or_none">查一个：scalar_one() / scalar_one_or_none()</h3>
+<div class="highlight"><pre><span></span><code>    <span class="n">article</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="k">await</span> <span class="n">session</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">select</span><span class="p">(</span><span class="n">Article</span><span class="p">)</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">Article</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">scalar_one</span><span class="p">()</span>        <span class="c1"># 恰好一行 → Article 对象</span>
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>0 行</th>
+<th>1 行</th>
+<th>多行</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>scalar_one()</code></td>
+<td>抛 <code>NoResultFound</code></td>
+<td>返回对象</td>
+<td>抛 <code>MultipleResultsFound</code></td>
+</tr>
+<tr>
+<td><code>scalar_one_or_none()</code></td>
+<td>返回 <code>None</code></td>
+<td>返回对象</td>
+<td>抛 <code>MultipleResultsFound</code></td>
+</tr>
+</tbody>
+</table>
+<p>按主键查、业务上「必须存在」的场景用 <code>scalar_one()</code>，让缺失直接炸出来而不是悄悄传 <code>None</code> 往下走。</p>
+<h3 id="改查出来直接改属性">改：查出来，直接改属性</h3>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">with</span> <span class="n">session_factory</span><span class="o">.</span><span class="n">begin</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
+    <span class="n">article</span> <span class="o">=</span> <span class="p">(</span><span class="k">await</span> <span class="n">session</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">select</span><span class="p">(</span><span class="n">Article</span><span class="p">)</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">Article</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)))</span><span class="o">.</span><span class="n">scalar_one</span><span class="p">()</span>
+    <span class="n">article</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="s2">"异步编程入门：从事件循环到 uvloop"</span>   <span class="c1"># 改对象 = 购物车里换货</span>
+    <span class="c1"># 提交时 session 自动对比出差异，生成精准的 UPDATE</span>
+</code></pre></div>
+<p>ORM 的爽点：<strong>没有 <code>update()</code> 这个调用</strong>。会话记着你查过的对象，改属性即改数据，提交时自动算 UPDATE。</p>
+<h3 id="删delete">删：delete()</h3>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">with</span> <span class="n">session_factory</span><span class="o">.</span><span class="n">begin</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
+    <span class="n">article</span> <span class="o">=</span> <span class="p">(</span><span class="k">await</span> <span class="n">session</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">select</span><span class="p">(</span><span class="n">Article</span><span class="p">)</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">Article</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)))</span><span class="o">.</span><span class="n">scalar_one</span><span class="p">()</span>
+    <span class="k">await</span> <span class="n">session</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">article</span><span class="p">)</span>      <span class="c1"># 注意 await，异步方法</span>
+    <span class="c1"># 提交时自动生成 DELETE</span>
+</code></pre></div>
+<p><strong>常见坑</strong>：<code>session.add()</code> 和 <code>session.delete()</code> 长得像，但前者是同步方法、后者在异步会话里<strong>必须 <code>await</code></strong>——漏了 await 删除根本没执行，还不一定报错。</p>
+<hr />
+<h2 id="8-三种提交方式从手动挡到自动挡">8. 三种提交方式：从手动挡到自动挡</h2>
+<p>写操作最终都要 <code>commit()</code> 才落库。三种写法，从「全手动」到「全自动」：</p>
+<h3 id="方式一手动挡commit-rollback-close-全自己管">方式一：手动挡——commit / rollback / close 全自己管</h3>
+<div class="highlight"><pre><span></span><code><span class="n">session</span> <span class="o">=</span> <span class="n">session_factory</span><span class="p">()</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Article</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">"..."</span><span class="p">,</span> <span class="n">channel_id</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+    <span class="k">await</span> <span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>          <span class="c1"># 提交</span>
+<span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+    <span class="k">await</span> <span class="n">session</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span>        <span class="c1"># 出错回滚</span>
+    <span class="k">raise</span>
+<span class="k">finally</span><span class="p">:</span>
+    <span class="k">await</span> <span class="n">session</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>           <span class="c1"># 无论如何都要关</span>
+</code></pre></div>
+<p>能看懂就行，日常不建议写——仪式感太重，漏掉任何一个环节都是坑（忘 rollback 占着连接、忘 close 连接泄漏）。</p>
+<h3 id="方式二上下文管关闭事务仍手动">方式二：上下文管关闭——事务仍手动</h3>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">with</span> <span class="n">session_factory</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>   <span class="c1"># 退出时自动 close</span>
+    <span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Article</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">"..."</span><span class="p">,</span> <span class="n">channel_id</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+    <span class="k">await</span> <span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>                 <span class="c1"># 提交还得自己来</span>
+</code></pre></div>
+<p><code>async with</code> 只包了「关」，没包「提交」。适合<strong>一个会话里干好几摊事、每摊单独提交</strong>的精细控制场景。</p>
+<h3 id="方式三自动挡begin-一起管">方式三：自动挡——begin() 一起管</h3>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">with</span> <span class="n">session_factory</span><span class="o">.</span><span class="n">begin</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
+    <span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Article</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">"..."</span><span class="p">,</span> <span class="n">channel_id</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+<span class="c1"># 正常走到头 → 自动 commit；中途抛异常 → 自动 rollback + close</span>
+</code></pre></div>
+<p>一行上下文，提交/回滚/关闭全包。<strong>日常业务代码的默认选择。</strong></p>
+<table>
+<thead>
+<tr>
+<th>方式</th>
+<th>关闭</th>
+<th>提交</th>
+<th>回滚</th>
+<th>一句话</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>手动</td>
+<td>手动</td>
+<td>手动</td>
+<td>手动</td>
+<td>老式写法，懂原理用</td>
+</tr>
+<tr>
+<td><code>factory()</code></td>
+<td>自动</td>
+<td>手动</td>
+<td>手动</td>
+<td>多事务分段提交</td>
+</tr>
+<tr>
+<td><code>factory.begin()</code></td>
+<td>自动</td>
+<td>自动</td>
+<td>自动</td>
+<td>无脑首选</td>
+</tr>
+</tbody>
+</table>
+<p><strong>常见坑</strong>：方式二里忘了 <code>commit()</code>——退出上下文干干净净、不报任何错，数据没了。这是新手丢数据第一名的原因。</p>
+<hr />
+<h2 id="9-flush-vs-commit先发-sql-先落库">9. flush vs commit：先发 SQL ≠ 先落库</h2>
+<p>这俩最容易混。用「发文章」打比方：</p>
+<ul>
+<li><strong>flush = 点了「保存草稿」</strong>：SQL 真的发到数据库了（INSERT/UPDATE 都执行了），<strong>但事务没提交</strong>——只有你自己（当前事务）看得见，别人看不见，随时可以反悔；</li>
+<li><strong>commit = 点了「发布」</strong>：先自动 flush 所有挂起的改动，<strong>再提交事务</strong>——从此所有人可见，覆水难收。</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">with</span> <span class="n">session_factory</span><span class="o">.</span><span class="n">begin</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
+    <span class="n">article</span> <span class="o">=</span> <span class="n">Article</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">"本周框架动态"</span><span class="p">,</span> <span class="n">channel_id</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">article</span><span class="p">)</span>
+    <span class="k">await</span> <span class="n">session</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>               <span class="c1"># INSERT 已发出，article.id 已回填</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="n">article</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>                   <span class="c1"># ✅ 主键能用了（数据库生成的）</span>
+    <span class="c1"># 此刻换一个会话去查这条记录 → 查不到（事务未提交）</span>
+<span class="c1"># 退出 begin 块，自动 commit，别的会话才看得见</span>
+</code></pre></div>
+<p>什么时候需要手动 flush？<strong>想在提交前拿到数据库生成的主键</strong>（比如插入文章后立刻要用 <code>article.id</code> 去建关联记录）。其余时候交给 commit 里的自动 flush 就行。</p>
+<p>另外记住 <code>autoflush=True</code>（默认）：每次 <code>session.execute()</code> 查询前，会话会先把挂起的改动 flush 掉——所以你在同一个会话里 add 完马上查，能查到自己的改动，这不是玄学，是 autoflush 在干活。</p>
+<hr />
+<h2 id="10-字段过期与-refreshcommit-之后属性还能读吗">10. 字段过期与 refresh：commit 之后属性还能读吗</h2>
+<p><code>async_sessionmaker</code> 里那个 <code>expire_on_commit</code>，专管这件事。</p>
+<p><strong>默认 <code>expire_on_commit=True</code>：提交即「贴封条」</strong>。commit 之后，会话把所有关联对象的字段标记为过期——你再一读属性，它就发一条 SELECT 去数据库重新对账。相当于结账后超市把小票上每件商品都盖了「待复核」章，摸一下就得回货架核价。</p>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">with</span> <span class="n">session_factory</span><span class="o">.</span><span class="n">begin</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
+    <span class="n">article</span> <span class="o">=</span> <span class="n">Article</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">"字段过期演示"</span><span class="p">,</span> <span class="n">channel_id</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">article</span><span class="p">)</span>
+    <span class="k">await</span> <span class="n">session</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+
+<span class="c1"># 会话已关闭，对象脱离会话</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">article</span><span class="o">.</span><span class="n">title</span><span class="p">)</span>   <span class="c1"># 💥 DetachedInstanceError：想过期属性，但没会话帮你查了</span>
+</code></pre></div>
+<p><strong>为什么 FastAPI 里几乎都关掉</strong>：Web 请求的典型节奏是「commit → 把对象塞进 Pydantic 响应模型 → 返回」，这中间读属性时事务早关了，开着过期只会炸。所以社区惯例：</p>
+<div class="highlight"><pre><span></span><code><span class="n">async_sessionmaker</span><span class="p">(</span><span class="n">engine</span><span class="p">,</span> <span class="n">class_</span><span class="o">=</span><span class="n">AsyncSession</span><span class="p">,</span> <span class="n">expire_on_commit</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</code></pre></div>
+<p>关掉之后提交完属性照常可读（读的是提交前的内存快照）。</p>
+<p><strong>那数据库万一变了呢？用 <code>refresh()</code></strong>——在会话还活着的时候，主动把数据库的最新值同步回对象：</p>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">with</span> <span class="n">session_factory</span><span class="o">.</span><span class="n">begin</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
+    <span class="n">article</span> <span class="o">=</span> <span class="p">(</span><span class="k">await</span> <span class="n">session</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">select</span><span class="p">(</span><span class="n">Article</span><span class="p">)</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">Article</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)))</span><span class="o">.</span><span class="n">scalar_one</span><span class="p">()</span>
+    <span class="k">await</span> <span class="n">session</span><span class="o">.</span><span class="n">refresh</span><span class="p">(</span><span class="n">article</span><span class="p">)</span>    <span class="c1"># 发一条 SELECT，用数据库当前值覆盖对象</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">article</span><span class="o">.</span><span class="n">title</span><span class="p">)</span>              <span class="c1"># 一定是此刻数据库里的真值</span>
+</code></pre></div>
+<p>一句话总结：<strong><code>expire_on_commit=True</code> 是「自动定期对账」（费查询、异步里易炸），<code>False</code> + 手动 <code>refresh()</code> 是「平时信缓存、要新就刷新」（省事、可控）</strong>。异步开发选后者。</p>
+<hr />
+<h2 id="11-get_db-依赖的雏形">11. get_db 依赖的雏形</h2>
+<p>FastAPI 每个请求处理函数都需要一个会话，用完就还。靠什么做到「一个请求一个会话，全自动」？——<strong>生成器 + <code>yield</code></strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">AsyncIterator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.ext.asyncio</span><span class="w"> </span><span class="kn">import</span> <span class="n">AsyncSession</span>
+
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_db</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">AsyncIterator</span><span class="p">[</span><span class="n">AsyncSession</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""一个请求一个会话：请求进来造一个，请求结束自动关"""</span>
+    <span class="k">async</span> <span class="k">with</span> <span class="n">session_factory</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
+        <span class="k">yield</span> <span class="n">session</span>     <span class="c1"># yield 处把会话交给路由函数；路由跑完后才执行退出</span>
+</code></pre></div>
+<p>在 FastAPI 里配合 <code>Depends</code>（依赖注入，第 08 章的主角）：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">fastapi</span><span class="w"> </span><span class="kn">import</span> <span class="n">Depends</span>
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"/articles"</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">list_articles</span><span class="p">(</span><span class="n">db</span><span class="p">:</span> <span class="n">AsyncSession</span> <span class="o">=</span> <span class="n">Depends</span><span class="p">(</span><span class="n">get_db</span><span class="p">)):</span>
+    <span class="n">articles</span> <span class="o">=</span> <span class="p">(</span><span class="k">await</span> <span class="n">db</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">select</span><span class="p">(</span><span class="n">Article</span><span class="p">)))</span><span class="o">.</span><span class="n">scalars</span><span class="p">()</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">a</span><span class="o">.</span><span class="n">title</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">articles</span><span class="p">]</span>     <span class="c1"># 请求结束，会话自动关闭、连接自动归还</span>
+</code></pre></div>
+<p>现在只需要记住形状：<strong><code>yield</code> 前是「借」，<code>yield</code> 后是「还」</strong>。为什么这么设计、异常时怎么保证归还、怎么统一换成 <code>begin()</code> 模式——第 08 章依赖注入见。</p>
+<hr />
+<h2 id="12-本章速查表">12. 本章速查表</h2>
+<table>
+<thead>
+<tr>
+<th>要点</th>
+<th>一句话</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>安装</td>
+<td><code>pip install "sqlalchemy[asyncio]" asyncpg</code>，方括号不能丢</td>
+</tr>
+<tr>
+<td>连接串</td>
+<td><code>postgresql+asyncpg://user:pwd@host:port/db</code>；换库只改这一行</td>
+</tr>
+<tr>
+<td>引擎</td>
+<td>进程级单例；<code>echo=True</code> 调试用；用完 <code>dispose()</code></td>
+</tr>
+<tr>
+<td>池参数</td>
+<td><code>pool_size</code>/<code>max_overflow</code>/<code>pool_pre_ping</code>，服务型数据库专用</td>
+</tr>
+<tr>
+<td>三层关系</td>
+<td>引擎（柜台）→ 池（充电宝柜子）→ 驱动（线）</td>
+</tr>
+<tr>
+<td>裸 SQL</td>
+<td>必须 <code>text()</code> 包裹；参数一律 <code>:占位符</code> + 字典，杜绝注入</td>
+</tr>
+<tr>
+<td>借连接</td>
+<td>查询 <code>connect()</code>；写入 <code>begin()</code>（自动提交/回滚）</td>
+</tr>
+<tr>
+<td>会话工厂</td>
+<td><code>async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)</code></td>
+</tr>
+<tr>
+<td>增删查改</td>
+<td><code>add</code> / <code>execute</code> + <code>scalars().all()</code> / <code>scalar_one()</code> / 改属性 / <code>await delete()</code></td>
+</tr>
+<tr>
+<td>提交三式</td>
+<td>手动挡 → <code>factory()</code> 管关 → <code>factory.begin()</code> 全包（首选）</td>
+</tr>
+<tr>
+<td>flush vs commit</td>
+<td>flush 保存草稿（自己可见），commit 发布（全局可见）</td>
+</tr>
+<tr>
+<td>过期与刷新</td>
+<td>异步关 <code>expire_on_commit</code>，要最新值用 <code>refresh()</code></td>
+</tr>
+<tr>
+<td>get_db 雏形</td>
+<td><code>async with ... yield session</code>，yield 前借、后还（08 章展开）</td>
+</tr>
+</tbody>
+</table>
+<p><strong>下一章</strong>：<a href="../backend/05-orm-jian-mo.html">05 · ORM 建模</a></p></div>
+
+      </article>
+<nav class="pager"><a class="pg-card pg-prev" href="../backend/03-pydantic-shu-ju-jiao-yan-yu-pei-zhi.html"><span class="pg-label">← 上一篇</span><span class="pg-title">Pydantic 数据校验与配置</span><span class="pg-mod">Python 框架指南</span></a><a class="pg-card pg-next" href="../backend/05-orm-jian-mo.html"><span class="pg-label">下一篇 →</span><span class="pg-title">ORM 建模</span><span class="pg-mod">Python 框架指南</span></a></nav>
+    </div>
+    <footer class="foot">
+      <span>深栈 DeepStack · AI Agent 工程师转型训练营配套文档</span>
+    </footer>
+  </main>
+<nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#1-安装一个方括号引发的血案">1. 安装：一个方括号引发的血案</a><a class="toc-link toc-h2" href="#2-create_async_engine先把调度中心建起来">2. create_async_engine：先把调度中心建起来</a><a class="toc-link toc-h2" href="#3-引擎连接池驱动一个柜台三家店">3. 引擎、连接池、驱动：一个柜台三家店</a><a class="toc-link toc-h2" href="#4-text裸-sql-的正确姿势">4. text()：裸 SQL 的正确姿势</a><a class="toc-link toc-h2" href="#5-connect-vs-begin借连接的两种方式">5. connect() vs begin()：借连接的两种方式</a><a class="toc-link toc-h2" href="#6-async_sessionmaker会话工厂">6. async_sessionmaker：会话工厂</a><a class="toc-link toc-h2" href="#7-会话上的增删查改">7. 会话上的增删查改</a><a class="toc-link toc-h3" href="#增add">增：add()</a><a class="toc-link toc-h3" href="#查execute-scalars">查：execute() + scalars()</a><a class="toc-link toc-h3" href="#查一个scalar_one-scalar_one_or_none">查一个：scalar_one() / scalar_one_or_none()</a><a class="toc-link toc-h3" href="#改查出来直接改属性">改：查出来，直接改属性</a><a class="toc-link toc-h3" href="#删delete">删：delete()</a><a class="toc-link toc-h2" href="#8-三种提交方式从手动挡到自动挡">8. 三种提交方式：从手动挡到自动挡</a><a class="toc-link toc-h3" href="#方式一手动挡commit-rollback-close-全自己管">方式一：手动挡——commit / rollback / close 全自己管</a><a class="toc-link toc-h3" href="#方式二上下文管关闭事务仍手动">方式二：上下文管关闭——事务仍手动</a><a class="toc-link toc-h3" href="#方式三自动挡begin-一起管">方式三：自动挡——begin() 一起管</a><a class="toc-link toc-h2" href="#9-flush-vs-commit先发-sql-先落库">9. flush vs commit：先发 SQL ≠ 先落库</a><a class="toc-link toc-h2" href="#10-字段过期与-refreshcommit-之后属性还能读吗">10. 字段过期与 refresh：commit 之后属性还能读吗</a><a class="toc-link toc-h2" href="#11-get_db-依赖的雏形">11. get_db 依赖的雏形</a><a class="toc-link toc-h2" href="#12-本章速查表">12. 本章速查表</a></nav>
+</div>
+<div class="sb-mask" id="sbMask"></div>
+<script src="../assets/app.js"></script>
+</body>
+</html>

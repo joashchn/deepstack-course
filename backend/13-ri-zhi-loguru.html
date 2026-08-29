@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>13 · 日志 loguru · 深栈 DeepStack 课程文档</title>
+<meta name="description" content="本章你将学会
+
+ - 为什么 print 不能当日志用（无级别、无时间、无上下文、不能关），标准 logging 又输在哪（配置繁琐、堆栈不直观）
+ - loguru 核心用法：logger.add 装配 sink、级别…">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%23d9c39a' text-anchor='middle'%3EDS%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+<div class="progress" id="progress"></div>
+
+<div class="layout">
+<aside class="sidebar" id="sidebar">
+  <div class="sb-head">
+    <a class="brand" href="../index.html">
+      <span class="brand-mark">DS</span>
+      <span class="brand-text"><b>深栈 DeepStack</b><i>AI Agent 工程师转型训练营</i></span>
+    </a>
+    <button class="sb-close" id="sbClose" aria-label="关闭目录">✕</button>
+  </div>
+  <div class="sb-search"><input type="search" id="searchInput" placeholder="搜索 123 篇文档… ( / )" autocomplete="off">
+    <div class="sb-results" id="searchResults"></div></div>
+  <nav class="sb-nav">
+    <section class="sb-group" data-mod="python">
+      <a class="sb-group-title" href="../modules/python.html" data-toggle="python">
+        <span class="sb-num">01</span>
+        <span class="sb-group-text"><b>Python 与数据实践</b><i>31 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../python/01-huan-jing-da-jian-yu-ban-ben-guan-li.html"><span class="sb-item-num">01</span><span class="sb-item-title">环境搭建与版本管理</span></a>
+        <a class="sb-item" href="../python/02-bian-liang-biao-da-shi-yu-liu-cheng-kong-zhi.html"><span class="sb-item-num">02</span><span class="sb-item-title">变量、表达式与流程控制</span></a>
+        <a class="sb-item" href="../python/03-xu-lie-zi-dian-yu-ji-he.html"><span class="sb-item-num">03</span><span class="sb-item-title">序列、字典与集合</span></a>
+        <a class="sb-item" href="../python/04-han-shu-she-ji-yu-lambda.html"><span class="sb-item-num">04</span><span class="sb-item-title">函数设计与 lambda</span></a>
+        <a class="sb-item" href="../python/05-zuo-yong-yu-gui-ze-yu-bi-bao.html"><span class="sb-item-num">05</span><span class="sb-item-title">作用域规则与闭包</span></a>
+        <a class="sb-item" href="../python/06-lei-de-ding-yi-yu-shi-li-hua.html"><span class="sb-item-num">06</span><span class="sb-item-title">类的定义与实例化</span></a>
+        <a class="sb-item" href="../python/07-lei-xing-pan-ding-yu-chou-xiang-ji-lei.html"><span class="sb-item-num">07</span><span class="sb-item-title">类型判定与抽象基类</span></a>
+        <a class="sb-item" href="../python/08-mo-shu-fang-fa-quan-jing.html"><span class="sb-item-num">08</span><span class="sb-item-title">魔术方法全景</span></a>
+        <a class="sb-item" href="../python/09-miao-shu-fu-yu-yuan-lei.html"><span class="sb-item-num">09</span><span class="sb-item-title">描述符与元类</span></a>
+        <a class="sb-item" href="../python/10-zhuang-shi-qi.html"><span class="sb-item-num">10</span><span class="sb-item-title">装饰器</span></a>
+        <a class="sb-item" href="../python/11-die-dai-xie-yi-yu-sheng-cheng-qi.html"><span class="sb-item-num">11</span><span class="sb-item-title">迭代协议与生成器</span></a>
+        <a class="sb-item" href="../python/12-with-yu-shang-xia-wen-xie-yi.html"><span class="sb-item-num">12</span><span class="sb-item-title">with 与上下文协议</span></a>
+        <a class="sb-item" href="../python/13-yi-chang-ti-xi-yu-chu-li.html"><span class="sb-item-num">13</span><span class="sb-item-title">异常体系与处理</span></a>
+        <a class="sb-item" href="../python/14-lei-xing-biao-zhu.html"><span class="sb-item-num">14</span><span class="sb-item-title">类型标注</span></a>
+        <a class="sb-item" href="../python/15-mo-kuai-yu-bao-de-zu-zhi.html"><span class="sb-item-num">15</span><span class="sb-item-title">模块与包的组织</span></a>
+        <a class="sb-item" href="../python/16-biao-zhun-ku-xun-li.html"><span class="sb-item-num">16</span><span class="sb-item-title">标准库巡礼</span></a>
+        <a class="sb-item" href="../python/17-yi-lai-guan-li-yu-di-san-fang-ku.html"><span class="sb-item-num">17</span><span class="sb-item-title">依赖管理与第三方库</span></a>
+        <a class="sb-item" href="../python/18-xian-cheng-yu-jin-cheng.html"><span class="sb-item-num">18</span><span class="sb-item-title">线程与进程</span></a>
+        <a class="sb-item" href="../python/19-shi-jian-xun-huan.html"><span class="sb-item-num">19</span><span class="sb-item-title">事件循环</span></a>
+        <a class="sb-item" href="../python/20-future-yu-xie-cheng.html"><span class="sb-item-num">20</span><span class="sb-item-title">Future 与协程</span></a>
+        <a class="sb-item" href="../python/21-asyncio-shi-zhan.html"><span class="sb-item-num">21</span><span class="sb-item-title">asyncio 实战</span></a>
+        <a class="sb-item" href="../python/22-gou-jian-yu-fa-bu.html"><span class="sb-item-num">22</span><span class="sb-item-title">构建与发布</span></a>
+        <a class="sb-item" href="../python/23-gong-cheng-hua-gong-ju-lian.html"><span class="sb-item-num">23</span><span class="sb-item-title">工程化工具链</span></a>
+        <a class="sb-item" href="../python/24-monorepo-yu-tiao-shi.html"><span class="sb-item-num">24</span><span class="sb-item-title">monorepo 与调试</span></a>
+        <a class="sb-item" href="../python/25-jupyter-jiao-hu-huan-jing.html"><span class="sb-item-num">25</span><span class="sb-item-title">Jupyter 交互环境</span></a>
+        <a class="sb-item" href="../python/26-numpy-shu-zu-yu-xiang-liang-hua.html"><span class="sb-item-num">26</span><span class="sb-item-title">NumPy 数组与向量化</span></a>
+        <a class="sb-item" href="../python/27-pandas-shu-ju-jie-gou.html"><span class="sb-item-num">27</span><span class="sb-item-title">Pandas 数据结构</span></a>
+        <a class="sb-item" href="../python/28-pandas-shu-ju-qing-xi.html"><span class="sb-item-num">28</span><span class="sb-item-title">Pandas 数据清洗</span></a>
+        <a class="sb-item" href="../python/29-matplotlib-hui-tu-ti-xi.html"><span class="sb-item-num">29</span><span class="sb-item-title">Matplotlib 绘图体系</span></a>
+        <a class="sb-item" href="../python/30-matplotlib-dong-hua-yu-jiao-hu.html"><span class="sb-item-num">30</span><span class="sb-item-title">Matplotlib 动画与交互</span></a>
+        <a class="sb-item" href="../python/31-seaborn-tong-ji-ke-shi-hua.html"><span class="sb-item-num">31</span><span class="sb-item-title">Seaborn 统计可视化</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="agent">
+      <a class="sb-group-title" href="../modules/agent.html" data-toggle="agent">
+        <span class="sb-num">02</span>
+        <span class="sb-group-text"><b>Agent 核心</b><i>15 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../agent/01-token-yu-ci-qian-ru.html"><span class="sb-item-num">01</span><span class="sb-item-title">Token 与词嵌入</span></a>
+        <a class="sb-item" href="../agent/02-qian-xiang-chuan-bo-yu-fan-xiang-chuan-bo.html"><span class="sb-item-num">02</span><span class="sb-item-title">前向传播与反向传播</span></a>
+        <a class="sb-item" href="../agent/03-zhu-yi-li-ji-zhi-yu-transformer-jia-gou.html"><span class="sb-item-num">03</span><span class="sb-item-title">注意力机制与 Transformer 架构</span></a>
+        <a class="sb-item" href="../agent/04-yu-xun-lian-rlhf-yu-cai-yang-kv-cache.html"><span class="sb-item-num">04</span><span class="sb-item-title">预训练、RLHF 与采样（KV Cache）</span></a>
+        <a class="sb-item" href="../agent/05-ben-di-mo-xing-yu-xiao-xi-jie-gou.html"><span class="sb-item-num">05</span><span class="sb-item-title">本地模型与消息结构</span></a>
+        <a class="sb-item" href="../agent/06-hui-hua-guan-li-yu-json-shu-chu.html"><span class="sb-item-num">06</span><span class="sb-item-title">会话管理与 JSON 输出</span></a>
+        <a class="sb-item" href="../agent/07-tool-calling-xie-yi-yu-feng-zhuang.html"><span class="sb-item-num">07</span><span class="sb-item-title">Tool Calling：协议与封装</span></a>
+        <a class="sb-item" href="../agent/08-react-mo-shi-yu-zhu-xun-huan.html"><span class="sb-item-num">08</span><span class="sb-item-title">ReAct 模式与主循环</span></a>
+        <a class="sb-item" href="../agent/09-shi-zhan-deep-research-agent.html"><span class="sb-item-num">09</span><span class="sb-item-title">实战：Deep Research Agent</span></a>
+        <a class="sb-item" href="../agent/10-skill-yu-jian-jin-shi-pi-lu.html"><span class="sb-item-num">10</span><span class="sb-item-title">Skill 与渐进式披露</span></a>
+        <a class="sb-item" href="../agent/11-mcp-quan-jing.html"><span class="sb-item-num">11</span><span class="sb-item-title">MCP 全景</span></a>
+        <a class="sb-item" href="../agent/12-duo-agent-yu-xuan-xing-ce-lve.html"><span class="sb-item-num">12</span><span class="sb-item-title">多 Agent 与选型策略</span></a>
+        <a class="sb-item" href="../agent/13-ti-shi-ci-gong-cheng-yu-shang-xia-wen-gong.html"><span class="sb-item-num">13</span><span class="sb-item-title">提示词工程与上下文工程</span></a>
+        <a class="sb-item" href="../agent/14-xun-huan-tu-yu-gu-jia-gong-cheng.html"><span class="sb-item-num">14</span><span class="sb-item-title">循环、图与骨架工程</span></a>
+        <a class="sb-item" href="../agent/15-ji-yi-quan-xian-yu-ping-ce.html"><span class="sb-item-num">15</span><span class="sb-item-title">记忆、权限与评测</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="langchain">
+      <a class="sb-group-title" href="../modules/langchain.html" data-toggle="langchain">
+        <span class="sb-num">03</span>
+        <span class="sb-group-text"><b>LangChain 指南</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langchain/01-ren-shi-langchain.html"><span class="sb-item-num">01</span><span class="sb-item-title">认识 LangChain</span></a>
+        <a class="sb-item" href="../langchain/02-ti-shi-ci-mu-ban-yu-xiao-xi.html"><span class="sb-item-num">02</span><span class="sb-item-title">提示词模板与消息</span></a>
+        <a class="sb-item" href="../langchain/03-lcel-yu-runnable.html"><span class="sb-item-num">03</span><span class="sb-item-title">LCEL 与 Runnable</span></a>
+        <a class="sb-item" href="../langchain/04-liu-shi-yu-bing-fa.html"><span class="sb-item-num">04</span><span class="sb-item-title">流式与并发</span></a>
+        <a class="sb-item" href="../langchain/05-shu-chu-jie-xi-qi.html"><span class="sb-item-num">05</span><span class="sb-item-title">输出解析器</span></a>
+        <a class="sb-item" href="../langchain/06-wen-dang-jia-zai-yu-qie-ge.html"><span class="sb-item-num">06</span><span class="sb-item-title">文档加载与切割</span></a>
+        <a class="sb-item" href="../langchain/07-qian-ru-yu-xiang-liang-ku.html"><span class="sb-item-num">07</span><span class="sb-item-title">嵌入与向量库</span></a>
+        <a class="sb-item" href="../langchain/08-jian-suo-yu-rag.html"><span class="sb-item-num">08</span><span class="sb-item-title">检索与RAG</span></a>
+        <a class="sb-item" href="../langchain/09-dui-hua-ji-yi.html"><span class="sb-item-num">09</span><span class="sb-item-title">对话记忆</span></a>
+        <a class="sb-item" href="../langchain/10-gong-ju-diao-yong.html"><span class="sb-item-num">10</span><span class="sb-item-title">工具调用</span></a>
+        <a class="sb-item" href="../langchain/11-agent.html"><span class="sb-item-num">11</span><span class="sb-item-title">Agent</span></a>
+        <a class="sb-item" href="../langchain/12-hui-diao-yu-tiao-shi-quan-ke-cheng-shou-guan.html"><span class="sb-item-num">12</span><span class="sb-item-title">回调与调试（全课程收官章）</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="langgraph">
+      <a class="sb-group-title" href="../modules/langgraph.html" data-toggle="langgraph">
+        <span class="sb-num">04</span>
+        <span class="sb-group-text"><b>LangGraph 框架指南</b><i>17 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langgraph/01-di-1-zhang-cong-yi-ge-shi-kong-de-jiao.html"><span class="sb-item-num">01</span><span class="sb-item-title">第 1 章 从一个失控的脚本说起</span></a>
+        <a class="sb-item" href="../langgraph/02-di-2-zhang-zui-xiao-ke-yun-xing-tu.html"><span class="sb-item-num">02</span><span class="sb-item-title">第 2 章 最小可运行图</span></a>
+        <a class="sb-item" href="../langgraph/03-di-3-zhang-zhuang-tai-tu-de-shu-ju-xin.html"><span class="sb-item-num">03</span><span class="sb-item-title">第 3 章 状态：图的数据心脏</span></a>
+        <a class="sb-item" href="../langgraph/04-di-4-zhang-rang-liu-cheng-xue-hui-jue-ce.html"><span class="sb-item-num">04</span><span class="sb-item-title">第 4 章 让流程学会决策</span></a>
+        <a class="sb-item" href="../langgraph/05-di-5-zhang-bing-xing-shi-jie-chao-bu-zhi.html"><span class="sb-item-num">05</span><span class="sb-item-title">第 5 章 并行世界：超步执行模型</span></a>
+        <a class="sb-item" href="../langgraph/06-di-6-zhang-command-ba-kong-zhi-quan-jiao-jin.html"><span class="sb-item-num">06</span><span class="sb-item-title">第 6 章 Command：把控制权交进节点</span></a>
+        <a class="sb-item" href="../langgraph/07-di-7-zhang-dong-tai-bing-xing-send-yu-mapreduce.html"><span class="sb-item-num">07</span><span class="sb-item-title">第 7 章 动态并行：Send 与 MapReduce</span></a>
+        <a class="sb-item" href="../langgraph/08-di-8-zhang-gei-tu-zhuang-shang-shou-jiao-gong.html"><span class="sb-item-num">08</span><span class="sb-item-title">第 8 章 给图装上手脚：工具调用</span></a>
+        <a class="sb-item" href="../langgraph/09-di-9-zhang-fu-yong-yu-feng-zhuang-zi-tu.html"><span class="sb-item-num">09</span><span class="sb-item-title">第 9 章 复用与封装：子图</span></a>
+        <a class="sb-item" href="../langgraph/10-di-10-zhang-cong-dan-tu-dao-tuan-dui-duo.html"><span class="sb-item-num">10</span><span class="sb-item-title">第 10 章 从单图到团队：多 Agent 架构</span></a>
+        <a class="sb-item" href="../langgraph/11-di-11-zhang-liu-shi-shu-chu.html"><span class="sb-item-num">11</span><span class="sb-item-title">第 11 章 流式输出</span></a>
+        <a class="sb-item" href="../langgraph/12-di-12-zhang-chi-jiu-hua-checkpointer-yu-xian-cheng.html"><span class="sb-item-num">12</span><span class="sb-item-title">第 12 章 持久化：Checkpointer 与线程</span></a>
+        <a class="sb-item" href="../langgraph/13-di-13-zhang-shi-jian-lv-xing.html"><span class="sb-item-num">13</span><span class="sb-item-title">第 13 章 时间旅行</span></a>
+        <a class="sb-item" href="../langgraph/14-di-14-zhang-zhong-duan-yu-ren-zai-hui-lu.html"><span class="sb-item-num">14</span><span class="sb-item-title">第 14 章 中断与人在回路</span></a>
+        <a class="sb-item" href="../langgraph/15-di-15-zhang-ji-yi-guan-li.html"><span class="sb-item-num">15</span><span class="sb-item-title">第 15 章 记忆管理</span></a>
+        <a class="sb-item" href="../langgraph/16-di-16-zhang-rong-cuo-zhong-shi-chao-shi-yu.html"><span class="sb-item-num">16</span><span class="sb-item-title">第 16 章 容错：重试、超时与兜底</span></a>
+        <a class="sb-item" href="../langgraph/17-di-17-zhang-quan-jing-hui-gu.html"><span class="sb-item-num">17</span><span class="sb-item-title">第 17 章 全景回顾</span></a>
+      </div>
+    </section>
+    <section class="sb-group open" data-mod="backend">
+      <a class="sb-group-title" href="../modules/backend.html" data-toggle="backend">
+        <span class="sb-num">05</span>
+        <span class="sb-group-text"><b>Python 框架指南</b><i>14 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../backend/01-fastapi-ru-men-yu-asgi.html"><span class="sb-item-num">01</span><span class="sb-item-title">FastAPI 入门与 ASGI</span></a>
+        <a class="sb-item" href="../backend/02-lu-you-yu-qing-qiu-xiang-ying.html"><span class="sb-item-num">02</span><span class="sb-item-title">路由与请求响应</span></a>
+        <a class="sb-item" href="../backend/03-pydantic-shu-ju-jiao-yan-yu-pei-zhi.html"><span class="sb-item-num">03</span><span class="sb-item-title">Pydantic 数据校验与配置</span></a>
+        <a class="sb-item" href="../backend/04-sqlalchemy-yi-bu-yin-qing-yu-hui-hua.html"><span class="sb-item-num">04</span><span class="sb-item-title">SQLAlchemy 异步引擎与会话</span></a>
+        <a class="sb-item" href="../backend/05-orm-jian-mo.html"><span class="sb-item-num">05</span><span class="sb-item-title">ORM 建模</span></a>
+        <a class="sb-item" href="../backend/06-sql-biao-da-shi-yu-shu-ju-cao-zuo.html"><span class="sb-item-num">06</span><span class="sb-item-title">SQL 表达式与数据操作</span></a>
+        <a class="sb-item" href="../backend/07-alembic-shu-ju-qian-yi.html"><span class="sb-item-num">07</span><span class="sb-item-title">Alembic 数据迁移</span></a>
+        <a class="sb-item" href="../backend/08-yi-lai-zhu-ru.html"><span class="sb-item-num">08</span><span class="sb-item-title">依赖注入</span></a>
+        <a class="sb-item" href="../backend/09-tong-yi-yi-chang-chu-li.html"><span class="sb-item-num">09</span><span class="sb-item-title">统一异常处理</span></a>
+        <a class="sb-item" href="../backend/10-zhong-jian-jian.html"><span class="sb-item-num">10</span><span class="sb-item-title">中间件</span></a>
+        <a class="sb-item" href="../backend/11-ren-zheng-yu-jwt.html"><span class="sb-item-num">11</span><span class="sb-item-title">认证与 JWT</span></a>
+        <a class="sb-item" href="../backend/12-pytest-ce-shi.html"><span class="sb-item-num">12</span><span class="sb-item-title">pytest 测试</span></a>
+        <a class="sb-item current" href="../backend/13-ri-zhi-loguru.html"><span class="sb-item-num">13</span><span class="sb-item-title">日志 loguru</span></a>
+        <a class="sb-item" href="../backend/14-liu-shi-xiang-ying-sse-yu-websocket.html"><span class="sb-item-num">14</span><span class="sb-item-title">流式响应 SSE 与 WebSocket</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="interview">
+      <a class="sb-group-title" href="../modules/interview.html" data-toggle="interview">
+        <span class="sb-num">06</span>
+        <span class="sb-group-text"><b>面试题库</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../interview/01-llm-yuan-li-pian.html"><span class="sb-item-num">01</span><span class="sb-item-title">LLM 原理篇</span></a>
+        <a class="sb-item" href="../interview/02-rag-yu-jian-suo-pian.html"><span class="sb-item-num">02</span><span class="sb-item-title">RAG 与检索篇</span></a>
+        <a class="sb-item" href="../interview/03-agent-he-xin-pian.html"><span class="sb-item-num">03</span><span class="sb-item-title">Agent 核心篇</span></a>
+        <a class="sb-item" href="../interview/04-langgraph-pian.html"><span class="sb-item-num">04</span><span class="sb-item-title">LangGraph 篇</span></a>
+        <a class="sb-item" href="../interview/05-langchain-pian.html"><span class="sb-item-num">05</span><span class="sb-item-title">LangChain 篇</span></a>
+        <a class="sb-item" href="../interview/06-xi-tong-she-ji-pian.html"><span class="sb-item-num">06</span><span class="sb-item-title">系统设计篇</span></a>
+        <a class="sb-item" href="../interview/07-xiang-mu-shen-wa-pian.html"><span class="sb-item-num">07</span><span class="sb-item-title">项目深挖篇</span></a>
+        <a class="sb-item" href="../interview/08-gu-zhang-pai-cha-pian.html"><span class="sb-item-num">08</span><span class="sb-item-title">故障排查篇</span></a>
+        <a class="sb-item" href="../interview/09-python-ji-chu-pian.html"><span class="sb-item-num">09</span><span class="sb-item-title">Python 基础篇</span></a>
+        <a class="sb-item" href="../interview/10-fastapi-yu-hou-duan-pian.html"><span class="sb-item-num">10</span><span class="sb-item-title">FastAPI 与后端篇</span></a>
+        <a class="sb-item" href="../interview/11-ti-shi-ci-gong-cheng-yu-an-quan-pian.html"><span class="sb-item-num">11</span><span class="sb-item-title">提示词工程与安全篇</span></a>
+        <a class="sb-item" href="../interview/12-mo-xing-xuan-xing-yu-jiang-ben-pian.html"><span class="sb-item-num">12</span><span class="sb-item-title">模型选型与降本篇</span></a>
+      </div>
+    </section>
+  </nav>
+</aside>
+  <main class="main">
+    <header class="topbar">
+      <button class="menu-btn" id="menuBtn" aria-label="目录">☰</button>
+      <div class="crumbs"><a href="../index.html">首页</a><span>/</span><a href="../modules/backend.html">Python 框架指南</a><span>/</span><span class="cur">日志 loguru</span></div>
+      <div class="topbar-actions">
+        <button class="icon-btn" id="themeBtn" title="切换深浅色" aria-label="切换深浅色">◐</button>
+      </div>
+    </header>
+    <div class="content">
+      <article class="article">
+
+<header class="page-head">
+  <div class="page-kicker">Python 框架指南 · 第 13 章</div>
+  <h1 class="page-title">日志 loguru</h1>
+  <p class="page-desc">本章你将学会
+
+ - 为什么 print 不能当日志用（无级别、无时间、无上下文、不能关），标准 logging 又输在哪（配置繁琐、堆栈不直观）
+ - loguru 核心用法：logger.add 装配 sink、级别…</p>
+  <div class="page-meta">
+    <span>约 55 分钟</span><span>22,005 字</span><span>37 个代码示例</span>
+  </div>
+</header>
+<div class="md"><blockquote>
+<p><strong>本章你将学会</strong></p>
+<ul>
+<li>为什么 <code>print</code> 不能当日志用（无级别、无时间、无上下文、不能关），标准 <code>logging</code> 又输在哪（配置繁琐、堆栈不直观）</li>
+<li>loguru 核心用法：<code>logger.add</code> 装配 sink、级别过滤、文件轮转 <code>rotation</code> / 保留 <code>retention</code> / 压缩 <code>compression</code>、序列化 <code>serialize</code></li>
+<li><code>bind</code> / <code>contextualize</code> 给日志挂上 <code>request_id</code>「行李牌」，一条日志 tracing 到一次请求</li>
+<li><code>logger.opt(exception=True)</code> 把异常堆栈记全，<code>lazy</code> 省掉白干的消息拼接，<code>diagnose</code> 看变量值（以及它为什么在生产必须关）</li>
+<li><code>InterceptHandler</code> 把标准 logging（uvicorn、SQLAlchemy 用的那套）收编进 loguru，全项目一个格式</li>
+<li>FastAPI 集成：中间件注入 <code>request_id</code> + <code>contextvars</code>（兑现第 10 章「只进不出」怪癖的预告）、异常处理器里记堆栈（兑现第 09 章「堆栈只进终端」的伏笔）</li>
+<li>生产建议：本地文本、生产 JSON，日志分级策略，敏感信息脱敏</li>
+</ul>
+</blockquote>
+<p>第 09 章统一异常时留了个尾巴：未知异常的完整堆栈只进 uvicorn 终端，重启终端就没了；第 10 章讲中间件时又预告过 <code>contextvars</code>「只进不出」的怪癖会在这章回收。这两笔账本章一起清——用 loguru 给墨集 inkhub 搭一套像样的日志系统：<strong>发布文章的每一步都有据可查，炸了能顺着 request_id 把病历单捞出来。</strong></p>
+<hr />
+<h2 id="1-print-为什么不行喊一嗓子不算记录">1. <code>print</code> 为什么不行：喊一嗓子不算记录</h2>
+<p><strong>作用</strong>：把「随手 print」和「正经日志」的区别钉死，后面所有 API 才有意义。</p>
+<p>墨集的发布接口上线第一周，运营反馈「昨天有篇文章发布失败了」。你打开代码一看：</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">publish_article</span><span class="p">(</span><span class="n">article_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"开始发布"</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">article_id</span><span class="p">)</span>
+    <span class="o">...</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"发布完成"</span><span class="p">)</span>  <span class="c1"># 到底执行到哪一句了？几点执行的？哪个请求触发的？</span>
+</code></pre></div>
+<p><code>print</code> 是<strong>对着办公室喊一嗓子</strong>：喊的时候在场的人听见了，没在场的人（未来的你）什么都没留下。它有四宗罪：</p>
+<table>
+<thead>
+<tr>
+<th>缺什么</th>
+<th>后果</th>
+<th>日志系统怎么救</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>级别</strong></td>
+<td>「文章发布成功」和「数据库挂了」长得一模一样，没法筛选</td>
+<td>DEBUG / INFO / ERROR 分级，要粗要细随取随用</td>
+</tr>
+<tr>
+<td><strong>时间</strong></td>
+<td>不知道哪天几点发生的，排障全靠猜</td>
+<td>每条自动带高精度时间戳</td>
+</tr>
+<tr>
+<td><strong>上下文</strong></td>
+<td>几十个并发请求的输出交错在一起，分不清哪行属于哪次请求</td>
+<td>绑定 request_id，一串日志追一次请求</td>
+</tr>
+<tr>
+<td><strong>开关</strong></td>
+<td>上线了想让 DEBUG 消失？只能挨个删代码</td>
+<td>一处配置关级别，代码一行不动</td>
+</tr>
+</tbody>
+</table>
+<p>还有第五宗：<code>print</code> 只会往 stdout 写，<strong>落不了盘、进不了采集系统</strong>——磁盘满了、数据库慢查询、凌晨三点的 500，全都无处追溯。</p>
+<p><strong>常见坑</strong>：<code>print</code> 不是要一刀切戒掉——写一次性脚本调试、<code>__main__</code> 里输出个结果，它依然是最快的。要戒的是「把 print 当日志系统用」。</p>
+<hr />
+<h2 id="2-标准-logging功能全都有用起来像手动挡">2. 标准 <code>logging</code>：功能全都有，用起来像手动挡</h2>
+<p><strong>作用</strong>：知道标准库 <code>logging</code> 痛在哪，才懂 loguru 为什么火。</p>
+<p>公平地说，标准 <code>logging</code> 功能是全的——级别、格式、轮转、分级 handler 一应俱全。问题是「把日志打对」的成本太高。墨集想要「终端出 INFO、文件出 DEBUG、文件按大小轮转」，标准写法长这样：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging.handlers</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">"inkhub"</span><span class="p">)</span>
+
+<span class="n">formatter</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">Formatter</span><span class="p">(</span>
+    <span class="s2">"</span><span class="si">%(asctime)s</span><span class="s2"> | </span><span class="si">%(levelname)-7s</span><span class="s2"> | </span><span class="si">%(message)s</span><span class="s2">"</span><span class="p">,</span>
+    <span class="n">datefmt</span><span class="o">=</span><span class="s2">"%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S"</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">console</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">StreamHandler</span><span class="p">()</span>
+<span class="n">console</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
+<span class="n">console</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">formatter</span><span class="p">)</span>
+
+<span class="n">file_handler</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">handlers</span><span class="o">.</span><span class="n">RotatingFileHandler</span><span class="p">(</span>
+    <span class="s2">"inkhub.log"</span><span class="p">,</span> <span class="n">maxBytes</span><span class="o">=</span><span class="mi">10</span> <span class="o">*</span> <span class="mi">1024</span> <span class="o">*</span> <span class="mi">1024</span><span class="p">,</span> <span class="n">backupCount</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">file_handler</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>
+<span class="n">file_handler</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">formatter</span><span class="p">)</span>
+
+<span class="n">logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">console</span><span class="p">)</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">file_handler</span><span class="p">)</span>
+</code></pre></div>
+<p>十行起步，还没算按时间轮转（得换 <code>TimedRotatingFileHandler</code>，参数又是另一套）。三大痛点：</p>
+<ol>
+<li><strong>配置繁琐</strong>：handler、formatter、level 三样东西要分别构造再手动接线，每个项目重抄一遍。</li>
+<li><strong>异常堆栈不直观</strong>：想带堆栈得记得写 <code>logger.error("发布失败", exc_info=True)</code>——忘了就是一行光秃秃的消息；堆栈格式是纯文本，跟消息挤在一起。</li>
+<li><strong>到处 <code>getLogger</code></strong>：每个文件开头 <code>logger = logging.getLogger(__name__)</code>，忘了配 propagate 和 root handler，日志就「神秘消失」。</li>
+</ol>
+<p>打个比方：标准 <code>logging</code> 是<strong>手动挡卡车</strong>——什么路况都能跑，但起步要踩离合、挂挡、给油三步操作。loguru 是自动挡：上车踩油门就走，老司机想手动调（它也支持），但日常场景全都自动完成。</p>
+<hr />
+<h2 id="3-loguru-上手add-一个-sink日志就有家了">3. loguru 上手：<code>add</code> 一个 sink，日志就有家了</h2>
+<p><strong>作用</strong>：装好 loguru，理解它最核心的模型——<strong>logger 是分发台，sink 是出口</strong>。</p>
+<div class="highlight"><pre><span></span><code>uv<span class="w"> </span>add<span class="w"> </span>loguru
+</code></pre></div>
+<p>loguru 开箱即用，<code>from loguru import logger</code> 直接打，默认往终端输出。但它真正的用法是先「装配」——把输出接到哪儿、收到什么级别、什么格式，全由 <code>add</code> 说了算：</p>
+<p><strong>签名</strong>（挑常用的讲）：</p>
+<div class="highlight"><pre><span></span><code><span class="n">logger</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
+    <span class="n">sink</span><span class="p">,</span>                    <span class="c1"># 出口：终端 / 文件路径 / 文件对象 / 自定义函数 / 协程……</span>
+    <span class="n">level</span><span class="o">=</span><span class="s2">"DEBUG"</span><span class="p">,</span>           <span class="c1"># 这个 sink 只接收该级别及以上的消息</span>
+    <span class="nb">format</span><span class="o">=</span><span class="s2">"</span><span class="si">{time}</span><span class="s2"> | </span><span class="si">{level}</span><span class="s2"> | </span><span class="si">{message}</span><span class="s2">"</span><span class="p">,</span>   <span class="c1"># 格式模板</span>
+    <span class="nb">filter</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>             <span class="c1"># 过滤器：更细粒度地决定哪些消息进来（第 4 节）</span>
+    <span class="n">serialize</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>         <span class="c1"># True 则每条日志序列化成一行 JSON（第 6 节）</span>
+    <span class="n">backtrace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>          <span class="c1"># 异常链完整展开（第 8 节）</span>
+    <span class="n">diagnose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>           <span class="c1"># 堆栈里标注变量值（第 8 节，生产要关！）</span>
+    <span class="n">enqueue</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>           <span class="c1"># True 则走队列写入，多进程安全（第 11 节）</span>
+    <span class="c1"># sink 是文件路径时，还能透传这些文件专属参数（第 5 节）：</span>
+    <span class="c1"># rotation=..., retention=..., compression=..., encoding=...</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span>                     <span class="c1"># 返回 sink 的 id，remove 时要用</span>
+</code></pre></div>
+<p>一个 <code>logger</code> 可以 <code>add</code> 多个 sink：同一条消息，终端一份、文件一份、采集系统一份——<strong>分发台模式</strong>：消息只发一次，出口随便接多少个。</p>
+<p><strong>最小示例</strong>（墨集的最小装配）：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">loguru</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
+
+<span class="n">logger</span><span class="o">.</span><span class="n">remove</span><span class="p">()</span>  <span class="c1"># 撤掉默认的终端 sink（不可定制，留着它日志会双份）</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">configure</span><span class="p">(</span><span class="n">extra</span><span class="o">=</span><span class="p">{</span><span class="s2">"request_id"</span><span class="p">:</span> <span class="s2">"-"</span><span class="p">})</span>  <span class="c1"># 给 extra 设默认值，见第 4 节的坑</span>
+
+<span class="n">logger</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="s2">"INFO"</span><span class="p">,</span>
+           <span class="nb">format</span><span class="o">=</span><span class="s2">"&lt;green&gt;{time:HH:mm:ss}&lt;/green&gt; | &lt;level&gt;</span><span class="si">{level: &lt;7}</span><span class="s2">&lt;/level&gt; | </span><span class="si">{message}</span><span class="s2">"</span><span class="p">)</span>
+
+<span class="n">logger</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">"logs/inkhub_{time:YYYYMMDD}.log"</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="s2">"DEBUG"</span><span class="p">,</span>
+           <span class="n">rotation</span><span class="o">=</span><span class="s2">"100 MB"</span><span class="p">,</span> <span class="n">retention</span><span class="o">=</span><span class="s2">"30 days"</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span>
+
+<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"墨集日志系统装配完成"</span><span class="p">)</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">success</span><span class="p">(</span><span class="s2">"文章发布完成：article_id=101"</span><span class="p">)</span>
+</code></pre></div>
+<p>顺路认识七级日志——loguru 比 <code>logging</code> 多了两个「人性化」级别：</p>
+<table>
+<thead>
+<tr>
+<th>级别</th>
+<th>数值</th>
+<th>什么时候用（墨集口径）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>TRACE</td>
+<td>5</td>
+<td>追查疑难杂症时的细粒度流水（进来时打开，查完关）</td>
+</tr>
+<tr>
+<td>DEBUG</td>
+<td>10</td>
+<td>开发排障细节：生成的 slug、SQL 参数、中间变量</td>
+</tr>
+<tr>
+<td>INFO</td>
+<td>20</td>
+<td>业务里程碑：收到请求、发布完成</td>
+</tr>
+<tr>
+<td>SUCCESS</td>
+<td>25</td>
+<td>INFO 的「办成了」变体：任务成功、支付到账</td>
+</tr>
+<tr>
+<td>WARNING</td>
+<td>30</td>
+<td>不对劲但没死：重试了一次、缓存失效回源</td>
+</tr>
+<tr>
+<td>ERROR</td>
+<td>40</td>
+<td>出错了：发布失败、下游超时</td>
+</tr>
+<tr>
+<td>CRITICAL</td>
+<td>50</td>
+<td>服务要不行了：数据库连不上、磁盘满</td>
+</tr>
+</tbody>
+</table>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li><strong><code>add</code> 调一次就多一个出口</strong>。在函数里写 <code>logger.add(...)</code>，函数被调 3 次就是 3 个出口，一条日志打印 3 遍——装配代码只在启动时执行一次，别塞进请求处理路径里。</li>
+<li><strong><code>logger.remove()</code> 不带参数删全部 sink，带 id 删单个</strong>（<code>add</code> 的返回值）。几乎所有项目开头都有一句 <code>remove()</code>：默认 sink 的格式不能定制，撤了自己装。</li>
+<li><code>rotation</code> / <code>retention</code> / <code>compression</code> 是<strong>文件 sink 专属</strong>参数——sink 是路径时才有效，传给 <code>sys.stderr</code> 这种对象 sink 会直接报错。它们不在 <code>add</code> 的签名里，是被透传给文件 sink 的。</li>
+</ul>
+<hr />
+<h2 id="4-级别与过滤同一批日志各取所需">4. 级别与过滤：同一批日志，各取所需</h2>
+<p><strong>作用</strong>：让不同 sink 吃不同范围的日志——终端别刷屏、文件要详尽、特殊日志单独归档。</p>
+<h3 id="41-sink-级别出口的门槛">4.1 sink 级别：出口的门槛</h3>
+<div class="highlight"><pre><span></span><code><span class="n">logger</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="s2">"INFO"</span><span class="p">)</span>            <span class="c1"># 终端：INFO 起步，DEBUG 刷屏免了</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">"logs/inkhub.log"</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="s2">"DEBUG"</span><span class="p">)</span>    <span class="c1"># 文件：DEBUG 起步，排障要的细节都在</span>
+
+<span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"生成 slug：loguru-十分钟上手"</span><span class="p">)</span>   <span class="c1"># 只进文件</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"文章发布完成"</span><span class="p">)</span>                     <span class="c1"># 终端 + 文件都进</span>
+</code></pre></div>
+<p>一句话：<strong>消息够不够格，看级别；够格了去哪些出口，看各 sink 的门槛</strong>。</p>
+<h3 id="42-filter级别之外的第二道闸">4.2 filter：级别之外的第二道闸</h3>
+<p><code>level</code> 只能按级别一刀切，<code>filter</code> 能按任意条件分流。三种写法：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># ① 函数：接收 record 字典，返回 True 才放行</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">"logs/billing.log"</span><span class="p">,</span>
+           <span class="nb">filter</span><span class="o">=</span><span class="k">lambda</span> <span class="n">record</span><span class="p">:</span> <span class="n">record</span><span class="p">[</span><span class="s2">"extra"</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"billing"</span><span class="p">))</span>
+
+<span class="c1"># ② 字符串：只收某个模块（按 logger 名）的日志</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">"logs/payment.log"</span><span class="p">,</span> <span class="nb">filter</span><span class="o">=</span><span class="s2">"inkhub.payment"</span><span class="p">)</span>
+
+<span class="c1"># ③ 字典：不同模块给不同级别（模块名 → 门槛）</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">,</span> <span class="nb">filter</span><span class="o">=</span><span class="p">{</span><span class="s2">"inkhub"</span><span class="p">:</span> <span class="s2">"INFO"</span><span class="p">,</span> <span class="s2">"sqlalchemy.engine"</span><span class="p">:</span> <span class="s2">"WARNING"</span><span class="p">})</span>
+</code></pre></div>
+<p>墨集的用法：计费日志单独归档。调用处 <code>logger.bind(billing=True).info(...)</code> 打标记（第 7 节细讲 bind），<code>billing.log</code> 这个 sink 用 <code>filter</code> 只收带标记的——以后财务对账，翻这一个文件就够，不用在海量业务日志里捞针。</p>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li>filter 函数里读 <code>extra</code> 字段<strong>必须用 <code>.get()</code></strong>：<code>record["extra"]["billing"]</code> 这种写法，遇到没 bind 过的普通日志直接 <code>KeyError</code>，炸的是日志系统本身——排障工具比业务先倒下，就很讽刺了。</li>
+<li><strong>format 模板里引用 <code>{extra[request_id]}</code>，前提是这个字段有默认值</strong>。任何一条没绑过 request_id 的日志（比如启动日志）都会因为字段不存在而报错。解法就一句：
+  <div class="highlight"><pre><span></span><code><span class="n">logger</span><span class="o">.</span><span class="n">configure</span><span class="p">(</span><span class="n">extra</span><span class="o">=</span><span class="p">{</span><span class="s2">"request_id"</span><span class="p">:</span> <span class="s2">"-"</span><span class="p">})</span>  <span class="c1"># 全局默认值，没绑的日志显示 "-"</span>
+</code></pre></div></li>
+<li>sink 还可以是<strong>自定义函数</strong>（收到 record 后想干嘛干嘛）——第 12 章写测试时，把日志记进一个 list，断言「ERROR 是否出现」就有了着落。</li>
+</ul>
+<hr />
+<h2 id="5-文件轮转三板斧rotationretentioncompression">5. 文件轮转三板斧：rotation、retention、compression</h2>
+<p><strong>作用</strong>：日志文件不能无限长。这三个参数把「一个文件写爆磁盘」变成「档案柜自动换抽屉、定期扔旧档、旧档抽真空」。</p>
+<p><strong>签名</strong>（都是 <code>add()</code> 传给文件 sink 的参数）：</p>
+<div class="highlight"><pre><span></span><code><span class="n">logger</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
+    <span class="s2">"logs/inkhub_{time:YYYYMMDD}.log"</span><span class="p">,</span>
+    <span class="n">rotation</span><span class="o">=</span><span class="s2">"100 MB"</span><span class="p">,</span>       <span class="c1"># ① 什么时候换新文件</span>
+    <span class="n">retention</span><span class="o">=</span><span class="s2">"30 days"</span><span class="p">,</span>     <span class="c1"># ② 旧文件留多久</span>
+    <span class="n">compression</span><span class="o">=</span><span class="s2">"zip"</span><span class="p">,</span>       <span class="c1"># ③ 退下来的旧文件压成压缩包</span>
+<span class="p">)</span>
+</code></pre></div>
+<p><strong>① rotation——换抽屉的触发条件</strong>。三种触发方式：</p>
+<div class="highlight"><pre><span></span><code><span class="n">rotation</span><span class="o">=</span><span class="s2">"100 MB"</span>     <span class="c1"># 按大小：写满 100 MB 就换新文件（最常用）</span>
+<span class="n">rotation</span><span class="o">=</span><span class="s2">"00:00"</span>      <span class="c1"># 按时刻：每天零点换（"midnight" 等价）</span>
+<span class="n">rotation</span><span class="o">=</span><span class="s2">"1 week"</span>     <span class="c1"># 按间隔：每 7 天换（"Monday" 表示每周一换）</span>
+</code></pre></div>
+<p>文件名里的 <code>{time:YYYYMMDD}</code> 占位符会被替换成 add 时刻的时间戳——每次轮转生成的新文件名都不同，绝不含糊。</p>
+<p><strong>② retention——保洁阿姨多久来一趟</strong>。旧的轮转文件留多少：</p>
+<div class="highlight"><pre><span></span><code><span class="n">retention</span><span class="o">=</span><span class="s2">"30 days"</span>   <span class="c1"># 只留最近 30 天的旧档</span>
+<span class="n">retention</span><span class="o">=</span><span class="mi">10</span>          <span class="c1"># 只留最近 10 个旧档</span>
+</code></pre></div>
+<p><strong>③ compression——退下来的旧档抽真空</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="n">compression</span><span class="o">=</span><span class="s2">"zip"</span>     <span class="c1"># 旧档自动压成 .zip（"gz" 也常用）</span>
+</code></pre></div>
+<p>顺序是固定的：写满 → 换新文件 → 超龄的旧档被删 → 剩下的旧档压成 zip。一行配置，磁盘永远体面。</p>
+<p><strong>最小示例</strong>（墨集生产配置长这样）：</p>
+<div class="highlight"><pre><span></span><code><span class="n">logger</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
+    <span class="s2">"logs/inkhub_{time:YYYYMMDD_HHmmss}.log"</span><span class="p">,</span>
+    <span class="n">level</span><span class="o">=</span><span class="s2">"DEBUG"</span><span class="p">,</span>
+    <span class="n">rotation</span><span class="o">=</span><span class="s2">"100 MB"</span><span class="p">,</span>       <span class="c1"># 单文件最多 100 MB</span>
+    <span class="n">retention</span><span class="o">=</span><span class="s2">"30 days"</span><span class="p">,</span>     <span class="c1"># 旧档留一个月</span>
+    <span class="n">compression</span><span class="o">=</span><span class="s2">"zip"</span><span class="p">,</span>       <span class="c1"># 旧档压缩，磁盘占用再砍一刀</span>
+    <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">,</span>
+<span class="p">)</span>
+</code></pre></div>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li><strong>演示时把阈值调小</strong>（比如 <code>rotation="2 KB"</code>），跑几条日志就能看见轮转发生；阈值 100 MB 的话，演示要写到天荒地老。本章 demo 就是这么干的。</li>
+<li>按时间轮转（<code>"00:00"</code>）判断的是<strong>本地时间</strong>，服务器时区和你们团队时区不一致时，「每天的日志」切分点可能出乎意料。</li>
+<li>retention 删除的是<strong>匹配文件名模式的旧档</strong>——文件名模板别中途改，改了之后旧模式的文件成了「无主档案」，retention 永远清不到它。</li>
+</ul>
+<hr />
+<h2 id="6-serialize一行一条-json喂给采集系统">6. serialize：一行一条 JSON，喂给采集系统</h2>
+<p><strong>作用</strong>：终端给人看，文件给机器看。生产环境的日志最终要进 ELK / Loki 这类采集系统，人家只吃 JSON。</p>
+<div class="highlight"><pre><span></span><code><span class="n">logger</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">"logs/inkhub.json"</span><span class="p">,</span> <span class="n">serialize</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="s2">"INFO"</span><span class="p">)</span>
+</code></pre></div>
+<p>之后每条日志是一行合法 JSON（JSON Lines 格式）：</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span><span class="nt">"text"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2026-08-27 10:32:11.402 | INFO    | req-a1b2c3 | 文章发布完成：article_id=101\n"</span><span class="p">,</span><span class="w"> </span><span class="nt">"record"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"elapsed"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"repr"</span><span class="p">:</span><span class="w"> </span><span class="s2">"..."</span><span class="p">,</span><span class="w"> </span><span class="nt">"seconds"</span><span class="p">:</span><span class="w"> </span><span class="mf">3.2</span><span class="p">},</span><span class="w"> </span><span class="nt">"exception"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w"> </span><span class="nt">"extra"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"request_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"req-a1b2c3"</span><span class="p">},</span><span class="w"> </span><span class="nt">"file"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"publish.py"</span><span class="p">,</span><span class="w"> </span><span class="nt">"path"</span><span class="p">:</span><span class="w"> </span><span class="s2">"..."</span><span class="p">},</span><span class="w"> </span><span class="nt">"function"</span><span class="p">:</span><span class="w"> </span><span class="s2">"publish_article"</span><span class="p">,</span><span class="w"> </span><span class="nt">"level"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"icon"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ℹ️"</span><span class="p">,</span><span class="w"> </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"INFO"</span><span class="p">,</span><span class="w"> </span><span class="nt">"no"</span><span class="p">:</span><span class="w"> </span><span class="mi">20</span><span class="p">},</span><span class="w"> </span><span class="nt">"line"</span><span class="p">:</span><span class="w"> </span><span class="mi">42</span><span class="p">,</span><span class="w"> </span><span class="nt">"message"</span><span class="p">:</span><span class="w"> </span><span class="s2">"文章发布完成：article_id=101"</span><span class="p">,</span><span class="w"> </span><span class="nt">"module"</span><span class="p">:</span><span class="w"> </span><span class="s2">"publish"</span><span class="p">,</span><span class="w"> </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"inkhub.publish"</span><span class="p">,</span><span class="w"> </span><span class="nt">"process"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">90367</span><span class="p">,</span><span class="w"> </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"MainProcess"</span><span class="p">},</span><span class="w"> </span><span class="nt">"thread"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"MainThread"</span><span class="p">},</span><span class="w"> </span><span class="nt">"time"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"repr"</span><span class="p">:</span><span class="w"> </span><span class="s2">"..."</span><span class="p">,</span><span class="w"> </span><span class="nt">"timestamp"</span><span class="p">:</span><span class="w"> </span><span class="mf">1770000000.0</span><span class="p">}}}</span>
+</code></pre></div>
+<p><code>text</code> 是渲染好的整行文本；<code>record</code> 是结构化原始数据——级别、模块、函数、行号、<code>extra</code> 里的 request_id，全都是独立字段。采集系统按 <code>record.extra.request_id</code> 建索引，一次请求的全部日志一秒筛出来。</p>
+<p>本地开发用不上它（人眼看 JSON 累），第 11 节会给「本地文本、生产 JSON」的切换模板。</p>
+<p><strong>常见坑</strong>：serialize 的是 loguru 自己的 record 结构，不是你想像的 <code>{"level": ..., "msg": ...}</code> 轻量格式。接采集系统时字段路径写对（消息在 <code>record.message</code>，上下文在 <code>record.extra</code>），别按直觉猜。</p>
+<hr />
+<h2 id="7-bind-与-contextualize给日志挂行李牌">7. bind 与 contextualize：给日志挂行李牌</h2>
+<p><strong>作用</strong>：解决第 1 节的第三宗罪——并发请求的日志交错，谁也分不清哪行属于哪次请求。给同一次请求的所有日志挂同一张「行李牌」：request_id。</p>
+<p>loguru 有一整套「上下文」工具，按出场顺序：</p>
+<p><strong>① <code>logger.bind()</code>——手动挂一张牌</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="n">log</span> <span class="o">=</span> <span class="n">logger</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="n">request_id</span><span class="o">=</span><span class="s2">"req-a1b2c3"</span><span class="p">)</span>
+<span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"收到发布请求"</span><span class="p">)</span>        <span class="c1"># 这两条日志的 extra 里有 request_id</span>
+<span class="n">log</span><span class="o">.</span><span class="n">success</span><span class="p">(</span><span class="s2">"文章发布完成"</span><span class="p">)</span>     <span class="c1"># 这条也是</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"另一条普通日志"</span><span class="p">)</span>    <span class="c1"># 这条没有——bind 只作用于返回的那个 log 对象</span>
+</code></pre></div>
+<p>适合小范围使用；全项目每处都 bind 一遍？不现实。</p>
+<p><strong>② <code>logger.contextualize()</code>——作用域内全程自动挂</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="k">with</span> <span class="n">logger</span><span class="o">.</span><span class="n">contextualize</span><span class="p">(</span><span class="n">request_id</span><span class="o">=</span><span class="s2">"req-a1b2c3"</span><span class="p">):</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"请求开始"</span><span class="p">)</span>            <span class="c1"># 自动带 request_id</span>
+    <span class="n">publish_article</span><span class="p">(</span><span class="mi">101</span><span class="p">,</span> <span class="s2">"..."</span><span class="p">)</span>        <span class="c1"># 函数内部所有 logger 调用都带（不用传参！）</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"请求结束"</span><span class="p">)</span>            <span class="c1"># 还是带</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"出了作用域"</span><span class="p">)</span>              <span class="c1"># 不带了</span>
+</code></pre></div>
+<p><code>with</code> 块里<strong>所有</strong>日志调用自动带上字段——业务函数一行都不用改。它底层就是 <code>contextvars</code> 实现的，所以在 asyncio 里天然安全（每个并发任务各拿各的上下文副本，互不串门）。</p>
+<p><strong>③ <code>logger.configure(extra=...)</code>——给所有人发默认牌</strong>：第 4 节已经出场，没绑定的日志兜底显示 <code>"-"</code>，防 format 报错。</p>
+<p><strong>④ <code>logger.configure(patcher=...)</code>——全局盖章机</strong>（进阶姿势）：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">contextvars</span>
+
+<span class="n">request_id_var</span><span class="p">:</span> <span class="n">contextvars</span><span class="o">.</span><span class="n">ContextVar</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">contextvars</span><span class="o">.</span><span class="n">ContextVar</span><span class="p">(</span>
+    <span class="s2">"request_id"</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">"-"</span>
+<span class="p">)</span>
+
+<span class="n">logger</span><span class="o">.</span><span class="n">configure</span><span class="p">(</span><span class="n">patcher</span><span class="o">=</span><span class="k">lambda</span> <span class="n">record</span><span class="p">:</span> <span class="n">record</span><span class="p">[</span><span class="s2">"extra"</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+    <span class="n">request_id</span><span class="o">=</span><span class="n">request_id_var</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+<span class="p">))</span>
+</code></pre></div>
+<p>每条日志落盘前，patcher 都被调用一次，从 contextvar 里捞当前值盖进 extra。好处：<strong>不管日志从哪来（哪怕是被第 9 节收编的标准 logging），只要它跑在「设置过 contextvar 的上下文」里，就自动带牌</strong>。第 10 节的 FastAPI 实战会看到这个好处值多少钱。</p>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li><code>bind</code> 和 <code>filter</code> 是配套的：<code>filter</code> 里用 <code>record["extra"].get("billing")</code> 判断的标记，正是 <code>bind(billing=True)</code> 挂上去的。挂标记的和消费标记的要约好字段名。</li>
+<li><code>contextualize</code> 是 <code>with</code> 语句，<strong>异常穿出 with 时上下文会被恢复</strong>——这个细节在第 10.3 节会变成一个真实的坑，先记下。</li>
+</ul>
+<hr />
+<h2 id="8-opt堆栈lazy-与调用深度">8. opt()：堆栈、lazy 与调用深度</h2>
+<p><strong>作用</strong>：<code>logger.opt()</code> 是「本条日志的特殊选项」，一次调用可以同时开好几个挂件。三个最值钱的：<code>exception</code>、<code>lazy</code>、<code>depth</code>。</p>
+<h3 id="81-exceptiontrue把病历单打全">8.1 exception=True：把病历单打全</h3>
+<p>第 09 章的家规：堆栈进日志、不进响应。loguru 里这么写：</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">publish_article</span><span class="p">(</span><span class="n">article_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">sync_to_search</span><span class="p">(</span><span class="n">article_id</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+        <span class="c1"># 显式带上堆栈——不需要在 except 块里，任何地方都能用</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">opt</span><span class="p">(</span><span class="n">exception</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">"同步搜索引擎失败：article_id=</span><span class="si">{}</span><span class="s2">"</span><span class="p">,</span> <span class="n">article_id</span><span class="p">)</span>
+</code></pre></div>
+<p><code>logger.exception("...")</code> 是它的快捷方式（等价于 <code>opt(exception=True).error</code>），但只能在 <code>except</code> 块里用；<code>opt(exception=True)</code> 还能显式传异常对象——<code>opt(exception=exc)</code>，第 10.3 节在异常处理器里就靠它。</p>
+<p>输出长这样（loguru 的招牌）：</p>
+<div class="highlight"><pre><span></span><code>10:32:11 | ERROR | req-g7h8i9 | 同步搜索引擎失败：article_id=103
+Traceback (most recent call last):
+
+  File "publish.py", line 93, in publish_article
+    sync_to_search(slug, article_id)
+    │              │     └ 103
+    │              └ 'loguru-十分钟上手'
+    └ &lt;function sync_to_search at 0x1096a2790&gt;
+
+  File "publish.py", line 83, in sync_to_search
+    url = "/search/index/" + article_id
+                             └ 103
+
+TypeError: can only concatenate str (not "int") to str
+</code></pre></div>
+<p>注意堆栈里那些 <code>└ 103</code>——<strong>每个变量的值直接标在旁边</strong>，一眼看出 <code>article_id</code> 是 int 才炸的。这是 <code>diagnose=True</code> 的功劳。</p>
+<h3 id="82-backtrace-与-diagnose堆栈的两档火力">8.2 backtrace 与 diagnose：堆栈的两档火力</h3>
+<p>这两个是 <strong><code>add()</code> 的 sink 级参数</strong>（不是 opt 的！），控制堆栈渲染的详细程度：</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>默认</th>
+<th>管什么</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>backtrace</code></td>
+<td>True</td>
+<td>异常链（<code>raise ... from ...</code> 的因果链）是否完整展开</td>
+</tr>
+<tr>
+<td><code>diagnose</code></td>
+<td>True</td>
+<td>堆栈里是否标注<strong>变量值</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>坑（本章最大的安全坑）</strong>：<code>diagnose</code> 默认是开的，而变量值里可能有<strong>密码、token、用户手机号</strong>——生产环境写文件 sink 时必须显式关掉：</p>
+<div class="highlight"><pre><span></span><code><span class="n">logger</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">"logs/inkhub.log"</span><span class="p">,</span> <span class="n">diagnose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>   <span class="c1"># 生产：堆栈照打，变量值不打</span>
+</code></pre></div>
+<p>开发环境留着它，是排障神器；生产环境关掉它，是安全底线。</p>
+<h3 id="83-lazy消息没人收参数就不求值">8.3 lazy：消息没人收，参数就不求值</h3>
+<p><strong>作用</strong>：高频 DEBUG 日志的性能保险。消息级别低于所有 sink 的门槛时，这条日志注定被丢弃——那为它拼接字符串就是纯浪费。<code>lazy=True</code> 让参数延迟到「确定要记」才求值：</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">build_tracking_payload</span><span class="p">(</span><span class="n">article_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="o">...</span>  <span class="c1"># 读缓存、拼 JSON，一套昂贵操作</span>
+
+<span class="c1"># 生产 sink 是 INFO 起步：这条 DEBUG 没人收，lambda 根本不执行，零开销</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">opt</span><span class="p">(</span><span class="n">lazy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"埋点：</span><span class="si">{}</span><span class="s2">"</span><span class="p">,</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">build_tracking_payload</span><span class="p">(</span><span class="mi">101</span><span class="p">))</span>
+
+<span class="c1"># 万一临时把 sink 调到 DEBUG 排障，lambda 自动开始执行，一个字不用改</span>
+</code></pre></div>
+<p>参数写成 <code>lambda</code>，loguru 只在「至少有一个 sink 要收这条消息」时才调用它。本章 demo 实测过：TRACE 级别没人收，lambda 静默跳过；DEBUG 级别有文件 sink 收，lambda 如约执行。</p>
+<h3 id="84-depth谁记的这条日志">8.4 depth：谁记的这条日志</h3>
+<p><code>opt(depth=N)</code> 让 loguru 把「日志来源」算到 N 层之外的调用者头上。平时用不着，但第 9 节的 <code>InterceptHandler</code> 全靠它——不然所有被收编的第三方日志，来源都写着 <code>logging/__init__.py</code>。</p>
+<hr />
+<h2 id="9-intercepthandler收编标准-logging">9. InterceptHandler：收编标准 logging</h2>
+<p><strong>作用</strong>：FastAPI 生态里不只有你的代码在打日志——uvicorn 的访问日志、SQLAlchemy 的 SQL 日志、第三方 SDK，全用标准 <code>logging</code>。不收编的话，终端上两种格式打架，文件里只有你自己的日志，「统一日志系统」名存实亡。</p>
+<p><strong>思路</strong>：标准 <code>logging</code> 的每条消息最终都要过某个 handler——那就在 root logger 上装一个「转发器」，把消息原封不动转给 loguru。这就是官方推荐的 <code>InterceptHandler</code>：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">loguru</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">InterceptHandler</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">Handler</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""标准 logging → loguru 的摆渡人。"""</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">emit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">record</span><span class="p">:</span> <span class="n">logging</span><span class="o">.</span><span class="n">LogRecord</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># ① 级别映射：标准 logging 的级别名转成 loguru 的名字；</span>
+        <span class="c1">#    对不上号（loguru 特有的 TRACE/SUCCESS）就退回数字级别</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">level</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">logger</span><span class="o">.</span><span class="n">level</span><span class="p">(</span><span class="n">record</span><span class="o">.</span><span class="n">levelname</span><span class="p">)</span><span class="o">.</span><span class="n">name</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="n">level</span> <span class="o">=</span> <span class="n">record</span><span class="o">.</span><span class="n">levelno</span>
+
+        <span class="c1"># ② 栈深度探测：往上翻调用栈，跳过 logging 模块自己的帧，</span>
+        <span class="c1">#    让 loguru 显示的「文件:行号」是真正发起调用的地方</span>
+        <span class="n">frame</span><span class="p">,</span> <span class="n">depth</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">(),</span> <span class="mi">0</span>
+        <span class="k">while</span> <span class="n">frame</span> <span class="ow">and</span> <span class="p">(</span><span class="n">depth</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">frame</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_filename</span> <span class="o">==</span> <span class="n">logging</span><span class="o">.</span><span class="vm">__file__</span><span class="p">):</span>
+            <span class="n">frame</span> <span class="o">=</span> <span class="n">frame</span><span class="o">.</span><span class="n">f_back</span>
+            <span class="n">depth</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="c1"># ③ 转发：带上原始堆栈（record.exc_info），按探测到的深度记录</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">opt</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="n">depth</span><span class="p">,</span> <span class="n">exception</span><span class="o">=</span><span class="n">record</span><span class="o">.</span><span class="n">exc_info</span><span class="p">)</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
+            <span class="n">level</span><span class="p">,</span> <span class="n">record</span><span class="o">.</span><span class="n">getMessage</span><span class="p">()</span>
+        <span class="p">)</span>
+</code></pre></div>
+<p>装到 root logger 上，全项目的标准 logging 一次性改道：</p>
+<div class="highlight"><pre><span></span><code><span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">handlers</span><span class="o">=</span><span class="p">[</span><span class="n">InterceptHandler</span><span class="p">()],</span> <span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</code></pre></div>
+<p><code>level=0</code> 保证 root 不拦截任何级别（放行权交给 loguru 的各 sink）；<code>force=True</code> 拆掉可能已存在的旧配置，保证我们的摆渡人是唯一的。</p>
+<p>收编前后对比（墨集终端，实测）：</p>
+<div class="highlight"><pre><span></span><code># 收编前：uvicorn 的原生格式，跟 loguru 的格式打架
+INFO:     127.0.0.1:5173 - "POST /api/articles HTTP/1.1" 201 Created
+
+# 收编后：uvicorn 的日志也走 loguru 格式，进 loguru 的所有 sink
+10:32:11 | INFO    | - | 127.0.0.1:5173 - "POST /api/articles HTTP/1.1" 201
+</code></pre></div>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li><strong><code>logging.basicConfig</code> 要在 <code>uvicorn.run()</code> 之前执行</strong>（放模块顶层或 <code>create_app</code> 里都行）。uvicorn 启动时会自己配置一遍日志，晚了就被覆盖。</li>
+<li>uvicorn 默认给 <code>uvicorn</code>、<code>uvicorn.error</code>、<code>uvicorn.access</code> 三个 logger 挂自己的 handler 且 <code>propagate=False</code>——消息到不了 root，摆渡人白装。最省事的解法是启动时加一个参数：
+  <div class="highlight"><pre><span></span><code><span class="n">uvicorn</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="n">log_config</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>   <span class="c1"># 禁止 uvicorn 摆弄 logging 配置，全权交给 InterceptHandler</span>
+</code></pre></div></li>
+</ul>
+<hr />
+<h2 id="10-fastapi-集成request_id-贯穿全链路">10. FastAPI 集成：request_id 贯穿全链路</h2>
+<p>前面都是零件，这节组装成墨集的完整方案：<strong>一次请求从进门到出门，所有日志带同一个 request_id；出了异常，堆栈也能顺着 request_id 捞出来。</strong></p>
+<h3 id="101-总装配">10.1 总装配</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">loguru</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">setup_logging</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""墨集日志总装：终端看 INFO，文件收 DEBUG，标准 logging 全部收编。"""</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">remove</span><span class="p">()</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">configure</span><span class="p">(</span><span class="n">extra</span><span class="o">=</span><span class="p">{</span><span class="s2">"request_id"</span><span class="p">:</span> <span class="s2">"-"</span><span class="p">})</span>
+
+    <span class="c1"># 终端：短格式，开发时盯屏幕</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">,</span>
+        <span class="n">level</span><span class="o">=</span><span class="s2">"INFO"</span><span class="p">,</span>
+        <span class="nb">format</span><span class="o">=</span><span class="s2">"&lt;green&gt;{time:HH:mm:ss}&lt;/green&gt; | &lt;level&gt;</span><span class="si">{level: &lt;7}</span><span class="s2">&lt;/level&gt; "</span>
+               <span class="s2">"| </span><span class="si">{extra[request_id]}</span><span class="s2"> | </span><span class="si">{message}</span><span class="s2">"</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># 文件：长格式，带轮转（参数含义见第 5 节）</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
+        <span class="s2">"logs/inkhub_{time:YYYYMMDD_HHmmss}.log"</span><span class="p">,</span>
+        <span class="n">level</span><span class="o">=</span><span class="s2">"DEBUG"</span><span class="p">,</span>
+        <span class="nb">format</span><span class="o">=</span><span class="s2">"{time:YYYY-MM-DD HH:mm:ss.SSS} | </span><span class="si">{level: &lt;7}</span><span class="s2"> "</span>
+               <span class="s2">"| </span><span class="si">{extra[request_id]}</span><span class="s2"> | </span><span class="si">{name}</span><span class="s2">:</span><span class="si">{function}</span><span class="s2">:</span><span class="si">{line}</span><span class="s2"> | </span><span class="si">{message}</span><span class="s2">"</span><span class="p">,</span>
+        <span class="n">rotation</span><span class="o">=</span><span class="s2">"100 MB"</span><span class="p">,</span>
+        <span class="n">retention</span><span class="o">=</span><span class="s2">"30 days"</span><span class="p">,</span>
+        <span class="n">compression</span><span class="o">=</span><span class="s2">"zip"</span><span class="p">,</span>
+        <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">,</span>
+        <span class="n">diagnose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>          <span class="c1"># 生产环境：堆栈要，变量值不要（第 8.2 节的坑）</span>
+    <span class="p">)</span>
+
+    <span class="c1"># 收编标准 logging（第 9 节）</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">handlers</span><span class="o">=</span><span class="p">[</span><span class="n">InterceptHandler</span><span class="p">()],</span> <span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="102-中间件注入-request_id兑现第-10-章的预告">10.2 中间件注入 request_id：兑现第 10 章的预告</h3>
+<p>第 10 章 3.4 节埋的雷：<strong>BaseHTTPMiddleware 的 contextvars「只进不出」——中间件设置的 contextvar，端点能读到；端点设置的，中间件在 <code>call_next</code> 之后读不到</strong>。现在到引爆的时候了，先说结论：</p>
+<blockquote>
+<p>这个怪癖是<strong>单向阀</strong>：上游写、下游读，畅通；下游写、上游读，是幻影。
+而日志绑定恰好只需要「中间件（上游）写、业务代码（下游）读」——方向完全顺流，怪癖伤不到它。</p>
+</blockquote>
+<p><strong>姿势一（推荐起步）：<code>contextualize</code> 包住 <code>call_next</code></strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">uuid</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Awaitable</span><span class="p">,</span> <span class="n">Callable</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">fastapi</span><span class="w"> </span><span class="kn">import</span> <span class="n">Request</span><span class="p">,</span> <span class="n">Response</span>
+
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">middleware</span><span class="p">(</span><span class="s2">"http"</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">request_id_middleware</span><span class="p">(</span>
+    <span class="n">request</span><span class="p">:</span> <span class="n">Request</span><span class="p">,</span> <span class="n">call_next</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Request</span><span class="p">],</span> <span class="n">Awaitable</span><span class="p">[</span><span class="n">Response</span><span class="p">]]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Response</span><span class="p">:</span>
+    <span class="n">rid</span> <span class="o">=</span> <span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()</span><span class="o">.</span><span class="n">hex</span><span class="p">[:</span><span class="mi">8</span><span class="p">]</span>          <span class="c1"># 每次请求一枚新牌子</span>
+    <span class="k">with</span> <span class="n">logger</span><span class="o">.</span><span class="n">contextualize</span><span class="p">(</span><span class="n">request_id</span><span class="o">=</span><span class="n">rid</span><span class="p">):</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"请求进来：</span><span class="si">{}</span><span class="s2"> </span><span class="si">{}</span><span class="s2">"</span><span class="p">,</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span><span class="p">,</span> <span class="n">request</span><span class="o">.</span><span class="n">url</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="k">await</span> <span class="n">call_next</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>   <span class="c1"># 下游所有日志自动带 rid</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"请求结束：</span><span class="si">{}</span><span class="s2"> </span><span class="si">{}</span><span class="s2">"</span><span class="p">,</span> <span class="n">request</span><span class="o">.</span><span class="n">url</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="p">)</span>
+    <span class="n">response</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s2">"X-Request-Id"</span><span class="p">]</span> <span class="o">=</span> <span class="n">rid</span>    <span class="c1"># 回写响应头，用户报障时报这个号</span>
+    <span class="k">return</span> <span class="n">response</span>
+</code></pre></div>
+<p>实测效果（墨集终端）：</p>
+<div class="highlight"><pre><span></span><code>10:32:11 | INFO    | cc3fbd41 | 请求进来：GET /api/articles/1
+10:32:11 | INFO    | cc3fbd41 | 查询文章：article_id=1
+10:32:11 | INFO    | cc3fbd41 | 请求结束：/api/articles/1 200
+10:32:11 | INFO    | -        | 127.0.0.1:62149 - "GET /api/articles/1 HTTP/1.1" 200
+</code></pre></div>
+<p>三行业务日志同牌 <code>cc3fbd41</code>；最后一行是 uvicorn 的访问日志——它跑在协议层（比中间件更外层的任务里），看不到 contextvar，只能显示默认的 <code>-</code>。这不是 bug：访问日志本来就记录连接级信息，业务上下文由你自己的日志负责。</p>
+<p><strong>姿势二（进阶）：contextvar + patcher 全局盖章</strong>。7 节 ④ 的配置，中间件只负责 set：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">contextvars</span>
+
+<span class="n">request_id_var</span><span class="p">:</span> <span class="n">contextvars</span><span class="o">.</span><span class="n">ContextVar</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">contextvars</span><span class="o">.</span><span class="n">ContextVar</span><span class="p">(</span>
+    <span class="s2">"request_id"</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">"-"</span>
+<span class="p">)</span>
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">middleware</span><span class="p">(</span><span class="s2">"http"</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">request_id_middleware</span><span class="p">(</span><span class="n">request</span><span class="p">:</span> <span class="n">Request</span><span class="p">,</span> <span class="n">call_next</span><span class="p">):</span>
+    <span class="n">request_id_var</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()</span><span class="o">.</span><span class="n">hex</span><span class="p">[:</span><span class="mi">8</span><span class="p">])</span>   <span class="c1"># 入口 set，下游全可见</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="k">await</span> <span class="n">call_next</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+    <span class="n">response</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s2">"X-Request-Id"</span><span class="p">]</span> <span class="o">=</span> <span class="n">request_id_var</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">response</span>
+</code></pre></div>
+<p>它的杀手锏在 10.3 节揭晓——先卖个关子。</p>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li><strong>别把 set 写反方向</strong>。第 10 章实测过：在<strong>端点里</strong> <code>rid.set(...)</code>、中间件在 <code>call_next</code> 之后读——读到的永远是旧值（<code>"unset"</code>）。单向阀只认顺流。</li>
+<li><code>X-Request-Id</code> 回写响应头用的是中间件自己的局部变量 <code>rid</code>，不依赖 contextvar 回读——天然避开怪癖。想让前端 JS 读到它，记得按第 10 章 CORS 的规矩登记进 <code>expose_headers</code>。</li>
+</ul>
+<h3 id="103-异常处理器里记堆栈兑现第-09-章的伏笔">10.3 异常处理器里记堆栈：兑现第 09 章的伏笔</h3>
+<p>第 09 章的遗留问题：未捕获异常的完整堆栈只在 uvicorn 终端闪一下，服务重启就没了。现在把它变成<strong>带 request_id、进文件、可轮转可检索</strong>的正式记录。</p>
+<p>直觉写法——在第 09 章的兜底 handler 里记：</p>
+<div class="highlight"><pre><span></span><code><span class="nd">@app</span><span class="o">.</span><span class="n">exception_handler</span><span class="p">(</span><span class="ne">Exception</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">unknown_exception_handler</span><span class="p">(</span><span class="n">request</span><span class="p">:</span> <span class="n">Request</span><span class="p">,</span> <span class="n">exc</span><span class="p">:</span> <span class="ne">Exception</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JSONResponse</span><span class="p">:</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">opt</span><span class="p">(</span><span class="n">exception</span><span class="o">=</span><span class="n">exc</span><span class="p">)</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">"未处理异常：</span><span class="si">{}</span><span class="s2">"</span><span class="p">,</span> <span class="n">request</span><span class="o">.</span><span class="n">url</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">JSONResponse</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span>
+                        <span class="n">content</span><span class="o">=</span><span class="p">{</span><span class="s2">"code"</span><span class="p">:</span> <span class="s2">"500000"</span><span class="p">,</span> <span class="s2">"message"</span><span class="p">:</span> <span class="s2">"服务器开小差了，请稍后重试"</span><span class="p">})</span>
+</code></pre></div>
+<p><strong>但实测发现一个意外</strong>：这条 ERROR 日志的 request_id 是 <code>-</code>，不是本次请求的牌子！原因藏得很深——Starlette 把<strong>注册给 <code>Exception</code>（和 500）的 handler 分给了洋葱最外层的 ServerErrorMiddleware，其余 handler（业务异常、HTTPException、校验异常）才交给最内层的 ExceptionMiddleware</strong>。第 10 章那张洋葱图说的「异常处理器住最内层」对业务异常成立；而 <code>Exception</code> 兜底 handler 住在最外面——异常一路穿出中间件、退出 <code>contextualize</code> 的 with 块（上下文被恢复）之后，才轮到它执行。所以姿势一在这里掉了牌子。</p>
+<p>两条补救路线，任选其一：</p>
+<p><strong>路线 A（最稳）：日志中间件自己接住再放行</strong>。反正异常必然穿过中间件，就在门口记：</p>
+<div class="highlight"><pre><span></span><code><span class="nd">@app</span><span class="o">.</span><span class="n">middleware</span><span class="p">(</span><span class="s2">"http"</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">request_id_middleware</span><span class="p">(</span>
+    <span class="n">request</span><span class="p">:</span> <span class="n">Request</span><span class="p">,</span> <span class="n">call_next</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Request</span><span class="p">],</span> <span class="n">Awaitable</span><span class="p">[</span><span class="n">Response</span><span class="p">]]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Response</span><span class="p">:</span>
+    <span class="n">rid</span> <span class="o">=</span> <span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()</span><span class="o">.</span><span class="n">hex</span><span class="p">[:</span><span class="mi">8</span><span class="p">]</span>
+    <span class="k">with</span> <span class="n">logger</span><span class="o">.</span><span class="n">contextualize</span><span class="p">(</span><span class="n">request_id</span><span class="o">=</span><span class="n">rid</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="k">await</span> <span class="n">call_next</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="c1"># 还在 with 作用域内：堆栈带 request_id，记完放行给兜底 handler 变 500</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">opt</span><span class="p">(</span><span class="n">exception</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">"未处理异常：</span><span class="si">{}</span><span class="s2"> </span><span class="si">{}</span><span class="s2">"</span><span class="p">,</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span><span class="p">,</span> <span class="n">request</span><span class="o">.</span><span class="n">url</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
+            <span class="k">raise</span>
+        <span class="n">response</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s2">"X-Request-Id"</span><span class="p">]</span> <span class="o">=</span> <span class="n">rid</span>
+        <span class="k">return</span> <span class="n">response</span>
+</code></pre></div>
+<p>实测日志（毒丸接口 <code>/api/boom</code>，故意 KeyError）：</p>
+<div class="highlight"><pre><span></span><code>10:32:12 | INFO    | 63732cef | 请求进来：GET /api/boom
+10:32:12 | INFO    | 63732cef | [端点] 毒丸路由
+10:32:12 | ERROR   | 63732cef | 未处理异常：GET /api/boom      ← 带 request_id 的完整堆栈
+</code></pre></div>
+<p>业务异常 handler（第 09 章的 <code>BusinessException</code> 体系）住最内层、没退出 with，天然就带 request_id，不用任何处理——实测 <code>req-api-biz</code> 全程在牌。</p>
+<p><strong>路线 B：姿势二的 contextvar + patcher</strong>。contextvar 是任务级状态，中间件入口 <code>set</code> 之后（只要不在 finally 里 reset），同一个任务链上更外层的 ServerErrorMiddleware 执行兜底 handler 时<strong>照样读得到</strong>——实测兜底日志稳稳带上了 <code>req-api-boom</code>。这就是 10.2 节卖的关子：patcher 对「所有经过这条任务链的日志」生效，包括被收编的标准 logging 和兜底 handler。</p>
+<p>最后一件小事：第 09 章提过「注册兜底后 uvicorn 终端还会再打一份堆栈」。收编之后这份冗余也在（不带 request_id，是协议层的裸堆栈）。一般留着无妨——它是最后一道保险；嫌吵可以调 uvicorn 相关 logger 的级别。</p>
+<h3 id="104-接线总览">10.4 接线总览</h3>
+<div class="highlight"><pre><span></span><code>uvicorn.run(app, log_config=None)          # uvicorn 不自己配日志
+        │
+        ▼
+setup_logging()                            # remove 默认 → 终端 sink + 文件 sink
+        │                                   # + basicConfig 装 InterceptHandler
+        ▼
+request_id 中间件（contextualize / contextvar）
+        │  进门发牌 → 端点/业务异常 handler 自动带牌
+        │  未捕获异常穿出时：中间件 catch 记堆栈（带牌）→ raise
+        ▼
+Exception 兜底 handler（最外层）           # 变 500 响应；contextvar 方案下也带牌
+        │
+        ▼
+文件 sink（rotation/retention/compression）# 带牌日志落盘，按 request_id 检索
+</code></pre></div>
+<hr />
+<h2 id="11-生产环境建议">11. 生产环境建议</h2>
+<h3 id="111-本地文本生产-json">11.1 本地文本、生产 JSON</h3>
+<p>人看文本、机器看 JSON，一个环境变量切换：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+
+<span class="n">IS_PROD</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">"INKHUB_ENV"</span><span class="p">)</span> <span class="o">==</span> <span class="s2">"prod"</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">setup_logging</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">remove</span><span class="p">()</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">configure</span><span class="p">(</span><span class="n">extra</span><span class="o">=</span><span class="p">{</span><span class="s2">"request_id"</span><span class="p">:</span> <span class="s2">"-"</span><span class="p">})</span>
+
+    <span class="k">if</span> <span class="n">IS_PROD</span><span class="p">:</span>
+        <span class="c1"># 生产：JSON 文件（喂采集系统），INFO 起，关 diagnose</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">"logs/inkhub.json"</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="s2">"INFO"</span><span class="p">,</span> <span class="n">serialize</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                   <span class="n">rotation</span><span class="o">=</span><span class="s2">"100 MB"</span><span class="p">,</span> <span class="n">retention</span><span class="o">=</span><span class="s2">"30 days"</span><span class="p">,</span> <span class="n">compression</span><span class="o">=</span><span class="s2">"zip"</span><span class="p">,</span>
+                   <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">,</span> <span class="n">diagnose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">enqueue</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># 本地：彩色文本终端，DEBUG 起，开着 diagnose 排障</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="s2">"DEBUG"</span><span class="p">,</span> <span class="n">diagnose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                   <span class="nb">format</span><span class="o">=</span><span class="s2">"&lt;green&gt;{time:HH:mm:ss}&lt;/green&gt; | &lt;level&gt;</span><span class="si">{level: &lt;7}</span><span class="s2">&lt;/level&gt; "</span>
+                          <span class="s2">"| </span><span class="si">{extra[request_id]}</span><span class="s2"> | </span><span class="si">{message}</span><span class="s2">"</span><span class="p">)</span>
+
+    <span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">handlers</span><span class="o">=</span><span class="p">[</span><span class="n">InterceptHandler</span><span class="p">()],</span> <span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="112-日志分级策略">11.2 日志分级策略</h3>
+<table>
+<thead>
+<tr>
+<th>级别</th>
+<th>生产默认</th>
+<th>团队约定（墨集口径）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>DEBUG</td>
+<td>文件可选收</td>
+<td>只写开发排障需要的细节，<strong>不进终端</strong></td>
+</tr>
+<tr>
+<td>INFO</td>
+<td>收</td>
+<td>业务里程碑：请求开始/结束、发布完成。一条请求别超过个位数</td>
+</tr>
+<tr>
+<td>SUCCESS</td>
+<td>收</td>
+<td>INFO 的成功变体，别滥用——发布成功算，查询成功不算</td>
+</tr>
+<tr>
+<td>WARNING</td>
+<td>收 + 告警</td>
+<td>系统在自愈：重试、降级、缓存击穿。攒多了说明该修了</td>
+</tr>
+<tr>
+<td>ERROR</td>
+<td>收 + 告警</td>
+<td>功能受损：下游超时、发布失败。<strong>出现就该有人看</strong></td>
+</tr>
+<tr>
+<td>CRITICAL</td>
+<td>收 + 电话/短信</td>
+<td>服务不可用：数据库连不上、磁盘满</td>
+</tr>
+</tbody>
+</table>
+<p>两条铁律：<strong>日志不是越多越好</strong>（INFO 刷成海，真事就被淹了）；<strong>ERROR 必须有人认领</strong>（没人值守的 ERROR 级别不如改叫 WARNING）。</p>
+<h3 id="113-敏感信息脱敏">11.3 敏感信息脱敏</h3>
+<p>日志是给开发看的，但看日志的不一定是开发——日志会进采集系统、会被运维翻、会被贴进工单。墨集的三条军规：</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">mask_secret</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">keep</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""token/密码类：只露尾巴几位。"""</span>
+    <span class="k">return</span> <span class="n">value</span><span class="p">[:</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s2">"*"</span> <span class="o">*</span> <span class="nb">max</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">-</span> <span class="n">keep</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="n">value</span><span class="p">[</span><span class="o">-</span><span class="n">keep</span><span class="p">:]</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">mask_phone</span><span class="p">(</span><span class="n">phone</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""手机号：139****1234。"""</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">phone</span><span class="p">[:</span><span class="mi">3</span><span class="p">]</span><span class="si">}</span><span class="s2">****</span><span class="si">{</span><span class="n">phone</span><span class="p">[</span><span class="o">-</span><span class="mi">4</span><span class="p">:]</span><span class="si">}</span><span class="s2">"</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">phone</span><span class="p">)</span> <span class="o">==</span> <span class="mi">11</span> <span class="k">else</span> <span class="s2">"***"</span>
+
+
+<span class="c1"># ① 手里的敏感值，落笔前脱敏</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"登录成功：token=</span><span class="si">{}</span><span class="s2">"</span><span class="p">,</span> <span class="n">mask_secret</span><span class="p">(</span><span class="n">access_token</span><span class="p">))</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"作者手机号：</span><span class="si">{}</span><span class="s2">"</span><span class="p">,</span> <span class="n">mask_phone</span><span class="p">(</span><span class="n">author</span><span class="o">.</span><span class="n">phone</span><span class="p">))</span>
+
+<span class="c1"># ② 请求体别整包记——password 字段迟早混进去；</span>
+<span class="c1">#    要记就挑白名单字段记</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"创建文章：title=</span><span class="si">{}</span><span class="s2"> author_id=</span><span class="si">{}</span><span class="s2">"</span><span class="p">,</span> <span class="n">body</span><span class="o">.</span><span class="n">title</span><span class="p">,</span> <span class="n">body</span><span class="o">.</span><span class="n">author_id</span><span class="p">)</span>
+
+<span class="c1"># ③ diagnose=True 的变量值标注是隐形泄密通道（第 8.2 节），生产必关</span>
+</code></pre></div>
+<h3 id="114-enqueue-与多进程">11.4 enqueue 与多进程</h3>
+<p><code>uvicorn --workers 4</code> 起四个进程时，每个进程一套独立的 loguru、各写各的文件——同名的会互相覆盖，rotation 也会打架。两个办法：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 办法一：enqueue=True——写入丢给后台线程队列，多线程/多进程安全，</span>
+<span class="c1"># 顺带把「写盘慢拖慢请求」也解了（磁盘卡顿时日志先排队）</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">"logs/inkhub.json"</span><span class="p">,</span> <span class="n">enqueue</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">serialize</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
+
+<span class="c1"># 办法二（更彻底）：多 worker 直接把日志发到采集系统（Loki/ELK 的 agent），</span>
+<span class="c1"># 本地不落文件，谁也不跟谁抢</span>
+</code></pre></div>
+<p>单 worker 部署（墨集现在的规模）用办法一即可。</p>
+<hr />
+<h2 id="12-跑一下本章-demo">12. 跑一下本章 demo</h2>
+<p>完整代码在 <code>demo/demo_loguru.py</code>：纯脚本（不起服务），把本章核心 API 走一遍——装配 sink、request_id 行李牌、轮转三板斧、异常堆栈、lazy、收编标准 logging，示例全是墨集发布文章的业务日志。</p>
+<div class="highlight"><pre><span></span><code>uv<span class="w"> </span>add<span class="w"> </span>loguru
+uv<span class="w"> </span>run<span class="w"> </span>demo/demo_loguru.py
+</code></pre></div>
+<p>实测输出节选（终端部分）：</p>
+<div class="highlight"><pre><span></span><code>00:01:48 | INFO    | -         | 墨集日志系统装配完成，文件 sink 目录：.../demo/logs
+00:01:48 | INFO    | req-a1b2c3 | 请求开始
+00:01:48 | INFO    | req-a1b2c3 | 收到发布请求：author=陆墨 title=FastAPI 异步 SQLAlchemy 入门
+00:01:48 | ERROR   | req-a1b2c3 | 同步搜索引擎失败：article_id=101
+Traceback (most recent call last):
+  ...
+&gt; File "demo_loguru.py", line 93, in publish_article
+    sync_to_search(slug, article_id)
+    │              │     └ 101
+    │              └ 'fastapi-异步-sqlalchemy-入门'
+TypeError: can only concatenate str (not "int") to str
+00:01:48 | SUCCESS | req-a1b2c3 | 文章发布完成：article_id=101 slug=fastapi-异步-sqlalchemy-入门
+00:01:48 | INFO    | req-d4e5f6 | 请求开始          ← 换了一枚牌子，行李牌各跟各的
+...
+00:01:48 | INFO    | - | 上一条 TRACE 被丢弃，lambda 没执行（终端没有『真的被调用了』）
+00:01:48 | INFO    | - | &gt;&gt;&gt; build_tracking_payload 真的被调用了（article_id=2）
+00:01:48 | INFO    | - | 127.0.0.1:5173 - "POST /api/articles HTTP/1.1" 201   ← 标准 logging 被收编
+00:01:48 | WARNING | - | SELECT articles WHERE id = 1 ... (0.8 ms)
+00:01:48 | ERROR   | - | 计费回调验签失败：order=NO-1024
+00:01:55 | INFO    | - | 演示结束，logs/ 目录产物：
+00:01:55 | INFO    | - |   inkhub_20260828_000155.2026-08-28_00-01-55_562411.log.zip (940 bytes)
+00:01:55 | INFO    | - |   inkhub_20260828_000155.2026-08-28_00-01-55_564721.log.zip (942 bytes)
+00:01:55 | INFO    | - |   inkhub_20260828_000155.2026-08-28_00-01-55_566155.log.zip (938 bytes)
+00:01:55 | INFO    | - |   inkhub_20260828_000155.log (739 bytes)
+</code></pre></div>
+<p>看点提示：<code>ERROR</code> 那条没打断发布流程（<code>SUCCESS</code> 照常出现）——堆栈记进日志、业务继续走，这正是第 09 章「不裸奔」家规的日志版；最后四行是轮转产物——三个 zip（被轮转压缩的旧档，retention=3 生效）加一个正在写的 .log。</p>
+<hr />
+<h2 id="13-小结速查">13. 小结速查</h2>
+<table>
+<thead>
+<tr>
+<th>需求</th>
+<th>用法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>撤默认 sink、自己装配</td>
+<td><code>logger.remove()</code> → <code>logger.add(...)</code></td>
+</tr>
+<tr>
+<td>一个出口收 INFO、另一个收 DEBUG</td>
+<td><code>add(sys.stderr, level="INFO")</code> + <code>add("f.log", level="DEBUG")</code></td>
+</tr>
+<tr>
+<td>日志单独归档（如计费）</td>
+<td><code>logger.bind(billing=True).info(...)</code> + <code>filter=lambda r: r["extra"].get("billing")</code></td>
+</tr>
+<tr>
+<td>文件轮转/保留/压缩</td>
+<td><code>rotation="100 MB"</code> / <code>retention="30 days"</code> / <code>compression="zip"</code></td>
+</tr>
+<tr>
+<td>生产喂采集系统</td>
+<td><code>serialize=True</code>（JSON Lines）</td>
+</tr>
+<tr>
+<td>给日志挂 request_id</td>
+<td><code>with logger.contextualize(request_id=rid): ...</code></td>
+</tr>
+<tr>
+<td>全局自动盖章</td>
+<td><code>logger.configure(patcher=lambda r: r["extra"].update(request_id=request_id_var.get()))</code></td>
+</tr>
+<tr>
+<td>extra 字段防 KeyError</td>
+<td><code>logger.configure(extra={"request_id": "-"})</code></td>
+</tr>
+<tr>
+<td>记异常堆栈</td>
+<td><code>logger.opt(exception=True).error(...)</code>（handler 里用 <code>opt(exception=exc)</code>）</td>
+</tr>
+<tr>
+<td>堆栈看变量值 / 生产关掉</td>
+<td><code>diagnose=True</code>（add 参数，默认开！）/ 生产 <code>diagnose=False</code></td>
+</tr>
+<tr>
+<td>高频 DEBUG 防白拼</td>
+<td><code>logger.opt(lazy=True).debug("{}", lambda: expensive())</code></td>
+</tr>
+<tr>
+<td>收编标准 logging</td>
+<td><code>InterceptHandler</code> + <code>basicConfig(handlers=[...], level=0, force=True)</code></td>
+</tr>
+<tr>
+<td>uvicorn 不抢日志配置</td>
+<td><code>uvicorn.run(app, log_config=None)</code></td>
+</tr>
+<tr>
+<td>request_id 中间件</td>
+<td>进门 <code>contextualize</code> / <code>contextvar.set</code>，响应头回写 <code>X-Request-Id</code></td>
+</tr>
+<tr>
+<td>兜底 handler 丢 request_id</td>
+<td>Starlette 把 <code>Exception</code> handler 分给最外层；用「中间件 catch 记堆栈再 raise」或 contextvar+patcher</td>
+</tr>
+<tr>
+<td>多进程安全写文件</td>
+<td><code>enqueue=True</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>自测三问</strong>：</p>
+<ol>
+<li><code>logger.add()</code> 被调用了两次、传了同一个文件路径，会发生什么？为什么装配代码只能跑一次？</li>
+<li>第 10 章说 contextvars 在中间件里「只进不出」，为什么这章的 request_id 绑定不受影响？哪种方向的使用会踩坑？</li>
+<li>生产环境哪两个配置必须显式设置，才能既保住安全又不丢排障能力？（提示：一个管变量值，一个管格式）</li>
+</ol>
+<p>到这里，墨集的后端已经「说得清自己干过什么」了：每个请求有牌，每次异常有完整病历，uvicorn 和第三方库的日志也归于一统。最后一章，我们让后端「学会说话」——把内容流式地、实时地推到用户眼前。</p>
+<hr />
+<p><strong>下一章</strong>：<a href="../backend/14-liu-shi-xiang-ying-sse-yu-websocket.html">14 · 流式响应 SSE 与 WebSocket</a></p></div>
+
+      </article>
+<nav class="pager"><a class="pg-card pg-prev" href="../backend/12-pytest-ce-shi.html"><span class="pg-label">← 上一篇</span><span class="pg-title">pytest 测试</span><span class="pg-mod">Python 框架指南</span></a><a class="pg-card pg-next" href="../backend/14-liu-shi-xiang-ying-sse-yu-websocket.html"><span class="pg-label">下一篇 →</span><span class="pg-title">流式响应 SSE 与 WebSocket</span><span class="pg-mod">Python 框架指南</span></a></nav>
+    </div>
+    <footer class="foot">
+      <span>深栈 DeepStack · AI Agent 工程师转型训练营配套文档</span>
+    </footer>
+  </main>
+<nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#1-print-为什么不行喊一嗓子不算记录">1. print 为什么不行：喊一嗓子不算记录</a><a class="toc-link toc-h2" href="#2-标准-logging功能全都有用起来像手动挡">2. 标准 logging：功能全都有，用起来像手动挡</a><a class="toc-link toc-h2" href="#3-loguru-上手add-一个-sink日志就有家了">3. loguru 上手：add 一个 sink，日志就有家了</a><a class="toc-link toc-h2" href="#4-级别与过滤同一批日志各取所需">4. 级别与过滤：同一批日志，各取所需</a><a class="toc-link toc-h3" href="#41-sink-级别出口的门槛">4.1 sink 级别：出口的门槛</a><a class="toc-link toc-h3" href="#42-filter级别之外的第二道闸">4.2 filter：级别之外的第二道闸</a><a class="toc-link toc-h2" href="#5-文件轮转三板斧rotationretentioncompression">5. 文件轮转三板斧：rotation、retention、compression</a><a class="toc-link toc-h2" href="#6-serialize一行一条-json喂给采集系统">6. serialize：一行一条 JSON，喂给采集系统</a><a class="toc-link toc-h2" href="#7-bind-与-contextualize给日志挂行李牌">7. bind 与 contextualize：给日志挂行李牌</a><a class="toc-link toc-h2" href="#8-opt堆栈lazy-与调用深度">8. opt()：堆栈、lazy 与调用深度</a><a class="toc-link toc-h3" href="#81-exceptiontrue把病历单打全">8.1 exception=True：把病历单打全</a><a class="toc-link toc-h3" href="#82-backtrace-与-diagnose堆栈的两档火力">8.2 backtrace 与 diagnose：堆栈的两档火力</a><a class="toc-link toc-h3" href="#83-lazy消息没人收参数就不求值">8.3 lazy：消息没人收，参数就不求值</a><a class="toc-link toc-h3" href="#84-depth谁记的这条日志">8.4 depth：谁记的这条日志</a><a class="toc-link toc-h2" href="#9-intercepthandler收编标准-logging">9. InterceptHandler：收编标准 logging</a><a class="toc-link toc-h2" href="#10-fastapi-集成request_id-贯穿全链路">10. FastAPI 集成：request_id 贯穿全链路</a><a class="toc-link toc-h3" href="#101-总装配">10.1 总装配</a><a class="toc-link toc-h3" href="#102-中间件注入-request_id兑现第-10-章的预告">10.2 中间件注入 request_id：兑现第 10 章的预告</a><a class="toc-link toc-h3" href="#103-异常处理器里记堆栈兑现第-09-章的伏笔">10.3 异常处理器里记堆栈：兑现第 09 章的伏笔</a><a class="toc-link toc-h3" href="#104-接线总览">10.4 接线总览</a><a class="toc-link toc-h2" href="#11-生产环境建议">11. 生产环境建议</a><a class="toc-link toc-h3" href="#111-本地文本生产-json">11.1 本地文本、生产 JSON</a><a class="toc-link toc-h3" href="#112-日志分级策略">11.2 日志分级策略</a><a class="toc-link toc-h3" href="#113-敏感信息脱敏">11.3 敏感信息脱敏</a><a class="toc-link toc-h3" href="#114-enqueue-与多进程">11.4 enqueue 与多进程</a><a class="toc-link toc-h2" href="#12-跑一下本章-demo">12. 跑一下本章 demo</a><a class="toc-link toc-h2" href="#13-小结速查">13. 小结速查</a></nav>
+</div>
+<div class="sb-mask" id="sbMask"></div>
+<script src="../assets/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>16 · 第 16 章 容错：重试、超时与兜底 · 深栈 DeepStack 课程文档</title>
+<meta name="description" content="本章目标：让图在故障面前活下来。掌握三个层次的容错手段——节点级重试（RetryPolicy）、节点级超时与异常兜底、以及&quot;错误重跑&quot;（failure + replay 组合拳）。LLM 应用调的是不稳定的外部服务，容错…">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%23d9c39a' text-anchor='middle'%3EDS%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+<div class="progress" id="progress"></div>
+
+<div class="layout">
+<aside class="sidebar" id="sidebar">
+  <div class="sb-head">
+    <a class="brand" href="../index.html">
+      <span class="brand-mark">DS</span>
+      <span class="brand-text"><b>深栈 DeepStack</b><i>AI Agent 工程师转型训练营</i></span>
+    </a>
+    <button class="sb-close" id="sbClose" aria-label="关闭目录">✕</button>
+  </div>
+  <div class="sb-search"><input type="search" id="searchInput" placeholder="搜索 123 篇文档… ( / )" autocomplete="off">
+    <div class="sb-results" id="searchResults"></div></div>
+  <nav class="sb-nav">
+    <section class="sb-group" data-mod="python">
+      <a class="sb-group-title" href="../modules/python.html" data-toggle="python">
+        <span class="sb-num">01</span>
+        <span class="sb-group-text"><b>Python 与数据实践</b><i>31 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../python/01-huan-jing-da-jian-yu-ban-ben-guan-li.html"><span class="sb-item-num">01</span><span class="sb-item-title">环境搭建与版本管理</span></a>
+        <a class="sb-item" href="../python/02-bian-liang-biao-da-shi-yu-liu-cheng-kong-zhi.html"><span class="sb-item-num">02</span><span class="sb-item-title">变量、表达式与流程控制</span></a>
+        <a class="sb-item" href="../python/03-xu-lie-zi-dian-yu-ji-he.html"><span class="sb-item-num">03</span><span class="sb-item-title">序列、字典与集合</span></a>
+        <a class="sb-item" href="../python/04-han-shu-she-ji-yu-lambda.html"><span class="sb-item-num">04</span><span class="sb-item-title">函数设计与 lambda</span></a>
+        <a class="sb-item" href="../python/05-zuo-yong-yu-gui-ze-yu-bi-bao.html"><span class="sb-item-num">05</span><span class="sb-item-title">作用域规则与闭包</span></a>
+        <a class="sb-item" href="../python/06-lei-de-ding-yi-yu-shi-li-hua.html"><span class="sb-item-num">06</span><span class="sb-item-title">类的定义与实例化</span></a>
+        <a class="sb-item" href="../python/07-lei-xing-pan-ding-yu-chou-xiang-ji-lei.html"><span class="sb-item-num">07</span><span class="sb-item-title">类型判定与抽象基类</span></a>
+        <a class="sb-item" href="../python/08-mo-shu-fang-fa-quan-jing.html"><span class="sb-item-num">08</span><span class="sb-item-title">魔术方法全景</span></a>
+        <a class="sb-item" href="../python/09-miao-shu-fu-yu-yuan-lei.html"><span class="sb-item-num">09</span><span class="sb-item-title">描述符与元类</span></a>
+        <a class="sb-item" href="../python/10-zhuang-shi-qi.html"><span class="sb-item-num">10</span><span class="sb-item-title">装饰器</span></a>
+        <a class="sb-item" href="../python/11-die-dai-xie-yi-yu-sheng-cheng-qi.html"><span class="sb-item-num">11</span><span class="sb-item-title">迭代协议与生成器</span></a>
+        <a class="sb-item" href="../python/12-with-yu-shang-xia-wen-xie-yi.html"><span class="sb-item-num">12</span><span class="sb-item-title">with 与上下文协议</span></a>
+        <a class="sb-item" href="../python/13-yi-chang-ti-xi-yu-chu-li.html"><span class="sb-item-num">13</span><span class="sb-item-title">异常体系与处理</span></a>
+        <a class="sb-item" href="../python/14-lei-xing-biao-zhu.html"><span class="sb-item-num">14</span><span class="sb-item-title">类型标注</span></a>
+        <a class="sb-item" href="../python/15-mo-kuai-yu-bao-de-zu-zhi.html"><span class="sb-item-num">15</span><span class="sb-item-title">模块与包的组织</span></a>
+        <a class="sb-item" href="../python/16-biao-zhun-ku-xun-li.html"><span class="sb-item-num">16</span><span class="sb-item-title">标准库巡礼</span></a>
+        <a class="sb-item" href="../python/17-yi-lai-guan-li-yu-di-san-fang-ku.html"><span class="sb-item-num">17</span><span class="sb-item-title">依赖管理与第三方库</span></a>
+        <a class="sb-item" href="../python/18-xian-cheng-yu-jin-cheng.html"><span class="sb-item-num">18</span><span class="sb-item-title">线程与进程</span></a>
+        <a class="sb-item" href="../python/19-shi-jian-xun-huan.html"><span class="sb-item-num">19</span><span class="sb-item-title">事件循环</span></a>
+        <a class="sb-item" href="../python/20-future-yu-xie-cheng.html"><span class="sb-item-num">20</span><span class="sb-item-title">Future 与协程</span></a>
+        <a class="sb-item" href="../python/21-asyncio-shi-zhan.html"><span class="sb-item-num">21</span><span class="sb-item-title">asyncio 实战</span></a>
+        <a class="sb-item" href="../python/22-gou-jian-yu-fa-bu.html"><span class="sb-item-num">22</span><span class="sb-item-title">构建与发布</span></a>
+        <a class="sb-item" href="../python/23-gong-cheng-hua-gong-ju-lian.html"><span class="sb-item-num">23</span><span class="sb-item-title">工程化工具链</span></a>
+        <a class="sb-item" href="../python/24-monorepo-yu-tiao-shi.html"><span class="sb-item-num">24</span><span class="sb-item-title">monorepo 与调试</span></a>
+        <a class="sb-item" href="../python/25-jupyter-jiao-hu-huan-jing.html"><span class="sb-item-num">25</span><span class="sb-item-title">Jupyter 交互环境</span></a>
+        <a class="sb-item" href="../python/26-numpy-shu-zu-yu-xiang-liang-hua.html"><span class="sb-item-num">26</span><span class="sb-item-title">NumPy 数组与向量化</span></a>
+        <a class="sb-item" href="../python/27-pandas-shu-ju-jie-gou.html"><span class="sb-item-num">27</span><span class="sb-item-title">Pandas 数据结构</span></a>
+        <a class="sb-item" href="../python/28-pandas-shu-ju-qing-xi.html"><span class="sb-item-num">28</span><span class="sb-item-title">Pandas 数据清洗</span></a>
+        <a class="sb-item" href="../python/29-matplotlib-hui-tu-ti-xi.html"><span class="sb-item-num">29</span><span class="sb-item-title">Matplotlib 绘图体系</span></a>
+        <a class="sb-item" href="../python/30-matplotlib-dong-hua-yu-jiao-hu.html"><span class="sb-item-num">30</span><span class="sb-item-title">Matplotlib 动画与交互</span></a>
+        <a class="sb-item" href="../python/31-seaborn-tong-ji-ke-shi-hua.html"><span class="sb-item-num">31</span><span class="sb-item-title">Seaborn 统计可视化</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="agent">
+      <a class="sb-group-title" href="../modules/agent.html" data-toggle="agent">
+        <span class="sb-num">02</span>
+        <span class="sb-group-text"><b>Agent 核心</b><i>15 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../agent/01-token-yu-ci-qian-ru.html"><span class="sb-item-num">01</span><span class="sb-item-title">Token 与词嵌入</span></a>
+        <a class="sb-item" href="../agent/02-qian-xiang-chuan-bo-yu-fan-xiang-chuan-bo.html"><span class="sb-item-num">02</span><span class="sb-item-title">前向传播与反向传播</span></a>
+        <a class="sb-item" href="../agent/03-zhu-yi-li-ji-zhi-yu-transformer-jia-gou.html"><span class="sb-item-num">03</span><span class="sb-item-title">注意力机制与 Transformer 架构</span></a>
+        <a class="sb-item" href="../agent/04-yu-xun-lian-rlhf-yu-cai-yang-kv-cache.html"><span class="sb-item-num">04</span><span class="sb-item-title">预训练、RLHF 与采样（KV Cache）</span></a>
+        <a class="sb-item" href="../agent/05-ben-di-mo-xing-yu-xiao-xi-jie-gou.html"><span class="sb-item-num">05</span><span class="sb-item-title">本地模型与消息结构</span></a>
+        <a class="sb-item" href="../agent/06-hui-hua-guan-li-yu-json-shu-chu.html"><span class="sb-item-num">06</span><span class="sb-item-title">会话管理与 JSON 输出</span></a>
+        <a class="sb-item" href="../agent/07-tool-calling-xie-yi-yu-feng-zhuang.html"><span class="sb-item-num">07</span><span class="sb-item-title">Tool Calling：协议与封装</span></a>
+        <a class="sb-item" href="../agent/08-react-mo-shi-yu-zhu-xun-huan.html"><span class="sb-item-num">08</span><span class="sb-item-title">ReAct 模式与主循环</span></a>
+        <a class="sb-item" href="../agent/09-shi-zhan-deep-research-agent.html"><span class="sb-item-num">09</span><span class="sb-item-title">实战：Deep Research Agent</span></a>
+        <a class="sb-item" href="../agent/10-skill-yu-jian-jin-shi-pi-lu.html"><span class="sb-item-num">10</span><span class="sb-item-title">Skill 与渐进式披露</span></a>
+        <a class="sb-item" href="../agent/11-mcp-quan-jing.html"><span class="sb-item-num">11</span><span class="sb-item-title">MCP 全景</span></a>
+        <a class="sb-item" href="../agent/12-duo-agent-yu-xuan-xing-ce-lve.html"><span class="sb-item-num">12</span><span class="sb-item-title">多 Agent 与选型策略</span></a>
+        <a class="sb-item" href="../agent/13-ti-shi-ci-gong-cheng-yu-shang-xia-wen-gong.html"><span class="sb-item-num">13</span><span class="sb-item-title">提示词工程与上下文工程</span></a>
+        <a class="sb-item" href="../agent/14-xun-huan-tu-yu-gu-jia-gong-cheng.html"><span class="sb-item-num">14</span><span class="sb-item-title">循环、图与骨架工程</span></a>
+        <a class="sb-item" href="../agent/15-ji-yi-quan-xian-yu-ping-ce.html"><span class="sb-item-num">15</span><span class="sb-item-title">记忆、权限与评测</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="langchain">
+      <a class="sb-group-title" href="../modules/langchain.html" data-toggle="langchain">
+        <span class="sb-num">03</span>
+        <span class="sb-group-text"><b>LangChain 指南</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langchain/01-ren-shi-langchain.html"><span class="sb-item-num">01</span><span class="sb-item-title">认识 LangChain</span></a>
+        <a class="sb-item" href="../langchain/02-ti-shi-ci-mu-ban-yu-xiao-xi.html"><span class="sb-item-num">02</span><span class="sb-item-title">提示词模板与消息</span></a>
+        <a class="sb-item" href="../langchain/03-lcel-yu-runnable.html"><span class="sb-item-num">03</span><span class="sb-item-title">LCEL 与 Runnable</span></a>
+        <a class="sb-item" href="../langchain/04-liu-shi-yu-bing-fa.html"><span class="sb-item-num">04</span><span class="sb-item-title">流式与并发</span></a>
+        <a class="sb-item" href="../langchain/05-shu-chu-jie-xi-qi.html"><span class="sb-item-num">05</span><span class="sb-item-title">输出解析器</span></a>
+        <a class="sb-item" href="../langchain/06-wen-dang-jia-zai-yu-qie-ge.html"><span class="sb-item-num">06</span><span class="sb-item-title">文档加载与切割</span></a>
+        <a class="sb-item" href="../langchain/07-qian-ru-yu-xiang-liang-ku.html"><span class="sb-item-num">07</span><span class="sb-item-title">嵌入与向量库</span></a>
+        <a class="sb-item" href="../langchain/08-jian-suo-yu-rag.html"><span class="sb-item-num">08</span><span class="sb-item-title">检索与RAG</span></a>
+        <a class="sb-item" href="../langchain/09-dui-hua-ji-yi.html"><span class="sb-item-num">09</span><span class="sb-item-title">对话记忆</span></a>
+        <a class="sb-item" href="../langchain/10-gong-ju-diao-yong.html"><span class="sb-item-num">10</span><span class="sb-item-title">工具调用</span></a>
+        <a class="sb-item" href="../langchain/11-agent.html"><span class="sb-item-num">11</span><span class="sb-item-title">Agent</span></a>
+        <a class="sb-item" href="../langchain/12-hui-diao-yu-tiao-shi-quan-ke-cheng-shou-guan.html"><span class="sb-item-num">12</span><span class="sb-item-title">回调与调试（全课程收官章）</span></a>
+      </div>
+    </section>
+    <section class="sb-group open" data-mod="langgraph">
+      <a class="sb-group-title" href="../modules/langgraph.html" data-toggle="langgraph">
+        <span class="sb-num">04</span>
+        <span class="sb-group-text"><b>LangGraph 框架指南</b><i>17 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langgraph/01-di-1-zhang-cong-yi-ge-shi-kong-de-jiao.html"><span class="sb-item-num">01</span><span class="sb-item-title">第 1 章 从一个失控的脚本说起</span></a>
+        <a class="sb-item" href="../langgraph/02-di-2-zhang-zui-xiao-ke-yun-xing-tu.html"><span class="sb-item-num">02</span><span class="sb-item-title">第 2 章 最小可运行图</span></a>
+        <a class="sb-item" href="../langgraph/03-di-3-zhang-zhuang-tai-tu-de-shu-ju-xin.html"><span class="sb-item-num">03</span><span class="sb-item-title">第 3 章 状态：图的数据心脏</span></a>
+        <a class="sb-item" href="../langgraph/04-di-4-zhang-rang-liu-cheng-xue-hui-jue-ce.html"><span class="sb-item-num">04</span><span class="sb-item-title">第 4 章 让流程学会决策</span></a>
+        <a class="sb-item" href="../langgraph/05-di-5-zhang-bing-xing-shi-jie-chao-bu-zhi.html"><span class="sb-item-num">05</span><span class="sb-item-title">第 5 章 并行世界：超步执行模型</span></a>
+        <a class="sb-item" href="../langgraph/06-di-6-zhang-command-ba-kong-zhi-quan-jiao-jin.html"><span class="sb-item-num">06</span><span class="sb-item-title">第 6 章 Command：把控制权交进节点</span></a>
+        <a class="sb-item" href="../langgraph/07-di-7-zhang-dong-tai-bing-xing-send-yu-mapreduce.html"><span class="sb-item-num">07</span><span class="sb-item-title">第 7 章 动态并行：Send 与 MapReduce</span></a>
+        <a class="sb-item" href="../langgraph/08-di-8-zhang-gei-tu-zhuang-shang-shou-jiao-gong.html"><span class="sb-item-num">08</span><span class="sb-item-title">第 8 章 给图装上手脚：工具调用</span></a>
+        <a class="sb-item" href="../langgraph/09-di-9-zhang-fu-yong-yu-feng-zhuang-zi-tu.html"><span class="sb-item-num">09</span><span class="sb-item-title">第 9 章 复用与封装：子图</span></a>
+        <a class="sb-item" href="../langgraph/10-di-10-zhang-cong-dan-tu-dao-tuan-dui-duo.html"><span class="sb-item-num">10</span><span class="sb-item-title">第 10 章 从单图到团队：多 Agent 架构</span></a>
+        <a class="sb-item" href="../langgraph/11-di-11-zhang-liu-shi-shu-chu.html"><span class="sb-item-num">11</span><span class="sb-item-title">第 11 章 流式输出</span></a>
+        <a class="sb-item" href="../langgraph/12-di-12-zhang-chi-jiu-hua-checkpointer-yu-xian-cheng.html"><span class="sb-item-num">12</span><span class="sb-item-title">第 12 章 持久化：Checkpointer 与线程</span></a>
+        <a class="sb-item" href="../langgraph/13-di-13-zhang-shi-jian-lv-xing.html"><span class="sb-item-num">13</span><span class="sb-item-title">第 13 章 时间旅行</span></a>
+        <a class="sb-item" href="../langgraph/14-di-14-zhang-zhong-duan-yu-ren-zai-hui-lu.html"><span class="sb-item-num">14</span><span class="sb-item-title">第 14 章 中断与人在回路</span></a>
+        <a class="sb-item" href="../langgraph/15-di-15-zhang-ji-yi-guan-li.html"><span class="sb-item-num">15</span><span class="sb-item-title">第 15 章 记忆管理</span></a>
+        <a class="sb-item current" href="../langgraph/16-di-16-zhang-rong-cuo-zhong-shi-chao-shi-yu.html"><span class="sb-item-num">16</span><span class="sb-item-title">第 16 章 容错：重试、超时与兜底</span></a>
+        <a class="sb-item" href="../langgraph/17-di-17-zhang-quan-jing-hui-gu.html"><span class="sb-item-num">17</span><span class="sb-item-title">第 17 章 全景回顾</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="backend">
+      <a class="sb-group-title" href="../modules/backend.html" data-toggle="backend">
+        <span class="sb-num">05</span>
+        <span class="sb-group-text"><b>Python 框架指南</b><i>14 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../backend/01-fastapi-ru-men-yu-asgi.html"><span class="sb-item-num">01</span><span class="sb-item-title">FastAPI 入门与 ASGI</span></a>
+        <a class="sb-item" href="../backend/02-lu-you-yu-qing-qiu-xiang-ying.html"><span class="sb-item-num">02</span><span class="sb-item-title">路由与请求响应</span></a>
+        <a class="sb-item" href="../backend/03-pydantic-shu-ju-jiao-yan-yu-pei-zhi.html"><span class="sb-item-num">03</span><span class="sb-item-title">Pydantic 数据校验与配置</span></a>
+        <a class="sb-item" href="../backend/04-sqlalchemy-yi-bu-yin-qing-yu-hui-hua.html"><span class="sb-item-num">04</span><span class="sb-item-title">SQLAlchemy 异步引擎与会话</span></a>
+        <a class="sb-item" href="../backend/05-orm-jian-mo.html"><span class="sb-item-num">05</span><span class="sb-item-title">ORM 建模</span></a>
+        <a class="sb-item" href="../backend/06-sql-biao-da-shi-yu-shu-ju-cao-zuo.html"><span class="sb-item-num">06</span><span class="sb-item-title">SQL 表达式与数据操作</span></a>
+        <a class="sb-item" href="../backend/07-alembic-shu-ju-qian-yi.html"><span class="sb-item-num">07</span><span class="sb-item-title">Alembic 数据迁移</span></a>
+        <a class="sb-item" href="../backend/08-yi-lai-zhu-ru.html"><span class="sb-item-num">08</span><span class="sb-item-title">依赖注入</span></a>
+        <a class="sb-item" href="../backend/09-tong-yi-yi-chang-chu-li.html"><span class="sb-item-num">09</span><span class="sb-item-title">统一异常处理</span></a>
+        <a class="sb-item" href="../backend/10-zhong-jian-jian.html"><span class="sb-item-num">10</span><span class="sb-item-title">中间件</span></a>
+        <a class="sb-item" href="../backend/11-ren-zheng-yu-jwt.html"><span class="sb-item-num">11</span><span class="sb-item-title">认证与 JWT</span></a>
+        <a class="sb-item" href="../backend/12-pytest-ce-shi.html"><span class="sb-item-num">12</span><span class="sb-item-title">pytest 测试</span></a>
+        <a class="sb-item" href="../backend/13-ri-zhi-loguru.html"><span class="sb-item-num">13</span><span class="sb-item-title">日志 loguru</span></a>
+        <a class="sb-item" href="../backend/14-liu-shi-xiang-ying-sse-yu-websocket.html"><span class="sb-item-num">14</span><span class="sb-item-title">流式响应 SSE 与 WebSocket</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="interview">
+      <a class="sb-group-title" href="../modules/interview.html" data-toggle="interview">
+        <span class="sb-num">06</span>
+        <span class="sb-group-text"><b>面试题库</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../interview/01-llm-yuan-li-pian.html"><span class="sb-item-num">01</span><span class="sb-item-title">LLM 原理篇</span></a>
+        <a class="sb-item" href="../interview/02-rag-yu-jian-suo-pian.html"><span class="sb-item-num">02</span><span class="sb-item-title">RAG 与检索篇</span></a>
+        <a class="sb-item" href="../interview/03-agent-he-xin-pian.html"><span class="sb-item-num">03</span><span class="sb-item-title">Agent 核心篇</span></a>
+        <a class="sb-item" href="../interview/04-langgraph-pian.html"><span class="sb-item-num">04</span><span class="sb-item-title">LangGraph 篇</span></a>
+        <a class="sb-item" href="../interview/05-langchain-pian.html"><span class="sb-item-num">05</span><span class="sb-item-title">LangChain 篇</span></a>
+        <a class="sb-item" href="../interview/06-xi-tong-she-ji-pian.html"><span class="sb-item-num">06</span><span class="sb-item-title">系统设计篇</span></a>
+        <a class="sb-item" href="../interview/07-xiang-mu-shen-wa-pian.html"><span class="sb-item-num">07</span><span class="sb-item-title">项目深挖篇</span></a>
+        <a class="sb-item" href="../interview/08-gu-zhang-pai-cha-pian.html"><span class="sb-item-num">08</span><span class="sb-item-title">故障排查篇</span></a>
+        <a class="sb-item" href="../interview/09-python-ji-chu-pian.html"><span class="sb-item-num">09</span><span class="sb-item-title">Python 基础篇</span></a>
+        <a class="sb-item" href="../interview/10-fastapi-yu-hou-duan-pian.html"><span class="sb-item-num">10</span><span class="sb-item-title">FastAPI 与后端篇</span></a>
+        <a class="sb-item" href="../interview/11-ti-shi-ci-gong-cheng-yu-an-quan-pian.html"><span class="sb-item-num">11</span><span class="sb-item-title">提示词工程与安全篇</span></a>
+        <a class="sb-item" href="../interview/12-mo-xing-xuan-xing-yu-jiang-ben-pian.html"><span class="sb-item-num">12</span><span class="sb-item-title">模型选型与降本篇</span></a>
+      </div>
+    </section>
+  </nav>
+</aside>
+  <main class="main">
+    <header class="topbar">
+      <button class="menu-btn" id="menuBtn" aria-label="目录">☰</button>
+      <div class="crumbs"><a href="../index.html">首页</a><span>/</span><a href="../modules/langgraph.html">LangGraph 框架指南</a><span>/</span><span class="cur">第 16 章 容错：重试、超时与兜底</span></div>
+      <div class="topbar-actions">
+        <button class="icon-btn" id="themeBtn" title="切换深浅色" aria-label="切换深浅色">◐</button>
+      </div>
+    </header>
+    <div class="content">
+      <article class="article">
+
+<header class="page-head">
+  <div class="page-kicker">LangGraph 框架指南 · 第 16 章</div>
+  <h1 class="page-title">第 16 章 容错：重试、超时与兜底</h1>
+  <p class="page-desc">本章目标：让图在故障面前活下来。掌握三个层次的容错手段——节点级重试（RetryPolicy）、节点级超时与异常兜底、以及&quot;错误重跑&quot;（failure + replay 组合拳）。LLM 应用调的是不稳定的外部服务，容错…</p>
+  <div class="page-meta">
+    <span>约 17 分钟</span><span>6,726 字</span><span>5 个代码示例</span>
+  </div>
+</header>
+<div class="md"><blockquote>
+<p>本章目标：让图在故障面前活下来。掌握三个层次的容错手段——节点级重试（RetryPolicy）、节点级超时与异常兜底、以及"错误重跑"（failure + replay 组合拳）。LLM 应用调的是不稳定的外部服务，容错不是可选项。</p>
+</blockquote>
+<h2 id="161-llm-工作流的故障面">16.1 LLM 工作流的故障面</h2>
+<p>传统代码的故障源相对收敛（机器挂、依赖挂），LLM 工作流的故障面宽得多：</p>
+<table>
+<thead>
+<tr>
+<th>故障源</th>
+<th>典型表现</th>
+<th>频率</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>模型服务</td>
+<td>429 限流、5xx、超时</td>
+<td>高（外部服务，天然不稳）</td>
+</tr>
+<tr>
+<td>结构化输出</td>
+<td>模型返回不合 schema 的 JSON</td>
+<td>中（温度、prompt 问题）</td>
+</tr>
+<tr>
+<td>工具执行</td>
+<td>下游 API 挂、参数幻觉</td>
+<td>中</td>
+</tr>
+<tr>
+<td>幻觉行为</td>
+<td>无限循环调工具、路由死循环</td>
+<td>低但致命（recursion_limit 爆炸）</td>
+</tr>
+<tr>
+<td>进程级</td>
+<td>断电、OOM、部署重启</td>
+<td>低</td>
+</tr>
+</tbody>
+</table>
+<p>对应四个层次的治理，本章按"由小到大"讲：</p>
+<ol>
+<li><strong>瞬时故障</strong>：重试解决（16.2）</li>
+<li><strong>慢故障</strong>：超时解决（16.3）</li>
+<li><strong>确定故障</strong>：兜底节点解决（16.4）</li>
+<li><strong>已发生的中途失败</strong>：重跑解决（16.5）</li>
+</ol>
+<h2 id="162-节点级重试retrypolicy">16.2 节点级重试：RetryPolicy</h2>
+<p>最高频的故障是瞬时的：模型 429 了、下游抖了一下。这种故障的正确反应不是绕过而是<strong>等一会儿再来一次</strong>。</p>
+<p>LangGraph 把重试做成编译期策略，按节点粒度挂载：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Annotated</span><span class="p">,</span> <span class="n">TypedDict</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">operator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langgraph.graph</span><span class="w"> </span><span class="kn">import</span> <span class="n">StateGraph</span><span class="p">,</span> <span class="n">START</span><span class="p">,</span> <span class="n">END</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langgraph.pregel</span><span class="w"> </span><span class="kn">import</span> <span class="n">RetryPolicy</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">ScreenState</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
+    <span class="n">resume_text</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">score</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">operator</span><span class="o">.</span><span class="n">add</span><span class="p">]</span>
+    <span class="n">log</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">operator</span><span class="o">.</span><span class="n">add</span><span class="p">]</span>
+
+<span class="c1"># 模拟一个不稳定的模型调用：前两次失败，第三次成功</span>
+<span class="n">_attempts</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"count"</span><span class="p">:</span> <span class="mi">0</span><span class="p">}</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">flaky_evaluate</span><span class="p">(</span><span class="n">state</span><span class="p">:</span> <span class="n">ScreenState</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="n">_attempts</span><span class="p">[</span><span class="s2">"count"</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">if</span> <span class="n">_attempts</span><span class="p">[</span><span class="s2">"count"</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ConnectionError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"模型服务暂时不可用（第 </span><span class="si">{</span><span class="n">_attempts</span><span class="p">[</span><span class="s1">'count'</span><span class="p">]</span><span class="si">}</span><span class="s2"> 次）"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">"score"</span><span class="p">:</span> <span class="mi">75</span><span class="p">,</span> <span class="s2">"log"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"evaluate 成功（第 3 次尝试）"</span><span class="p">]}</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">report</span><span class="p">(</span><span class="n">state</span><span class="p">:</span> <span class="n">ScreenState</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">"log"</span><span class="p">:</span> <span class="p">[</span><span class="sa">f</span><span class="s2">"最终得分 </span><span class="si">{</span><span class="n">state</span><span class="p">[</span><span class="s1">'score'</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">]}</span>
+
+<span class="n">builder</span> <span class="o">=</span> <span class="n">StateGraph</span><span class="p">(</span><span class="n">ScreenState</span><span class="p">)</span>
+<span class="n">builder</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span>
+    <span class="s2">"evaluate"</span><span class="p">,</span>
+    <span class="n">flaky_evaluate</span><span class="p">,</span>
+    <span class="n">retry</span><span class="o">=</span><span class="n">RetryPolicy</span><span class="p">(</span><span class="n">initial_interval</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>    <span class="c1"># 首次重试等 1 秒</span>
+                      <span class="n">backoff_factor</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span>      <span class="c1"># 指数退避：1s → 2s</span>
+                      <span class="n">max_attempts</span><span class="o">=</span><span class="mi">3</span><span class="p">),</span>         <span class="c1"># 最多尝试 3 次</span>
+<span class="p">)</span>
+<span class="n">builder</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="s2">"report"</span><span class="p">,</span> <span class="n">report</span><span class="p">)</span>
+<span class="n">builder</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="n">START</span><span class="p">,</span> <span class="s2">"evaluate"</span><span class="p">)</span>
+<span class="n">builder</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="s2">"evaluate"</span><span class="p">,</span> <span class="s2">"report"</span><span class="p">)</span>
+<span class="n">builder</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="s2">"report"</span><span class="p">,</span> <span class="n">END</span><span class="p">)</span>
+<span class="n">graph</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">compile</span><span class="p">()</span>
+
+<span class="n">result</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">invoke</span><span class="p">({</span><span class="s2">"resume_text"</span><span class="p">:</span> <span class="s2">"李思远 ..."</span><span class="p">})</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s2">"log"</span><span class="p">])</span>
+<span class="c1"># ['evaluate 成功（第 3 次尝试）', '最终得分 75']</span>
+</code></pre></div>
+<p>前两次抛出的 <code>ConnectionError</code> 被引擎静默吞掉、按退避策略重试，第三次成功——图正常走完，调用方完全无感。</p>
+<p>RetryPolicy 的参数语义：</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>initial_interval</code></td>
+<td>首次重试前等待秒数</td>
+</tr>
+<tr>
+<td><code>backoff_factor</code></td>
+<td>每次重试后等待时长的乘数（指数退避）</td>
+</tr>
+<tr>
+<td><code>max_attempts</code></td>
+<td>总尝试次数上限（含首次）</td>
+</tr>
+<tr>
+<td><code>retry_on</code></td>
+<td>哪些异常才重试（默认仅限"可重试"的通用异常）</td>
+</tr>
+</tbody>
+</table>
+<p><code>retry_on</code> 值得展开一句。<strong>默认策略故意不重试所有异常</strong>：参数错误、逻辑 bug 这类确定性失败，重试一万次也是同样的错，盲目重试只会拖长故障、烧掉配额。默认只对网络类/限流类"值得再来一次"的异常生效。如果你的自定义异常需要被重试，显式传 <code>retry_on=</code> 自定义判断函数。</p>
+<p>重试期间发生的事：节点整体失败、引擎捕获、按策略等待重试。<strong>注意重试的是"整个节点"</strong>——节点内的计数器、已发出的部分副作用不会回滚。含副作用的节点要考虑重入安全（与第 14 章 interrupt 的重入纪律同源）。</p>
+<h2 id="163-超时别让一个节点拖死整张图">16.3 超时：别让一个节点拖死整张图</h2>
+<p>重试治"失败得快"的病，治不了"失败得慢"的：模型卡死、下游 hang 住——节点不抛错也不返回，整个图陪着挂。超时是这类问题的解法。</p>
+<p>LangGraph 节点本身没有内建 timeout 参数（重试有、超时没有——设计上把"等多久"留给了节点的实现方式），主流做法是在节点内部控制：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain_openai</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChatOpenAI</span>
+
+<span class="n">llm</span> <span class="o">=</span> <span class="n">ChatOpenAI</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">=</span><span class="s2">"gpt-4o-mini"</span><span class="p">,</span>
+    <span class="n">timeout</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>          <span class="c1"># LangChain 模型自带的请求超时</span>
+    <span class="n">max_retries</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>       <span class="c1"># SDK 层自动重试</span>
+<span class="p">)</span>
+
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">evaluate</span><span class="p">(</span><span class="n">state</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="c1"># 节点内部再包一层总闸：整个节点 45 秒拿不下就放弃</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">wait_for</span><span class="p">(</span>
+            <span class="n">llm</span><span class="o">.</span><span class="n">ainvoke</span><span class="p">(</span><span class="n">build_prompt</span><span class="p">(</span><span class="n">state</span><span class="p">)),</span>
+            <span class="n">timeout</span><span class="o">=</span><span class="mi">45</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">"score"</span><span class="p">:</span> <span class="n">parse_score</span><span class="p">(</span><span class="n">result</span><span class="p">)}</span>
+    <span class="k">except</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">TimeoutError</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">"evaluate 节点超时"</span><span class="p">)</span>
+</code></pre></div>
+<p>三层超时的分工想清楚，别叠床架屋：</p>
+<ul>
+<li><strong>SDK 层</strong>（<code>timeout=30</code>）：单次 HTTP 请求超时，管"这一次调用"</li>
+<li><strong>节点层</strong>（<code>asyncio.wait_for</code>）：节点总预算，管"重试加起来不能超过多少"</li>
+<li><strong>调用层</strong>（外层服务的整体 deadline）：业务承诺，管"整个任务多久必须给用户交代"</li>
+</ul>
+<p>节点超时抛出的异常会进入 16.2 的重试策略管辖——超时后重试一次是合理的（可能只是网络抖动）。两层配合：<strong>瞬时故障重试解决，慢性故障超时切断</strong>。</p>
+<h2 id="164-兜底fail-safe-节点">16.4 兜底：fail-safe 节点</h2>
+<p>有些失败不该重试也不该中断整图：某份简历的背景核查挂了，凭什么整批评估报废？业务上的正确反应是——<strong>降级处理，继续走</strong>。</p>
+<p>模式：条件边做异常分流，兜底节点产出"体面的失败"：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Annotated</span><span class="p">,</span> <span class="n">TypedDict</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">operator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langgraph.graph</span><span class="w"> </span><span class="kn">import</span> <span class="n">StateGraph</span><span class="p">,</span> <span class="n">START</span><span class="p">,</span> <span class="n">END</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langgraph.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">Command</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">ScreenState</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
+    <span class="n">resume_text</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">bg_report</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">score</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">operator</span><span class="o">.</span><span class="n">add</span><span class="p">]</span>
+    <span class="n">log</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">operator</span><span class="o">.</span><span class="n">add</span><span class="p">]</span>
+
+<span class="n">SERVICE_OK</span> <span class="o">=</span> <span class="kc">False</span>        <span class="c1"># 改成 True 模拟下游恢复</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">background_check</span><span class="p">(</span><span class="n">state</span><span class="p">:</span> <span class="n">ScreenState</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Command</span><span class="p">:</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">SERVICE_OK</span><span class="p">:</span>
+            <span class="c1"># 模拟不稳定的下游：真实场景这里是外部调用</span>
+            <span class="k">raise</span> <span class="ne">ConnectionError</span><span class="p">(</span><span class="s2">"背景核查服务不可用"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Command</span><span class="p">(</span>
+            <span class="n">update</span><span class="o">=</span><span class="p">{</span><span class="s2">"bg_report"</span><span class="p">:</span> <span class="s2">"无风险记录"</span><span class="p">,</span> <span class="s2">"score"</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span> <span class="s2">"log"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"background_check 成功"</span><span class="p">]},</span>
+            <span class="n">goto</span><span class="o">=</span><span class="s2">"evaluate"</span><span class="p">,</span>               <span class="c1"># 成功：正常流转</span>
+        <span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ConnectionError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="c1"># 失败信息写入状态，流向兜底节点</span>
+        <span class="k">return</span> <span class="n">Command</span><span class="p">(</span>
+            <span class="n">update</span><span class="o">=</span><span class="p">{</span><span class="s2">"log"</span><span class="p">:</span> <span class="p">[</span><span class="sa">f</span><span class="s2">"background_check 失败：</span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">]},</span>
+            <span class="n">goto</span><span class="o">=</span><span class="s2">"bg_fallback"</span><span class="p">,</span>            <span class="c1"># 异常分流：去兜底节点</span>
+        <span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">bg_fallback</span><span class="p">(</span><span class="n">state</span><span class="p">:</span> <span class="n">ScreenState</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="c1"># 降级策略：标记"未核查"，流程继续</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">"bg_report"</span><span class="p">:</span> <span class="s2">"背景核查暂不可用（已降级跳过）"</span><span class="p">,</span>
+        <span class="s2">"score"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>                        <span class="c1"># 不加分也不扣分</span>
+        <span class="s2">"log"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"bg_fallback：降级处理，流程继续"</span><span class="p">],</span>
+    <span class="p">}</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">evaluate</span><span class="p">(</span><span class="n">state</span><span class="p">:</span> <span class="n">ScreenState</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">"score"</span><span class="p">:</span> <span class="mi">80</span><span class="p">,</span> <span class="s2">"log"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"evaluate 完成"</span><span class="p">]}</span>
+
+<span class="n">builder</span> <span class="o">=</span> <span class="n">StateGraph</span><span class="p">(</span><span class="n">ScreenState</span><span class="p">)</span>
+<span class="n">builder</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="s2">"background_check"</span><span class="p">,</span> <span class="n">background_check</span><span class="p">)</span>   <span class="c1"># 返回 Command：不挂出边</span>
+<span class="n">builder</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="s2">"bg_fallback"</span><span class="p">,</span> <span class="n">bg_fallback</span><span class="p">)</span>
+<span class="n">builder</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="s2">"evaluate"</span><span class="p">,</span> <span class="n">evaluate</span><span class="p">)</span>
+<span class="n">builder</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="n">START</span><span class="p">,</span> <span class="s2">"background_check"</span><span class="p">)</span>
+<span class="n">builder</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="s2">"bg_fallback"</span><span class="p">,</span> <span class="s2">"evaluate"</span><span class="p">)</span>
+<span class="n">builder</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="s2">"evaluate"</span><span class="p">,</span> <span class="n">END</span><span class="p">)</span>
+<span class="n">graph</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">compile</span><span class="p">()</span>
+
+<span class="n">result</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">invoke</span><span class="p">({</span><span class="s2">"resume_text"</span><span class="p">:</span> <span class="s2">"李思远 ..."</span><span class="p">})</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s2">"bg_report"</span><span class="p">])</span>   <span class="c1"># 背景核查暂不可用（已降级跳过）</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s2">"score"</span><span class="p">])</span>       <span class="c1"># 80（背景分 0 + 评估 80）</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s2">"log"</span><span class="p">])</span>
+</code></pre></div>
+<p>兜底节点的设计要点：</p>
+<ol>
+<li><strong>降级要有业务语义</strong>。"跳过"要留痕（bg_report 写明原因）、计分规则要自洽（该环节 0 分而不是 -100）、下游消费方要知道这是降级产物。</li>
+<li><strong>区分"可降级"与"不可降级"</strong>。背景核查可以跳过；"发 offer"步骤挂了绝不能静默跳过——不可降级的失败应当让图失败，交给 16.5 的重跑。哪些环节可降级，是业务决策，写进代码评审清单。</li>
+<li><strong>与 ToolNode 的错误回传呼应</strong>（第 8 章）：工具级失败默认回传给模型自愈，节点级失败才走兜底分流。粒度选对，别把模型能自愈的失败升级成图级兜底。</li>
+</ol>
+<h2 id="165-失败之后重跑而不是从头来">16.5 失败之后：重跑而不是从头来</h2>
+<p>最后一层：图真的失败了（重试耗尽、超时、不可降级），怎么办？</p>
+<p>没有持久化时只有一条路：修好问题、从头 invoke——30 份简历重新评一遍，前面成功的 16 份白跑。挂了 checkpointer 之后，正解是第 12、13 章的组合拳：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 失败发生后：</span>
+<span class="n">config</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"configurable"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"thread_id"</span><span class="p">:</span> <span class="s2">"batch-042"</span><span class="p">}}</span>
+<span class="n">snap</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">get_state</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">snap</span><span class="o">.</span><span class="n">next</span><span class="p">)</span>        <span class="c1"># ('evaluate_17',) —— 失败点：第 17 份简历的评估节点</span>
+
+<span class="c1"># 修好外部依赖后，从失败点重跑（输入 None = 用检查点原状态）</span>
+<span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">stream_mode</span><span class="o">=</span><span class="s2">"updates"</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">chunk</span><span class="p">)</span>
+<span class="c1"># 从 evaluate_17 继续，前 16 份的结果直接从检查点恢复，不重算</span>
+</code></pre></div>
+<p>要点在于理解"失败时检查点停在哪"：节点失败没有产生新检查点，线程的最新检查点停在<strong>失败节点即将执行前</strong>——<code>snap.next</code> 就是失败点。修好依赖后从那里续跑，等于把失败节点"再执行一次"。</p>
+<p>这套机制的产品化形态，还可以配合第 13 章 fork：不确定修复是否有效时，先从失败检查点 fork 一条时间线试跑，成功再切回主线。</p>
+<p>把四层手段串成决策树，作为本章的收束：</p>
+<div class="mermaid" data-code="flowchart TD
+    F[节点失败] --&gt; Q1{瞬时故障?}
+    Q1 --&gt;|是| R[RetryPolicy 重试]
+    Q1 --&gt;|否| Q2{慢故障/挂死?}
+    Q2 --&gt;|是| T[超时切断 → 转入异常处理]
+    Q2 --&gt;|否| Q3{业务上可降级?}
+    Q3 --&gt;|是| FB[兜底节点降级继续]
+    Q3 --&gt;|否| FAIL[图失败]
+    R --&gt;|重试耗尽| Q3
+    T --&gt; Q3
+    FAIL --&gt; FIX[修复后从检查点重跑]">flowchart TD
+    F[节点失败] --&gt; Q1{瞬时故障?}
+    Q1 --&gt;|是| R[RetryPolicy 重试]
+    Q1 --&gt;|否| Q2{慢故障/挂死?}
+    Q2 --&gt;|是| T[超时切断 → 转入异常处理]
+    Q2 --&gt;|否| Q3{业务上可降级?}
+    Q3 --&gt;|是| FB[兜底节点降级继续]
+    Q3 --&gt;|否| FAIL[图失败]
+    R --&gt;|重试耗尽| Q3
+    T --&gt; Q3
+    FAIL --&gt; FIX[修复后从检查点重跑]</div>
+<h2 id="常见坑与排错">常见坑与排错</h2>
+<ol>
+<li>
+<p><strong>重试加在确定性失败上</strong>。schema 解析错误、代码 bug 被 RetryPolicy 反复重试——每次都失败，白等几十秒才抛出。确认 <code>retry_on</code> 只覆盖瞬时性异常；确定性失败让它快速失败，走兜底或修复。</p>
+</li>
+<li>
+<p><strong>重试节点不重入安全</strong>。节点发了一半通知后失败、重试再发一遍——用户收到两条。副作用动作要么幂等（带去重键），要么挪到节点末尾确保"发完了才算成功"。</p>
+</li>
+<li>
+<p><strong>只有 SDK 超时没有节点超时</strong>。SDK 超时管单次请求，节点内部如果有多次调用 + 自己的重试，总时长可能远超预期。给节点套总闸（16.3 的 wait_for）。</p>
+</li>
+<li>
+<p><strong>兜底节点吞掉一切</strong>。catch-all 式的兜底把真正的 bug 也降级掉了——图永远"成功"，问题永远被掩盖。兜底必须留痕（log 字段、监控计数），并区分"预期的降级"与"意外的失败"。</p>
+</li>
+<li>
+<p><strong>重跑时忘修根因</strong>。从检查点重跑只是"再试一次"，如果外部依赖还是坏的，会再失败一次。重跑前先确认故障已排除——就像别对着 503 疯狂刷新。</p>
+</li>
+<li>
+<p><strong>同线程重跑撞上未结束的运行</strong>。失败的 invoke 若还在重试循环中（慢故障），此时又发起 stream 续跑——同线程并发（12.3 的禁区）。确认旧运行真正终止再重跑。</p>
+</li>
+<li>
+<p><strong>在 reducer/路由函数里做容错</strong>。reducer 要纯（第 3 章）、路由函数要哑（第 4 章）——try/catch 放这两个地方会污染可重放性。容错属于节点和编译期策略，不属於状态合并与路由。</p>
+</li>
+</ol>
+<h2 id="动手练习">动手练习</h2>
+<ol>
+<li>
+<p>把 16.2 的 demo 改成"永远失败"（flaky 函数每次都 raise），配合 <code>max_attempts=3</code>：测量整个 invoke 耗时，验证退避节奏（约 1s + 2s）。再把 <code>retry_on</code> 收紧为只重试 <code>ConnectionError</code>，抛 <code>ValueError</code> 验证不再重试。</p>
+</li>
+<li>
+<p>给 16.4 的图加上"不可降级"分支：<code>evaluate</code> 节点失败时（模拟 raise），让图整体失败；然后修复问题，从失败检查点重跑，验证前面的 background_check 环节没有重复执行（log 里只有一条记录）。</p>
+</li>
+<li>
+<p>综合演练：一个四节点图（parse → search → evaluate → report），search 是不稳定的（随机 30% 失败）。要求：search 瞬时失败重试 2 次；重试耗尽后降级（报告标注"检索不可用"）；整个流程无论怎样都能出 report。分别触发三条路径验证。</p>
+</li>
+</ol>
+<h2 id="本章速查">本章速查</h2>
+<table>
+<thead>
+<tr>
+<th>API / 概念</th>
+<th>一句话</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>RetryPolicy(initial_interval, backoff_factor, max_attempts)</code></td>
+<td>节点级重试策略，compile 前挂到 add_node</td>
+</tr>
+<tr>
+<td><code>retry_on</code></td>
+<td>只重试瞬时异常；确定性失败快速失败</td>
+</tr>
+<tr>
+<td>指数退避</td>
+<td>等待时长 ×backoff_factor 递增，避免雪崩式重试</td>
+</tr>
+<tr>
+<td>节点超时</td>
+<td>引擎不管，节点内 <code>asyncio.wait_for</code> 自设总闸</td>
+</tr>
+<tr>
+<td>三层超时</td>
+<td>SDK 单请求 → 节点总预算 → 调用方 deadline</td>
+</tr>
+<tr>
+<td>兜底节点</td>
+<td>try/except + Command 分流：可降级失败降级继续</td>
+</tr>
+<tr>
+<td>失败重跑</td>
+<td>失败线程最新检查点停在失败点前；修复后 stream(None, config) 续跑</td>
+</tr>
+<tr>
+<td>四层决策</td>
+<td>瞬时重试 → 慢故障超时 → 可降级兜底 → 不可降级失败后重跑</td>
+</tr>
+<tr>
+<td>重入安全</td>
+<td>重试与 interrupt 共同的纪律：副作用幂等或后置</td>
+</tr>
+</tbody>
+</table></div>
+
+      </article>
+<nav class="pager"><a class="pg-card pg-prev" href="../langgraph/15-di-15-zhang-ji-yi-guan-li.html"><span class="pg-label">← 上一篇</span><span class="pg-title">第 15 章 记忆管理</span><span class="pg-mod">LangGraph 框架指南</span></a><a class="pg-card pg-next" href="../langgraph/17-di-17-zhang-quan-jing-hui-gu.html"><span class="pg-label">下一篇 →</span><span class="pg-title">第 17 章 全景回顾</span><span class="pg-mod">LangGraph 框架指南</span></a></nav>
+    </div>
+    <footer class="foot">
+      <span>深栈 DeepStack · AI Agent 工程师转型训练营配套文档</span>
+    </footer>
+  </main>
+<nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#161-llm-工作流的故障面">16.1 LLM 工作流的故障面</a><a class="toc-link toc-h2" href="#162-节点级重试retrypolicy">16.2 节点级重试：RetryPolicy</a><a class="toc-link toc-h2" href="#163-超时别让一个节点拖死整张图">16.3 超时：别让一个节点拖死整张图</a><a class="toc-link toc-h2" href="#164-兜底fail-safe-节点">16.4 兜底：fail-safe 节点</a><a class="toc-link toc-h2" href="#165-失败之后重跑而不是从头来">16.5 失败之后：重跑而不是从头来</a><a class="toc-link toc-h2" href="#常见坑与排错">常见坑与排错</a><a class="toc-link toc-h2" href="#动手练习">动手练习</a><a class="toc-link toc-h2" href="#本章速查">本章速查</a></nav>
+</div>
+<div class="sb-mask" id="sbMask"></div>
+<script src="../assets/app.js"></script>
+</body>
+</html>

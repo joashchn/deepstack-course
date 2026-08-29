@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>30 · Matplotlib 动画与交互 · 深栈 DeepStack 课程文档</title>
+<meta name="description" content="上一章末尾留了个尾巴：静态图是&quot;定妆照&quot;，拍完就定格了。可现实里的数据故事经常是动态的——气温逐小时爬升、监控指标滚动刷新、参数一调结果跟着变。这一章给 Matplotlib 装上两样东西：时间轴（动画，图自己动）和操纵…">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%23d9c39a' text-anchor='middle'%3EDS%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+<div class="progress" id="progress"></div>
+
+<div class="layout">
+<aside class="sidebar" id="sidebar">
+  <div class="sb-head">
+    <a class="brand" href="../index.html">
+      <span class="brand-mark">DS</span>
+      <span class="brand-text"><b>深栈 DeepStack</b><i>AI Agent 工程师转型训练营</i></span>
+    </a>
+    <button class="sb-close" id="sbClose" aria-label="关闭目录">✕</button>
+  </div>
+  <div class="sb-search"><input type="search" id="searchInput" placeholder="搜索 123 篇文档… ( / )" autocomplete="off">
+    <div class="sb-results" id="searchResults"></div></div>
+  <nav class="sb-nav">
+    <section class="sb-group open" data-mod="python">
+      <a class="sb-group-title" href="../modules/python.html" data-toggle="python">
+        <span class="sb-num">01</span>
+        <span class="sb-group-text"><b>Python 与数据实践</b><i>31 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../python/01-huan-jing-da-jian-yu-ban-ben-guan-li.html"><span class="sb-item-num">01</span><span class="sb-item-title">环境搭建与版本管理</span></a>
+        <a class="sb-item" href="../python/02-bian-liang-biao-da-shi-yu-liu-cheng-kong-zhi.html"><span class="sb-item-num">02</span><span class="sb-item-title">变量、表达式与流程控制</span></a>
+        <a class="sb-item" href="../python/03-xu-lie-zi-dian-yu-ji-he.html"><span class="sb-item-num">03</span><span class="sb-item-title">序列、字典与集合</span></a>
+        <a class="sb-item" href="../python/04-han-shu-she-ji-yu-lambda.html"><span class="sb-item-num">04</span><span class="sb-item-title">函数设计与 lambda</span></a>
+        <a class="sb-item" href="../python/05-zuo-yong-yu-gui-ze-yu-bi-bao.html"><span class="sb-item-num">05</span><span class="sb-item-title">作用域规则与闭包</span></a>
+        <a class="sb-item" href="../python/06-lei-de-ding-yi-yu-shi-li-hua.html"><span class="sb-item-num">06</span><span class="sb-item-title">类的定义与实例化</span></a>
+        <a class="sb-item" href="../python/07-lei-xing-pan-ding-yu-chou-xiang-ji-lei.html"><span class="sb-item-num">07</span><span class="sb-item-title">类型判定与抽象基类</span></a>
+        <a class="sb-item" href="../python/08-mo-shu-fang-fa-quan-jing.html"><span class="sb-item-num">08</span><span class="sb-item-title">魔术方法全景</span></a>
+        <a class="sb-item" href="../python/09-miao-shu-fu-yu-yuan-lei.html"><span class="sb-item-num">09</span><span class="sb-item-title">描述符与元类</span></a>
+        <a class="sb-item" href="../python/10-zhuang-shi-qi.html"><span class="sb-item-num">10</span><span class="sb-item-title">装饰器</span></a>
+        <a class="sb-item" href="../python/11-die-dai-xie-yi-yu-sheng-cheng-qi.html"><span class="sb-item-num">11</span><span class="sb-item-title">迭代协议与生成器</span></a>
+        <a class="sb-item" href="../python/12-with-yu-shang-xia-wen-xie-yi.html"><span class="sb-item-num">12</span><span class="sb-item-title">with 与上下文协议</span></a>
+        <a class="sb-item" href="../python/13-yi-chang-ti-xi-yu-chu-li.html"><span class="sb-item-num">13</span><span class="sb-item-title">异常体系与处理</span></a>
+        <a class="sb-item" href="../python/14-lei-xing-biao-zhu.html"><span class="sb-item-num">14</span><span class="sb-item-title">类型标注</span></a>
+        <a class="sb-item" href="../python/15-mo-kuai-yu-bao-de-zu-zhi.html"><span class="sb-item-num">15</span><span class="sb-item-title">模块与包的组织</span></a>
+        <a class="sb-item" href="../python/16-biao-zhun-ku-xun-li.html"><span class="sb-item-num">16</span><span class="sb-item-title">标准库巡礼</span></a>
+        <a class="sb-item" href="../python/17-yi-lai-guan-li-yu-di-san-fang-ku.html"><span class="sb-item-num">17</span><span class="sb-item-title">依赖管理与第三方库</span></a>
+        <a class="sb-item" href="../python/18-xian-cheng-yu-jin-cheng.html"><span class="sb-item-num">18</span><span class="sb-item-title">线程与进程</span></a>
+        <a class="sb-item" href="../python/19-shi-jian-xun-huan.html"><span class="sb-item-num">19</span><span class="sb-item-title">事件循环</span></a>
+        <a class="sb-item" href="../python/20-future-yu-xie-cheng.html"><span class="sb-item-num">20</span><span class="sb-item-title">Future 与协程</span></a>
+        <a class="sb-item" href="../python/21-asyncio-shi-zhan.html"><span class="sb-item-num">21</span><span class="sb-item-title">asyncio 实战</span></a>
+        <a class="sb-item" href="../python/22-gou-jian-yu-fa-bu.html"><span class="sb-item-num">22</span><span class="sb-item-title">构建与发布</span></a>
+        <a class="sb-item" href="../python/23-gong-cheng-hua-gong-ju-lian.html"><span class="sb-item-num">23</span><span class="sb-item-title">工程化工具链</span></a>
+        <a class="sb-item" href="../python/24-monorepo-yu-tiao-shi.html"><span class="sb-item-num">24</span><span class="sb-item-title">monorepo 与调试</span></a>
+        <a class="sb-item" href="../python/25-jupyter-jiao-hu-huan-jing.html"><span class="sb-item-num">25</span><span class="sb-item-title">Jupyter 交互环境</span></a>
+        <a class="sb-item" href="../python/26-numpy-shu-zu-yu-xiang-liang-hua.html"><span class="sb-item-num">26</span><span class="sb-item-title">NumPy 数组与向量化</span></a>
+        <a class="sb-item" href="../python/27-pandas-shu-ju-jie-gou.html"><span class="sb-item-num">27</span><span class="sb-item-title">Pandas 数据结构</span></a>
+        <a class="sb-item" href="../python/28-pandas-shu-ju-qing-xi.html"><span class="sb-item-num">28</span><span class="sb-item-title">Pandas 数据清洗</span></a>
+        <a class="sb-item" href="../python/29-matplotlib-hui-tu-ti-xi.html"><span class="sb-item-num">29</span><span class="sb-item-title">Matplotlib 绘图体系</span></a>
+        <a class="sb-item current" href="../python/30-matplotlib-dong-hua-yu-jiao-hu.html"><span class="sb-item-num">30</span><span class="sb-item-title">Matplotlib 动画与交互</span></a>
+        <a class="sb-item" href="../python/31-seaborn-tong-ji-ke-shi-hua.html"><span class="sb-item-num">31</span><span class="sb-item-title">Seaborn 统计可视化</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="agent">
+      <a class="sb-group-title" href="../modules/agent.html" data-toggle="agent">
+        <span class="sb-num">02</span>
+        <span class="sb-group-text"><b>Agent 核心</b><i>15 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../agent/01-token-yu-ci-qian-ru.html"><span class="sb-item-num">01</span><span class="sb-item-title">Token 与词嵌入</span></a>
+        <a class="sb-item" href="../agent/02-qian-xiang-chuan-bo-yu-fan-xiang-chuan-bo.html"><span class="sb-item-num">02</span><span class="sb-item-title">前向传播与反向传播</span></a>
+        <a class="sb-item" href="../agent/03-zhu-yi-li-ji-zhi-yu-transformer-jia-gou.html"><span class="sb-item-num">03</span><span class="sb-item-title">注意力机制与 Transformer 架构</span></a>
+        <a class="sb-item" href="../agent/04-yu-xun-lian-rlhf-yu-cai-yang-kv-cache.html"><span class="sb-item-num">04</span><span class="sb-item-title">预训练、RLHF 与采样（KV Cache）</span></a>
+        <a class="sb-item" href="../agent/05-ben-di-mo-xing-yu-xiao-xi-jie-gou.html"><span class="sb-item-num">05</span><span class="sb-item-title">本地模型与消息结构</span></a>
+        <a class="sb-item" href="../agent/06-hui-hua-guan-li-yu-json-shu-chu.html"><span class="sb-item-num">06</span><span class="sb-item-title">会话管理与 JSON 输出</span></a>
+        <a class="sb-item" href="../agent/07-tool-calling-xie-yi-yu-feng-zhuang.html"><span class="sb-item-num">07</span><span class="sb-item-title">Tool Calling：协议与封装</span></a>
+        <a class="sb-item" href="../agent/08-react-mo-shi-yu-zhu-xun-huan.html"><span class="sb-item-num">08</span><span class="sb-item-title">ReAct 模式与主循环</span></a>
+        <a class="sb-item" href="../agent/09-shi-zhan-deep-research-agent.html"><span class="sb-item-num">09</span><span class="sb-item-title">实战：Deep Research Agent</span></a>
+        <a class="sb-item" href="../agent/10-skill-yu-jian-jin-shi-pi-lu.html"><span class="sb-item-num">10</span><span class="sb-item-title">Skill 与渐进式披露</span></a>
+        <a class="sb-item" href="../agent/11-mcp-quan-jing.html"><span class="sb-item-num">11</span><span class="sb-item-title">MCP 全景</span></a>
+        <a class="sb-item" href="../agent/12-duo-agent-yu-xuan-xing-ce-lve.html"><span class="sb-item-num">12</span><span class="sb-item-title">多 Agent 与选型策略</span></a>
+        <a class="sb-item" href="../agent/13-ti-shi-ci-gong-cheng-yu-shang-xia-wen-gong.html"><span class="sb-item-num">13</span><span class="sb-item-title">提示词工程与上下文工程</span></a>
+        <a class="sb-item" href="../agent/14-xun-huan-tu-yu-gu-jia-gong-cheng.html"><span class="sb-item-num">14</span><span class="sb-item-title">循环、图与骨架工程</span></a>
+        <a class="sb-item" href="../agent/15-ji-yi-quan-xian-yu-ping-ce.html"><span class="sb-item-num">15</span><span class="sb-item-title">记忆、权限与评测</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="langchain">
+      <a class="sb-group-title" href="../modules/langchain.html" data-toggle="langchain">
+        <span class="sb-num">03</span>
+        <span class="sb-group-text"><b>LangChain 指南</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langchain/01-ren-shi-langchain.html"><span class="sb-item-num">01</span><span class="sb-item-title">认识 LangChain</span></a>
+        <a class="sb-item" href="../langchain/02-ti-shi-ci-mu-ban-yu-xiao-xi.html"><span class="sb-item-num">02</span><span class="sb-item-title">提示词模板与消息</span></a>
+        <a class="sb-item" href="../langchain/03-lcel-yu-runnable.html"><span class="sb-item-num">03</span><span class="sb-item-title">LCEL 与 Runnable</span></a>
+        <a class="sb-item" href="../langchain/04-liu-shi-yu-bing-fa.html"><span class="sb-item-num">04</span><span class="sb-item-title">流式与并发</span></a>
+        <a class="sb-item" href="../langchain/05-shu-chu-jie-xi-qi.html"><span class="sb-item-num">05</span><span class="sb-item-title">输出解析器</span></a>
+        <a class="sb-item" href="../langchain/06-wen-dang-jia-zai-yu-qie-ge.html"><span class="sb-item-num">06</span><span class="sb-item-title">文档加载与切割</span></a>
+        <a class="sb-item" href="../langchain/07-qian-ru-yu-xiang-liang-ku.html"><span class="sb-item-num">07</span><span class="sb-item-title">嵌入与向量库</span></a>
+        <a class="sb-item" href="../langchain/08-jian-suo-yu-rag.html"><span class="sb-item-num">08</span><span class="sb-item-title">检索与RAG</span></a>
+        <a class="sb-item" href="../langchain/09-dui-hua-ji-yi.html"><span class="sb-item-num">09</span><span class="sb-item-title">对话记忆</span></a>
+        <a class="sb-item" href="../langchain/10-gong-ju-diao-yong.html"><span class="sb-item-num">10</span><span class="sb-item-title">工具调用</span></a>
+        <a class="sb-item" href="../langchain/11-agent.html"><span class="sb-item-num">11</span><span class="sb-item-title">Agent</span></a>
+        <a class="sb-item" href="../langchain/12-hui-diao-yu-tiao-shi-quan-ke-cheng-shou-guan.html"><span class="sb-item-num">12</span><span class="sb-item-title">回调与调试（全课程收官章）</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="langgraph">
+      <a class="sb-group-title" href="../modules/langgraph.html" data-toggle="langgraph">
+        <span class="sb-num">04</span>
+        <span class="sb-group-text"><b>LangGraph 框架指南</b><i>17 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langgraph/01-di-1-zhang-cong-yi-ge-shi-kong-de-jiao.html"><span class="sb-item-num">01</span><span class="sb-item-title">第 1 章 从一个失控的脚本说起</span></a>
+        <a class="sb-item" href="../langgraph/02-di-2-zhang-zui-xiao-ke-yun-xing-tu.html"><span class="sb-item-num">02</span><span class="sb-item-title">第 2 章 最小可运行图</span></a>
+        <a class="sb-item" href="../langgraph/03-di-3-zhang-zhuang-tai-tu-de-shu-ju-xin.html"><span class="sb-item-num">03</span><span class="sb-item-title">第 3 章 状态：图的数据心脏</span></a>
+        <a class="sb-item" href="../langgraph/04-di-4-zhang-rang-liu-cheng-xue-hui-jue-ce.html"><span class="sb-item-num">04</span><span class="sb-item-title">第 4 章 让流程学会决策</span></a>
+        <a class="sb-item" href="../langgraph/05-di-5-zhang-bing-xing-shi-jie-chao-bu-zhi.html"><span class="sb-item-num">05</span><span class="sb-item-title">第 5 章 并行世界：超步执行模型</span></a>
+        <a class="sb-item" href="../langgraph/06-di-6-zhang-command-ba-kong-zhi-quan-jiao-jin.html"><span class="sb-item-num">06</span><span class="sb-item-title">第 6 章 Command：把控制权交进节点</span></a>
+        <a class="sb-item" href="../langgraph/07-di-7-zhang-dong-tai-bing-xing-send-yu-mapreduce.html"><span class="sb-item-num">07</span><span class="sb-item-title">第 7 章 动态并行：Send 与 MapReduce</span></a>
+        <a class="sb-item" href="../langgraph/08-di-8-zhang-gei-tu-zhuang-shang-shou-jiao-gong.html"><span class="sb-item-num">08</span><span class="sb-item-title">第 8 章 给图装上手脚：工具调用</span></a>
+        <a class="sb-item" href="../langgraph/09-di-9-zhang-fu-yong-yu-feng-zhuang-zi-tu.html"><span class="sb-item-num">09</span><span class="sb-item-title">第 9 章 复用与封装：子图</span></a>
+        <a class="sb-item" href="../langgraph/10-di-10-zhang-cong-dan-tu-dao-tuan-dui-duo.html"><span class="sb-item-num">10</span><span class="sb-item-title">第 10 章 从单图到团队：多 Agent 架构</span></a>
+        <a class="sb-item" href="../langgraph/11-di-11-zhang-liu-shi-shu-chu.html"><span class="sb-item-num">11</span><span class="sb-item-title">第 11 章 流式输出</span></a>
+        <a class="sb-item" href="../langgraph/12-di-12-zhang-chi-jiu-hua-checkpointer-yu-xian-cheng.html"><span class="sb-item-num">12</span><span class="sb-item-title">第 12 章 持久化：Checkpointer 与线程</span></a>
+        <a class="sb-item" href="../langgraph/13-di-13-zhang-shi-jian-lv-xing.html"><span class="sb-item-num">13</span><span class="sb-item-title">第 13 章 时间旅行</span></a>
+        <a class="sb-item" href="../langgraph/14-di-14-zhang-zhong-duan-yu-ren-zai-hui-lu.html"><span class="sb-item-num">14</span><span class="sb-item-title">第 14 章 中断与人在回路</span></a>
+        <a class="sb-item" href="../langgraph/15-di-15-zhang-ji-yi-guan-li.html"><span class="sb-item-num">15</span><span class="sb-item-title">第 15 章 记忆管理</span></a>
+        <a class="sb-item" href="../langgraph/16-di-16-zhang-rong-cuo-zhong-shi-chao-shi-yu.html"><span class="sb-item-num">16</span><span class="sb-item-title">第 16 章 容错：重试、超时与兜底</span></a>
+        <a class="sb-item" href="../langgraph/17-di-17-zhang-quan-jing-hui-gu.html"><span class="sb-item-num">17</span><span class="sb-item-title">第 17 章 全景回顾</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="backend">
+      <a class="sb-group-title" href="../modules/backend.html" data-toggle="backend">
+        <span class="sb-num">05</span>
+        <span class="sb-group-text"><b>Python 框架指南</b><i>14 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../backend/01-fastapi-ru-men-yu-asgi.html"><span class="sb-item-num">01</span><span class="sb-item-title">FastAPI 入门与 ASGI</span></a>
+        <a class="sb-item" href="../backend/02-lu-you-yu-qing-qiu-xiang-ying.html"><span class="sb-item-num">02</span><span class="sb-item-title">路由与请求响应</span></a>
+        <a class="sb-item" href="../backend/03-pydantic-shu-ju-jiao-yan-yu-pei-zhi.html"><span class="sb-item-num">03</span><span class="sb-item-title">Pydantic 数据校验与配置</span></a>
+        <a class="sb-item" href="../backend/04-sqlalchemy-yi-bu-yin-qing-yu-hui-hua.html"><span class="sb-item-num">04</span><span class="sb-item-title">SQLAlchemy 异步引擎与会话</span></a>
+        <a class="sb-item" href="../backend/05-orm-jian-mo.html"><span class="sb-item-num">05</span><span class="sb-item-title">ORM 建模</span></a>
+        <a class="sb-item" href="../backend/06-sql-biao-da-shi-yu-shu-ju-cao-zuo.html"><span class="sb-item-num">06</span><span class="sb-item-title">SQL 表达式与数据操作</span></a>
+        <a class="sb-item" href="../backend/07-alembic-shu-ju-qian-yi.html"><span class="sb-item-num">07</span><span class="sb-item-title">Alembic 数据迁移</span></a>
+        <a class="sb-item" href="../backend/08-yi-lai-zhu-ru.html"><span class="sb-item-num">08</span><span class="sb-item-title">依赖注入</span></a>
+        <a class="sb-item" href="../backend/09-tong-yi-yi-chang-chu-li.html"><span class="sb-item-num">09</span><span class="sb-item-title">统一异常处理</span></a>
+        <a class="sb-item" href="../backend/10-zhong-jian-jian.html"><span class="sb-item-num">10</span><span class="sb-item-title">中间件</span></a>
+        <a class="sb-item" href="../backend/11-ren-zheng-yu-jwt.html"><span class="sb-item-num">11</span><span class="sb-item-title">认证与 JWT</span></a>
+        <a class="sb-item" href="../backend/12-pytest-ce-shi.html"><span class="sb-item-num">12</span><span class="sb-item-title">pytest 测试</span></a>
+        <a class="sb-item" href="../backend/13-ri-zhi-loguru.html"><span class="sb-item-num">13</span><span class="sb-item-title">日志 loguru</span></a>
+        <a class="sb-item" href="../backend/14-liu-shi-xiang-ying-sse-yu-websocket.html"><span class="sb-item-num">14</span><span class="sb-item-title">流式响应 SSE 与 WebSocket</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="interview">
+      <a class="sb-group-title" href="../modules/interview.html" data-toggle="interview">
+        <span class="sb-num">06</span>
+        <span class="sb-group-text"><b>面试题库</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../interview/01-llm-yuan-li-pian.html"><span class="sb-item-num">01</span><span class="sb-item-title">LLM 原理篇</span></a>
+        <a class="sb-item" href="../interview/02-rag-yu-jian-suo-pian.html"><span class="sb-item-num">02</span><span class="sb-item-title">RAG 与检索篇</span></a>
+        <a class="sb-item" href="../interview/03-agent-he-xin-pian.html"><span class="sb-item-num">03</span><span class="sb-item-title">Agent 核心篇</span></a>
+        <a class="sb-item" href="../interview/04-langgraph-pian.html"><span class="sb-item-num">04</span><span class="sb-item-title">LangGraph 篇</span></a>
+        <a class="sb-item" href="../interview/05-langchain-pian.html"><span class="sb-item-num">05</span><span class="sb-item-title">LangChain 篇</span></a>
+        <a class="sb-item" href="../interview/06-xi-tong-she-ji-pian.html"><span class="sb-item-num">06</span><span class="sb-item-title">系统设计篇</span></a>
+        <a class="sb-item" href="../interview/07-xiang-mu-shen-wa-pian.html"><span class="sb-item-num">07</span><span class="sb-item-title">项目深挖篇</span></a>
+        <a class="sb-item" href="../interview/08-gu-zhang-pai-cha-pian.html"><span class="sb-item-num">08</span><span class="sb-item-title">故障排查篇</span></a>
+        <a class="sb-item" href="../interview/09-python-ji-chu-pian.html"><span class="sb-item-num">09</span><span class="sb-item-title">Python 基础篇</span></a>
+        <a class="sb-item" href="../interview/10-fastapi-yu-hou-duan-pian.html"><span class="sb-item-num">10</span><span class="sb-item-title">FastAPI 与后端篇</span></a>
+        <a class="sb-item" href="../interview/11-ti-shi-ci-gong-cheng-yu-an-quan-pian.html"><span class="sb-item-num">11</span><span class="sb-item-title">提示词工程与安全篇</span></a>
+        <a class="sb-item" href="../interview/12-mo-xing-xuan-xing-yu-jiang-ben-pian.html"><span class="sb-item-num">12</span><span class="sb-item-title">模型选型与降本篇</span></a>
+      </div>
+    </section>
+  </nav>
+</aside>
+  <main class="main">
+    <header class="topbar">
+      <button class="menu-btn" id="menuBtn" aria-label="目录">☰</button>
+      <div class="crumbs"><a href="../index.html">首页</a><span>/</span><a href="../modules/python.html">Python 与数据实践</a><span>/</span><span class="cur">Matplotlib 动画与交互</span></div>
+      <div class="topbar-actions">
+        <button class="icon-btn" id="themeBtn" title="切换深浅色" aria-label="切换深浅色">◐</button>
+      </div>
+    </header>
+    <div class="content">
+      <article class="article">
+
+<header class="page-head">
+  <div class="page-kicker">Python 与数据实践 · 第 30 章</div>
+  <h1 class="page-title">Matplotlib 动画与交互</h1>
+  <p class="page-desc">上一章末尾留了个尾巴：静态图是&quot;定妆照&quot;，拍完就定格了。可现实里的数据故事经常是动态的——气温逐小时爬升、监控指标滚动刷新、参数一调结果跟着变。这一章给 Matplotlib 装上两样东西：时间轴（动画，图自己动）和操纵…</p>
+  <div class="page-meta">
+    <span>约 27 分钟</span><span>10,998 字</span><span>11 个代码示例</span>
+  </div>
+</header>
+<div class="md"><p>上一章末尾留了个尾巴：静态图是"定妆照"，拍完就定格了。可现实里的数据故事经常是动态的——气温逐小时爬升、监控指标滚动刷新、参数一调结果跟着变。这一章给 Matplotlib 装上两样东西：<strong>时间轴</strong>（动画，图自己动）和<strong>操纵杆</strong>（交互组件，看图的人上手调）。两样东西底层是同一套本事——第 29 章埋的那句话："Artist 是对象，画上去之后随时能改"。动画是"按节奏自动改"，交互是"看人操作再改"。</p>
+<p>运行环境先说清楚：本章代码在普通脚本里直接跑（<code>plt.show()</code> 弹出的窗口天然可交互）；在 Notebook 里跑，需要先启用交互后端 <code>%matplotlib widget</code>（装 <code>ipympl</code>，见第 25 章）。另外 Notebook 里反复运行前建议 <code>plt.close("all")</code> 清场，免得旧窗口越攒越多。</p>
+<h2 id="1-动画的底层逻辑不重画只替换">1. 动画的底层逻辑：不重画，只替换</h2>
+<p>很多人以为动画是"每帧重画一张图"，其实完全不是。想想第 29 章的 <code>line.set_ydata()</code>——改一下折线 Artist 携带的数据，画面刷新，线就变了形。动画的全部秘密就这一句：<strong>先摆好 Artist，之后每隔几十毫秒改一次它们的数据，再让画布重绘</strong>。放映机换胶片，不是重新拍电影。</p>
+<p>Matplotlib 把这套流程封装成了两个类：<code>FuncAnimation</code>（你写"每帧干什么"）和 <code>ArtistAnimation</code>（你先把每帧都摆好）。先讲前者，因为它常用得多。</p>
+<h2 id="2-funcanimation把每帧干什么写成函数">2. FuncAnimation：把"每帧干什么"写成函数</h2>
+<p>用 <code>FuncAnimation</code> 只需要交代三件事：在哪块画布上放、每帧执行什么函数、一共多少帧。看一个"全天气温曲线逐帧生长"的例子：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.animation</span><span class="w"> </span><span class="kn">import</span> <span class="n">FuncAnimation</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
+    <span class="s2">"font.sans-serif"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"PingFang SC"</span><span class="p">,</span> <span class="s2">"Microsoft YaHei"</span><span class="p">,</span> <span class="s2">"Noto Sans CJK SC"</span><span class="p">],</span>
+    <span class="s2">"axes.unicode_minus"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s2">"figure.dpi"</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+<span class="p">})</span>
+
+<span class="n">hours</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">24</span><span class="p">,</span> <span class="mi">145</span><span class="p">)</span>                                   <span class="c1"># 每 10 分钟一个点</span>
+<span class="n">temps</span> <span class="o">=</span> <span class="mi">16</span> <span class="o">+</span> <span class="mi">8</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">((</span><span class="n">hours</span> <span class="o">-</span> <span class="mi">8</span><span class="p">)</span> <span class="o">/</span> <span class="mi">24</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> \
+        <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mi">145</span><span class="p">)</span>                           <span class="c1"># 一天的气温曲线</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="p">(</span><span class="n">line</span><span class="p">,)</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">([],</span> <span class="p">[],</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"orangered"</span><span class="p">)</span>                <span class="c1"># 先摆一个空 Artist</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">24</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">30</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"全天气温：曲线随帧生长"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"时刻（点）"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"气温（℃）"</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">update</span><span class="p">(</span><span class="n">frame</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""第 frame 帧：曲线推进到第 frame 个采样点。"""</span>
+    <span class="n">line</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span><span class="n">hours</span><span class="p">[:</span><span class="n">frame</span><span class="p">],</span> <span class="n">temps</span><span class="p">[:</span><span class="n">frame</span><span class="p">])</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">line</span><span class="p">,)</span>   <span class="c1"># 返回本帧变化过的 Artist</span>
+
+<span class="n">ani</span> <span class="o">=</span> <span class="n">FuncAnimation</span><span class="p">(</span><span class="n">fig</span><span class="p">,</span> <span class="n">update</span><span class="p">,</span> <span class="n">frames</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">hours</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">interval</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span> <span class="n">repeat</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</code></pre></div>
+<p>跑起来是一条橘红色气温线从左往右慢慢"长"出来，画完整条后从头再来。三个关键细节：</p>
+<ul>
+<li><strong>先摆空线再填数据</strong>：<code>ax.plot([], [])</code> 先把 Artist 挂到展格上，<code>update</code> 只管往里灌数据——这正是"不重画、只替换"；</li>
+<li><strong><code>update</code> 返回改过的 Artist</strong>：这是给优化器看的清单，后面讲 blit 时会用到；</li>
+<li><strong><code>ani</code> 这个变量必须留住</strong>：<code>FuncAnimation</code> 返回的对象得有名字接着，否则可能被垃圾回收，动画莫名其妙就停了。</li>
+</ul>
+<p>常用参数一张表：</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>作用</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>frames</code></td>
+<td>帧总数，或任何可迭代对象</td>
+<td><code>range(100)</code>、生成器都行</td>
+</tr>
+<tr>
+<td><code>interval</code></td>
+<td>相邻两帧的间隔</td>
+<td>单位毫秒，默认 200</td>
+</tr>
+<tr>
+<td><code>repeat</code></td>
+<td>播完是否从头再来</td>
+<td>默认 <code>True</code></td>
+</tr>
+<tr>
+<td><code>blit</code></td>
+<td>只重绘变化的 Artist</td>
+<td>性能开关，见第 4 节</td>
+</tr>
+<tr>
+<td><code>init_func</code></td>
+<td>开播前的初始化函数</td>
+<td>配合 blit 使用</td>
+</tr>
+<tr>
+<td><code>cache_frame_data</code></td>
+<td>是否缓存每帧数据</td>
+<td>无限流要关掉，见下节</td>
+</tr>
+</tbody>
+</table>
+<h2 id="3-frames-也可以是个生成器实时数据流">3. frames 也可以是个生成器：实时数据流</h2>
+<p><code>frames=100</code> 是"预制好的 100 帧"；但监控类场景数据是源源不断来的，帧数根本事先不知道。解决办法非常 Python：<strong>把一个无限生成器交给 <code>frames</code></strong>，来一条数据算一帧：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">deque</span>
+
+<span class="n">WINDOW</span> <span class="o">=</span> <span class="mi">120</span>   <span class="c1"># 画面只保留最近 120 个采样点</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="n">temps</span> <span class="o">=</span> <span class="n">deque</span><span class="p">(</span><span class="n">maxlen</span><span class="o">=</span><span class="n">WINDOW</span><span class="p">)</span>                 <span class="c1"># deque 装满自动挤掉最老的</span>
+<span class="p">(</span><span class="n">line</span><span class="p">,)</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">([],</span> <span class="p">[],</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">WINDOW</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">35</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"机房温度：实时滚动窗口"</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">sensor</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""无限生成器：模拟一秒一条的传感器读数。"""</span>
+    <span class="n">tick</span><span class="p">,</span> <span class="n">drift</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.0</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">drift</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">drift</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">),</span> <span class="o">-</span><span class="mf">1.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">)</span>
+        <span class="k">yield</span> <span class="n">tick</span><span class="p">,</span> <span class="mi">24</span> <span class="o">+</span> <span class="n">drift</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">)</span>
+        <span class="n">tick</span> <span class="o">+=</span> <span class="mi">1</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">update</span><span class="p">(</span><span class="n">frame</span><span class="p">):</span>
+    <span class="n">tick</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="n">frame</span>
+    <span class="n">temps</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    <span class="n">line</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">temps</span><span class="p">)),</span> <span class="n">temps</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">tick</span> <span class="o">&gt;=</span> <span class="n">WINDOW</span><span class="p">:</span>                        <span class="c1"># 窗口满了，横轴跟着右移</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">tick</span> <span class="o">-</span> <span class="n">WINDOW</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">tick</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+
+<span class="n">ani</span> <span class="o">=</span> <span class="n">FuncAnimation</span><span class="p">(</span><span class="n">fig</span><span class="p">,</span> <span class="n">update</span><span class="p">,</span> <span class="n">frames</span><span class="o">=</span><span class="n">sensor</span><span class="p">(),</span>
+                    <span class="n">interval</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">cache_frame_data</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</code></pre></div>
+<p>两个新知识点：<code>deque(maxlen=...)</code> 是滚动窗口的天选容器，超出容量自动丢弃旧值；<code>cache_frame_data=False</code> 必须给——默认行为会把每一帧的数据都缓存起来，面对无限流就是无限吃内存。效果是一条温度线不断从右侧续新点，旧数据从左边滑出视野，活脱脱一块监控大屏。</p>
+<h2 id="4-blit只重绘动过的部分">4. blit：只重绘"动过"的部分</h2>
+<p>默认情况下每帧都整幅重绘，数据一多就掉帧。<code>blit=True</code> 是性能开关：<strong>画面里静止的部分只画一次，每帧只重绘 <code>update</code> 返回的那几个 Artist</strong>。配套要求是提供 <code>init_func</code>，把静态部分（坐标范围之类）先布置好：</p>
+<div class="highlight"><pre><span></span><code><span class="n">minutes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">300</span><span class="p">)</span>
+<span class="n">base</span> <span class="o">=</span> <span class="mi">22</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">minutes</span> <span class="o">/</span> <span class="mi">60</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>      <span class="c1"># 一小时的室温曲线</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="p">(</span><span class="n">curve</span><span class="p">,)</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">([],</span> <span class="p">[],</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"teal"</span><span class="p">)</span>
+<span class="p">(</span><span class="n">cursor</span><span class="p">,)</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">([],</span> <span class="p">[],</span> <span class="s2">"o"</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"crimson"</span><span class="p">,</span> <span class="n">ms</span><span class="o">=</span><span class="mi">9</span><span class="p">)</span>  <span class="c1"># 跟在曲线末端的游标点</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">init</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""开播前把静态部分布置好，返回参与 blit 的 Artist。"""</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">60</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mi">18</span><span class="p">,</span> <span class="mi">27</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">curve</span><span class="p">,</span> <span class="n">cursor</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">update</span><span class="p">(</span><span class="n">frame</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">base</span> <span class="o">+</span> <span class="mf">0.4</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">minutes</span> <span class="o">*</span> <span class="mf">0.7</span> <span class="o">+</span> <span class="n">frame</span> <span class="o">*</span> <span class="mf">0.08</span><span class="p">)</span>
+    <span class="n">curve</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span><span class="n">minutes</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+    <span class="n">cursor</span><span class="o">.</span><span class="n">set_data</span><span class="p">([</span><span class="n">minutes</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]],</span> <span class="p">[</span><span class="n">y</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]])</span>            <span class="c1"># 游标始终咬住曲线右端</span>
+    <span class="k">return</span> <span class="n">curve</span><span class="p">,</span> <span class="n">cursor</span>
+
+<span class="n">ani</span> <span class="o">=</span> <span class="n">FuncAnimation</span><span class="p">(</span><span class="n">fig</span><span class="p">,</span> <span class="n">update</span><span class="p">,</span> <span class="n">frames</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">init_func</span><span class="o">=</span><span class="n">init</span><span class="p">,</span>
+                    <span class="n">blit</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">interval</span><span class="o">=</span><span class="mi">40</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</code></pre></div>
+<p>画面是一条上下起伏的室温曲线，末端缀一颗红点，整体波形缓缓漂移，红点始终追着线头跑。帧数多、数据密时，blit 前后的流畅度差距肉眼可见——这也是它叫"性能开关"的原因。</p>
+<h2 id="5-artistanimation先把每一帧都摆进画面">5. ArtistAnimation：先把每一帧都摆进画面</h2>
+<p><code>FuncAnimation</code> 是"边播边算"，<code>ArtistAnimation</code> 是"先全摆好再播"：你把每一帧要显示的 Artist 列表提前备齐，交给它按顺序轮播。适合帧内容可以整体预制、且想精确控制每一帧的场景。比如用"滚动均值窗口逐级加大"演示平滑效果——每帧就是一条现成的线：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.animation</span><span class="w"> </span><span class="kn">import</span> <span class="n">ArtistAnimation</span>
+
+<span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span>
+<span class="n">days</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">91</span><span class="p">)</span>
+<span class="n">orders</span> <span class="o">=</span> <span class="mi">500</span> <span class="o">+</span> <span class="mi">35</span> <span class="o">*</span> <span class="n">days</span> <span class="o">/</span> <span class="mi">10</span> <span class="o">+</span> <span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">90</span><span class="p">)</span>   <span class="c1"># 90 天外卖订单量</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="n">frames</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">width</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">31</span><span class="p">):</span>
+    <span class="n">smoothed</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">convolve</span><span class="p">(</span><span class="n">orders</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">width</span><span class="p">)</span> <span class="o">/</span> <span class="n">width</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">"same"</span><span class="p">)</span>
+    <span class="p">(</span><span class="n">line</span><span class="p">,)</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">days</span><span class="p">,</span> <span class="n">smoothed</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"royalblue"</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
+    <span class="n">frames</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">line</span><span class="p">])</span>                                 <span class="c1"># 每帧一个 Artist 列表</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"订单量平滑：均值窗口从 1 天拉宽到 30 天"</span><span class="p">)</span>
+<span class="n">ani</span> <span class="o">=</span> <span class="n">ArtistAnimation</span><span class="p">(</span><span class="n">fig</span><span class="p">,</span> <span class="n">frames</span><span class="p">,</span> <span class="n">interval</span><span class="o">=</span><span class="mi">120</span><span class="p">,</span> <span class="n">repeat</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</code></pre></div>
+<p>播放时曲线从毛刺满身一路变顺滑，窗口越宽线条越温和——用动画讲"平滑是什么"，比十张静态图都直观。代价也说一句：所有帧的 Artist 同时存在内存里，帧数别铺太狠。</p>
+<h2 id="6-把动画带出-python保存与嵌入">6. 把动画带出 Python：保存与嵌入</h2>
+<p>动画做完总得交付。三条路：</p>
+<div class="highlight"><pre><span></span><code><span class="n">ani</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s2">"orders.gif"</span><span class="p">,</span> <span class="n">writer</span><span class="o">=</span><span class="s2">"pillow"</span><span class="p">,</span> <span class="n">fps</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>   <span class="c1"># GIF：装了 pillow 就能存，兼容性最好</span>
+
+<span class="n">ani</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s2">"orders.mp4"</span><span class="p">,</span> <span class="n">writer</span><span class="o">=</span><span class="s2">"ffmpeg"</span><span class="p">,</span> <span class="n">fps</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>   <span class="c1"># MP4：画质体积俱佳，需要系统装 ffmpeg</span>
+
+<span class="n">HTML</span><span class="p">(</span><span class="n">ani</span><span class="o">.</span><span class="n">to_jshtml</span><span class="p">())</span>                             <span class="c1"># HTML：转成网页版动画，直接嵌进 Notebook</span>
+<span class="c1"># from IPython.display import HTML</span>
+</code></pre></div>
+<p>发聊天群用 GIF，进视频剪辑用 MP4，写报告嵌 Notebook 用 <code>to_jshtml()</code>——最后这个不依赖任何外部程序，输出的网页自带播放控件（<code>ani.to_html5_video()</code> 也能嵌视频，但同样要 ffmpeg）。</p>
+<p>至此动画篇收工。下面换个方向：图不再自己动，而是<strong>等人来操作</strong>。</p>
+<h2 id="7-交互组件一个套路用到黑">7. 交互组件：一个套路用到黑</h2>
+<p>Matplotlib 自带一盒控件，全在 <code>matplotlib.widgets</code> 里：滑块、按钮、复选框、单选按钮、文本框。别看种类多，用法只有一个套路，三步：</p>
+<ol>
+<li><strong>给控件腾块地方</strong>：<code>fig.add_axes((左边距, 底边距, 宽, 高))</code>——四个数都是 0~1 的画布比例坐标，跟数据坐标无关；</li>
+<li><strong>把控件放上去，绑上回调</strong>：每种控件有自己的事件名，<code>on_changed</code>、<code>on_clicked</code>、<code>on_submit</code>；</li>
+<li><strong>回调里改 Artist，然后 <code>fig.canvas.draw_idle()</code></strong>：<code>draw_idle</code> 是"有空再重绘"的礼貌版本，比强行重绘顺滑。</li>
+</ol>
+<p>套路就这么多。剩下的只是"哪种控件发哪种事件、回调收到什么参数"的差别，逐个过。</p>
+<h2 id="8-slider连续参数的旋钮">8. Slider：连续参数的旋钮</h2>
+<p>拖动滑块改一个连续数值，回调里拿到新值。场景：复利计算器——拖收益率，看 1 万元 30 年后滚成多少：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.widgets</span><span class="w"> </span><span class="kn">import</span> <span class="n">Slider</span>
+
+<span class="n">years</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">31</span><span class="p">)</span>
+<span class="n">principal</span> <span class="o">=</span> <span class="mi">10_000</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">subplots_adjust</span><span class="p">(</span><span class="n">bottom</span><span class="o">=</span><span class="mf">0.25</span><span class="p">)</span>          <span class="c1"># 展格下方腾出放滑块的地方</span>
+
+<span class="p">(</span><span class="n">line</span><span class="p">,)</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">years</span><span class="p">,</span> <span class="n">principal</span> <span class="o">*</span> <span class="mf">1.05</span> <span class="o">**</span> <span class="n">years</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"复利曲线：拖动滑块调整年化收益率"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"年数"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"账户余额（元）"</span><span class="p">)</span>
+
+<span class="n">slider_ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_axes</span><span class="p">((</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.03</span><span class="p">))</span>       <span class="c1"># 滑块的落脚处</span>
+<span class="n">rate_slider</span> <span class="o">=</span> <span class="n">Slider</span><span class="p">(</span><span class="n">slider_ax</span><span class="p">,</span> <span class="s2">"年化收益率"</span><span class="p">,</span>
+                     <span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.20</span><span class="p">,</span> <span class="n">valinit</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">valstep</span><span class="o">=</span><span class="mf">0.005</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">refresh</span><span class="p">(</span><span class="n">rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">line</span><span class="o">.</span><span class="n">set_ydata</span><span class="p">(</span><span class="n">principal</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">rate</span><span class="p">)</span> <span class="o">**</span> <span class="n">years</span><span class="p">)</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">draw_idle</span><span class="p">()</span>
+
+<span class="n">rate_slider</span><span class="o">.</span><span class="n">on_changed</span><span class="p">(</span><span class="n">refresh</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</code></pre></div>
+<p>拖动时曲线实时弯上去又压下来——"复利有多猛"这件事，一根能拖的线比任何文字都好使。<code>valmin</code>/<code>valmax</code>/<code>valinit</code>/<code>valstep</code> 四个参数分别管下限、上限、初值和步长。</p>
+<p>一个滑块管一个参数，多参数就摆多个滑块，同一个回调里各取所需：</p>
+<div class="highlight"><pre><span></span><code><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">subplots_adjust</span><span class="p">(</span><span class="n">bottom</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+
+<span class="n">years</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">31</span><span class="p">)</span>
+<span class="p">(</span><span class="n">line</span><span class="p">,)</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">years</span><span class="p">,</span> <span class="mi">10_000</span> <span class="o">*</span> <span class="mf">1.05</span> <span class="o">**</span> <span class="n">years</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"复利曲线：本金与收益率双滑块"</span><span class="p">)</span>
+
+<span class="n">deposit_ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_axes</span><span class="p">((</span><span class="mf">0.22</span><span class="p">,</span> <span class="mf">0.15</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.03</span><span class="p">))</span>
+<span class="n">rate_ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_axes</span><span class="p">((</span><span class="mf">0.22</span><span class="p">,</span> <span class="mf">0.08</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.03</span><span class="p">))</span>
+<span class="n">deposit_slider</span> <span class="o">=</span> <span class="n">Slider</span><span class="p">(</span><span class="n">deposit_ax</span><span class="p">,</span> <span class="s2">"本金(万)"</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="n">valinit</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">rate_slider</span> <span class="o">=</span> <span class="n">Slider</span><span class="p">(</span><span class="n">rate_ax</span><span class="p">,</span> <span class="s2">"年化收益率"</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.20</span><span class="p">,</span>
+                     <span class="n">valinit</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">valstep</span><span class="o">=</span><span class="mf">0.005</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">refresh</span><span class="p">(</span><span class="n">_</span><span class="p">):</span>
+    <span class="n">balance</span> <span class="o">=</span> <span class="n">deposit_slider</span><span class="o">.</span><span class="n">val</span> <span class="o">*</span> <span class="mi">10_000</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">rate_slider</span><span class="o">.</span><span class="n">val</span><span class="p">)</span> <span class="o">**</span> <span class="n">years</span>
+    <span class="n">line</span><span class="o">.</span><span class="n">set_ydata</span><span class="p">(</span><span class="n">balance</span><span class="p">)</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">draw_idle</span><span class="p">()</span>
+
+<span class="n">deposit_slider</span><span class="o">.</span><span class="n">on_changed</span><span class="p">(</span><span class="n">refresh</span><span class="p">)</span>
+<span class="n">rate_slider</span><span class="o">.</span><span class="n">on_changed</span><span class="p">(</span><span class="n">refresh</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</code></pre></div>
+<p>两个滑块都绑同一个 <code>refresh</code>：不管谁动，都按两个滑块的当前值重算整条线。这就是多参数实验台的雏形——维度再加几个，套路原样复制。</p>
+<h2 id="9-button一次点击一个动作">9. Button：一次点击，一个动作</h2>
+<p>滑块管连续值，按钮管离散动作：换一批数据、重置视图、导出图片。场景：门店客流模拟器，点一下重新模拟一个 30 天：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.widgets</span><span class="w"> </span><span class="kn">import</span> <span class="n">Button</span>
+
+<span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">()</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">subplots_adjust</span><span class="p">(</span><span class="n">bottom</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
+
+<span class="n">days</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">31</span><span class="p">)</span>
+<span class="p">(</span><span class="n">line</span><span class="p">,)</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">days</span><span class="p">,</span> <span class="mi">200</span> <span class="o">+</span> <span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">30</span><span class="p">)</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(),</span>
+                  <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">"o"</span><span class="p">,</span> <span class="n">ms</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"门店客流：点按钮再模拟一次"</span><span class="p">)</span>
+
+<span class="n">button_ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_axes</span><span class="p">((</span><span class="mf">0.38</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.24</span><span class="p">,</span> <span class="mf">0.075</span><span class="p">))</span>
+<span class="n">resim</span> <span class="o">=</span> <span class="n">Button</span><span class="p">(</span><span class="n">button_ax</span><span class="p">,</span> <span class="s2">"再模拟一次"</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"lightyellow"</span><span class="p">,</span> <span class="n">hovercolor</span><span class="o">=</span><span class="s2">"gold"</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">rerun</span><span class="p">(</span><span class="n">event</span><span class="p">):</span>
+    <span class="n">line</span><span class="o">.</span><span class="n">set_ydata</span><span class="p">(</span><span class="mi">200</span> <span class="o">+</span> <span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">30</span><span class="p">)</span><span class="o">.</span><span class="n">cumsum</span><span class="p">())</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">relim</span><span class="p">()</span>            <span class="c1"># 按新数据重新划定数据边界</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">autoscale_view</span><span class="p">()</span>   <span class="c1"># 坐标轴随之自适应</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">draw_idle</span><span class="p">()</span>
+
+<span class="n">resim</span><span class="o">.</span><span class="n">on_clicked</span><span class="p">(</span><span class="n">rerun</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</code></pre></div>
+<p><code>color</code> 与 <code>hovercolor</code> 分别是常态和悬停时的底色，鼠标扫过去会变色，提示"这里能点"。注意 <code>ax.relim()</code> 加 <code>ax.autoscale_view()</code> 这对组合——新数据换了量级，坐标轴得重新量体裁衣，否则曲线可能"画出界"。</p>
+<h2 id="10-checkbuttons多个独立开关">10. CheckButtons：多个独立开关</h2>
+<p>复选框 = 一组各自独立的开关，最典型的用法是<strong>控制多条曲线的显隐</strong>。场景：三家门店的日销量对比，勾谁谁出现：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.widgets</span><span class="w"> </span><span class="kn">import</span> <span class="n">CheckButtons</span>
+
+<span class="n">days</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">15</span><span class="p">)</span>
+<span class="n">shop_data</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">"西湖店"</span><span class="p">:</span> <span class="mi">120</span> <span class="o">+</span> <span class="mi">6</span> <span class="o">*</span> <span class="n">days</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">14</span><span class="p">),</span>
+    <span class="s2">"滨江店"</span><span class="p">:</span> <span class="mi">95</span> <span class="o">+</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">days</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">14</span><span class="p">),</span>
+    <span class="s2">"城西店"</span><span class="p">:</span> <span class="mi">150</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">days</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">14</span><span class="p">),</span>
+<span class="p">}</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">subplots_adjust</span><span class="p">(</span><span class="n">left</span><span class="o">=</span><span class="mf">0.28</span><span class="p">)</span>          <span class="c1"># 左边腾地方放复选框</span>
+
+<span class="n">lines</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">values</span> <span class="ow">in</span> <span class="n">shop_data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="p">(</span><span class="n">lines</span><span class="p">[</span><span class="n">name</span><span class="p">],)</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">days</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">"upper left"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"门店日销量：勾选控制显隐"</span><span class="p">)</span>
+
+<span class="n">check_ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_axes</span><span class="p">((</span><span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.18</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">))</span>
+<span class="n">check</span> <span class="o">=</span> <span class="n">CheckButtons</span><span class="p">(</span><span class="n">check_ax</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">shop_data</span><span class="p">),</span> <span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">])</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">toggle</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="n">lines</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="ow">not</span> <span class="n">lines</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">get_visible</span><span class="p">())</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">draw_idle</span><span class="p">()</span>
+
+<span class="n">check</span><span class="o">.</span><span class="n">on_clicked</span><span class="p">(</span><span class="n">toggle</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</code></pre></div>
+<p>回调收到的是被点击那一项的名字，拿它找到对应 Artist，把可见性取反——<code>set_visible</code> 是 Artist 的通用方法，任何元素都能这么开关。多系列图配上这排复选框，看图的人自己决定对比谁。</p>
+<h2 id="11-radiobuttons一组互斥的选项">11. RadioButtons：一组互斥的选项</h2>
+<p>单选按钮 = 只能选一个的开关，适合<strong>切换视图、口径、数据源</strong>。场景：同一份 90 天营收数据，三种统计口径随时切：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.widgets</span><span class="w"> </span><span class="kn">import</span> <span class="n">RadioButtons</span>
+
+<span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span>
+<span class="n">days</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">91</span><span class="p">)</span>
+<span class="n">revenue</span> <span class="o">=</span> <span class="mi">5000</span> <span class="o">+</span> <span class="mi">35</span> <span class="o">*</span> <span class="n">days</span> <span class="o">+</span> <span class="mi">800</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">days</span> <span class="o">/</span> <span class="mi">90</span> <span class="o">*</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> \
+          <span class="o">+</span> <span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">450</span><span class="p">,</span> <span class="mi">90</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">moving_average</span><span class="p">(</span><span class="n">values</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">width</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">convolve</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">width</span><span class="p">)</span> <span class="o">/</span> <span class="n">width</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">"same"</span><span class="p">)</span>
+
+<span class="n">views</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">"原始日营收"</span><span class="p">:</span> <span class="n">revenue</span><span class="p">,</span>
+    <span class="s2">"7 日均值"</span><span class="p">:</span> <span class="n">moving_average</span><span class="p">(</span><span class="n">revenue</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span>
+    <span class="s2">"30 日均值"</span><span class="p">:</span> <span class="n">moving_average</span><span class="p">(</span><span class="n">revenue</span><span class="p">,</span> <span class="mi">30</span><span class="p">),</span>
+<span class="p">}</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">subplots_adjust</span><span class="p">(</span><span class="n">left</span><span class="o">=</span><span class="mf">0.28</span><span class="p">)</span>
+
+<span class="p">(</span><span class="n">line</span><span class="p">,)</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">days</span><span class="p">,</span> <span class="n">revenue</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"royalblue"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"营收口径切换：原始 / 7 日 / 30 日"</span><span class="p">)</span>
+
+<span class="n">radio_ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_axes</span><span class="p">((</span><span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.18</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">))</span>
+<span class="n">radio</span> <span class="o">=</span> <span class="n">RadioButtons</span><span class="p">(</span><span class="n">radio_ax</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">views</span><span class="p">))</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">switch</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="n">line</span><span class="o">.</span><span class="n">set_ydata</span><span class="p">(</span><span class="n">views</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">draw_idle</span><span class="p">()</span>
+
+<span class="n">radio</span><span class="o">.</span><span class="n">on_clicked</span><span class="p">(</span><span class="n">switch</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</code></pre></div>
+<p>勾"30 日均值"，毛刺瞬间被熨平——原始数据的噪声、7 日的轻抚、30 日的大刀，一个按钮组讲清楚三种口径的取舍。</p>
+<h2 id="12-textbox要精确值的时候">12. TextBox：要精确值的时候</h2>
+<p>滑块拖起来爽，但"我要的是 8.5% 不是拖到的 8.47%"这种时刻，就得键盘出场。<code>TextBox</code> 收文本输入，回车提交。场景：月储蓄计划计算器——输入每月存多少，看 20 年能攒出什么：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.widgets</span><span class="w"> </span><span class="kn">import</span> <span class="n">TextBox</span>
+
+<span class="n">months</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">241</span><span class="p">)</span>          <span class="c1"># 20 年 = 240 个月</span>
+<span class="n">monthly_rate</span> <span class="o">=</span> <span class="mf">0.03</span> <span class="o">/</span> <span class="mi">12</span>            <span class="c1"># 年化 3% 折成月利率</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">balance</span><span class="p">(</span><span class="n">monthly</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""每月固定存一笔，按月复利滚存的总金额。"""</span>
+    <span class="k">return</span> <span class="n">monthly</span> <span class="o">*</span> <span class="p">((</span><span class="mi">1</span> <span class="o">+</span> <span class="n">monthly_rate</span><span class="p">)</span> <span class="o">**</span> <span class="n">months</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">monthly_rate</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">subplots_adjust</span><span class="p">(</span><span class="n">bottom</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
+
+<span class="p">(</span><span class="n">line</span><span class="p">,)</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">months</span> <span class="o">/</span> <span class="mi">12</span><span class="p">,</span> <span class="n">balance</span><span class="p">(</span><span class="mi">2000</span><span class="p">),</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"储蓄计划：输入月存款额后回车"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"年数"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"总额（元）"</span><span class="p">)</span>
+
+<span class="n">box_ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_axes</span><span class="p">((</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.06</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.06</span><span class="p">))</span>
+<span class="n">saving_box</span> <span class="o">=</span> <span class="n">TextBox</span><span class="p">(</span><span class="n">box_ax</span><span class="p">,</span> <span class="s2">"月存款"</span><span class="p">,</span> <span class="n">initial</span><span class="o">=</span><span class="s2">"2000"</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">submit</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">amount</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="k">return</span>                       <span class="c1"># 输入不是数字就悄悄忽略</span>
+    <span class="n">line</span><span class="o">.</span><span class="n">set_ydata</span><span class="p">(</span><span class="n">balance</span><span class="p">(</span><span class="n">amount</span><span class="p">))</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">draw_idle</span><span class="p">()</span>
+
+<span class="n">saving_box</span><span class="o">.</span><span class="n">on_submit</span><span class="p">(</span><span class="n">submit</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</code></pre></div>
+<p><code>on_submit</code> 在回车时触发，拿到的是字符串，<code>float()</code> 转换失败就安静返回——用户敲错了不该被一屏报错糊脸。滑块扫范围、文本框点精值，两个组件正好互补。</p>
+<h2 id="13-选型速查五个控件各管一摊">13. 选型速查：五个控件各管一摊</h2>
+<table>
+<thead>
+<tr>
+<th>需求</th>
+<th>控件</th>
+<th>事件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>调连续参数（扫范围）</td>
+<td><code>Slider</code></td>
+<td><code>on_changed(val)</code></td>
+</tr>
+<tr>
+<td>触发一次动作（重算/重置）</td>
+<td><code>Button</code></td>
+<td><code>on_clicked(event)</code></td>
+</tr>
+<tr>
+<td>多个独立开关（曲线显隐）</td>
+<td><code>CheckButtons</code></td>
+<td><code>on_clicked(label)</code></td>
+</tr>
+<tr>
+<td>互斥选项（切换口径）</td>
+<td><code>RadioButtons</code></td>
+<td><code>on_clicked(label)</code></td>
+</tr>
+<tr>
+<td>精确输入数值</td>
+<td><code>TextBox</code></td>
+<td><code>on_submit(text)</code></td>
+</tr>
+</tbody>
+</table>
+<p>三步套路（腾地方 → 绑回调 → <code>draw_idle</code>）不变，变的只是控件和事件。再往深做，浏览器里的 <code>ipywidgets</code>、桌面端的 PyQt 都是同一思路的放大版——Matplotlib widgets 的价值在于<strong>零额外依赖</strong>，装了 Matplotlib 就有。</p>
+<h2 id="试一试">试一试</h2>
+<h3 id="一帧数预算">一、帧数预算</h3>
+<p><code>FuncAnimation(fig, update, frames=200, interval=40)</code> 播完一轮要多久？想让播放速度翻倍，<code>interval</code> 该改成多少（假设每帧重绘时间忽略）？</p>
+<h3 id="二白名单">二、白名单</h3>
+<p>blit 模式下，<code>update</code> 忘了 <code>return</code> 会发生什么？为什么"返回改过的 Artist"这步不能省？</p>
+<h3 id="三加一个口径">三、加一个口径</h3>
+<p>第 11 节的营收切换器只有三个口径。请加上第四个"90 日均值"（提示：<code>views</code> 字典加一项，<code>RadioButtons</code> 的选项列表会自动跟着长吗——动手验证）。</p>
+<p>本章全部示例的可运行版本在同目录：动画看 <a href="../code/python/30-Matplotlib-dong-hua-yu-jiao-hu/demo_grow.py">demo_grow.py</a>、<a href="../code/python/30-Matplotlib-dong-hua-yu-jiao-hu/demo_stream.py">demo_stream.py</a>、<a href="../code/python/30-Matplotlib-dong-hua-yu-jiao-hu/demo_blit.py">demo_blit.py</a>；交互看 <a href="../code/python/30-Matplotlib-dong-hua-yu-jiao-hu/demo_slider_single.py">demo_slider_single.py</a>、<a href="../code/python/30-Matplotlib-dong-hua-yu-jiao-hu/demo_slider_multi.py">demo_slider_multi.py</a>、<a href="../code/python/30-Matplotlib-dong-hua-yu-jiao-hu/demo_button.py">demo_button.py</a>、<a href="../code/python/30-Matplotlib-dong-hua-yu-jiao-hu/demo_checkbox.py">demo_checkbox.py</a>、<a href="../code/python/30-Matplotlib-dong-hua-yu-jiao-hu/demo_radiobutton.py">demo_radiobutton.py</a>、<a href="../code/python/30-Matplotlib-dong-hua-yu-jiao-hu/demo_textbox.py">demo_textbox.py</a>。</p>
+<hr />
+<p>到这儿，Matplotlib 的十八般武艺基本配齐：静态图会画，动态图会播，还接得上人的操作。但你也发现了——每根柱子、每条线的样式都要自己一件件交代，图一多手就酸。最后一章请出 Seaborn：统计图的"自动挡"，你负责说清"画什么"，长相它包了。</p>
+<hr />
+<p><strong>下一章</strong>：<a href="../python/31-seaborn-tong-ji-ke-shi-hua.html">31 · Seaborn 统计可视化</a></p></div>
+
+      </article>
+<nav class="pager"><a class="pg-card pg-prev" href="../python/29-matplotlib-hui-tu-ti-xi.html"><span class="pg-label">← 上一篇</span><span class="pg-title">Matplotlib 绘图体系</span><span class="pg-mod">Python 与数据实践</span></a><a class="pg-card pg-next" href="../python/31-seaborn-tong-ji-ke-shi-hua.html"><span class="pg-label">下一篇 →</span><span class="pg-title">Seaborn 统计可视化</span><span class="pg-mod">Python 与数据实践</span></a></nav>
+    </div>
+    <footer class="foot">
+      <span>深栈 DeepStack · AI Agent 工程师转型训练营配套文档</span>
+    </footer>
+  </main>
+<nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#1-动画的底层逻辑不重画只替换">1. 动画的底层逻辑：不重画，只替换</a><a class="toc-link toc-h2" href="#2-funcanimation把每帧干什么写成函数">2. FuncAnimation：把&quot;每帧干什么&quot;写成函数</a><a class="toc-link toc-h2" href="#3-frames-也可以是个生成器实时数据流">3. frames 也可以是个生成器：实时数据流</a><a class="toc-link toc-h2" href="#4-blit只重绘动过的部分">4. blit：只重绘&quot;动过&quot;的部分</a><a class="toc-link toc-h2" href="#5-artistanimation先把每一帧都摆进画面">5. ArtistAnimation：先把每一帧都摆进画面</a><a class="toc-link toc-h2" href="#6-把动画带出-python保存与嵌入">6. 把动画带出 Python：保存与嵌入</a><a class="toc-link toc-h2" href="#7-交互组件一个套路用到黑">7. 交互组件：一个套路用到黑</a><a class="toc-link toc-h2" href="#8-slider连续参数的旋钮">8. Slider：连续参数的旋钮</a><a class="toc-link toc-h2" href="#9-button一次点击一个动作">9. Button：一次点击，一个动作</a><a class="toc-link toc-h2" href="#10-checkbuttons多个独立开关">10. CheckButtons：多个独立开关</a><a class="toc-link toc-h2" href="#11-radiobuttons一组互斥的选项">11. RadioButtons：一组互斥的选项</a><a class="toc-link toc-h2" href="#12-textbox要精确值的时候">12. TextBox：要精确值的时候</a><a class="toc-link toc-h2" href="#13-选型速查五个控件各管一摊">13. 选型速查：五个控件各管一摊</a><a class="toc-link toc-h2" href="#试一试">试一试</a><a class="toc-link toc-h3" href="#一帧数预算">一、帧数预算</a><a class="toc-link toc-h3" href="#二白名单">二、白名单</a><a class="toc-link toc-h3" href="#三加一个口径">三、加一个口径</a></nav>
+</div>
+<div class="sb-mask" id="sbMask"></div>
+<script src="../assets/app.js"></script>
+</body>
+</html>

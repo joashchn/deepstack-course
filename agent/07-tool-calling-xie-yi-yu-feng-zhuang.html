@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>07 · Tool Calling：协议与封装 · 深栈 DeepStack 课程文档</title>
+<meta name="description" content="第三章「怎么让它干活」从这里开始。前面两章里，模型再好用也只有一张嘴：它能告诉你&quot;今天适合跑步&quot;，却查不了实时天气、读不了你的文件、调不了你的接口——嘴上功夫再好，也伸不出一只手。给模型接上工具，就是补上这只手。这是 A…">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%23d9c39a' text-anchor='middle'%3EDS%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+<div class="progress" id="progress"></div>
+
+<div class="layout">
+<aside class="sidebar" id="sidebar">
+  <div class="sb-head">
+    <a class="brand" href="../index.html">
+      <span class="brand-mark">DS</span>
+      <span class="brand-text"><b>深栈 DeepStack</b><i>AI Agent 工程师转型训练营</i></span>
+    </a>
+    <button class="sb-close" id="sbClose" aria-label="关闭目录">✕</button>
+  </div>
+  <div class="sb-search"><input type="search" id="searchInput" placeholder="搜索 123 篇文档… ( / )" autocomplete="off">
+    <div class="sb-results" id="searchResults"></div></div>
+  <nav class="sb-nav">
+    <section class="sb-group" data-mod="python">
+      <a class="sb-group-title" href="../modules/python.html" data-toggle="python">
+        <span class="sb-num">01</span>
+        <span class="sb-group-text"><b>Python 与数据实践</b><i>31 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../python/01-huan-jing-da-jian-yu-ban-ben-guan-li.html"><span class="sb-item-num">01</span><span class="sb-item-title">环境搭建与版本管理</span></a>
+        <a class="sb-item" href="../python/02-bian-liang-biao-da-shi-yu-liu-cheng-kong-zhi.html"><span class="sb-item-num">02</span><span class="sb-item-title">变量、表达式与流程控制</span></a>
+        <a class="sb-item" href="../python/03-xu-lie-zi-dian-yu-ji-he.html"><span class="sb-item-num">03</span><span class="sb-item-title">序列、字典与集合</span></a>
+        <a class="sb-item" href="../python/04-han-shu-she-ji-yu-lambda.html"><span class="sb-item-num">04</span><span class="sb-item-title">函数设计与 lambda</span></a>
+        <a class="sb-item" href="../python/05-zuo-yong-yu-gui-ze-yu-bi-bao.html"><span class="sb-item-num">05</span><span class="sb-item-title">作用域规则与闭包</span></a>
+        <a class="sb-item" href="../python/06-lei-de-ding-yi-yu-shi-li-hua.html"><span class="sb-item-num">06</span><span class="sb-item-title">类的定义与实例化</span></a>
+        <a class="sb-item" href="../python/07-lei-xing-pan-ding-yu-chou-xiang-ji-lei.html"><span class="sb-item-num">07</span><span class="sb-item-title">类型判定与抽象基类</span></a>
+        <a class="sb-item" href="../python/08-mo-shu-fang-fa-quan-jing.html"><span class="sb-item-num">08</span><span class="sb-item-title">魔术方法全景</span></a>
+        <a class="sb-item" href="../python/09-miao-shu-fu-yu-yuan-lei.html"><span class="sb-item-num">09</span><span class="sb-item-title">描述符与元类</span></a>
+        <a class="sb-item" href="../python/10-zhuang-shi-qi.html"><span class="sb-item-num">10</span><span class="sb-item-title">装饰器</span></a>
+        <a class="sb-item" href="../python/11-die-dai-xie-yi-yu-sheng-cheng-qi.html"><span class="sb-item-num">11</span><span class="sb-item-title">迭代协议与生成器</span></a>
+        <a class="sb-item" href="../python/12-with-yu-shang-xia-wen-xie-yi.html"><span class="sb-item-num">12</span><span class="sb-item-title">with 与上下文协议</span></a>
+        <a class="sb-item" href="../python/13-yi-chang-ti-xi-yu-chu-li.html"><span class="sb-item-num">13</span><span class="sb-item-title">异常体系与处理</span></a>
+        <a class="sb-item" href="../python/14-lei-xing-biao-zhu.html"><span class="sb-item-num">14</span><span class="sb-item-title">类型标注</span></a>
+        <a class="sb-item" href="../python/15-mo-kuai-yu-bao-de-zu-zhi.html"><span class="sb-item-num">15</span><span class="sb-item-title">模块与包的组织</span></a>
+        <a class="sb-item" href="../python/16-biao-zhun-ku-xun-li.html"><span class="sb-item-num">16</span><span class="sb-item-title">标准库巡礼</span></a>
+        <a class="sb-item" href="../python/17-yi-lai-guan-li-yu-di-san-fang-ku.html"><span class="sb-item-num">17</span><span class="sb-item-title">依赖管理与第三方库</span></a>
+        <a class="sb-item" href="../python/18-xian-cheng-yu-jin-cheng.html"><span class="sb-item-num">18</span><span class="sb-item-title">线程与进程</span></a>
+        <a class="sb-item" href="../python/19-shi-jian-xun-huan.html"><span class="sb-item-num">19</span><span class="sb-item-title">事件循环</span></a>
+        <a class="sb-item" href="../python/20-future-yu-xie-cheng.html"><span class="sb-item-num">20</span><span class="sb-item-title">Future 与协程</span></a>
+        <a class="sb-item" href="../python/21-asyncio-shi-zhan.html"><span class="sb-item-num">21</span><span class="sb-item-title">asyncio 实战</span></a>
+        <a class="sb-item" href="../python/22-gou-jian-yu-fa-bu.html"><span class="sb-item-num">22</span><span class="sb-item-title">构建与发布</span></a>
+        <a class="sb-item" href="../python/23-gong-cheng-hua-gong-ju-lian.html"><span class="sb-item-num">23</span><span class="sb-item-title">工程化工具链</span></a>
+        <a class="sb-item" href="../python/24-monorepo-yu-tiao-shi.html"><span class="sb-item-num">24</span><span class="sb-item-title">monorepo 与调试</span></a>
+        <a class="sb-item" href="../python/25-jupyter-jiao-hu-huan-jing.html"><span class="sb-item-num">25</span><span class="sb-item-title">Jupyter 交互环境</span></a>
+        <a class="sb-item" href="../python/26-numpy-shu-zu-yu-xiang-liang-hua.html"><span class="sb-item-num">26</span><span class="sb-item-title">NumPy 数组与向量化</span></a>
+        <a class="sb-item" href="../python/27-pandas-shu-ju-jie-gou.html"><span class="sb-item-num">27</span><span class="sb-item-title">Pandas 数据结构</span></a>
+        <a class="sb-item" href="../python/28-pandas-shu-ju-qing-xi.html"><span class="sb-item-num">28</span><span class="sb-item-title">Pandas 数据清洗</span></a>
+        <a class="sb-item" href="../python/29-matplotlib-hui-tu-ti-xi.html"><span class="sb-item-num">29</span><span class="sb-item-title">Matplotlib 绘图体系</span></a>
+        <a class="sb-item" href="../python/30-matplotlib-dong-hua-yu-jiao-hu.html"><span class="sb-item-num">30</span><span class="sb-item-title">Matplotlib 动画与交互</span></a>
+        <a class="sb-item" href="../python/31-seaborn-tong-ji-ke-shi-hua.html"><span class="sb-item-num">31</span><span class="sb-item-title">Seaborn 统计可视化</span></a>
+      </div>
+    </section>
+    <section class="sb-group open" data-mod="agent">
+      <a class="sb-group-title" href="../modules/agent.html" data-toggle="agent">
+        <span class="sb-num">02</span>
+        <span class="sb-group-text"><b>Agent 核心</b><i>15 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../agent/01-token-yu-ci-qian-ru.html"><span class="sb-item-num">01</span><span class="sb-item-title">Token 与词嵌入</span></a>
+        <a class="sb-item" href="../agent/02-qian-xiang-chuan-bo-yu-fan-xiang-chuan-bo.html"><span class="sb-item-num">02</span><span class="sb-item-title">前向传播与反向传播</span></a>
+        <a class="sb-item" href="../agent/03-zhu-yi-li-ji-zhi-yu-transformer-jia-gou.html"><span class="sb-item-num">03</span><span class="sb-item-title">注意力机制与 Transformer 架构</span></a>
+        <a class="sb-item" href="../agent/04-yu-xun-lian-rlhf-yu-cai-yang-kv-cache.html"><span class="sb-item-num">04</span><span class="sb-item-title">预训练、RLHF 与采样（KV Cache）</span></a>
+        <a class="sb-item" href="../agent/05-ben-di-mo-xing-yu-xiao-xi-jie-gou.html"><span class="sb-item-num">05</span><span class="sb-item-title">本地模型与消息结构</span></a>
+        <a class="sb-item" href="../agent/06-hui-hua-guan-li-yu-json-shu-chu.html"><span class="sb-item-num">06</span><span class="sb-item-title">会话管理与 JSON 输出</span></a>
+        <a class="sb-item current" href="../agent/07-tool-calling-xie-yi-yu-feng-zhuang.html"><span class="sb-item-num">07</span><span class="sb-item-title">Tool Calling：协议与封装</span></a>
+        <a class="sb-item" href="../agent/08-react-mo-shi-yu-zhu-xun-huan.html"><span class="sb-item-num">08</span><span class="sb-item-title">ReAct 模式与主循环</span></a>
+        <a class="sb-item" href="../agent/09-shi-zhan-deep-research-agent.html"><span class="sb-item-num">09</span><span class="sb-item-title">实战：Deep Research Agent</span></a>
+        <a class="sb-item" href="../agent/10-skill-yu-jian-jin-shi-pi-lu.html"><span class="sb-item-num">10</span><span class="sb-item-title">Skill 与渐进式披露</span></a>
+        <a class="sb-item" href="../agent/11-mcp-quan-jing.html"><span class="sb-item-num">11</span><span class="sb-item-title">MCP 全景</span></a>
+        <a class="sb-item" href="../agent/12-duo-agent-yu-xuan-xing-ce-lve.html"><span class="sb-item-num">12</span><span class="sb-item-title">多 Agent 与选型策略</span></a>
+        <a class="sb-item" href="../agent/13-ti-shi-ci-gong-cheng-yu-shang-xia-wen-gong.html"><span class="sb-item-num">13</span><span class="sb-item-title">提示词工程与上下文工程</span></a>
+        <a class="sb-item" href="../agent/14-xun-huan-tu-yu-gu-jia-gong-cheng.html"><span class="sb-item-num">14</span><span class="sb-item-title">循环、图与骨架工程</span></a>
+        <a class="sb-item" href="../agent/15-ji-yi-quan-xian-yu-ping-ce.html"><span class="sb-item-num">15</span><span class="sb-item-title">记忆、权限与评测</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="langchain">
+      <a class="sb-group-title" href="../modules/langchain.html" data-toggle="langchain">
+        <span class="sb-num">03</span>
+        <span class="sb-group-text"><b>LangChain 指南</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langchain/01-ren-shi-langchain.html"><span class="sb-item-num">01</span><span class="sb-item-title">认识 LangChain</span></a>
+        <a class="sb-item" href="../langchain/02-ti-shi-ci-mu-ban-yu-xiao-xi.html"><span class="sb-item-num">02</span><span class="sb-item-title">提示词模板与消息</span></a>
+        <a class="sb-item" href="../langchain/03-lcel-yu-runnable.html"><span class="sb-item-num">03</span><span class="sb-item-title">LCEL 与 Runnable</span></a>
+        <a class="sb-item" href="../langchain/04-liu-shi-yu-bing-fa.html"><span class="sb-item-num">04</span><span class="sb-item-title">流式与并发</span></a>
+        <a class="sb-item" href="../langchain/05-shu-chu-jie-xi-qi.html"><span class="sb-item-num">05</span><span class="sb-item-title">输出解析器</span></a>
+        <a class="sb-item" href="../langchain/06-wen-dang-jia-zai-yu-qie-ge.html"><span class="sb-item-num">06</span><span class="sb-item-title">文档加载与切割</span></a>
+        <a class="sb-item" href="../langchain/07-qian-ru-yu-xiang-liang-ku.html"><span class="sb-item-num">07</span><span class="sb-item-title">嵌入与向量库</span></a>
+        <a class="sb-item" href="../langchain/08-jian-suo-yu-rag.html"><span class="sb-item-num">08</span><span class="sb-item-title">检索与RAG</span></a>
+        <a class="sb-item" href="../langchain/09-dui-hua-ji-yi.html"><span class="sb-item-num">09</span><span class="sb-item-title">对话记忆</span></a>
+        <a class="sb-item" href="../langchain/10-gong-ju-diao-yong.html"><span class="sb-item-num">10</span><span class="sb-item-title">工具调用</span></a>
+        <a class="sb-item" href="../langchain/11-agent.html"><span class="sb-item-num">11</span><span class="sb-item-title">Agent</span></a>
+        <a class="sb-item" href="../langchain/12-hui-diao-yu-tiao-shi-quan-ke-cheng-shou-guan.html"><span class="sb-item-num">12</span><span class="sb-item-title">回调与调试（全课程收官章）</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="langgraph">
+      <a class="sb-group-title" href="../modules/langgraph.html" data-toggle="langgraph">
+        <span class="sb-num">04</span>
+        <span class="sb-group-text"><b>LangGraph 框架指南</b><i>17 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langgraph/01-di-1-zhang-cong-yi-ge-shi-kong-de-jiao.html"><span class="sb-item-num">01</span><span class="sb-item-title">第 1 章 从一个失控的脚本说起</span></a>
+        <a class="sb-item" href="../langgraph/02-di-2-zhang-zui-xiao-ke-yun-xing-tu.html"><span class="sb-item-num">02</span><span class="sb-item-title">第 2 章 最小可运行图</span></a>
+        <a class="sb-item" href="../langgraph/03-di-3-zhang-zhuang-tai-tu-de-shu-ju-xin.html"><span class="sb-item-num">03</span><span class="sb-item-title">第 3 章 状态：图的数据心脏</span></a>
+        <a class="sb-item" href="../langgraph/04-di-4-zhang-rang-liu-cheng-xue-hui-jue-ce.html"><span class="sb-item-num">04</span><span class="sb-item-title">第 4 章 让流程学会决策</span></a>
+        <a class="sb-item" href="../langgraph/05-di-5-zhang-bing-xing-shi-jie-chao-bu-zhi.html"><span class="sb-item-num">05</span><span class="sb-item-title">第 5 章 并行世界：超步执行模型</span></a>
+        <a class="sb-item" href="../langgraph/06-di-6-zhang-command-ba-kong-zhi-quan-jiao-jin.html"><span class="sb-item-num">06</span><span class="sb-item-title">第 6 章 Command：把控制权交进节点</span></a>
+        <a class="sb-item" href="../langgraph/07-di-7-zhang-dong-tai-bing-xing-send-yu-mapreduce.html"><span class="sb-item-num">07</span><span class="sb-item-title">第 7 章 动态并行：Send 与 MapReduce</span></a>
+        <a class="sb-item" href="../langgraph/08-di-8-zhang-gei-tu-zhuang-shang-shou-jiao-gong.html"><span class="sb-item-num">08</span><span class="sb-item-title">第 8 章 给图装上手脚：工具调用</span></a>
+        <a class="sb-item" href="../langgraph/09-di-9-zhang-fu-yong-yu-feng-zhuang-zi-tu.html"><span class="sb-item-num">09</span><span class="sb-item-title">第 9 章 复用与封装：子图</span></a>
+        <a class="sb-item" href="../langgraph/10-di-10-zhang-cong-dan-tu-dao-tuan-dui-duo.html"><span class="sb-item-num">10</span><span class="sb-item-title">第 10 章 从单图到团队：多 Agent 架构</span></a>
+        <a class="sb-item" href="../langgraph/11-di-11-zhang-liu-shi-shu-chu.html"><span class="sb-item-num">11</span><span class="sb-item-title">第 11 章 流式输出</span></a>
+        <a class="sb-item" href="../langgraph/12-di-12-zhang-chi-jiu-hua-checkpointer-yu-xian-cheng.html"><span class="sb-item-num">12</span><span class="sb-item-title">第 12 章 持久化：Checkpointer 与线程</span></a>
+        <a class="sb-item" href="../langgraph/13-di-13-zhang-shi-jian-lv-xing.html"><span class="sb-item-num">13</span><span class="sb-item-title">第 13 章 时间旅行</span></a>
+        <a class="sb-item" href="../langgraph/14-di-14-zhang-zhong-duan-yu-ren-zai-hui-lu.html"><span class="sb-item-num">14</span><span class="sb-item-title">第 14 章 中断与人在回路</span></a>
+        <a class="sb-item" href="../langgraph/15-di-15-zhang-ji-yi-guan-li.html"><span class="sb-item-num">15</span><span class="sb-item-title">第 15 章 记忆管理</span></a>
+        <a class="sb-item" href="../langgraph/16-di-16-zhang-rong-cuo-zhong-shi-chao-shi-yu.html"><span class="sb-item-num">16</span><span class="sb-item-title">第 16 章 容错：重试、超时与兜底</span></a>
+        <a class="sb-item" href="../langgraph/17-di-17-zhang-quan-jing-hui-gu.html"><span class="sb-item-num">17</span><span class="sb-item-title">第 17 章 全景回顾</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="backend">
+      <a class="sb-group-title" href="../modules/backend.html" data-toggle="backend">
+        <span class="sb-num">05</span>
+        <span class="sb-group-text"><b>Python 框架指南</b><i>14 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../backend/01-fastapi-ru-men-yu-asgi.html"><span class="sb-item-num">01</span><span class="sb-item-title">FastAPI 入门与 ASGI</span></a>
+        <a class="sb-item" href="../backend/02-lu-you-yu-qing-qiu-xiang-ying.html"><span class="sb-item-num">02</span><span class="sb-item-title">路由与请求响应</span></a>
+        <a class="sb-item" href="../backend/03-pydantic-shu-ju-jiao-yan-yu-pei-zhi.html"><span class="sb-item-num">03</span><span class="sb-item-title">Pydantic 数据校验与配置</span></a>
+        <a class="sb-item" href="../backend/04-sqlalchemy-yi-bu-yin-qing-yu-hui-hua.html"><span class="sb-item-num">04</span><span class="sb-item-title">SQLAlchemy 异步引擎与会话</span></a>
+        <a class="sb-item" href="../backend/05-orm-jian-mo.html"><span class="sb-item-num">05</span><span class="sb-item-title">ORM 建模</span></a>
+        <a class="sb-item" href="../backend/06-sql-biao-da-shi-yu-shu-ju-cao-zuo.html"><span class="sb-item-num">06</span><span class="sb-item-title">SQL 表达式与数据操作</span></a>
+        <a class="sb-item" href="../backend/07-alembic-shu-ju-qian-yi.html"><span class="sb-item-num">07</span><span class="sb-item-title">Alembic 数据迁移</span></a>
+        <a class="sb-item" href="../backend/08-yi-lai-zhu-ru.html"><span class="sb-item-num">08</span><span class="sb-item-title">依赖注入</span></a>
+        <a class="sb-item" href="../backend/09-tong-yi-yi-chang-chu-li.html"><span class="sb-item-num">09</span><span class="sb-item-title">统一异常处理</span></a>
+        <a class="sb-item" href="../backend/10-zhong-jian-jian.html"><span class="sb-item-num">10</span><span class="sb-item-title">中间件</span></a>
+        <a class="sb-item" href="../backend/11-ren-zheng-yu-jwt.html"><span class="sb-item-num">11</span><span class="sb-item-title">认证与 JWT</span></a>
+        <a class="sb-item" href="../backend/12-pytest-ce-shi.html"><span class="sb-item-num">12</span><span class="sb-item-title">pytest 测试</span></a>
+        <a class="sb-item" href="../backend/13-ri-zhi-loguru.html"><span class="sb-item-num">13</span><span class="sb-item-title">日志 loguru</span></a>
+        <a class="sb-item" href="../backend/14-liu-shi-xiang-ying-sse-yu-websocket.html"><span class="sb-item-num">14</span><span class="sb-item-title">流式响应 SSE 与 WebSocket</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="interview">
+      <a class="sb-group-title" href="../modules/interview.html" data-toggle="interview">
+        <span class="sb-num">06</span>
+        <span class="sb-group-text"><b>面试题库</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../interview/01-llm-yuan-li-pian.html"><span class="sb-item-num">01</span><span class="sb-item-title">LLM 原理篇</span></a>
+        <a class="sb-item" href="../interview/02-rag-yu-jian-suo-pian.html"><span class="sb-item-num">02</span><span class="sb-item-title">RAG 与检索篇</span></a>
+        <a class="sb-item" href="../interview/03-agent-he-xin-pian.html"><span class="sb-item-num">03</span><span class="sb-item-title">Agent 核心篇</span></a>
+        <a class="sb-item" href="../interview/04-langgraph-pian.html"><span class="sb-item-num">04</span><span class="sb-item-title">LangGraph 篇</span></a>
+        <a class="sb-item" href="../interview/05-langchain-pian.html"><span class="sb-item-num">05</span><span class="sb-item-title">LangChain 篇</span></a>
+        <a class="sb-item" href="../interview/06-xi-tong-she-ji-pian.html"><span class="sb-item-num">06</span><span class="sb-item-title">系统设计篇</span></a>
+        <a class="sb-item" href="../interview/07-xiang-mu-shen-wa-pian.html"><span class="sb-item-num">07</span><span class="sb-item-title">项目深挖篇</span></a>
+        <a class="sb-item" href="../interview/08-gu-zhang-pai-cha-pian.html"><span class="sb-item-num">08</span><span class="sb-item-title">故障排查篇</span></a>
+        <a class="sb-item" href="../interview/09-python-ji-chu-pian.html"><span class="sb-item-num">09</span><span class="sb-item-title">Python 基础篇</span></a>
+        <a class="sb-item" href="../interview/10-fastapi-yu-hou-duan-pian.html"><span class="sb-item-num">10</span><span class="sb-item-title">FastAPI 与后端篇</span></a>
+        <a class="sb-item" href="../interview/11-ti-shi-ci-gong-cheng-yu-an-quan-pian.html"><span class="sb-item-num">11</span><span class="sb-item-title">提示词工程与安全篇</span></a>
+        <a class="sb-item" href="../interview/12-mo-xing-xuan-xing-yu-jiang-ben-pian.html"><span class="sb-item-num">12</span><span class="sb-item-title">模型选型与降本篇</span></a>
+      </div>
+    </section>
+  </nav>
+</aside>
+  <main class="main">
+    <header class="topbar">
+      <button class="menu-btn" id="menuBtn" aria-label="目录">☰</button>
+      <div class="crumbs"><a href="../index.html">首页</a><span>/</span><a href="../modules/agent.html">Agent 核心</a><span>/</span><span class="cur">Tool Calling：协议与封装</span></div>
+      <div class="topbar-actions">
+        <button class="icon-btn" id="themeBtn" title="切换深浅色" aria-label="切换深浅色">◐</button>
+      </div>
+    </header>
+    <div class="content">
+      <article class="article">
+
+<header class="page-head">
+  <div class="page-kicker">Agent 核心 · 第 07 章</div>
+  <h1 class="page-title">Tool Calling：协议与封装</h1>
+  <p class="page-desc">第三章「怎么让它干活」从这里开始。前面两章里，模型再好用也只有一张嘴：它能告诉你&quot;今天适合跑步&quot;，却查不了实时天气、读不了你的文件、调不了你的接口——嘴上功夫再好，也伸不出一只手。给模型接上工具，就是补上这只手。这是 A…</p>
+  <div class="page-meta">
+    <span>约 24 分钟</span><span>9,715 字</span><span>13 个代码示例</span>
+  </div>
+</header>
+<div class="md"><blockquote>
+<p>第三章「怎么让它干活」从这里开始。前面两章里，模型再好用也只有一张嘴：它能告诉你"今天适合跑步"，却查不了实时天气、读不了你的文件、调不了你的接口——嘴上功夫再好，也伸不出一只手。给模型接上工具，就是补上这只手。这是 Agent 与聊天机器人的分水岭：在此之前，模型只能"说"；在此之后，模型能"做"——查数据、读文件、调接口、执行命令。</p>
+<p>本章前后两半：前半拆解 Tool Calling 的完整协议——工具怎么声明、模型怎么表达调用意向、你的代码怎么执行并把结果回传，理解它，Agent 就不再神秘；后半讲工具的设计与封装——Agent 的智商上限由模型决定，但下限由工具决定，同一个模型，配上设计良好的工具是得力助手，配上粗糙的工具只会帮倒忙。我们会用 Pydantic 搭一套 <code>Tool + Registry</code> 封装，第 8 章的 Agent 主循环直接来这里取零件。</p>
+</blockquote>
+<h2 id="1-为什么需要工具模型只有嘴没有手">1. 为什么需要工具：模型只有嘴，没有手</h2>
+<p>模型有三个先天残缺（前几章都埋过伏笔）：</p>
+<table>
+<thead>
+<tr>
+<th>残缺</th>
+<th>根源</th>
+<th>章节</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>知识有截止日期</td>
+<td>预训练数据是快照</td>
+<td>第 4 章</td>
+</tr>
+<tr>
+<td>不能访问你的私有系统</td>
+<td>训练时没见过你的数据库</td>
+<td>第 4 章</td>
+</tr>
+<tr>
+<td>算不准数、数不清字符</td>
+<td>token 粒度的感知局限</td>
+<td>第 1 章</td>
+</tr>
+</tbody>
+</table>
+<p>Tool Calling（也叫 Function Calling）的思路：<strong>模型负责"决定做什么"，你的代码负责"真正去做"</strong>。模型像一个大脑，工具是它的手脚。</p>
+<p>先建立一个最重要的心智模型（第 15 章安全的基石）：</p>
+<blockquote>
+<p><strong>模型永远不执行任何工具。它只是输出一段结构化的"调用意向"（工具名 + 参数），执行发生在你的代码里。</strong></p>
+</blockquote>
+<h2 id="2-协议全貌四次交互">2. 协议全貌：四次交互</h2>
+<p>Tool Calling 是一个多步协议，完整走一遍。这次我们给模型一个天气工具：</p>
+<p><strong>第一步：声明工具</strong>。把工具的名字、功能、参数 schema 随请求发给模型：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">openai</span><span class="w"> </span><span class="kn">import</span> <span class="n">OpenAI</span>
+
+<span class="n">client</span> <span class="o">=</span> <span class="n">OpenAI</span><span class="p">(</span><span class="n">base_url</span><span class="o">=</span><span class="s2">"http://localhost:11434/v1"</span><span class="p">,</span> <span class="n">api_key</span><span class="o">=</span><span class="s2">"ollama"</span><span class="p">)</span>
+
+<span class="n">tools</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span>
+        <span class="s2">"type"</span><span class="p">:</span> <span class="s2">"function"</span><span class="p">,</span>
+        <span class="s2">"function"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"get_weather"</span><span class="p">,</span>
+            <span class="s2">"description"</span><span class="p">:</span> <span class="s2">"查询指定城市当前的实时天气。当用户询问天气、温度、"</span>
+                           <span class="s2">"降雨、穿衣建议等问题时使用。"</span><span class="p">,</span>
+            <span class="s2">"parameters"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">"type"</span><span class="p">:</span> <span class="s2">"object"</span><span class="p">,</span>
+                <span class="s2">"properties"</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">"city"</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="s2">"type"</span><span class="p">:</span> <span class="s2">"string"</span><span class="p">,</span>
+                        <span class="s2">"description"</span><span class="p">:</span> <span class="s2">"城市名，如「北京」"</span><span class="p">,</span>
+                    <span class="p">},</span>
+                    <span class="s2">"unit"</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="s2">"type"</span><span class="p">:</span> <span class="s2">"string"</span><span class="p">,</span>
+                        <span class="s2">"enum"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"celsius"</span><span class="p">,</span> <span class="s2">"fahrenheit"</span><span class="p">],</span>
+                        <span class="s2">"description"</span><span class="p">:</span> <span class="s2">"温度单位，默认 celsius"</span><span class="p">,</span>
+                    <span class="p">},</span>
+                <span class="p">},</span>
+                <span class="s2">"required"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"city"</span><span class="p">],</span>
+            <span class="p">},</span>
+        <span class="p">},</span>
+    <span class="p">},</span>
+<span class="p">]</span>
+</code></pre></div>
+<p>注意 <code>parameters</code> 就是第 6 章的 JSON Schema——<strong>tool calling 的参数约束，正是结构化输出技术的复用</strong>。</p>
+<p><strong>第二步：模型返回"调用意向"</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="n">resp</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">chat</span><span class="o">.</span><span class="n">completions</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">=</span><span class="s2">"qwen3:4b"</span><span class="p">,</span>
+    <span class="n">messages</span><span class="o">=</span><span class="p">[{</span><span class="s2">"role"</span><span class="p">:</span> <span class="s2">"user"</span><span class="p">,</span> <span class="s2">"content"</span><span class="p">:</span> <span class="s2">"北京今天多少度？适合跑步吗"</span><span class="p">}],</span>
+    <span class="n">tools</span><span class="o">=</span><span class="n">tools</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">msg</span> <span class="o">=</span> <span class="n">resp</span><span class="o">.</span><span class="n">choices</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">message</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>        <span class="c1"># 通常为空，或只有简短的思考文字</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">tool_calls</span><span class="p">)</span>      <span class="c1"># 真正的货在这里</span>
+</code></pre></div>
+<p>输出（整理后）：</p>
+<div class="highlight"><pre><span></span><code><span class="p">[</span><span class="n">ChoiceMessageToolCall</span><span class="p">(</span>
+    <span class="nb">id</span><span class="o">=</span><span class="s1">'call_abc123'</span><span class="p">,</span>
+    <span class="n">function</span><span class="o">=</span><span class="n">Function</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="s1">'get_weather'</span><span class="p">,</span>
+        <span class="n">arguments</span><span class="o">=</span><span class="s1">'{"city": "北京"}'</span>    <span class="c1"># ← 一段 JSON 字符串</span>
+    <span class="p">)</span>
+<span class="p">)]</span>
+</code></pre></div>
+<p>两个细节：<code>arguments</code> 是 <strong>JSON 字符串</strong>不是 dict，使用前要 <code>json.loads</code>；<code>finish_reason</code> 此时是 <code>tool_calls</code> 而不是 <code>stop</code>——又是一个第 5 章说的"必须检查 finish_reason"的理由。</p>
+<p><strong>第三步：你的代码执行工具</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_weather</span><span class="p">(</span><span class="n">city</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">unit</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"celsius"</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""演示用假实现；真实场景换成任意天气 API"""</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"北京"</span><span class="p">:</span> <span class="mi">12</span><span class="p">,</span> <span class="s2">"上海"</span><span class="p">:</span> <span class="mi">18</span><span class="p">}</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">city</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">unit</span> <span class="o">==</span> <span class="s2">"fahrenheit"</span><span class="p">:</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">t</span> <span class="o">*</span> <span class="mi">9</span> <span class="o">/</span> <span class="mi">5</span> <span class="o">+</span> <span class="mi">32</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">city</span><span class="si">}</span><span class="s2">当前 </span><span class="si">{</span><span class="n">t</span><span class="si">}</span><span class="s2">°</span><span class="si">{</span><span class="s1">'C'</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">unit</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s1">'celsius'</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">'F'</span><span class="si">}</span><span class="s2">，晴，空气质量优"</span>
+
+<span class="n">tc</span> <span class="o">=</span> <span class="n">msg</span><span class="o">.</span><span class="n">tool_calls</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">args</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">tc</span><span class="o">.</span><span class="n">function</span><span class="o">.</span><span class="n">arguments</span><span class="p">)</span>          <span class="c1"># JSON 字符串 → dict</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">get_weather</span><span class="p">(</span><span class="o">**</span><span class="n">args</span><span class="p">)</span>                       <span class="c1"># 真正的执行发生在这里</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>                                      <span class="c1"># 北京当前 12°C，晴，空气质量优</span>
+</code></pre></div>
+<p><strong>第四步：把结果作为 tool 消息回传，让模型收尾</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="n">messages</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span><span class="s2">"role"</span><span class="p">:</span> <span class="s2">"user"</span><span class="p">,</span> <span class="s2">"content"</span><span class="p">:</span> <span class="s2">"北京今天多少度？适合跑步吗"</span><span class="p">},</span>
+    <span class="n">msg</span><span class="p">,</span>                                                    <span class="c1"># 调用意向（assistant）</span>
+    <span class="p">{</span><span class="s2">"role"</span><span class="p">:</span> <span class="s2">"tool"</span><span class="p">,</span> <span class="s2">"tool_call_id"</span><span class="p">:</span> <span class="n">tc</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="s2">"content"</span><span class="p">:</span> <span class="n">result</span><span class="p">},</span>  <span class="c1"># 执行结果</span>
+<span class="p">]</span>
+
+<span class="n">final</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">chat</span><span class="o">.</span><span class="n">completions</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">=</span><span class="s2">"qwen3:4b"</span><span class="p">,</span> <span class="n">messages</span><span class="o">=</span><span class="n">messages</span><span class="p">,</span> <span class="n">tools</span><span class="o">=</span><span class="n">tools</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">final</span><span class="o">.</span><span class="n">choices</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">message</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+<span class="c1"># 模型现在能看到工具结果，产出最终回答：</span>
+<span class="c1"># "北京当前 12°C，晴，空气质量优，很适合跑步。不过温度略低，建议穿件薄外套。"</span>
+</code></pre></div>
+<p>注意第 5 章的角色表在这里补全了最后一个角色：<code>tool</code> 消息携带 <code>tool_call_id</code>，<strong>必须和它回应的那条调用一一配对</strong>。这就是第 6 章警告过的"成对边界"——裁剪历史时把 assistant 的 tool_calls 和它对应的 tool 结果切开，下次请求直接 400 报错。</p>
+<h2 id="3-协议背后的原理">3. 协议背后的原理</h2>
+<p>剥开工业包装，tool calling 没有任何新魔法，三样老朋友拼装而成：</p>
+<ol>
+<li><strong>注入</strong>：SDK 把 <code>tools</code> 定义序列化成文本（类似一段"可用函数列表"的说明），拼进输入——本质上和你在 system 里手写"你有以下工具可用"没有区别</li>
+<li><strong>生成</strong>：模型被后训练（第 4 章）专门训练过"见到工具列表 + 合适的用户请求时，输出调用格式的文本"</li>
+<li><strong>解析</strong>：推理服务把这段特殊文本解析成结构化的 <code>tool_calls</code> 对象返回给你</li>
+</ol>
+<p>所以它可靠性不错，但仍是概率行为——模型可能不调用该调的工具、编造不存在的参数值、或给出格式错误的参数。第 6 章的"校验 + 兜底"思想在这里同样适用（本章第 8 节落地）。</p>
+<p><code>tool_choice</code> 参数控制模型的调用倾向：</p>
+<table>
+<thead>
+<tr>
+<th>值</th>
+<th>行为</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>"auto"</code>（默认）</td>
+<td>模型自行决定调不调、调哪个</td>
+</tr>
+<tr>
+<td><code>"none"</code></td>
+<td>禁止调用，纯对话</td>
+</tr>
+<tr>
+<td><code>"required"</code></td>
+<td>强制至少调用一个工具</td>
+</tr>
+<tr>
+<td><code>{"type": "function", "function": {"name": "..."}}</code></td>
+<td>强制调用指定工具（可用来做"参数提取器"）</td>
+</tr>
+</tbody>
+</table>
+<p>最后那个用法很实用：强制模型把自然语言填进某个 schema，等于一个"自然语言→结构化数据"的转换器（第 6 章的另一种实现路径）。</p>
+<h2 id="4-并行调用与多轮工具">4. 并行调用与多轮工具</h2>
+<p>现代模型（含 qwen3）支持<strong>一次返回多个调用</strong>——用户问"北京和上海哪个更适合今天跑步"时：</p>
+<div class="highlight"><pre><span></span><code><span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">tool_calls</span><span class="p">))</span>    <span class="c1"># 可能是 2：get_weather(北京) + get_weather(上海)</span>
+</code></pre></div>
+<p>协议要求：每个 tool_call 都要有对应的一条 tool 消息回传。执行侧可以并发：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">concurrent.futures</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cf</span>
+
+<span class="n">messages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>                                   <span class="c1"># 先把意向入列</span>
+<span class="k">with</span> <span class="n">cf</span><span class="o">.</span><span class="n">ThreadPoolExecutor</span><span class="p">()</span> <span class="k">as</span> <span class="n">pool</span><span class="p">:</span>
+    <span class="n">futures</span> <span class="o">=</span> <span class="p">{</span><span class="n">tc</span><span class="o">.</span><span class="n">id</span><span class="p">:</span> <span class="n">pool</span><span class="o">.</span><span class="n">submit</span><span class="p">(</span>
+        <span class="n">get_weather</span><span class="p">,</span> <span class="o">**</span><span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">tc</span><span class="o">.</span><span class="n">function</span><span class="o">.</span><span class="n">arguments</span><span class="p">)</span>
+    <span class="p">)</span> <span class="k">for</span> <span class="n">tc</span> <span class="ow">in</span> <span class="n">msg</span><span class="o">.</span><span class="n">tool_calls</span><span class="p">}</span>
+    <span class="k">for</span> <span class="n">tc</span> <span class="ow">in</span> <span class="n">msg</span><span class="o">.</span><span class="n">tool_calls</span><span class="p">:</span>
+        <span class="n">messages</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+            <span class="s2">"role"</span><span class="p">:</span> <span class="s2">"tool"</span><span class="p">,</span>
+            <span class="s2">"tool_call_id"</span><span class="p">:</span> <span class="n">tc</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+            <span class="s2">"content"</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">futures</span><span class="p">[</span><span class="n">tc</span><span class="o">.</span><span class="n">id</span><span class="p">]</span><span class="o">.</span><span class="n">result</span><span class="p">()),</span>
+        <span class="p">})</span>
+</code></pre></div>
+<p><strong>多轮</strong>同理：模型收到工具结果后，可能不直接回答，而是发起下一轮调用（先查天气、再查空气质量）。这个"循环直到模型不再调用工具"的模式，就是 Agent 主循环的雏形——第 8 章的主角。</p>
+<h2 id="5-一个完整的可运行示例">5. 一个完整的可运行示例</h2>
+<p>把本章前半的协议收拢成一个函数（单工具、支持多轮、带防御）：</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">chat_with_tools</span><span class="p">(</span><span class="n">user_input</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">tools</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">executor</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+                    <span class="n">max_rounds</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""executor: {工具名: 可调用函数} 的映射"""</span>
+    <span class="n">messages</span> <span class="o">=</span> <span class="p">[{</span><span class="s2">"role"</span><span class="p">:</span> <span class="s2">"user"</span><span class="p">,</span> <span class="s2">"content"</span><span class="p">:</span> <span class="n">user_input</span><span class="p">}]</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_rounds</span><span class="p">):</span>
+        <span class="n">resp</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">chat</span><span class="o">.</span><span class="n">completions</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+            <span class="n">model</span><span class="o">=</span><span class="s2">"qwen3:4b"</span><span class="p">,</span> <span class="n">messages</span><span class="o">=</span><span class="n">messages</span><span class="p">,</span> <span class="n">tools</span><span class="o">=</span><span class="n">tools</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="n">resp</span><span class="o">.</span><span class="n">choices</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">message</span>
+        <span class="n">messages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">msg</span><span class="o">.</span><span class="n">tool_calls</span><span class="p">:</span>                       <span class="c1"># 不再调用 → 最终回答</span>
+            <span class="k">return</span> <span class="n">msg</span><span class="o">.</span><span class="n">content</span>
+
+        <span class="k">for</span> <span class="n">tc</span> <span class="ow">in</span> <span class="n">msg</span><span class="o">.</span><span class="n">tool_calls</span><span class="p">:</span>
+            <span class="n">func</span> <span class="o">=</span> <span class="n">executor</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">tc</span><span class="o">.</span><span class="n">function</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">func</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>                          <span class="c1"># 防御：模型幻觉出工具名</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"错误：不存在名为 </span><span class="si">{</span><span class="n">tc</span><span class="o">.</span><span class="n">function</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> 的工具"</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">result</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">func</span><span class="p">(</span><span class="o">**</span><span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">tc</span><span class="o">.</span><span class="n">function</span><span class="o">.</span><span class="n">arguments</span><span class="p">)))</span>
+                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>                <span class="c1"># 防御：执行失败不崩溃</span>
+                    <span class="n">result</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"工具执行出错：</span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span>
+            <span class="n">messages</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+                <span class="s2">"role"</span><span class="p">:</span> <span class="s2">"tool"</span><span class="p">,</span> <span class="s2">"tool_call_id"</span><span class="p">:</span> <span class="n">tc</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="s2">"content"</span><span class="p">:</span> <span class="n">result</span><span class="p">,</span>
+            <span class="p">})</span>
+    <span class="k">return</span> <span class="s2">"（达到最大轮次限制）"</span>
+</code></pre></div>
+<p>注意两个防御点：模型<strong>幻觉出不存在的工具名</strong>、参数解析失败——生产代码里这两个都会真实发生。处理哲学统一为"把错误信息作为 tool 结果回传，让模型自己纠偏"，本章第 8 节会把这套防御工程化。</p>
+<p>现在模型能"做一件事"了。但真实 Agent 需要一抽屉工具，而且工具的质量直接决定 Agent 的智商——协议解决了"怎么接上"，接下来解决"怎么接好"：本章后半，讲工具的设计与封装。</p>
+<h2 id="6-description写给模型的产品说明书">6. description：写给模型的产品说明书</h2>
+<p>先建立一个容易搞反的认知：<strong>模型看不到你的代码，只看得到 name、description 和参数 schema</strong>。<code>get_weather</code> 函数内部写得多优雅，模型一无所知；它判断"什么时候用这个工具"，完全依赖 description 这几十个字。</p>
+<p>对比两种写法：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># ❌ 只说"是什么"</span>
+<span class="s2">"description"</span><span class="p">:</span> <span class="s2">"获取天气"</span>
+
+<span class="c1"># ✅ 说清"什么时候用、能干什么、边界在哪"</span>
+<span class="s2">"description"</span><span class="p">:</span> <span class="s2">"查询指定城市当前的实时天气（温度、天气现象、空气质量）。</span>
+<span class="n">当用户询问天气</span><span class="err">、</span><span class="n">气温</span><span class="err">、</span><span class="n">是否下雨下雪</span><span class="err">、</span><span class="n">该穿什么衣服等问题时使用</span><span class="err">。</span>
+<span class="n">仅支持中国主要城市</span><span class="err">。</span><span class="n">不提供未来</span> <span class="mi">3</span> <span class="n">天以外的预报</span><span class="err">。</span><span class="s2">"</span>
+</code></pre></div>
+<p>三个写法要点：</p>
+<ol>
+<li><strong>写触发条件</strong>（"当用户问……时使用"）比写名词解释有效——模型是在做"用户请求 vs 工具描述"的匹配</li>
+<li><strong>写边界和失败情形</strong>，管理模型的期望，减少误调用</li>
+<li><strong>参数描述同理</strong>：<code>city</code> 不写描述时，模型不知道该传"北京"还是"北京市朝阳区"——写清楚</li>
+</ol>
+<h2 id="7-好工具的六个特征">7. 好工具的六个特征</h2>
+<table>
+<thead>
+<tr>
+<th>特征</th>
+<th>说明</th>
+<th>反例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>名称动词化、自解释</td>
+<td><code>read_file</code>、<code>query_orders</code></td>
+<td><code>handle_data</code></td>
+</tr>
+<tr>
+<td>参数面最小</td>
+<td>每个参数都是模型的一次发挥机会</td>
+<td>8 个参数里有 5 个可选</td>
+</tr>
+<tr>
+<td>枚举锁死取值</td>
+<td><code>Literal</code> / <code>enum</code></td>
+<td>自由字符串的 <code>sort_by</code></td>
+</tr>
+<tr>
+<td>返回可读字符串</td>
+<td>模型要"读"结果，不是反序列化</td>
+<td>返回嵌套 5 层的 JSON</td>
+</tr>
+<tr>
+<td>结果大小受控</td>
+<td>截断 + 提示被截断</td>
+<td>返回整个 2MB 文件</td>
+</tr>
+<tr>
+<td>错误信息可行动</td>
+<td>"城市不存在，支持的城市：…"</td>
+<td>抛异常或返回 <code>null</code></td>
+</tr>
+</tbody>
+</table>
+<p>最后两条展开讲——它们是新手最容易踩的坑：</p>
+<p><strong>结果大小受控</strong>。工具结果会全文进入上下文（第 4 章的窗口预算）。<code>read_file</code> 必须截断：</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">read_file</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="n">content</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">read_text</span><span class="p">(</span><span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">content</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">4000</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">content</span><span class="p">[:</span><span class="mi">4000</span><span class="p">]</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="s2">...(已截断，全文共 </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">content</span><span class="p">)</span><span class="si">}</span><span class="s2"> 字符)"</span>
+    <span class="k">return</span> <span class="n">content</span>
+</code></pre></div>
+<p><strong>错误可行动</strong>。错误信息是给模型的"下一步指令"：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># ❌ 错误示例</span>
+<span class="s2">"error"</span>                        <span class="c1"># 模型：？？然后开始编</span>
+
+<span class="c1"># ✅ 可行动的错误</span>
+<span class="s2">"城市 '北jing' 不存在。请检查拼写，或改用支持的城市列表中的名称"</span>
+</code></pre></div>
+<h2 id="8-封装tool-registry">8. 封装：Tool + Registry</h2>
+<p>工具多了之后，手写 schema、手写 dispatch（本章第 5 节结尾那个 if-else）会失控。用 Pydantic（第 6 章）把"参数校验、schema 生成、执行分发"收进一个注册器：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">ValidationError</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Tool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""把一个 Python 函数封装成模型可用的工具"""</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">args_model</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">BaseModel</span><span class="p">],</span> <span class="n">description</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="n">func</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">args_model</span> <span class="o">=</span> <span class="n">args_model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">func</span><span class="o">.</span><span class="vm">__name__</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="n">description</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">schema</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""生成 OpenAI 格式的工具声明（本章第 2 节的 tools 列表元素）"""</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">"type"</span><span class="p">:</span> <span class="s2">"function"</span><span class="p">,</span>
+            <span class="s2">"function"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">"name"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                <span class="s2">"description"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">description</span><span class="p">,</span>
+                <span class="s2">"parameters"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">args_model</span><span class="o">.</span><span class="n">model_json_schema</span><span class="p">(),</span>
+            <span class="p">},</span>
+        <span class="p">}</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arguments_json</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""执行工具。所有失败都以可读字符串返回，绝不抛异常"""</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">args</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">args_model</span><span class="o">.</span><span class="n">model_validate_json</span><span class="p">(</span><span class="n">arguments_json</span><span class="p">)</span>
+            <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="o">**</span><span class="n">args</span><span class="o">.</span><span class="n">model_dump</span><span class="p">()))</span>
+        <span class="k">except</span> <span class="n">ValidationError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s2">"参数校验失败：</span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s2">"工具执行出错：</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Registry</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""工具注册器：schema 生成 + 名称分发"""</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tools</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Tool</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">register</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tool</span><span class="p">:</span> <span class="n">Tool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tools</span><span class="p">[</span><span class="n">tool</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">tool</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">schemas</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">t</span><span class="o">.</span><span class="n">schema</span><span class="p">()</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tools</span><span class="o">.</span><span class="n">values</span><span class="p">()]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">dispatch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">arguments_json</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="n">tool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tools</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">tool</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s2">"错误：不存在名为 </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> 的工具。可用工具：</span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tools</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
+        <span class="k">return</span> <span class="n">tool</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">arguments_json</span><span class="p">)</span>
+</code></pre></div>
+<p>设计要点：</p>
+<ul>
+<li><strong><code>run</code> 永不抛异常</strong>——所有错误转为字符串返回。这是本章第 5 节防御哲学的工程化：错误是模型的信息，不是调用方的灾难</li>
+<li>Pydantic 在入口统一校验——本章第 3 节"幻觉参数"问题在这里被拦下（<code>ValidationError</code> 的报文本身就是可行动的错误信息）</li>
+<li>未知工具名返回<strong>可用工具列表</strong>，模型下一轮通常能自己纠正</li>
+</ul>
+<h2 id="9-注册一组真实工具">9. 注册一组真实工具</h2>
+<p>用这套封装注册三个常用工具（第 8、9 章的 Agent 直接用它们）：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">Field</span><span class="p">,</span> <span class="n">ValidationError</span>
+
+<span class="c1"># ---------- read_file ----------</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ReadFileArgs</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">"要读取的文件路径（相对当前目录或绝对路径）"</span><span class="p">)</span>
+    <span class="n">max_chars</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">4000</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">"最多返回的字符数"</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">read_file</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">max_chars</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4000</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">p</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">"文件不存在：</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">"</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">p</span><span class="o">.</span><span class="n">is_file</span><span class="p">():</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">"路径不是文件：</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">"</span>
+    <span class="n">content</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">read_text</span><span class="p">(</span><span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">content</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">max_chars</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">content</span><span class="p">[:</span><span class="n">max_chars</span><span class="p">]</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="s2">...(已截断，共 </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">content</span><span class="p">)</span><span class="si">}</span><span class="s2"> 字符)"</span>
+    <span class="k">return</span> <span class="n">content</span>
+
+<span class="c1"># ---------- write_file ----------</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">WriteFileArgs</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">"目标文件路径"</span><span class="p">)</span>
+    <span class="n">content</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">"要写入的完整内容（全量覆盖，非追加）"</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">write_file</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">content</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">content</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">"已写入 </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">（</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">content</span><span class="p">)</span><span class="si">}</span><span class="s2"> 字符）"</span>
+
+<span class="c1"># ---------- calculate ----------</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">CalculateArgs</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">expression</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">"Python 算术表达式，如 '(12.5 + 3) * 2'"</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">calculate</span><span class="p">(</span><span class="n">expression</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="c1"># 只放行安全子集，杜绝 eval 直接执行任意代码</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">re</span><span class="o">.</span><span class="n">fullmatch</span><span class="p">(</span><span class="sa">r</span><span class="s2">"[0-9+\-*/().%\s]+"</span><span class="p">,</span> <span class="n">expression</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">"表达式包含不支持的字符（仅支持数字与 + - * / % ( )）"</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="nb">eval</span><span class="p">(</span><span class="n">expression</span><span class="p">,</span> <span class="p">{</span><span class="s2">"__builtins__"</span><span class="p">:</span> <span class="p">{}},</span> <span class="p">{}))</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">"计算失败：</span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span>
+
+<span class="c1"># ---------- 注册 ----------</span>
+<span class="n">registry</span> <span class="o">=</span> <span class="n">Registry</span><span class="p">()</span>
+<span class="n">registry</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Tool</span><span class="p">(</span><span class="n">read_file</span><span class="p">,</span> <span class="n">ReadFileArgs</span><span class="p">,</span>
+    <span class="s2">"读取本地文本文件的内容。文件过大时自动截断。"</span><span class="p">))</span>
+<span class="n">registry</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Tool</span><span class="p">(</span><span class="n">write_file</span><span class="p">,</span> <span class="n">WriteFileArgs</span><span class="p">,</span>
+    <span class="s2">"将文本内容写入本地文件（覆盖写入）。需要创建或修改文件时使用。"</span><span class="p">))</span>
+<span class="n">registry</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Tool</span><span class="p">(</span><span class="n">calculate</span><span class="p">,</span> <span class="n">CalculateArgs</span><span class="p">,</span>
+    <span class="s2">"精确计算算术表达式。任何数学计算都必须用本工具，不要心算。"</span><span class="p">))</span>
+</code></pre></div>
+<p><code>calculate</code> 的 description 最后一句值得注意——<strong>你在用说明书反向抑制模型的坏习惯</strong>（第 1 章讲过模型的数学缺陷）。这比在系统提示词里泛泛要求"算数要准确"有效得多，因为它出现在模型决策调用的现场。</p>
+<h2 id="10-工具不是越多越好">10. 工具不是越多越好</h2>
+<p>一个反直觉的事实：<strong>工具越多，Agent 越笨</strong>。原因有三层：</p>
+<ol>
+<li><strong>选择困难</strong>：几十个相似工具的 description 挤占输入，模型匹配精度下降（见过"用 read_file 读天气 API"的迷惑行为吗）</li>
+<li><strong>窗口消耗</strong>：每个工具 schema 平均 100~200 token，30 个工具就是半个系统提示词（第 4 章的预算思维）</li>
+<li><strong>组合爆炸</strong>：工具间可组合的"邪道用法"随数量指数增长（第 15 章安全的攻击面）</li>
+</ol>
+<p>工程对策按代价排序：</p>
+<ul>
+<li><strong>控制注册量</strong>：一个 Agent 只挂它职责内的工具（5~8 个为宜）</li>
+<li><strong>按需装配</strong>：路由 Agent 先分类，再挂子工具集（第 12 章子代理的动机）</li>
+<li><strong>文档外置</strong>：Skill 机制——平时只给一行索引，用时才加载全文（第 10 章专门讲）</li>
+</ul>
+<h2 id="本章小结">本章小结</h2>
+<ul>
+<li>心智模型：模型只产出"调用意向"（工具名 + JSON 参数），执行永远在你的代码里</li>
+<li>协议四步：声明工具 → 收到 tool_calls → 执行 → tool 消息回传（id 必须配对）</li>
+<li>原理 = schema 注入 + 后训练出的调用格式 + 服务端解析；可靠但非绝对</li>
+<li><code>tool_choice</code> 可禁用/强制调用；强制指定工具可当"参数提取器"用</li>
+<li>并行调用：一个 assistant 消息可含多个 tool_calls，每个都要有配对的 tool 回传</li>
+<li>防御两件事：幻觉工具名、执行异常——错误信息回传给模型让它自纠</li>
+<li>模型只看得见 name/description/schema——description 要写"什么时候用"而非"是什么"</li>
+<li>好工具六特征：动词化命名、最小参数面、枚举锁值、可读返回、受控大小、可行动的错误</li>
+<li><code>Tool.run</code> 永不抛异常：错误是给模型的信息，不是调用方的灾难</li>
+<li>Pydantic 统一了参数校验和 schema 生成（第 6 章技术的复用）</li>
+<li>工具数量是负债：5~8 个为宜，多了用路由/子代理/技能分层</li>
+</ul>
+<p>零件齐了：模型会表达调用意向（本章前半），工具有了统一封装（本章后半）。但还缺一样东西把零件转起来——那个"不停循环直到任务完成"的引擎，下一章见。</p>
+<p><strong>下一篇</strong>：<a href="../agent/08-react-mo-shi-yu-zhu-xun-huan.html">08 · ReAct 模式与主循环</a></p></div>
+
+      </article>
+<nav class="pager"><a class="pg-card pg-prev" href="../agent/06-hui-hua-guan-li-yu-json-shu-chu.html"><span class="pg-label">← 上一篇</span><span class="pg-title">会话管理与 JSON 输出</span><span class="pg-mod">Agent 核心</span></a><a class="pg-card pg-next" href="../agent/08-react-mo-shi-yu-zhu-xun-huan.html"><span class="pg-label">下一篇 →</span><span class="pg-title">ReAct 模式与主循环</span><span class="pg-mod">Agent 核心</span></a></nav>
+    </div>
+    <footer class="foot">
+      <span>深栈 DeepStack · AI Agent 工程师转型训练营配套文档</span>
+    </footer>
+  </main>
+<nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#1-为什么需要工具模型只有嘴没有手">1. 为什么需要工具：模型只有嘴，没有手</a><a class="toc-link toc-h2" href="#2-协议全貌四次交互">2. 协议全貌：四次交互</a><a class="toc-link toc-h2" href="#3-协议背后的原理">3. 协议背后的原理</a><a class="toc-link toc-h2" href="#4-并行调用与多轮工具">4. 并行调用与多轮工具</a><a class="toc-link toc-h2" href="#5-一个完整的可运行示例">5. 一个完整的可运行示例</a><a class="toc-link toc-h2" href="#6-description写给模型的产品说明书">6. description：写给模型的产品说明书</a><a class="toc-link toc-h2" href="#7-好工具的六个特征">7. 好工具的六个特征</a><a class="toc-link toc-h2" href="#8-封装tool-registry">8. 封装：Tool + Registry</a><a class="toc-link toc-h2" href="#9-注册一组真实工具">9. 注册一组真实工具</a><a class="toc-link toc-h2" href="#10-工具不是越多越好">10. 工具不是越多越好</a><a class="toc-link toc-h2" href="#本章小结">本章小结</a></nav>
+</div>
+<div class="sb-mask" id="sbMask"></div>
+<script src="../assets/app.js"></script>
+</body>
+</html>

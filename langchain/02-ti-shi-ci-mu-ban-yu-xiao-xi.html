@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>02 · 提示词模板与消息 · 深栈 DeepStack 课程文档</title>
+<meta name="description" content="跟大模型打交道，第一件事是把话说清楚。这一章讲 LangChain 的「话术工厂」：模板负责把要说的变成填空题，消息（Message） 负责把填好的话按角色打包发给模型。学完你能独立搭出带历史记录的多轮对话提示词，还能看…">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%23d9c39a' text-anchor='middle'%3EDS%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+<div class="progress" id="progress"></div>
+
+<div class="layout">
+<aside class="sidebar" id="sidebar">
+  <div class="sb-head">
+    <a class="brand" href="../index.html">
+      <span class="brand-mark">DS</span>
+      <span class="brand-text"><b>深栈 DeepStack</b><i>AI Agent 工程师转型训练营</i></span>
+    </a>
+    <button class="sb-close" id="sbClose" aria-label="关闭目录">✕</button>
+  </div>
+  <div class="sb-search"><input type="search" id="searchInput" placeholder="搜索 123 篇文档… ( / )" autocomplete="off">
+    <div class="sb-results" id="searchResults"></div></div>
+  <nav class="sb-nav">
+    <section class="sb-group" data-mod="python">
+      <a class="sb-group-title" href="../modules/python.html" data-toggle="python">
+        <span class="sb-num">01</span>
+        <span class="sb-group-text"><b>Python 与数据实践</b><i>31 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../python/01-huan-jing-da-jian-yu-ban-ben-guan-li.html"><span class="sb-item-num">01</span><span class="sb-item-title">环境搭建与版本管理</span></a>
+        <a class="sb-item" href="../python/02-bian-liang-biao-da-shi-yu-liu-cheng-kong-zhi.html"><span class="sb-item-num">02</span><span class="sb-item-title">变量、表达式与流程控制</span></a>
+        <a class="sb-item" href="../python/03-xu-lie-zi-dian-yu-ji-he.html"><span class="sb-item-num">03</span><span class="sb-item-title">序列、字典与集合</span></a>
+        <a class="sb-item" href="../python/04-han-shu-she-ji-yu-lambda.html"><span class="sb-item-num">04</span><span class="sb-item-title">函数设计与 lambda</span></a>
+        <a class="sb-item" href="../python/05-zuo-yong-yu-gui-ze-yu-bi-bao.html"><span class="sb-item-num">05</span><span class="sb-item-title">作用域规则与闭包</span></a>
+        <a class="sb-item" href="../python/06-lei-de-ding-yi-yu-shi-li-hua.html"><span class="sb-item-num">06</span><span class="sb-item-title">类的定义与实例化</span></a>
+        <a class="sb-item" href="../python/07-lei-xing-pan-ding-yu-chou-xiang-ji-lei.html"><span class="sb-item-num">07</span><span class="sb-item-title">类型判定与抽象基类</span></a>
+        <a class="sb-item" href="../python/08-mo-shu-fang-fa-quan-jing.html"><span class="sb-item-num">08</span><span class="sb-item-title">魔术方法全景</span></a>
+        <a class="sb-item" href="../python/09-miao-shu-fu-yu-yuan-lei.html"><span class="sb-item-num">09</span><span class="sb-item-title">描述符与元类</span></a>
+        <a class="sb-item" href="../python/10-zhuang-shi-qi.html"><span class="sb-item-num">10</span><span class="sb-item-title">装饰器</span></a>
+        <a class="sb-item" href="../python/11-die-dai-xie-yi-yu-sheng-cheng-qi.html"><span class="sb-item-num">11</span><span class="sb-item-title">迭代协议与生成器</span></a>
+        <a class="sb-item" href="../python/12-with-yu-shang-xia-wen-xie-yi.html"><span class="sb-item-num">12</span><span class="sb-item-title">with 与上下文协议</span></a>
+        <a class="sb-item" href="../python/13-yi-chang-ti-xi-yu-chu-li.html"><span class="sb-item-num">13</span><span class="sb-item-title">异常体系与处理</span></a>
+        <a class="sb-item" href="../python/14-lei-xing-biao-zhu.html"><span class="sb-item-num">14</span><span class="sb-item-title">类型标注</span></a>
+        <a class="sb-item" href="../python/15-mo-kuai-yu-bao-de-zu-zhi.html"><span class="sb-item-num">15</span><span class="sb-item-title">模块与包的组织</span></a>
+        <a class="sb-item" href="../python/16-biao-zhun-ku-xun-li.html"><span class="sb-item-num">16</span><span class="sb-item-title">标准库巡礼</span></a>
+        <a class="sb-item" href="../python/17-yi-lai-guan-li-yu-di-san-fang-ku.html"><span class="sb-item-num">17</span><span class="sb-item-title">依赖管理与第三方库</span></a>
+        <a class="sb-item" href="../python/18-xian-cheng-yu-jin-cheng.html"><span class="sb-item-num">18</span><span class="sb-item-title">线程与进程</span></a>
+        <a class="sb-item" href="../python/19-shi-jian-xun-huan.html"><span class="sb-item-num">19</span><span class="sb-item-title">事件循环</span></a>
+        <a class="sb-item" href="../python/20-future-yu-xie-cheng.html"><span class="sb-item-num">20</span><span class="sb-item-title">Future 与协程</span></a>
+        <a class="sb-item" href="../python/21-asyncio-shi-zhan.html"><span class="sb-item-num">21</span><span class="sb-item-title">asyncio 实战</span></a>
+        <a class="sb-item" href="../python/22-gou-jian-yu-fa-bu.html"><span class="sb-item-num">22</span><span class="sb-item-title">构建与发布</span></a>
+        <a class="sb-item" href="../python/23-gong-cheng-hua-gong-ju-lian.html"><span class="sb-item-num">23</span><span class="sb-item-title">工程化工具链</span></a>
+        <a class="sb-item" href="../python/24-monorepo-yu-tiao-shi.html"><span class="sb-item-num">24</span><span class="sb-item-title">monorepo 与调试</span></a>
+        <a class="sb-item" href="../python/25-jupyter-jiao-hu-huan-jing.html"><span class="sb-item-num">25</span><span class="sb-item-title">Jupyter 交互环境</span></a>
+        <a class="sb-item" href="../python/26-numpy-shu-zu-yu-xiang-liang-hua.html"><span class="sb-item-num">26</span><span class="sb-item-title">NumPy 数组与向量化</span></a>
+        <a class="sb-item" href="../python/27-pandas-shu-ju-jie-gou.html"><span class="sb-item-num">27</span><span class="sb-item-title">Pandas 数据结构</span></a>
+        <a class="sb-item" href="../python/28-pandas-shu-ju-qing-xi.html"><span class="sb-item-num">28</span><span class="sb-item-title">Pandas 数据清洗</span></a>
+        <a class="sb-item" href="../python/29-matplotlib-hui-tu-ti-xi.html"><span class="sb-item-num">29</span><span class="sb-item-title">Matplotlib 绘图体系</span></a>
+        <a class="sb-item" href="../python/30-matplotlib-dong-hua-yu-jiao-hu.html"><span class="sb-item-num">30</span><span class="sb-item-title">Matplotlib 动画与交互</span></a>
+        <a class="sb-item" href="../python/31-seaborn-tong-ji-ke-shi-hua.html"><span class="sb-item-num">31</span><span class="sb-item-title">Seaborn 统计可视化</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="agent">
+      <a class="sb-group-title" href="../modules/agent.html" data-toggle="agent">
+        <span class="sb-num">02</span>
+        <span class="sb-group-text"><b>Agent 核心</b><i>15 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../agent/01-token-yu-ci-qian-ru.html"><span class="sb-item-num">01</span><span class="sb-item-title">Token 与词嵌入</span></a>
+        <a class="sb-item" href="../agent/02-qian-xiang-chuan-bo-yu-fan-xiang-chuan-bo.html"><span class="sb-item-num">02</span><span class="sb-item-title">前向传播与反向传播</span></a>
+        <a class="sb-item" href="../agent/03-zhu-yi-li-ji-zhi-yu-transformer-jia-gou.html"><span class="sb-item-num">03</span><span class="sb-item-title">注意力机制与 Transformer 架构</span></a>
+        <a class="sb-item" href="../agent/04-yu-xun-lian-rlhf-yu-cai-yang-kv-cache.html"><span class="sb-item-num">04</span><span class="sb-item-title">预训练、RLHF 与采样（KV Cache）</span></a>
+        <a class="sb-item" href="../agent/05-ben-di-mo-xing-yu-xiao-xi-jie-gou.html"><span class="sb-item-num">05</span><span class="sb-item-title">本地模型与消息结构</span></a>
+        <a class="sb-item" href="../agent/06-hui-hua-guan-li-yu-json-shu-chu.html"><span class="sb-item-num">06</span><span class="sb-item-title">会话管理与 JSON 输出</span></a>
+        <a class="sb-item" href="../agent/07-tool-calling-xie-yi-yu-feng-zhuang.html"><span class="sb-item-num">07</span><span class="sb-item-title">Tool Calling：协议与封装</span></a>
+        <a class="sb-item" href="../agent/08-react-mo-shi-yu-zhu-xun-huan.html"><span class="sb-item-num">08</span><span class="sb-item-title">ReAct 模式与主循环</span></a>
+        <a class="sb-item" href="../agent/09-shi-zhan-deep-research-agent.html"><span class="sb-item-num">09</span><span class="sb-item-title">实战：Deep Research Agent</span></a>
+        <a class="sb-item" href="../agent/10-skill-yu-jian-jin-shi-pi-lu.html"><span class="sb-item-num">10</span><span class="sb-item-title">Skill 与渐进式披露</span></a>
+        <a class="sb-item" href="../agent/11-mcp-quan-jing.html"><span class="sb-item-num">11</span><span class="sb-item-title">MCP 全景</span></a>
+        <a class="sb-item" href="../agent/12-duo-agent-yu-xuan-xing-ce-lve.html"><span class="sb-item-num">12</span><span class="sb-item-title">多 Agent 与选型策略</span></a>
+        <a class="sb-item" href="../agent/13-ti-shi-ci-gong-cheng-yu-shang-xia-wen-gong.html"><span class="sb-item-num">13</span><span class="sb-item-title">提示词工程与上下文工程</span></a>
+        <a class="sb-item" href="../agent/14-xun-huan-tu-yu-gu-jia-gong-cheng.html"><span class="sb-item-num">14</span><span class="sb-item-title">循环、图与骨架工程</span></a>
+        <a class="sb-item" href="../agent/15-ji-yi-quan-xian-yu-ping-ce.html"><span class="sb-item-num">15</span><span class="sb-item-title">记忆、权限与评测</span></a>
+      </div>
+    </section>
+    <section class="sb-group open" data-mod="langchain">
+      <a class="sb-group-title" href="../modules/langchain.html" data-toggle="langchain">
+        <span class="sb-num">03</span>
+        <span class="sb-group-text"><b>LangChain 指南</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langchain/01-ren-shi-langchain.html"><span class="sb-item-num">01</span><span class="sb-item-title">认识 LangChain</span></a>
+        <a class="sb-item current" href="../langchain/02-ti-shi-ci-mu-ban-yu-xiao-xi.html"><span class="sb-item-num">02</span><span class="sb-item-title">提示词模板与消息</span></a>
+        <a class="sb-item" href="../langchain/03-lcel-yu-runnable.html"><span class="sb-item-num">03</span><span class="sb-item-title">LCEL 与 Runnable</span></a>
+        <a class="sb-item" href="../langchain/04-liu-shi-yu-bing-fa.html"><span class="sb-item-num">04</span><span class="sb-item-title">流式与并发</span></a>
+        <a class="sb-item" href="../langchain/05-shu-chu-jie-xi-qi.html"><span class="sb-item-num">05</span><span class="sb-item-title">输出解析器</span></a>
+        <a class="sb-item" href="../langchain/06-wen-dang-jia-zai-yu-qie-ge.html"><span class="sb-item-num">06</span><span class="sb-item-title">文档加载与切割</span></a>
+        <a class="sb-item" href="../langchain/07-qian-ru-yu-xiang-liang-ku.html"><span class="sb-item-num">07</span><span class="sb-item-title">嵌入与向量库</span></a>
+        <a class="sb-item" href="../langchain/08-jian-suo-yu-rag.html"><span class="sb-item-num">08</span><span class="sb-item-title">检索与RAG</span></a>
+        <a class="sb-item" href="../langchain/09-dui-hua-ji-yi.html"><span class="sb-item-num">09</span><span class="sb-item-title">对话记忆</span></a>
+        <a class="sb-item" href="../langchain/10-gong-ju-diao-yong.html"><span class="sb-item-num">10</span><span class="sb-item-title">工具调用</span></a>
+        <a class="sb-item" href="../langchain/11-agent.html"><span class="sb-item-num">11</span><span class="sb-item-title">Agent</span></a>
+        <a class="sb-item" href="../langchain/12-hui-diao-yu-tiao-shi-quan-ke-cheng-shou-guan.html"><span class="sb-item-num">12</span><span class="sb-item-title">回调与调试（全课程收官章）</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="langgraph">
+      <a class="sb-group-title" href="../modules/langgraph.html" data-toggle="langgraph">
+        <span class="sb-num">04</span>
+        <span class="sb-group-text"><b>LangGraph 框架指南</b><i>17 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langgraph/01-di-1-zhang-cong-yi-ge-shi-kong-de-jiao.html"><span class="sb-item-num">01</span><span class="sb-item-title">第 1 章 从一个失控的脚本说起</span></a>
+        <a class="sb-item" href="../langgraph/02-di-2-zhang-zui-xiao-ke-yun-xing-tu.html"><span class="sb-item-num">02</span><span class="sb-item-title">第 2 章 最小可运行图</span></a>
+        <a class="sb-item" href="../langgraph/03-di-3-zhang-zhuang-tai-tu-de-shu-ju-xin.html"><span class="sb-item-num">03</span><span class="sb-item-title">第 3 章 状态：图的数据心脏</span></a>
+        <a class="sb-item" href="../langgraph/04-di-4-zhang-rang-liu-cheng-xue-hui-jue-ce.html"><span class="sb-item-num">04</span><span class="sb-item-title">第 4 章 让流程学会决策</span></a>
+        <a class="sb-item" href="../langgraph/05-di-5-zhang-bing-xing-shi-jie-chao-bu-zhi.html"><span class="sb-item-num">05</span><span class="sb-item-title">第 5 章 并行世界：超步执行模型</span></a>
+        <a class="sb-item" href="../langgraph/06-di-6-zhang-command-ba-kong-zhi-quan-jiao-jin.html"><span class="sb-item-num">06</span><span class="sb-item-title">第 6 章 Command：把控制权交进节点</span></a>
+        <a class="sb-item" href="../langgraph/07-di-7-zhang-dong-tai-bing-xing-send-yu-mapreduce.html"><span class="sb-item-num">07</span><span class="sb-item-title">第 7 章 动态并行：Send 与 MapReduce</span></a>
+        <a class="sb-item" href="../langgraph/08-di-8-zhang-gei-tu-zhuang-shang-shou-jiao-gong.html"><span class="sb-item-num">08</span><span class="sb-item-title">第 8 章 给图装上手脚：工具调用</span></a>
+        <a class="sb-item" href="../langgraph/09-di-9-zhang-fu-yong-yu-feng-zhuang-zi-tu.html"><span class="sb-item-num">09</span><span class="sb-item-title">第 9 章 复用与封装：子图</span></a>
+        <a class="sb-item" href="../langgraph/10-di-10-zhang-cong-dan-tu-dao-tuan-dui-duo.html"><span class="sb-item-num">10</span><span class="sb-item-title">第 10 章 从单图到团队：多 Agent 架构</span></a>
+        <a class="sb-item" href="../langgraph/11-di-11-zhang-liu-shi-shu-chu.html"><span class="sb-item-num">11</span><span class="sb-item-title">第 11 章 流式输出</span></a>
+        <a class="sb-item" href="../langgraph/12-di-12-zhang-chi-jiu-hua-checkpointer-yu-xian-cheng.html"><span class="sb-item-num">12</span><span class="sb-item-title">第 12 章 持久化：Checkpointer 与线程</span></a>
+        <a class="sb-item" href="../langgraph/13-di-13-zhang-shi-jian-lv-xing.html"><span class="sb-item-num">13</span><span class="sb-item-title">第 13 章 时间旅行</span></a>
+        <a class="sb-item" href="../langgraph/14-di-14-zhang-zhong-duan-yu-ren-zai-hui-lu.html"><span class="sb-item-num">14</span><span class="sb-item-title">第 14 章 中断与人在回路</span></a>
+        <a class="sb-item" href="../langgraph/15-di-15-zhang-ji-yi-guan-li.html"><span class="sb-item-num">15</span><span class="sb-item-title">第 15 章 记忆管理</span></a>
+        <a class="sb-item" href="../langgraph/16-di-16-zhang-rong-cuo-zhong-shi-chao-shi-yu.html"><span class="sb-item-num">16</span><span class="sb-item-title">第 16 章 容错：重试、超时与兜底</span></a>
+        <a class="sb-item" href="../langgraph/17-di-17-zhang-quan-jing-hui-gu.html"><span class="sb-item-num">17</span><span class="sb-item-title">第 17 章 全景回顾</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="backend">
+      <a class="sb-group-title" href="../modules/backend.html" data-toggle="backend">
+        <span class="sb-num">05</span>
+        <span class="sb-group-text"><b>Python 框架指南</b><i>14 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../backend/01-fastapi-ru-men-yu-asgi.html"><span class="sb-item-num">01</span><span class="sb-item-title">FastAPI 入门与 ASGI</span></a>
+        <a class="sb-item" href="../backend/02-lu-you-yu-qing-qiu-xiang-ying.html"><span class="sb-item-num">02</span><span class="sb-item-title">路由与请求响应</span></a>
+        <a class="sb-item" href="../backend/03-pydantic-shu-ju-jiao-yan-yu-pei-zhi.html"><span class="sb-item-num">03</span><span class="sb-item-title">Pydantic 数据校验与配置</span></a>
+        <a class="sb-item" href="../backend/04-sqlalchemy-yi-bu-yin-qing-yu-hui-hua.html"><span class="sb-item-num">04</span><span class="sb-item-title">SQLAlchemy 异步引擎与会话</span></a>
+        <a class="sb-item" href="../backend/05-orm-jian-mo.html"><span class="sb-item-num">05</span><span class="sb-item-title">ORM 建模</span></a>
+        <a class="sb-item" href="../backend/06-sql-biao-da-shi-yu-shu-ju-cao-zuo.html"><span class="sb-item-num">06</span><span class="sb-item-title">SQL 表达式与数据操作</span></a>
+        <a class="sb-item" href="../backend/07-alembic-shu-ju-qian-yi.html"><span class="sb-item-num">07</span><span class="sb-item-title">Alembic 数据迁移</span></a>
+        <a class="sb-item" href="../backend/08-yi-lai-zhu-ru.html"><span class="sb-item-num">08</span><span class="sb-item-title">依赖注入</span></a>
+        <a class="sb-item" href="../backend/09-tong-yi-yi-chang-chu-li.html"><span class="sb-item-num">09</span><span class="sb-item-title">统一异常处理</span></a>
+        <a class="sb-item" href="../backend/10-zhong-jian-jian.html"><span class="sb-item-num">10</span><span class="sb-item-title">中间件</span></a>
+        <a class="sb-item" href="../backend/11-ren-zheng-yu-jwt.html"><span class="sb-item-num">11</span><span class="sb-item-title">认证与 JWT</span></a>
+        <a class="sb-item" href="../backend/12-pytest-ce-shi.html"><span class="sb-item-num">12</span><span class="sb-item-title">pytest 测试</span></a>
+        <a class="sb-item" href="../backend/13-ri-zhi-loguru.html"><span class="sb-item-num">13</span><span class="sb-item-title">日志 loguru</span></a>
+        <a class="sb-item" href="../backend/14-liu-shi-xiang-ying-sse-yu-websocket.html"><span class="sb-item-num">14</span><span class="sb-item-title">流式响应 SSE 与 WebSocket</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="interview">
+      <a class="sb-group-title" href="../modules/interview.html" data-toggle="interview">
+        <span class="sb-num">06</span>
+        <span class="sb-group-text"><b>面试题库</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../interview/01-llm-yuan-li-pian.html"><span class="sb-item-num">01</span><span class="sb-item-title">LLM 原理篇</span></a>
+        <a class="sb-item" href="../interview/02-rag-yu-jian-suo-pian.html"><span class="sb-item-num">02</span><span class="sb-item-title">RAG 与检索篇</span></a>
+        <a class="sb-item" href="../interview/03-agent-he-xin-pian.html"><span class="sb-item-num">03</span><span class="sb-item-title">Agent 核心篇</span></a>
+        <a class="sb-item" href="../interview/04-langgraph-pian.html"><span class="sb-item-num">04</span><span class="sb-item-title">LangGraph 篇</span></a>
+        <a class="sb-item" href="../interview/05-langchain-pian.html"><span class="sb-item-num">05</span><span class="sb-item-title">LangChain 篇</span></a>
+        <a class="sb-item" href="../interview/06-xi-tong-she-ji-pian.html"><span class="sb-item-num">06</span><span class="sb-item-title">系统设计篇</span></a>
+        <a class="sb-item" href="../interview/07-xiang-mu-shen-wa-pian.html"><span class="sb-item-num">07</span><span class="sb-item-title">项目深挖篇</span></a>
+        <a class="sb-item" href="../interview/08-gu-zhang-pai-cha-pian.html"><span class="sb-item-num">08</span><span class="sb-item-title">故障排查篇</span></a>
+        <a class="sb-item" href="../interview/09-python-ji-chu-pian.html"><span class="sb-item-num">09</span><span class="sb-item-title">Python 基础篇</span></a>
+        <a class="sb-item" href="../interview/10-fastapi-yu-hou-duan-pian.html"><span class="sb-item-num">10</span><span class="sb-item-title">FastAPI 与后端篇</span></a>
+        <a class="sb-item" href="../interview/11-ti-shi-ci-gong-cheng-yu-an-quan-pian.html"><span class="sb-item-num">11</span><span class="sb-item-title">提示词工程与安全篇</span></a>
+        <a class="sb-item" href="../interview/12-mo-xing-xuan-xing-yu-jiang-ben-pian.html"><span class="sb-item-num">12</span><span class="sb-item-title">模型选型与降本篇</span></a>
+      </div>
+    </section>
+  </nav>
+</aside>
+  <main class="main">
+    <header class="topbar">
+      <button class="menu-btn" id="menuBtn" aria-label="目录">☰</button>
+      <div class="crumbs"><a href="../index.html">首页</a><span>/</span><a href="../modules/langchain.html">LangChain 指南</a><span>/</span><span class="cur">提示词模板与消息</span></div>
+      <div class="topbar-actions">
+        <button class="icon-btn" id="themeBtn" title="切换深浅色" aria-label="切换深浅色">◐</button>
+      </div>
+    </header>
+    <div class="content">
+      <article class="article">
+
+<header class="page-head">
+  <div class="page-kicker">LangChain 指南 · 第 02 章</div>
+  <h1 class="page-title">提示词模板与消息</h1>
+  <p class="page-desc">跟大模型打交道，第一件事是把话说清楚。这一章讲 LangChain 的「话术工厂」：模板负责把要说的变成填空题，消息（Message） 负责把填好的话按角色打包发给模型。学完你能独立搭出带历史记录的多轮对话提示词，还能看…</p>
+  <div class="page-meta">
+    <span>约 34 分钟</span><span>13,433 字</span><span>23 个代码示例</span>
+  </div>
+</header>
+<div class="md"><blockquote>
+<p>跟大模型打交道，第一件事是把话说清楚。这一章讲 LangChain 的「话术工厂」：<strong>模板</strong>负责把要说的变成填空题，<strong>消息（Message）</strong> 负责把填好的话按角色打包发给模型。学完你能独立搭出带历史记录的多轮对话提示词，还能看懂模型吐回来的每一个字段。</p>
+<p>示例场景统一为<strong>拾光书屋阅读社区</strong>——一家开在老街角的线下书店 + 线上社区，会员爱聊天、爱写书评、爱让店员荐书。</p>
+<p>环境：Python 3.10+，<code>pip install langchain langchain-ollama</code>，本地 Ollama 跑 <code>qwen3:4b</code>。</p>
+</blockquote>
+<h2 id="本章你会用到的东西">本章你会用到的东西</h2>
+<ul>
+<li><code>ChatPromptTemplate.from_messages / from_template</code>：两扇进模板世界的门</li>
+<li>变量插值 <code>{name}</code> 与 <code>invoke</code> 渲染</li>
+<li><code>.partial()</code> 部分填充：值可以后到，甚至可以是个函数</li>
+<li>角色元组 <code>("system" / "human" / "ai", "...")</code></li>
+<li><code>SystemMessage / HumanMessage / AIMessage / ToolMessage</code> 四种消息对象</li>
+<li><code>AIMessage</code> 的 <code>content / additional_kwargs / tool_calls / content_blocks / text</code></li>
+<li><code>FewShotChatMessagePromptTemplate</code> 少样本提示词</li>
+<li><code>MessagesPlaceholder</code> 消息占位</li>
+</ul>
+<hr />
+<h2 id="21-提示词模板把写死的话变成填空题">2.1 提示词模板：把写死的话变成填空题</h2>
+<p><strong>作用</strong>：直接把提示词写成一坨字符串，等于把每位会员的姓名都印刷在菜单上——来一位新会员就得重印一份。模板干的事正好相反：<strong>固定的话印好，变化的话挖空</strong>，用的时候再填。顺手还能统一管理店里的「话术」，改一处、处处生效。</p>
+<p><strong>签名</strong>（两扇门 + 一个渲染动作）：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 门一：按「多条消息」建模板（本章主角，接受元组/对象/占位符的混合列表）</span>
+<span class="n">ChatPromptTemplate</span><span class="o">.</span><span class="n">from_messages</span><span class="p">(</span>
+    <span class="n">messages</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">MessageLikeRepresentation</span><span class="p">],</span>
+    <span class="n">template_format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"f-string"</span><span class="p">,</span>   <span class="c1"># 也支持 "mustache" 等</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ChatPromptTemplate</span>
+
+<span class="c1"># 门二：按「单条消息」建模板（人类那一方，省事写法）</span>
+<span class="n">ChatPromptTemplate</span><span class="o">.</span><span class="n">from_template</span><span class="p">(</span><span class="n">template</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ChatPromptTemplate</span>
+
+<span class="c1"># 渲染：填空 → 得到一个 ChatPromptValue</span>
+<span class="n">tpl</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span><span class="n">values</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">ChatPromptValue</span>
+</code></pre></div>
+<p><code>ChatPromptValue</code> 是「渲染成品」，两个取法：</p>
+<ul>
+<li><code>.messages</code>：<code>list[BaseMessage]</code>——<strong>真正发给模型的东西</strong>（2.3 节展开）</li>
+<li><code>.to_string()</code>：把所有消息拼成一段带 <code>System:</code> / <code>Human:</code> 前缀的文本——<strong>给自己调试看的</strong>，别发给模型</li>
+</ul>
+<p><strong>最小示例</strong>——会员来找店员荐书：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.prompts</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChatPromptTemplate</span>
+
+<span class="n">tpl</span> <span class="o">=</span> <span class="n">ChatPromptTemplate</span><span class="o">.</span><span class="n">from_messages</span><span class="p">([</span>
+    <span class="p">(</span><span class="s2">"human"</span><span class="p">,</span> <span class="s2">"我是</span><span class="si">{member}</span><span class="s2">，请用</span><span class="si">{mood}</span><span class="s2">的口吻给我推荐一本书"</span><span class="p">),</span>
+<span class="p">])</span>
+
+<span class="c1"># 变量是自动识别的，不用像声明函数参数那样先登记</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">tpl</span><span class="o">.</span><span class="n">input_variables</span><span class="p">)</span>   <span class="c1"># ['member', 'mood']</span>
+
+<span class="n">pv</span> <span class="o">=</span> <span class="n">tpl</span><span class="o">.</span><span class="n">invoke</span><span class="p">({</span><span class="s2">"member"</span><span class="p">:</span> <span class="s2">"老周"</span><span class="p">,</span> <span class="s2">"mood"</span><span class="p">:</span> <span class="s2">"温暖"</span><span class="p">})</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">pv</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>     <span class="c1"># ChatPromptValue</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">pv</span><span class="o">.</span><span class="n">messages</span><span class="p">)</span>
+<span class="c1"># [HumanMessage(content='我是老周，请用温暖的口吻给我推荐一本书')]</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">pv</span><span class="o">.</span><span class="n">to_string</span><span class="p">())</span>
+<span class="c1"># Human: 我是老周，请用温暖的口吻给我推荐一本书</span>
+</code></pre></div>
+<p>单条消息嫌写列表啰嗦，可以走第二扇门：</p>
+<div class="highlight"><pre><span></span><code><span class="n">tpl</span> <span class="o">=</span> <span class="n">ChatPromptTemplate</span><span class="o">.</span><span class="n">from_template</span><span class="p">(</span><span class="s2">"给我推荐一本</span><span class="si">{genre}</span><span class="s2">书"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">tpl</span><span class="o">.</span><span class="n">invoke</span><span class="p">({</span><span class="s2">"genre"</span><span class="p">:</span> <span class="s2">"科幻"</span><span class="p">})</span><span class="o">.</span><span class="n">to_string</span><span class="p">())</span>
+<span class="c1"># Human: 给我推荐一本科幻书</span>
+</code></pre></div>
+<p>想在成品里保留一对真花括号（比如让模型输出 JSON 示例），写两层花括号转义：</p>
+<div class="highlight"><pre><span></span><code><span class="n">tpl</span> <span class="o">=</span> <span class="n">ChatPromptTemplate</span><span class="o">.</span><span class="n">from_messages</span><span class="p">([</span>
+    <span class="p">(</span><span class="s2">"human"</span><span class="p">,</span> <span class="s2">"{{answer}} 字段示例：请按 {{</span><span class="se">\"</span><span class="s2">score</span><span class="se">\"</span><span class="s2">: 5}} 的格式回答</span><span class="si">{question}</span><span class="s2">"</span><span class="p">),</span>
+<span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">tpl</span><span class="o">.</span><span class="n">invoke</span><span class="p">({</span><span class="s2">"question"</span><span class="p">:</span> <span class="s2">"这条书评该打几分"</span><span class="p">})</span><span class="o">.</span><span class="n">to_string</span><span class="p">())</span>
+<span class="c1"># Human: {answer} 字段示例：请按 {"score": 5} 的格式回答这条书评该打几分</span>
+</code></pre></div>
+<p><strong>常见坑</strong>：</p>
+<ol>
+<li><strong>漏传变量直接炸</strong>：<code>tpl.invoke({"member": "老周"})</code> 抛 <code>KeyError</code>，但报错写得相当贴心——<code>Expected: ['member', 'mood'] Received: ['member']</code>，缺谁补谁就行。</li>
+<li><strong>单花括号 = 变量</strong>：模板里出现任何 <code>{xxx}</code> 都会被当变量解析；不是变量的必须写成 <code>{{xxx}}</code>。让模型输出 JSON 的提示词是重灾区。</li>
+<li><strong>不想跟花括号搏斗</strong>：改用 mustache 风格——<code>ChatPromptTemplate.from_messages([...], template_format="mustache")</code>，变量写成 <code>{{name}}</code>，字面花括号反而不用转义（名字相同纯属历史巧合，别背混）。</li>
+<li><strong>老 JS 写法翻译</strong>：JS 版要 <code>inputVariables: ["user"]</code> 手动登记变量，Python 1.x 全自动扫描，数组登记这步可以直接扔掉。</li>
+</ol>
+<hr />
+<h2 id="22-partial变量分批到货先到的先腌着">2.2 partial：变量分批到货，先到的先腌着</h2>
+<p><strong>作用</strong>：现实中变量很少齐齐整整一起到。会员名要等用户输入，但「店名」「今天的日期」在程序启动时就知道了。<code>partial</code> 允许<strong>先填一部分，剩下的留给以后</strong>——像腌肉：酱油先抹上，肉到了再下锅。</p>
+<p><strong>签名</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="n">tpl</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">ChatPromptTemplate</span>
+<span class="c1"># 返回一个新模板（原模板不动）；</span>
+<span class="c1"># 值可以是字符串，也可以是「零参数的可调用对象」——渲染时才现取</span>
+</code></pre></div>
+<p><strong>最小示例</strong>——固定值先腌上：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.prompts</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChatPromptTemplate</span>
+
+<span class="n">tpl</span> <span class="o">=</span> <span class="n">ChatPromptTemplate</span><span class="o">.</span><span class="n">from_messages</span><span class="p">([</span>
+    <span class="p">(</span><span class="s2">"system"</span><span class="p">,</span> <span class="s2">"你是</span><span class="si">{shop}</span><span class="s2">的资深店员，用</span><span class="si">{lang}</span><span class="s2">回答"</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"human"</span><span class="p">,</span> <span class="s2">"</span><span class="si">{question}</span><span class="s2">"</span><span class="p">),</span>
+<span class="p">])</span>
+
+<span class="n">half</span> <span class="o">=</span> <span class="n">tpl</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">shop</span><span class="o">=</span><span class="s2">"拾光书屋"</span><span class="p">,</span> <span class="n">lang</span><span class="o">=</span><span class="s2">"中文"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">half</span><span class="o">.</span><span class="n">input_variables</span><span class="p">)</span>   <span class="c1"># ['question'] —— 腌进去的两个不再算欠的</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">half</span><span class="o">.</span><span class="n">invoke</span><span class="p">({</span><span class="s2">"question"</span><span class="p">:</span> <span class="s2">"有什么新书"</span><span class="p">})</span><span class="o">.</span><span class="n">to_string</span><span class="p">())</span>
+<span class="c1"># System: 你是拾光书屋的资深店员，用中文回答</span>
+<span class="c1"># Human: 有什么新书</span>
+</code></pre></div>
+<p>再腌一个「每次渲染时现做」的动态值——日期函数：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">date</span>
+
+<span class="n">tpl</span> <span class="o">=</span> <span class="n">ChatPromptTemplate</span><span class="o">.</span><span class="n">from_messages</span><span class="p">([</span>
+    <span class="p">(</span><span class="s2">"system"</span><span class="p">,</span> <span class="s2">"今天是</span><span class="si">{date}</span><span class="s2">，你是拾光书屋的当值店员"</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"human"</span><span class="p">,</span> <span class="s2">"</span><span class="si">{question}</span><span class="s2">"</span><span class="p">),</span>
+<span class="p">])</span>
+
+<span class="n">half</span> <span class="o">=</span> <span class="n">tpl</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">date</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">date</span><span class="o">.</span><span class="n">today</span><span class="p">()</span><span class="o">.</span><span class="n">isoformat</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">half</span><span class="o">.</span><span class="n">invoke</span><span class="p">({</span><span class="s2">"question"</span><span class="p">:</span> <span class="s2">"今天有读书会吗"</span><span class="p">})</span><span class="o">.</span><span class="n">to_string</span><span class="p">())</span>
+<span class="c1"># System: 今天是2026-08-28，你是拾光书屋的当值店员</span>
+<span class="c1"># Human: 今天有读书会吗</span>
+</code></pre></div>
+<p>函数版的妙处：<code>invoke</code> 跑一次就取一次值，凌晨十二点跑的定时任务拿到的日期是对的。</p>
+<p><strong>常见坑</strong>：</p>
+<ol>
+<li><strong>函数必须是零参数的</strong>：<code>lambda: ...</code> 可以，<code>lambda x: ...</code> 不行。要带参数就先算好结果，再把结果作为值传进来。</li>
+<li><strong>partial 不改原模板</strong>：它返回新对象，<code>tpl.partial(...)</code> 之后接着用 <code>tpl</code> 调用，欠的变量一个没少。</li>
+<li><strong>别传模板对象进去搞嵌套</strong>：<code>partial(notice=另一个模板)</code> 不会自动递归渲染，填进去的是它的「名片」（repr）。想组合两个模板：先 <code>invoke</code> 内层拿到文本，再把文本传给外层（或者等下一章用 LCEL 的管道符，那才是正路）。</li>
+<li><strong>JS 版的 <code>PipelinePromptTemplate</code> 在 Python 1.x 里已删除</strong>：模板流水线的活儿交给 LCEL（第 03 章），本章记住「先 render 再填」就够用。</li>
+</ol>
+<hr />
+<h2 id="23-结构化提示词给每句话安排角色">2.3 结构化提示词：给每句话安排角色</h2>
+<p><strong>作用</strong>：聊天模型读的不是一整段文字，而是<strong>一叠标了发言人的卡片</strong>。同一句「你是拾光书屋的店员」，印在后台守则上和由顾客随口喊出来，模型眼里的分量天差地别。给每句话安排好角色，是结构化提示词的全部意义。</p>
+<p>拿话剧后台打个比方：</p>
+<ul>
+<li><code>system</code> 是贴在后台的<strong>演出守则</strong>——观众看不见，但演员必须照办，权重最高；</li>
+<li><code>human</code> 是观众递上台的<strong>提问纸条</strong>——真实需求都在这；</li>
+<li><code>ai</code> 是演员（模型）<strong>之前说过的话</strong>——把它放回上下文，演员才知道自己演到哪了。</li>
+</ul>
+<p><strong>签名</strong>：还是 <code>from_messages</code>，列表里塞「角色元组」：</p>
+<div class="highlight"><pre><span></span><code><span class="n">ChatPromptTemplate</span><span class="o">.</span><span class="n">from_messages</span><span class="p">([</span>
+    <span class="p">(</span><span class="s2">"system"</span><span class="p">,</span> <span class="s2">"模板字符串，可含 </span><span class="si">{变量}</span><span class="s2">"</span><span class="p">),</span>   <span class="c1"># 或 "user"，同一意思</span>
+    <span class="p">(</span><span class="s2">"ai"</span><span class="p">,</span> <span class="s2">"模板字符串"</span><span class="p">),</span>                    <span class="c1"># 或 "assistant"</span>
+    <span class="p">(</span><span class="s2">"human"</span><span class="p">,</span> <span class="s2">"模板字符串"</span><span class="p">),</span>
+<span class="p">])</span>
+</code></pre></div>
+<p><strong>最小示例</strong>——元组写法（最常用）：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.prompts</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChatPromptTemplate</span>
+
+<span class="n">tpl</span> <span class="o">=</span> <span class="n">ChatPromptTemplate</span><span class="o">.</span><span class="n">from_messages</span><span class="p">([</span>
+    <span class="p">(</span><span class="s2">"system"</span><span class="p">,</span> <span class="s2">"你是拾光书屋的资深店员，用</span><span class="si">{tone}</span><span class="s2">的口吻说话，荐书不超过三本"</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"human"</span><span class="p">,</span> <span class="s2">"</span><span class="si">{question}</span><span class="s2">"</span><span class="p">),</span>
+<span class="p">])</span>
+
+<span class="n">pv</span> <span class="o">=</span> <span class="n">tpl</span><span class="o">.</span><span class="n">invoke</span><span class="p">({</span><span class="s2">"tone"</span><span class="p">:</span> <span class="s2">"温和"</span><span class="p">,</span> <span class="s2">"question"</span><span class="p">:</span> <span class="s2">"想找一本睡前能读的散文"</span><span class="p">})</span>
+<span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">pv</span><span class="o">.</span><span class="n">messages</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">m</span><span class="o">.</span><span class="n">type</span><span class="si">:</span><span class="s2">8</span><span class="si">}</span><span class="s2"> | </span><span class="si">{</span><span class="n">m</span><span class="o">.</span><span class="n">content</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="c1"># system  | 你是拾光书屋的资深店员，用温和的口吻说话，荐书不超过三本</span>
+<span class="c1"># human   | 想找一本睡前能读的散文</span>
+</code></pre></div>
+<p><strong>对象写法</strong>——一句话里没有变量时，直接放现成的消息对象更顺手：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.messages</span><span class="w"> </span><span class="kn">import</span> <span class="n">AIMessage</span><span class="p">,</span> <span class="n">HumanMessage</span><span class="p">,</span> <span class="n">SystemMessage</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.prompts</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChatPromptTemplate</span>
+
+<span class="n">tpl</span> <span class="o">=</span> <span class="n">ChatPromptTemplate</span><span class="o">.</span><span class="n">from_messages</span><span class="p">([</span>
+    <span class="n">SystemMessage</span><span class="p">(</span><span class="n">content</span><span class="o">=</span><span class="s2">"你是拾光书屋的资深店员"</span><span class="p">),</span>
+    <span class="n">AIMessage</span><span class="p">(</span><span class="n">content</span><span class="o">=</span><span class="s2">"欢迎光临！今天想看点什么？"</span><span class="p">),</span>
+    <span class="n">HumanMessage</span><span class="p">(</span><span class="n">content</span><span class="o">=</span><span class="s2">"有没有看一晚上能哭出来的书"</span><span class="p">),</span>
+<span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">tpl</span><span class="o">.</span><span class="n">invoke</span><span class="p">({})</span><span class="o">.</span><span class="n">messages</span><span class="p">)</span>   <span class="c1"># 没有变量，传空字典</span>
+</code></pre></div>
+<p><strong>混着写</strong>完全合法——固定台词用对象、要填空的用元组：</p>
+<div class="highlight"><pre><span></span><code><span class="n">tpl</span> <span class="o">=</span> <span class="n">ChatPromptTemplate</span><span class="o">.</span><span class="n">from_messages</span><span class="p">([</span>
+    <span class="p">(</span><span class="s2">"system"</span><span class="p">,</span> <span class="s2">"你是拾光书屋的资深店员，用</span><span class="si">{tone}</span><span class="s2">的口吻说话"</span><span class="p">),</span>
+    <span class="n">AIMessage</span><span class="p">(</span><span class="n">content</span><span class="o">=</span><span class="s2">"欢迎光临！"</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"human"</span><span class="p">,</span> <span class="s2">"</span><span class="si">{question}</span><span class="s2">"</span><span class="p">),</span>
+<span class="p">])</span>
+</code></pre></div>
+<p><strong>两种写法互转</strong>：元组渲染出来的本来就是消息对象（看上面的 <code>pv.messages</code>）。反过来，手头有一堆「元组 / OpenAI 风格 dict」想统一成消息对象，用 <code>convert_to_messages</code>：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.messages</span><span class="w"> </span><span class="kn">import</span> <span class="n">convert_to_messages</span>
+
+<span class="n">msgs</span> <span class="o">=</span> <span class="n">convert_to_messages</span><span class="p">([</span>
+    <span class="p">(</span><span class="s2">"system"</span><span class="p">,</span> <span class="s2">"你是拾光书屋的店员"</span><span class="p">),</span>
+    <span class="p">{</span><span class="s2">"role"</span><span class="p">:</span> <span class="s2">"user"</span><span class="p">,</span> <span class="s2">"content"</span><span class="p">:</span> <span class="s2">"你好"</span><span class="p">},</span>      <span class="c1"># OpenAI 风格的 dict 也认识</span>
+    <span class="p">(</span><span class="s2">"ai"</span><span class="p">,</span> <span class="s2">"欢迎光临"</span><span class="p">),</span>
+<span class="p">])</span>
+<span class="nb">print</span><span class="p">([</span><span class="n">m</span><span class="o">.</span><span class="n">type</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">msgs</span><span class="p">])</span>   <span class="c1"># ['system', 'human', 'ai']</span>
+</code></pre></div>
+<p><strong>常见坑</strong>：</p>
+<ol>
+<li><strong>角色名的两套叫法</strong>：LangChain 本地叫 <code>human</code> / <code>ai</code>（元组里推荐用这个）；OpenAI 风格的 <code>user</code> / <code>assistant</code> 也能识别，是别名。但 <code>tool</code> 角色不能用元组表达——<code>ToolMessage</code> 必须带 <code>tool_call_id</code>（工具调用的回执单号），所以只能用对象形式。</li>
+<li><strong>想自定义角色</strong>：用 <code>ChatMessage(content="……", role="narrator")</code>，它是一种「万能消息」，<code>type</code> 为 <code>chat</code>。但注意多数模型只认四种标准角色，自定义角色主要是本地排版/剧情脚本用。</li>
+<li><strong>system 放最前</strong>：多数模型对 system 的位置敏感——放中间可能被当成普通对话忽略掉。</li>
+<li><strong><code>("human", "{q}")</code> 和 <code>HumanMessage(content="{q}")</code> 不一样</strong>：前者是模板（渲染时填 <code>{q}</code>），后者是字面量（<code>{q}</code> 会被原样发出）。元组走模板解析，对象不走。</li>
+</ol>
+<hr />
+<h2 id="24-少样本提示词先看示范再照着做">2.4 少样本提示词：先看示范，再照着做</h2>
+<p><strong>作用</strong>：与其给新来的兼职店员写一万字《荐书服务规范》，不如直接给他看三张「会员问—店员答」的示范卡。模型的模仿能力一流，<strong>几个示范往往比一页规则更省 token、更不容易跑偏</strong>。这就是少样本（few-shot）提示词。</p>
+<p><strong>签名</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="n">FewShotChatMessagePromptTemplate</span><span class="p">(</span>
+    <span class="n">examples</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>   <span class="c1"># 示范数据：一个 dict 就是一张示范卡</span>
+    <span class="n">example_prompt</span><span class="p">:</span> <span class="n">ChatPromptTemplate</span><span class="p">,</span>      <span class="c1"># 每张卡片渲染成哪几条消息</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FewShotChatMessagePromptTemplate</span>
+</code></pre></div>
+<p>它本身是个「消息段」，直接嵌进 <code>from_messages</code> 的列表里，跟普通模板排排坐。</p>
+<p><strong>最小示例</strong>——拾光书屋的书评打分助手：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.prompts</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">ChatPromptTemplate</span><span class="p">,</span>
+    <span class="n">FewShotChatMessagePromptTemplate</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># 一张示范卡 = 一问一答两条消息</span>
+<span class="n">card</span> <span class="o">=</span> <span class="n">ChatPromptTemplate</span><span class="o">.</span><span class="n">from_messages</span><span class="p">([</span>
+    <span class="p">(</span><span class="s2">"human"</span><span class="p">,</span> <span class="s2">"书评：</span><span class="si">{review}</span><span class="s2">"</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"ai"</span><span class="p">,</span> <span class="s2">"评分：</span><span class="si">{score}</span><span class="s2">"</span><span class="p">),</span>
+<span class="p">])</span>
+
+<span class="n">few</span> <span class="o">=</span> <span class="n">FewShotChatMessagePromptTemplate</span><span class="p">(</span>
+    <span class="n">examples</span><span class="o">=</span><span class="p">[</span>
+        <span class="p">{</span><span class="s2">"review"</span><span class="p">:</span> <span class="s2">"一晚上看完，舍不得睡。"</span><span class="p">,</span> <span class="s2">"score"</span><span class="p">:</span> <span class="s2">"5"</span><span class="p">},</span>
+        <span class="p">{</span><span class="s2">"review"</span><span class="p">:</span> <span class="s2">"开头精彩，结尾仓促。"</span><span class="p">,</span> <span class="s2">"score"</span><span class="p">:</span> <span class="s2">"3"</span><span class="p">},</span>
+        <span class="p">{</span><span class="s2">"review"</span><span class="p">:</span> <span class="s2">"书脊开胶了，内容还行。"</span><span class="p">,</span> <span class="s2">"score"</span><span class="p">:</span> <span class="s2">"3"</span><span class="p">},</span>
+    <span class="p">],</span>
+    <span class="n">example_prompt</span><span class="o">=</span><span class="n">card</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">final</span> <span class="o">=</span> <span class="n">ChatPromptTemplate</span><span class="o">.</span><span class="n">from_messages</span><span class="p">([</span>
+    <span class="p">(</span><span class="s2">"system"</span><span class="p">,</span> <span class="s2">"你是拾光书屋的评分助手，先看示范再打分。"</span><span class="p">),</span>
+    <span class="n">few</span><span class="p">,</span>
+    <span class="p">(</span><span class="s2">"human"</span><span class="p">,</span> <span class="s2">"书评：</span><span class="si">{review}</span><span class="s2">"</span><span class="p">),</span>
+<span class="p">])</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">final</span><span class="o">.</span><span class="n">invoke</span><span class="p">({</span><span class="s2">"review"</span><span class="p">:</span> <span class="s2">"通勤路上读完了大半"</span><span class="p">})</span><span class="o">.</span><span class="n">to_string</span><span class="p">())</span>
+<span class="c1"># System: 你是拾光书屋的评分助手，先看示范再打分。</span>
+<span class="c1"># Human: 书评：一晚上看完，舍不得睡。</span>
+<span class="c1"># AI: 评分：5</span>
+<span class="c1"># Human: 书评：开头精彩，结尾仓促。</span>
+<span class="c1"># AI: 评分：3</span>
+<span class="c1"># Human: 书评：书脊开胶了，内容还行。</span>
+<span class="c1"># AI: 评分：3</span>
+<span class="c1"># Human: 书评：通勤路上读完了大半</span>
+</code></pre></div>
+<p><strong>常见坑</strong>：</p>
+<ol>
+<li><strong>两套变量别撞车</strong>：<code>examples</code> 里的 dict 喂给 <code>example_prompt</code>，真问题喂给外层模板。上例中示范用 <code>{review}</code>、外层也用 <code>{review}</code>——撞名没问题，因为渲染时机不同；但如果你给示范卡的变量起名 <code>{question}</code>、外层也叫 <code>{question}</code> 又想填不同的值，就会打架。稳妥做法：示范卡变量加前缀，如 <code>{example_review}</code>。</li>
+<li><strong>示例里的花括号同样要转义</strong>：示范卡的模板也走 f-string 规则，<code>{{</code> 才能输出 <code>{</code>。</li>
+<li><strong>数量 2~5 张足够</strong>：示范不是越多越好，token 是真金白银，而且太多示例反而稀释模型的注意力。</li>
+<li><strong>examples 是数据不是函数</strong>：它就是普通的 dict 列表，1.x 里<strong>不接受</strong>传函数进去（0.x 时代的 Callable 写法已被收紧）。想运行时动态换示例集，用新数据重建一个 <code>FewShotChatMessagePromptTemplate</code> 即可——对象本身很轻，重建没有负担。</li>
+</ol>
+<hr />
+<h2 id="25-message-消息对象拆开包裹看看">2.5 Message 消息对象：拆开包裹看看</h2>
+<p><strong>作用</strong>：Message 是 LangChain 跟模型交互的<strong>基本单位</strong>——「谁说了什么」加上一包随箱附赠的元信息。前面所有模板的渲染终点，都是一叠 Message；模型的每一次回答，也是一条 Message。把它拆开看明白，后面章节的工具调用、对话记忆才有的聊。</p>
+<p>拿快递包裹打比方：<code>content</code> 是箱子里主要的货，<code>additional_kwargs</code> 是商家塞的随箱赠品，<code>response_metadata</code> 是贴在箱上的物流单，<code>id</code> 是运单号，<code>tool_calls</code> 是「顺便帮我下一单」的请求。</p>
+<p><strong>四种标准角色</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>类</th>
+<th><code>type</code> 值</th>
+<th>谁在说话</th>
+<th>干什么用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SystemMessage</code></td>
+<td><code>system</code></td>
+<td>店长</td>
+<td>定规矩、设定人设，用户看不见</td>
+</tr>
+<tr>
+<td><code>HumanMessage</code></td>
+<td><code>human</code></td>
+<td>会员</td>
+<td>提问、下指令</td>
+</tr>
+<tr>
+<td><code>AIMessage</code></td>
+<td><code>ai</code></td>
+<td>店员（模型）</td>
+<td>回复内容 + 工具调用请求</td>
+</tr>
+<tr>
+<td><code>ToolMessage</code></td>
+<td><code>tool</code></td>
+<td>收银台</td>
+<td>回传工具执行结果，须带 <code>tool_call_id</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>字段签名</strong>（以最复杂的 <code>AIMessage</code> 为例）：</p>
+<div class="highlight"><pre><span></span><code><span class="n">AIMessage</span><span class="p">(</span>
+    <span class="n">content</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">ContentBlock</span><span class="p">]</span> <span class="o">=</span> <span class="s2">""</span><span class="p">,</span>   <span class="c1"># 正文：纯文本或内容块列表（多模态）</span>
+    <span class="n">additional_kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{},</span>       <span class="c1"># 各家 API 的扩展抽屉</span>
+    <span class="n">response_metadata</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{},</span>       <span class="c1"># 模型返回时自动附的元信息</span>
+    <span class="n">tool_calls</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">ToolCall</span><span class="p">]</span> <span class="o">=</span> <span class="p">[],</span>               <span class="c1"># 模型请求的工具调用</span>
+    <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>                        <span class="c1"># 消息运单号</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>                      <span class="c1"># 发言人名字（多角色时有用）</span>
+<span class="p">)</span>
+</code></pre></div>
+<p><strong>最小示例</strong>——挨个字段看：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.messages</span><span class="w"> </span><span class="kn">import</span> <span class="n">AIMessage</span><span class="p">,</span> <span class="n">HumanMessage</span><span class="p">,</span> <span class="n">ToolMessage</span>
+
+<span class="n">hm</span> <span class="o">=</span> <span class="n">HumanMessage</span><span class="p">(</span><span class="n">content</span><span class="o">=</span><span class="p">[</span>
+    <span class="p">{</span><span class="s2">"type"</span><span class="p">:</span> <span class="s2">"text"</span><span class="p">,</span> <span class="s2">"text"</span><span class="p">:</span> <span class="s2">"这张封面图里的书还有货吗"</span><span class="p">},</span>
+    <span class="c1"># {"type": "image", ...}  图片块同理，qwen3:4b 是文本模型就先不放了</span>
+<span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">hm</span><span class="o">.</span><span class="n">content_blocks</span><span class="p">)</span>   <span class="c1"># [{'type': 'text', 'text': '这张封面图里的书还有货吗'}]</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">hm</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>            <span class="c1"># 这张封面图里的书还有货吗 —— 从内容块里抽出纯文本</span>
+
+<span class="n">ai</span> <span class="o">=</span> <span class="n">AIMessage</span><span class="p">(</span>
+    <span class="n">content</span><span class="o">=</span><span class="s2">"还有最后一本，给你留到打烊。"</span><span class="p">,</span>
+    <span class="n">additional_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">"foo"</span><span class="p">:</span> <span class="s2">"bar"</span><span class="p">},</span>
+    <span class="n">response_metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">"model_name"</span><span class="p">:</span> <span class="s2">"qwen3:4b"</span><span class="p">},</span>
+    <span class="nb">id</span><span class="o">=</span><span class="s2">"ai-001"</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">ai</span><span class="o">.</span><span class="n">type</span><span class="p">)</span>                 <span class="c1"># ai</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">ai</span><span class="o">.</span><span class="n">additional_kwargs</span><span class="p">)</span>    <span class="c1"># {'foo': 'bar'}</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">ai</span><span class="o">.</span><span class="n">response_metadata</span><span class="p">)</span>    <span class="c1"># {'model_name': 'qwen3:4b'}</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">ai</span><span class="o">.</span><span class="n">tool_calls</span><span class="p">)</span>           <span class="c1"># [] 模型没请求工具时就是空列表</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">ai</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>                 <span class="c1"># 还有最后一本，给你留到打烊。</span>
+
+<span class="n">tm</span> <span class="o">=</span> <span class="n">ToolMessage</span><span class="p">(</span><span class="n">content</span><span class="o">=</span><span class="s2">"库存查询：剩 1 本"</span><span class="p">,</span> <span class="n">tool_call_id</span><span class="o">=</span><span class="s2">"call-001"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">tm</span><span class="o">.</span><span class="n">type</span><span class="p">)</span>                  <span class="c1"># tool</span>
+</code></pre></div>
+<p>工具调用场景下的 <code>AIMessage</code>（先睹为快，第 10 章细讲）：</p>
+<div class="highlight"><pre><span></span><code><span class="n">ai</span> <span class="o">=</span> <span class="n">AIMessage</span><span class="p">(</span><span class="n">content</span><span class="o">=</span><span class="s2">""</span><span class="p">,</span> <span class="n">tool_calls</span><span class="o">=</span><span class="p">[</span>
+    <span class="p">{</span><span class="s2">"name"</span><span class="p">:</span> <span class="s2">"search_book"</span><span class="p">,</span> <span class="s2">"args"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"genre"</span><span class="p">:</span> <span class="s2">"科幻"</span><span class="p">},</span> <span class="s2">"id"</span><span class="p">:</span> <span class="s2">"call-001"</span><span class="p">},</span>
+<span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">ai</span><span class="o">.</span><span class="n">tool_calls</span><span class="p">)</span>
+<span class="c1"># [{'name': 'search_book', 'args': {'genre': '科幻'}, 'id': 'call-001', 'type': 'tool_call'}]</span>
+</code></pre></div>
+<p><strong>消息的等价形式</strong>——同一条消息有三种长相，说的事一模一样：</p>
+<div class="highlight"><pre><span></span><code><span class="p">(</span><span class="s2">"human"</span><span class="p">,</span> <span class="s2">"你好"</span><span class="p">)</span>                        <span class="c1"># 元组：写模板时最顺手</span>
+<span class="n">HumanMessage</span><span class="p">(</span><span class="n">content</span><span class="o">=</span><span class="s2">"你好"</span><span class="p">)</span>             <span class="c1"># 对象：构造、传递、类型判断时用</span>
+<span class="p">{</span><span class="s2">"role"</span><span class="p">:</span> <span class="s2">"user"</span><span class="p">,</span> <span class="s2">"content"</span><span class="p">:</span> <span class="s2">"你好"</span><span class="p">}</span>       <span class="c1"># dict：跟 OpenAI 系 API 打交道时用</span>
+</code></pre></div>
+<p>三者用工具函数互转：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.messages</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">HumanMessage</span><span class="p">,</span> <span class="n">convert_to_messages</span><span class="p">,</span> <span class="n">messages_from_dict</span><span class="p">,</span> <span class="n">messages_to_dict</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">msgs</span> <span class="o">=</span> <span class="n">convert_to_messages</span><span class="p">([(</span><span class="s2">"human"</span><span class="p">,</span> <span class="s2">"你好"</span><span class="p">),</span> <span class="p">{</span><span class="s2">"role"</span><span class="p">:</span> <span class="s2">"assistant"</span><span class="p">,</span> <span class="s2">"content"</span><span class="p">:</span> <span class="s2">"欢迎光临"</span><span class="p">}])</span>
+<span class="c1"># [HumanMessage(content='你好'), AIMessage(content='欢迎光临')]</span>
+
+<span class="n">d</span> <span class="o">=</span> <span class="n">messages_to_dict</span><span class="p">(</span><span class="n">msgs</span><span class="p">)</span>          <span class="c1"># 转成可 JSON 序列化的 dict 列表（存库、走网络）</span>
+<span class="n">back</span> <span class="o">=</span> <span class="n">messages_from_dict</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>        <span class="c1"># 再转回对象（读库、收网络）</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">back</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>      <span class="c1"># HumanMessage</span>
+</code></pre></div>
+<p><strong>常见坑</strong>：</p>
+<ol>
+<li><strong>JS 版的 <code>getType()</code> 是方法，Python 1.x 的 <code>type</code> 是属性</strong>：写 <code>msg.type</code>，别加括号。</li>
+<li><strong>守卫函数没了</strong>：JS 版有 <code>isHumanMessage(msg)</code> 这类守卫，Python 1.x 的 <code>langchain_core.messages</code> 里<strong>没有</strong> <code>is_human_message</code> 一族——直接用 <code>isinstance(msg, HumanMessage)</code>，或者比对 <code>msg.type == "human"</code>。</li>
+<li><strong><code>content</code> 类型有两幅面孔</strong>：<code>str</code> 或内容块 <code>list</code>。拿去切片、拼接前先 <code>isinstance(m.content, str)</code> 摸一下底，别假设它永远是字符串。要纯文本，统一走 <code>.text</code>。</li>
+<li><strong><code>additional_kwargs</code> 不是你的储物柜</strong>：它是留给各家模型 API 的兼容抽屉（比如早期的 <code>function_call</code> 字段）。业务数据硬塞进去，可能被某个集成原样透传给模型，也可能被覆盖丢掉。想存自定义元信息，<code>response_metadata</code> 稍微安全些，但更稳妥的是放在消息外部的业务对象里。</li>
+<li><strong><code>ToolMessage</code> 缺 <code>tool_call_id</code> 直接构造失败</strong>：这个字段是跟 <code>AIMessage.tool_calls</code> 里的 <code>id</code> 对账用的，少了它模型不知道这条结果回的是哪次请求。</li>
+</ol>
+<hr />
+<h2 id="26-消息占位剧本里留一页回忆插页">2.6 消息占位：剧本里留一页「回忆插页」</h2>
+<p><strong>作用</strong>：多轮对话里，历史记录是<strong>动态的</strong>——写模板时根本不知道会聊几轮、聊了什么。总不能每来一轮就手写一份新模板吧。<code>MessagesPlaceholder</code> 就是在剧本里预留的一页活页：<strong>演出前把整段「历史对话」插进去</strong>，页数不限。</p>
+<p>两个问题一次说清：</p>
+<ol>
+<li><strong>怎么创建</strong>：<code>MessagesPlaceholder("history")</code>——<code>"history"</code> 是这个坑位的名字（变量名）；</li>
+<li><strong>放哪里</strong>：塞进 <code>from_messages</code> 的列表，想插哪儿插哪儿，通常在 <code>system</code> 之后、当前问题之前。</li>
+</ol>
+<p><strong>签名</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="n">MessagesPlaceholder</span><span class="p">(</span>
+    <span class="n">variable_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>          <span class="c1"># 坑位名，invoke 时按这个名字喂消息列表</span>
+    <span class="n">optional</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>     <span class="c1"># True 时允许不喂（新对话的第一轮就用得上）</span>
+<span class="p">)</span>
+<span class="c1"># 等价简写（塞元组时）：</span>
+<span class="p">(</span><span class="s2">"placeholder"</span><span class="p">,</span> <span class="s2">"</span><span class="si">{history}</span><span class="s2">"</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>最小示例</strong>——店员记得住会员聊过什么：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.messages</span><span class="w"> </span><span class="kn">import</span> <span class="n">AIMessage</span><span class="p">,</span> <span class="n">HumanMessage</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.prompts</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChatPromptTemplate</span><span class="p">,</span> <span class="n">MessagesPlaceholder</span>
+
+<span class="n">tpl</span> <span class="o">=</span> <span class="n">ChatPromptTemplate</span><span class="o">.</span><span class="n">from_messages</span><span class="p">([</span>
+    <span class="p">(</span><span class="s2">"system"</span><span class="p">,</span> <span class="s2">"你是拾光书屋的店员，记得住会员聊过的话题，回答要接得上前文"</span><span class="p">),</span>
+    <span class="n">MessagesPlaceholder</span><span class="p">(</span><span class="s2">"history"</span><span class="p">),</span>          <span class="c1"># 「回忆插页」插在这儿</span>
+    <span class="p">(</span><span class="s2">"human"</span><span class="p">,</span> <span class="s2">"</span><span class="si">{question}</span><span class="s2">"</span><span class="p">),</span>
+<span class="p">])</span>
+
+<span class="n">pv</span> <span class="o">=</span> <span class="n">tpl</span><span class="o">.</span><span class="n">invoke</span><span class="p">({</span>
+    <span class="s2">"history"</span><span class="p">:</span> <span class="p">[</span>
+        <span class="n">HumanMessage</span><span class="p">(</span><span class="n">content</span><span class="o">=</span><span class="s2">"上次你推荐我读《小王子》"</span><span class="p">),</span>
+        <span class="n">AIMessage</span><span class="p">(</span><span class="n">content</span><span class="o">=</span><span class="s2">"对呀！读完感觉怎么样？"</span><span class="p">),</span>
+    <span class="p">],</span>
+    <span class="s2">"question"</span><span class="p">:</span> <span class="s2">"类似风格的还有吗"</span><span class="p">,</span>
+<span class="p">})</span>
+<span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">pv</span><span class="o">.</span><span class="n">messages</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">m</span><span class="o">.</span><span class="n">type</span><span class="si">:</span><span class="s2">8</span><span class="si">}</span><span class="s2"> | </span><span class="si">{</span><span class="n">m</span><span class="o">.</span><span class="n">content</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="c1"># system  | 你是拾光书屋的店员，记得住会员聊过的话题，回答要接得上前文</span>
+<span class="c1"># human   | 上次你推荐我读《小王子》</span>
+<span class="c1"># ai      | 对呀！读完感觉怎么样？</span>
+<span class="c1"># human   | 类似风格的还有吗</span>
+</code></pre></div>
+<p>新对话的第一轮，<code>history</code> 还是空的——用 <code>optional=True</code>，不喂也不报错：</p>
+<div class="highlight"><pre><span></span><code><span class="n">tpl_first</span> <span class="o">=</span> <span class="n">ChatPromptTemplate</span><span class="o">.</span><span class="n">from_messages</span><span class="p">([</span>
+    <span class="p">(</span><span class="s2">"system"</span><span class="p">,</span> <span class="s2">"你是拾光书屋的店员"</span><span class="p">),</span>
+    <span class="n">MessagesPlaceholder</span><span class="p">(</span><span class="s2">"history"</span><span class="p">,</span> <span class="n">optional</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>   <span class="c1"># 允许缺席</span>
+    <span class="p">(</span><span class="s2">"human"</span><span class="p">,</span> <span class="s2">"</span><span class="si">{question}</span><span class="s2">"</span><span class="p">),</span>
+<span class="p">])</span>
+<span class="nb">print</span><span class="p">([</span><span class="n">m</span><span class="o">.</span><span class="n">type</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">tpl_first</span><span class="o">.</span><span class="n">invoke</span><span class="p">({</span><span class="s2">"question"</span><span class="p">:</span> <span class="s2">"你好"</span><span class="p">})</span><span class="o">.</span><span class="n">messages</span><span class="p">])</span>
+<span class="c1"># ['system', 'human'] —— history 悄悄略过，不炸</span>
+</code></pre></div>
+<p>列表里写简写版也行，跟 <code>MessagesPlaceholder</code> 完全等价：</p>
+<div class="highlight"><pre><span></span><code><span class="n">tpl2</span> <span class="o">=</span> <span class="n">ChatPromptTemplate</span><span class="o">.</span><span class="n">from_messages</span><span class="p">([</span>
+    <span class="p">(</span><span class="s2">"system"</span><span class="p">,</span> <span class="s2">"你是拾光书屋的店员"</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"placeholder"</span><span class="p">,</span> <span class="s2">"</span><span class="si">{history}</span><span class="s2">"</span><span class="p">),</span>     <span class="c1"># 与 MessagesPlaceholder("history") 等价</span>
+    <span class="p">(</span><span class="s2">"human"</span><span class="p">,</span> <span class="s2">"</span><span class="si">{question}</span><span class="s2">"</span><span class="p">),</span>
+<span class="p">])</span>
+</code></pre></div>
+<p><strong>常见坑</strong>：</p>
+<ol>
+<li><strong><code>history</code> 必须喂「消息列表」</strong>：<code>list</code> 里装消息对象（或元组、dict 等消息形态）。直接喂字符串 <code>"你好"</code> 会在渲染时报错——活页夹里插的是一页页卡片，不是一段裸文字。</li>
+<li><strong>忘喂照样 <code>KeyError</code></strong>：占位变量跟普通变量一样查账，<code>optional=True</code> 是唯一的免死金牌。</li>
+<li><strong>位置即语义</strong>：插在 <code>system</code> 前面，历史会盖过人设；插在当前问题后面，模型会把历史当新问题聊。<strong>惯例：system → history → human</strong>。</li>
+<li><strong>占位符 ≠ 变量</strong>：<code>MessagesPlaceholder("history")</code> 的坑里放的是<strong>消息列表</strong>；<code>("human", "{history}")</code> 的坑里放的是<strong>字符串</strong>（会被塞进 human 消息的正文里）。前者长出好几条消息，后者只是一条消息里的文字。</li>
+</ol>
+<hr />
+<h2 id="27-小结">2.7 小结</h2>
+<p>一张表带走本章：</p>
+<table>
+<thead>
+<tr>
+<th>你想做什么</th>
+<th>用什么</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>把提示词变成可复用的填空题</td>
+<td><code>ChatPromptTemplate.from_messages([...])</code> / <code>from_template("...")</code></td>
+</tr>
+<tr>
+<td>填空渲染</td>
+<td><code>tpl.invoke({...})</code> → <code>.messages</code> 发模型，<code>.to_string()</code> 调试</td>
+</tr>
+<tr>
+<td>输出字面花括号</td>
+<td><code>{{</code> 转义，或 <code>template_format="mustache"</code></td>
+</tr>
+<tr>
+<td>变量分批填 / 动态取值</td>
+<td><code>tpl.partial(shop=..., date=lambda: ...)</code></td>
+</tr>
+<tr>
+<td>给每句话安排角色</td>
+<td>元组 <code>("system"/"human"/"ai", "...")</code> 或消息对象</td>
+</tr>
+<tr>
+<td>给模型看几个示范</td>
+<td><code>FewShotChatMessagePromptTemplate(examples=..., example_prompt=...)</code></td>
+</tr>
+<tr>
+<td>看懂模型返回的消息</td>
+<td><code>AIMessage</code> 的 <code>content / text / tool_calls / response_metadata</code></td>
+</tr>
+<tr>
+<td>消息三种长相互转</td>
+<td><code>convert_to_messages / messages_to_dict / messages_from_dict</code></td>
+</tr>
+<tr>
+<td>往模板里插历史对话</td>
+<td><code>MessagesPlaceholder("history", optional=True)</code></td>
+</tr>
+</tbody>
+</table>
+<p>配套代码：</p>
+<ul>
+<li><code>demo/demo_prompt.py</code>：单文件演示「模板 + 变量 + 多角色 + MessagesPlaceholder」四连；探测到本地 Ollama 就真调 <code>qwen3:4b</code>，探测不到就只打印渲染好的 messages</li>
+</ul>
+<h3 id="作业">作业</h3>
+<ol>
+<li>同一句「你是拾光书屋的店员」，放在 <code>("system", ...)</code> 里和放在 <code>("human", ...)</code> 里，模型看到的区别是什么？为什么说 system 消息「权重高」？</li>
+<li><code>MessagesPlaceholder("history")</code> 和 <code>("human", "{history}")</code> 都能在 <code>invoke</code> 时喂 <code>history</code>，两者渲染结果差在哪？</li>
+<li>写一个模板让模型输出 <code>{"score": 5}</code> 这样的 JSON，提示词里那个 JSON 示例该怎么写才不会被当成变量解析掉？</li>
+<li><code>partial(date=lambda: date.today().isoformat())</code> 和 <code>partial(date=date.today().isoformat())</code>，差在哪一秒？什么时候必须用前者？</li>
+<li><code>pv.to_string()</code> 和 <code>pv.messages</code> 分别适合什么场合？把 <code>to_string()</code> 的结果直接喂给 <code>ChatOllama.invoke</code> 会发生什么？</li>
+</ol>
+<hr />
+<p><strong>下一章</strong>：<a href="../langchain/03-lcel-yu-runnable.html">03 · LCEL 与 Runnable</a></p></div>
+
+      </article>
+<nav class="pager"><a class="pg-card pg-prev" href="../langchain/01-ren-shi-langchain.html"><span class="pg-label">← 上一篇</span><span class="pg-title">认识 LangChain</span><span class="pg-mod">LangChain 指南</span></a><a class="pg-card pg-next" href="../langchain/03-lcel-yu-runnable.html"><span class="pg-label">下一篇 →</span><span class="pg-title">LCEL 与 Runnable</span><span class="pg-mod">LangChain 指南</span></a></nav>
+    </div>
+    <footer class="foot">
+      <span>深栈 DeepStack · AI Agent 工程师转型训练营配套文档</span>
+    </footer>
+  </main>
+<nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#本章你会用到的东西">本章你会用到的东西</a><a class="toc-link toc-h2" href="#21-提示词模板把写死的话变成填空题">2.1 提示词模板：把写死的话变成填空题</a><a class="toc-link toc-h2" href="#22-partial变量分批到货先到的先腌着">2.2 partial：变量分批到货，先到的先腌着</a><a class="toc-link toc-h2" href="#23-结构化提示词给每句话安排角色">2.3 结构化提示词：给每句话安排角色</a><a class="toc-link toc-h2" href="#24-少样本提示词先看示范再照着做">2.4 少样本提示词：先看示范，再照着做</a><a class="toc-link toc-h2" href="#25-message-消息对象拆开包裹看看">2.5 Message 消息对象：拆开包裹看看</a><a class="toc-link toc-h2" href="#26-消息占位剧本里留一页回忆插页">2.6 消息占位：剧本里留一页「回忆插页」</a><a class="toc-link toc-h2" href="#27-小结">2.7 小结</a><a class="toc-link toc-h3" href="#作业">作业</a></nav>
+</div>
+<div class="sb-mask" id="sbMask"></div>
+<script src="../assets/app.js"></script>
+</body>
+</html>

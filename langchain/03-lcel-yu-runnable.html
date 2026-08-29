@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>03 · LCEL 与 Runnable · 深栈 DeepStack 课程文档</title>
+<meta name="description" content="本章配套可运行示例：demo/demolcel.py。demo 全程用纯数据变换，不启动 Ollama 也能跑；文末留了一段带模型的完整链，想体验的话设 USEMODEL=1 再运行">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%23d9c39a' text-anchor='middle'%3EDS%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+<div class="progress" id="progress"></div>
+
+<div class="layout">
+<aside class="sidebar" id="sidebar">
+  <div class="sb-head">
+    <a class="brand" href="../index.html">
+      <span class="brand-mark">DS</span>
+      <span class="brand-text"><b>深栈 DeepStack</b><i>AI Agent 工程师转型训练营</i></span>
+    </a>
+    <button class="sb-close" id="sbClose" aria-label="关闭目录">✕</button>
+  </div>
+  <div class="sb-search"><input type="search" id="searchInput" placeholder="搜索 123 篇文档… ( / )" autocomplete="off">
+    <div class="sb-results" id="searchResults"></div></div>
+  <nav class="sb-nav">
+    <section class="sb-group" data-mod="python">
+      <a class="sb-group-title" href="../modules/python.html" data-toggle="python">
+        <span class="sb-num">01</span>
+        <span class="sb-group-text"><b>Python 与数据实践</b><i>31 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../python/01-huan-jing-da-jian-yu-ban-ben-guan-li.html"><span class="sb-item-num">01</span><span class="sb-item-title">环境搭建与版本管理</span></a>
+        <a class="sb-item" href="../python/02-bian-liang-biao-da-shi-yu-liu-cheng-kong-zhi.html"><span class="sb-item-num">02</span><span class="sb-item-title">变量、表达式与流程控制</span></a>
+        <a class="sb-item" href="../python/03-xu-lie-zi-dian-yu-ji-he.html"><span class="sb-item-num">03</span><span class="sb-item-title">序列、字典与集合</span></a>
+        <a class="sb-item" href="../python/04-han-shu-she-ji-yu-lambda.html"><span class="sb-item-num">04</span><span class="sb-item-title">函数设计与 lambda</span></a>
+        <a class="sb-item" href="../python/05-zuo-yong-yu-gui-ze-yu-bi-bao.html"><span class="sb-item-num">05</span><span class="sb-item-title">作用域规则与闭包</span></a>
+        <a class="sb-item" href="../python/06-lei-de-ding-yi-yu-shi-li-hua.html"><span class="sb-item-num">06</span><span class="sb-item-title">类的定义与实例化</span></a>
+        <a class="sb-item" href="../python/07-lei-xing-pan-ding-yu-chou-xiang-ji-lei.html"><span class="sb-item-num">07</span><span class="sb-item-title">类型判定与抽象基类</span></a>
+        <a class="sb-item" href="../python/08-mo-shu-fang-fa-quan-jing.html"><span class="sb-item-num">08</span><span class="sb-item-title">魔术方法全景</span></a>
+        <a class="sb-item" href="../python/09-miao-shu-fu-yu-yuan-lei.html"><span class="sb-item-num">09</span><span class="sb-item-title">描述符与元类</span></a>
+        <a class="sb-item" href="../python/10-zhuang-shi-qi.html"><span class="sb-item-num">10</span><span class="sb-item-title">装饰器</span></a>
+        <a class="sb-item" href="../python/11-die-dai-xie-yi-yu-sheng-cheng-qi.html"><span class="sb-item-num">11</span><span class="sb-item-title">迭代协议与生成器</span></a>
+        <a class="sb-item" href="../python/12-with-yu-shang-xia-wen-xie-yi.html"><span class="sb-item-num">12</span><span class="sb-item-title">with 与上下文协议</span></a>
+        <a class="sb-item" href="../python/13-yi-chang-ti-xi-yu-chu-li.html"><span class="sb-item-num">13</span><span class="sb-item-title">异常体系与处理</span></a>
+        <a class="sb-item" href="../python/14-lei-xing-biao-zhu.html"><span class="sb-item-num">14</span><span class="sb-item-title">类型标注</span></a>
+        <a class="sb-item" href="../python/15-mo-kuai-yu-bao-de-zu-zhi.html"><span class="sb-item-num">15</span><span class="sb-item-title">模块与包的组织</span></a>
+        <a class="sb-item" href="../python/16-biao-zhun-ku-xun-li.html"><span class="sb-item-num">16</span><span class="sb-item-title">标准库巡礼</span></a>
+        <a class="sb-item" href="../python/17-yi-lai-guan-li-yu-di-san-fang-ku.html"><span class="sb-item-num">17</span><span class="sb-item-title">依赖管理与第三方库</span></a>
+        <a class="sb-item" href="../python/18-xian-cheng-yu-jin-cheng.html"><span class="sb-item-num">18</span><span class="sb-item-title">线程与进程</span></a>
+        <a class="sb-item" href="../python/19-shi-jian-xun-huan.html"><span class="sb-item-num">19</span><span class="sb-item-title">事件循环</span></a>
+        <a class="sb-item" href="../python/20-future-yu-xie-cheng.html"><span class="sb-item-num">20</span><span class="sb-item-title">Future 与协程</span></a>
+        <a class="sb-item" href="../python/21-asyncio-shi-zhan.html"><span class="sb-item-num">21</span><span class="sb-item-title">asyncio 实战</span></a>
+        <a class="sb-item" href="../python/22-gou-jian-yu-fa-bu.html"><span class="sb-item-num">22</span><span class="sb-item-title">构建与发布</span></a>
+        <a class="sb-item" href="../python/23-gong-cheng-hua-gong-ju-lian.html"><span class="sb-item-num">23</span><span class="sb-item-title">工程化工具链</span></a>
+        <a class="sb-item" href="../python/24-monorepo-yu-tiao-shi.html"><span class="sb-item-num">24</span><span class="sb-item-title">monorepo 与调试</span></a>
+        <a class="sb-item" href="../python/25-jupyter-jiao-hu-huan-jing.html"><span class="sb-item-num">25</span><span class="sb-item-title">Jupyter 交互环境</span></a>
+        <a class="sb-item" href="../python/26-numpy-shu-zu-yu-xiang-liang-hua.html"><span class="sb-item-num">26</span><span class="sb-item-title">NumPy 数组与向量化</span></a>
+        <a class="sb-item" href="../python/27-pandas-shu-ju-jie-gou.html"><span class="sb-item-num">27</span><span class="sb-item-title">Pandas 数据结构</span></a>
+        <a class="sb-item" href="../python/28-pandas-shu-ju-qing-xi.html"><span class="sb-item-num">28</span><span class="sb-item-title">Pandas 数据清洗</span></a>
+        <a class="sb-item" href="../python/29-matplotlib-hui-tu-ti-xi.html"><span class="sb-item-num">29</span><span class="sb-item-title">Matplotlib 绘图体系</span></a>
+        <a class="sb-item" href="../python/30-matplotlib-dong-hua-yu-jiao-hu.html"><span class="sb-item-num">30</span><span class="sb-item-title">Matplotlib 动画与交互</span></a>
+        <a class="sb-item" href="../python/31-seaborn-tong-ji-ke-shi-hua.html"><span class="sb-item-num">31</span><span class="sb-item-title">Seaborn 统计可视化</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="agent">
+      <a class="sb-group-title" href="../modules/agent.html" data-toggle="agent">
+        <span class="sb-num">02</span>
+        <span class="sb-group-text"><b>Agent 核心</b><i>15 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../agent/01-token-yu-ci-qian-ru.html"><span class="sb-item-num">01</span><span class="sb-item-title">Token 与词嵌入</span></a>
+        <a class="sb-item" href="../agent/02-qian-xiang-chuan-bo-yu-fan-xiang-chuan-bo.html"><span class="sb-item-num">02</span><span class="sb-item-title">前向传播与反向传播</span></a>
+        <a class="sb-item" href="../agent/03-zhu-yi-li-ji-zhi-yu-transformer-jia-gou.html"><span class="sb-item-num">03</span><span class="sb-item-title">注意力机制与 Transformer 架构</span></a>
+        <a class="sb-item" href="../agent/04-yu-xun-lian-rlhf-yu-cai-yang-kv-cache.html"><span class="sb-item-num">04</span><span class="sb-item-title">预训练、RLHF 与采样（KV Cache）</span></a>
+        <a class="sb-item" href="../agent/05-ben-di-mo-xing-yu-xiao-xi-jie-gou.html"><span class="sb-item-num">05</span><span class="sb-item-title">本地模型与消息结构</span></a>
+        <a class="sb-item" href="../agent/06-hui-hua-guan-li-yu-json-shu-chu.html"><span class="sb-item-num">06</span><span class="sb-item-title">会话管理与 JSON 输出</span></a>
+        <a class="sb-item" href="../agent/07-tool-calling-xie-yi-yu-feng-zhuang.html"><span class="sb-item-num">07</span><span class="sb-item-title">Tool Calling：协议与封装</span></a>
+        <a class="sb-item" href="../agent/08-react-mo-shi-yu-zhu-xun-huan.html"><span class="sb-item-num">08</span><span class="sb-item-title">ReAct 模式与主循环</span></a>
+        <a class="sb-item" href="../agent/09-shi-zhan-deep-research-agent.html"><span class="sb-item-num">09</span><span class="sb-item-title">实战：Deep Research Agent</span></a>
+        <a class="sb-item" href="../agent/10-skill-yu-jian-jin-shi-pi-lu.html"><span class="sb-item-num">10</span><span class="sb-item-title">Skill 与渐进式披露</span></a>
+        <a class="sb-item" href="../agent/11-mcp-quan-jing.html"><span class="sb-item-num">11</span><span class="sb-item-title">MCP 全景</span></a>
+        <a class="sb-item" href="../agent/12-duo-agent-yu-xuan-xing-ce-lve.html"><span class="sb-item-num">12</span><span class="sb-item-title">多 Agent 与选型策略</span></a>
+        <a class="sb-item" href="../agent/13-ti-shi-ci-gong-cheng-yu-shang-xia-wen-gong.html"><span class="sb-item-num">13</span><span class="sb-item-title">提示词工程与上下文工程</span></a>
+        <a class="sb-item" href="../agent/14-xun-huan-tu-yu-gu-jia-gong-cheng.html"><span class="sb-item-num">14</span><span class="sb-item-title">循环、图与骨架工程</span></a>
+        <a class="sb-item" href="../agent/15-ji-yi-quan-xian-yu-ping-ce.html"><span class="sb-item-num">15</span><span class="sb-item-title">记忆、权限与评测</span></a>
+      </div>
+    </section>
+    <section class="sb-group open" data-mod="langchain">
+      <a class="sb-group-title" href="../modules/langchain.html" data-toggle="langchain">
+        <span class="sb-num">03</span>
+        <span class="sb-group-text"><b>LangChain 指南</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langchain/01-ren-shi-langchain.html"><span class="sb-item-num">01</span><span class="sb-item-title">认识 LangChain</span></a>
+        <a class="sb-item" href="../langchain/02-ti-shi-ci-mu-ban-yu-xiao-xi.html"><span class="sb-item-num">02</span><span class="sb-item-title">提示词模板与消息</span></a>
+        <a class="sb-item current" href="../langchain/03-lcel-yu-runnable.html"><span class="sb-item-num">03</span><span class="sb-item-title">LCEL 与 Runnable</span></a>
+        <a class="sb-item" href="../langchain/04-liu-shi-yu-bing-fa.html"><span class="sb-item-num">04</span><span class="sb-item-title">流式与并发</span></a>
+        <a class="sb-item" href="../langchain/05-shu-chu-jie-xi-qi.html"><span class="sb-item-num">05</span><span class="sb-item-title">输出解析器</span></a>
+        <a class="sb-item" href="../langchain/06-wen-dang-jia-zai-yu-qie-ge.html"><span class="sb-item-num">06</span><span class="sb-item-title">文档加载与切割</span></a>
+        <a class="sb-item" href="../langchain/07-qian-ru-yu-xiang-liang-ku.html"><span class="sb-item-num">07</span><span class="sb-item-title">嵌入与向量库</span></a>
+        <a class="sb-item" href="../langchain/08-jian-suo-yu-rag.html"><span class="sb-item-num">08</span><span class="sb-item-title">检索与RAG</span></a>
+        <a class="sb-item" href="../langchain/09-dui-hua-ji-yi.html"><span class="sb-item-num">09</span><span class="sb-item-title">对话记忆</span></a>
+        <a class="sb-item" href="../langchain/10-gong-ju-diao-yong.html"><span class="sb-item-num">10</span><span class="sb-item-title">工具调用</span></a>
+        <a class="sb-item" href="../langchain/11-agent.html"><span class="sb-item-num">11</span><span class="sb-item-title">Agent</span></a>
+        <a class="sb-item" href="../langchain/12-hui-diao-yu-tiao-shi-quan-ke-cheng-shou-guan.html"><span class="sb-item-num">12</span><span class="sb-item-title">回调与调试（全课程收官章）</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="langgraph">
+      <a class="sb-group-title" href="../modules/langgraph.html" data-toggle="langgraph">
+        <span class="sb-num">04</span>
+        <span class="sb-group-text"><b>LangGraph 框架指南</b><i>17 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langgraph/01-di-1-zhang-cong-yi-ge-shi-kong-de-jiao.html"><span class="sb-item-num">01</span><span class="sb-item-title">第 1 章 从一个失控的脚本说起</span></a>
+        <a class="sb-item" href="../langgraph/02-di-2-zhang-zui-xiao-ke-yun-xing-tu.html"><span class="sb-item-num">02</span><span class="sb-item-title">第 2 章 最小可运行图</span></a>
+        <a class="sb-item" href="../langgraph/03-di-3-zhang-zhuang-tai-tu-de-shu-ju-xin.html"><span class="sb-item-num">03</span><span class="sb-item-title">第 3 章 状态：图的数据心脏</span></a>
+        <a class="sb-item" href="../langgraph/04-di-4-zhang-rang-liu-cheng-xue-hui-jue-ce.html"><span class="sb-item-num">04</span><span class="sb-item-title">第 4 章 让流程学会决策</span></a>
+        <a class="sb-item" href="../langgraph/05-di-5-zhang-bing-xing-shi-jie-chao-bu-zhi.html"><span class="sb-item-num">05</span><span class="sb-item-title">第 5 章 并行世界：超步执行模型</span></a>
+        <a class="sb-item" href="../langgraph/06-di-6-zhang-command-ba-kong-zhi-quan-jiao-jin.html"><span class="sb-item-num">06</span><span class="sb-item-title">第 6 章 Command：把控制权交进节点</span></a>
+        <a class="sb-item" href="../langgraph/07-di-7-zhang-dong-tai-bing-xing-send-yu-mapreduce.html"><span class="sb-item-num">07</span><span class="sb-item-title">第 7 章 动态并行：Send 与 MapReduce</span></a>
+        <a class="sb-item" href="../langgraph/08-di-8-zhang-gei-tu-zhuang-shang-shou-jiao-gong.html"><span class="sb-item-num">08</span><span class="sb-item-title">第 8 章 给图装上手脚：工具调用</span></a>
+        <a class="sb-item" href="../langgraph/09-di-9-zhang-fu-yong-yu-feng-zhuang-zi-tu.html"><span class="sb-item-num">09</span><span class="sb-item-title">第 9 章 复用与封装：子图</span></a>
+        <a class="sb-item" href="../langgraph/10-di-10-zhang-cong-dan-tu-dao-tuan-dui-duo.html"><span class="sb-item-num">10</span><span class="sb-item-title">第 10 章 从单图到团队：多 Agent 架构</span></a>
+        <a class="sb-item" href="../langgraph/11-di-11-zhang-liu-shi-shu-chu.html"><span class="sb-item-num">11</span><span class="sb-item-title">第 11 章 流式输出</span></a>
+        <a class="sb-item" href="../langgraph/12-di-12-zhang-chi-jiu-hua-checkpointer-yu-xian-cheng.html"><span class="sb-item-num">12</span><span class="sb-item-title">第 12 章 持久化：Checkpointer 与线程</span></a>
+        <a class="sb-item" href="../langgraph/13-di-13-zhang-shi-jian-lv-xing.html"><span class="sb-item-num">13</span><span class="sb-item-title">第 13 章 时间旅行</span></a>
+        <a class="sb-item" href="../langgraph/14-di-14-zhang-zhong-duan-yu-ren-zai-hui-lu.html"><span class="sb-item-num">14</span><span class="sb-item-title">第 14 章 中断与人在回路</span></a>
+        <a class="sb-item" href="../langgraph/15-di-15-zhang-ji-yi-guan-li.html"><span class="sb-item-num">15</span><span class="sb-item-title">第 15 章 记忆管理</span></a>
+        <a class="sb-item" href="../langgraph/16-di-16-zhang-rong-cuo-zhong-shi-chao-shi-yu.html"><span class="sb-item-num">16</span><span class="sb-item-title">第 16 章 容错：重试、超时与兜底</span></a>
+        <a class="sb-item" href="../langgraph/17-di-17-zhang-quan-jing-hui-gu.html"><span class="sb-item-num">17</span><span class="sb-item-title">第 17 章 全景回顾</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="backend">
+      <a class="sb-group-title" href="../modules/backend.html" data-toggle="backend">
+        <span class="sb-num">05</span>
+        <span class="sb-group-text"><b>Python 框架指南</b><i>14 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../backend/01-fastapi-ru-men-yu-asgi.html"><span class="sb-item-num">01</span><span class="sb-item-title">FastAPI 入门与 ASGI</span></a>
+        <a class="sb-item" href="../backend/02-lu-you-yu-qing-qiu-xiang-ying.html"><span class="sb-item-num">02</span><span class="sb-item-title">路由与请求响应</span></a>
+        <a class="sb-item" href="../backend/03-pydantic-shu-ju-jiao-yan-yu-pei-zhi.html"><span class="sb-item-num">03</span><span class="sb-item-title">Pydantic 数据校验与配置</span></a>
+        <a class="sb-item" href="../backend/04-sqlalchemy-yi-bu-yin-qing-yu-hui-hua.html"><span class="sb-item-num">04</span><span class="sb-item-title">SQLAlchemy 异步引擎与会话</span></a>
+        <a class="sb-item" href="../backend/05-orm-jian-mo.html"><span class="sb-item-num">05</span><span class="sb-item-title">ORM 建模</span></a>
+        <a class="sb-item" href="../backend/06-sql-biao-da-shi-yu-shu-ju-cao-zuo.html"><span class="sb-item-num">06</span><span class="sb-item-title">SQL 表达式与数据操作</span></a>
+        <a class="sb-item" href="../backend/07-alembic-shu-ju-qian-yi.html"><span class="sb-item-num">07</span><span class="sb-item-title">Alembic 数据迁移</span></a>
+        <a class="sb-item" href="../backend/08-yi-lai-zhu-ru.html"><span class="sb-item-num">08</span><span class="sb-item-title">依赖注入</span></a>
+        <a class="sb-item" href="../backend/09-tong-yi-yi-chang-chu-li.html"><span class="sb-item-num">09</span><span class="sb-item-title">统一异常处理</span></a>
+        <a class="sb-item" href="../backend/10-zhong-jian-jian.html"><span class="sb-item-num">10</span><span class="sb-item-title">中间件</span></a>
+        <a class="sb-item" href="../backend/11-ren-zheng-yu-jwt.html"><span class="sb-item-num">11</span><span class="sb-item-title">认证与 JWT</span></a>
+        <a class="sb-item" href="../backend/12-pytest-ce-shi.html"><span class="sb-item-num">12</span><span class="sb-item-title">pytest 测试</span></a>
+        <a class="sb-item" href="../backend/13-ri-zhi-loguru.html"><span class="sb-item-num">13</span><span class="sb-item-title">日志 loguru</span></a>
+        <a class="sb-item" href="../backend/14-liu-shi-xiang-ying-sse-yu-websocket.html"><span class="sb-item-num">14</span><span class="sb-item-title">流式响应 SSE 与 WebSocket</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="interview">
+      <a class="sb-group-title" href="../modules/interview.html" data-toggle="interview">
+        <span class="sb-num">06</span>
+        <span class="sb-group-text"><b>面试题库</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../interview/01-llm-yuan-li-pian.html"><span class="sb-item-num">01</span><span class="sb-item-title">LLM 原理篇</span></a>
+        <a class="sb-item" href="../interview/02-rag-yu-jian-suo-pian.html"><span class="sb-item-num">02</span><span class="sb-item-title">RAG 与检索篇</span></a>
+        <a class="sb-item" href="../interview/03-agent-he-xin-pian.html"><span class="sb-item-num">03</span><span class="sb-item-title">Agent 核心篇</span></a>
+        <a class="sb-item" href="../interview/04-langgraph-pian.html"><span class="sb-item-num">04</span><span class="sb-item-title">LangGraph 篇</span></a>
+        <a class="sb-item" href="../interview/05-langchain-pian.html"><span class="sb-item-num">05</span><span class="sb-item-title">LangChain 篇</span></a>
+        <a class="sb-item" href="../interview/06-xi-tong-she-ji-pian.html"><span class="sb-item-num">06</span><span class="sb-item-title">系统设计篇</span></a>
+        <a class="sb-item" href="../interview/07-xiang-mu-shen-wa-pian.html"><span class="sb-item-num">07</span><span class="sb-item-title">项目深挖篇</span></a>
+        <a class="sb-item" href="../interview/08-gu-zhang-pai-cha-pian.html"><span class="sb-item-num">08</span><span class="sb-item-title">故障排查篇</span></a>
+        <a class="sb-item" href="../interview/09-python-ji-chu-pian.html"><span class="sb-item-num">09</span><span class="sb-item-title">Python 基础篇</span></a>
+        <a class="sb-item" href="../interview/10-fastapi-yu-hou-duan-pian.html"><span class="sb-item-num">10</span><span class="sb-item-title">FastAPI 与后端篇</span></a>
+        <a class="sb-item" href="../interview/11-ti-shi-ci-gong-cheng-yu-an-quan-pian.html"><span class="sb-item-num">11</span><span class="sb-item-title">提示词工程与安全篇</span></a>
+        <a class="sb-item" href="../interview/12-mo-xing-xuan-xing-yu-jiang-ben-pian.html"><span class="sb-item-num">12</span><span class="sb-item-title">模型选型与降本篇</span></a>
+      </div>
+    </section>
+  </nav>
+</aside>
+  <main class="main">
+    <header class="topbar">
+      <button class="menu-btn" id="menuBtn" aria-label="目录">☰</button>
+      <div class="crumbs"><a href="../index.html">首页</a><span>/</span><a href="../modules/langchain.html">LangChain 指南</a><span>/</span><span class="cur">LCEL 与 Runnable</span></div>
+      <div class="topbar-actions">
+        <button class="icon-btn" id="themeBtn" title="切换深浅色" aria-label="切换深浅色">◐</button>
+      </div>
+    </header>
+    <div class="content">
+      <article class="article">
+
+<header class="page-head">
+  <div class="page-kicker">LangChain 指南 · 第 03 章</div>
+  <h1 class="page-title">LCEL 与 Runnable</h1>
+  <p class="page-desc">本章配套可运行示例：demo/demolcel.py。demo 全程用纯数据变换，不启动 Ollama 也能跑；文末留了一段带模型的完整链，想体验的话设 USEMODEL=1 再运行</p>
+  <div class="page-meta">
+    <span>约 30 分钟</span><span>11,861 字</span><span>25 个代码示例</span>
+  </div>
+</header>
+<div class="md"><blockquote>
+<p>本章配套可运行示例：<a href="../code/langchain/03-LCEL-yu-Runnable/demo/demo_lcel.py">demo/demo_lcel.py</a>。demo 全程用纯数据变换，<strong>不启动 Ollama 也能跑</strong>；文末留了一段带模型的完整链，想体验的话设 <code>USE_MODEL=1</code> 再运行。</p>
+</blockquote>
+<h2 id="开场从接龙到流水线">开场：从「接龙」到「流水线」</h2>
+<p>前两章我们把两样零件玩熟了：提示词模板负责「把变量填进话术」，模型负责「生成内容」。但「拾光书屋」的真实业务从来不是一个零件能搞定的：</p>
+<blockquote>
+<p>读者提问 → 拼提示词 → 喂模型 → 清洗输出 → 盖上书屋印章 → 展示给读者</p>
+</blockquote>
+<p>如果每一步都手写调用，你的代码会变成一串中间变量的接龙：<code>temp1 = prompt.format(...)</code>、<code>temp2 = model.invoke(temp1)</code>、<code>temp3 = clean(temp2)</code>……步骤一多就晕。</p>
+<p>LCEL（LangChain Expression Language）就是终结接龙的：<strong>用统一接口把零件串成流水线，拼装一次，反复运行</strong>。本章讲透这套拼装术的全部核心积木。</p>
+<hr />
+<h2 id="1-lcel-管道-与-pipe">1. LCEL 管道：<code>|</code> 与 <code>.pipe()</code></h2>
+<p><strong>比喻</strong>：奶茶店出杯流水线。摇茶机、加料勺、封口机的杯口规格全部统一，所以任何一台都能随意换进产线。<code>|</code> 就是那根传送带。</p>
+<h3 id="作用">作用</h3>
+<p>把多个组件首尾相接：上一个的输出，就是下一个的输入。拼出来的整条链，本身又是一个可运行的组件。</p>
+<h3 id="签名两种等价写法">签名（两种等价写法）</h3>
+<div class="highlight"><pre><span></span><code><span class="n">chain</span> <span class="o">=</span> <span class="n">first</span> <span class="o">|</span> <span class="n">second</span> <span class="o">|</span> <span class="n">third</span>          <span class="c1"># 写法一：| 运算符（Python 惯用，一眼看出流向）</span>
+<span class="n">chain</span> <span class="o">=</span> <span class="n">first</span><span class="o">.</span><span class="n">pipe</span><span class="p">(</span><span class="n">second</span><span class="p">)</span><span class="o">.</span><span class="n">pipe</span><span class="p">(</span><span class="n">third</span><span class="p">)</span>  <span class="c1"># 写法二：.pipe() 方法（其他语言版本常见写法）</span>
+</code></pre></div>
+<p><code>.pipe()</code> 的括号里能塞什么？三类：</p>
+<ol>
+<li><strong>Runnable 实例</strong>——最常用、最推荐</li>
+<li><strong>普通函数 / lambda</strong>——自动帮你包成 <code>RunnableLambda</code>（第 3 节）</li>
+<li><strong>dict</strong>——自动转成 <code>RunnableParallel</code>（第 5 节），键名就是输出字段名</li>
+</ol>
+<h3 id="最小示例">最小示例</h3>
+<p>纯数据版（不碰模型）：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.runnables</span><span class="w"> </span><span class="kn">import</span> <span class="n">RunnableLambda</span>
+
+<span class="c1"># 拾光书屋：书名标准化 -&gt; 盖书屋印章</span>
+<span class="n">normalize</span> <span class="o">=</span> <span class="n">RunnableLambda</span><span class="p">(</span><span class="k">lambda</span> <span class="n">title</span><span class="p">:</span> <span class="n">title</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">title</span><span class="p">())</span>
+<span class="n">stamp</span> <span class="o">=</span> <span class="n">RunnableLambda</span><span class="p">(</span><span class="k">lambda</span> <span class="n">title</span><span class="p">:</span> <span class="sa">f</span><span class="s2">"【拾光书屋】</span><span class="si">{</span><span class="n">title</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+<span class="n">pipeline</span> <span class="o">=</span> <span class="n">normalize</span> <span class="o">|</span> <span class="n">stamp</span>                    <span class="c1"># 等价于 normalize.pipe(stamp)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">pipeline</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span><span class="s2">"  the little prince "</span><span class="p">))</span>
+<span class="c1"># 输出：【拾光书屋】The Little Prince</span>
+</code></pre></div>
+<p>带模型版（经典三件套）：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_ollama</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChatOllama</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.prompts</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChatPromptTemplate</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.output_parsers</span><span class="w"> </span><span class="kn">import</span> <span class="n">StrOutputParser</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">ChatOllama</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="s2">"qwen3:4b"</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="mf">0.7</span><span class="p">)</span>
+<span class="n">prompt</span> <span class="o">=</span> <span class="n">ChatPromptTemplate</span><span class="o">.</span><span class="n">from_template</span><span class="p">(</span><span class="s2">"用一句话向社区读者推荐《</span><span class="si">{book}</span><span class="s2">》"</span><span class="p">)</span>
+<span class="n">parser</span> <span class="o">=</span> <span class="n">StrOutputParser</span><span class="p">()</span>          <span class="c1"># 把模型吐出的 AIMessage 变成纯 str</span>
+
+<span class="n">chain</span> <span class="o">=</span> <span class="n">prompt</span> <span class="o">|</span> <span class="n">model</span> <span class="o">|</span> <span class="n">parser</span>     <span class="c1"># 模板 -&gt; 模型 -&gt; 解析器</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">chain</span><span class="o">.</span><span class="n">invoke</span><span class="p">({</span><span class="s2">"book"</span><span class="p">:</span> <span class="s2">"小王子"</span><span class="p">}))</span>
+</code></pre></div>
+<p>数据流向：<code>{"book": "小王子"}</code> →（模板）→ 提示词消息 →（模型）→ AIMessage →（解析器）→ str。</p>
+<p>注意一个改名：LangChain 1.x 里字符串解析器叫 <code>StrOutputParser</code>（旧名 <code>StringOutputParser</code> 还能用，但新代码建议写新名）。</p>
+<h3 id="常见坑">常见坑</h3>
+<ul>
+<li><strong>pipe 的是「机器」，不是「产物」</strong>。<code>prompt | model</code> 对，<code>prompt | model.invoke()</code> 错——后者是把一次运行的结果塞上传送带，直接 <code>TypeError</code>。</li>
+<li><strong>模板变量和输入 key 要对齐</strong>。模板里写 <code>{book}</code>，输入却传 <code>{"title": ...}</code>，校验立刻报错，不会静默通过。</li>
+<li><strong>拼装 ≠ 执行</strong>。<code>|</code> 只是画好图纸，不调用 invoke / stream / batch，链条一行代码都不会真正跑。</li>
+</ul>
+<hr />
+<h2 id="2-runnable-统一接口invoke-stream-batch-三兄弟">2. Runnable 统一接口：invoke / stream / batch 三兄弟</h2>
+<p><strong>比喻</strong>：不管是螺丝刀还是电钻，开关都是同一个。学会拧这三个开关，你就能驱动 LangChain 世界里的<strong>所有</strong>组件。</p>
+<h3 id="作用_1">作用</h3>
+<p>任何 Runnable——单零件也好、拼了几十环的大链也好——都自带同一套运行方法。</p>
+<h3 id="签名">签名</h3>
+<div class="highlight"><pre><span></span><code><span class="n">result</span><span class="p">:</span> <span class="n">Output</span> <span class="o">=</span> <span class="n">runnable</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>    <span class="c1"># 单个输入 -&gt; 完整结果</span>
+<span class="n">chunks</span> <span class="o">=</span> <span class="n">runnable</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>            <span class="c1"># 单个输入 -&gt; 逐块产出（生成器）</span>
+<span class="n">results</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Output</span><span class="p">]</span> <span class="o">=</span> <span class="n">runnable</span><span class="o">.</span><span class="n">batch</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>  <span class="c1"># 一批输入 -&gt; 一批结果</span>
+</code></pre></div>
+<h3 id="最小示例_1">最小示例</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.runnables</span><span class="w"> </span><span class="kn">import</span> <span class="n">RunnableLambda</span>
+
+<span class="n">price_of</span> <span class="o">=</span> <span class="n">RunnableLambda</span><span class="p">(</span><span class="k">lambda</span> <span class="n">b</span><span class="p">:</span> <span class="sa">f</span><span class="s2">"《</span><span class="si">{</span><span class="n">b</span><span class="p">[</span><span class="s1">'title'</span><span class="p">]</span><span class="si">}</span><span class="s2">》定价 </span><span class="si">{</span><span class="n">b</span><span class="p">[</span><span class="s1">'price'</span><span class="p">]</span><span class="si">}</span><span class="s2"> 元"</span><span class="p">)</span>
+
+<span class="c1"># 1) invoke：一次一个</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">price_of</span><span class="o">.</span><span class="n">invoke</span><span class="p">({</span><span class="s2">"title"</span><span class="p">:</span> <span class="s2">"小王子"</span><span class="p">,</span> <span class="s2">"price"</span><span class="p">:</span> <span class="mi">39</span><span class="p">}))</span>
+<span class="c1"># 《小王子》定价 39 元</span>
+
+<span class="c1"># 2) stream：拆成一块块吐出（纯数据链通常一次只吐一块）</span>
+<span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">price_of</span><span class="o">.</span><span class="n">stream</span><span class="p">({</span><span class="s2">"title"</span><span class="p">:</span> <span class="s2">"夜航"</span><span class="p">,</span> <span class="s2">"price"</span><span class="p">:</span> <span class="mi">28</span><span class="p">}):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"收到一块："</span><span class="p">,</span> <span class="n">chunk</span><span class="p">)</span>
+
+<span class="c1"># 3) batch：一次一排，结果顺序与输入一一对应</span>
+<span class="n">cart</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span><span class="s2">"title"</span><span class="p">:</span> <span class="s2">"小王子"</span><span class="p">,</span> <span class="s2">"price"</span><span class="p">:</span> <span class="mi">39</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">"title"</span><span class="p">:</span> <span class="s2">"夜航"</span><span class="p">,</span> <span class="s2">"price"</span><span class="p">:</span> <span class="mi">28</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">"title"</span><span class="p">:</span> <span class="s2">"人类群星闪耀时"</span><span class="p">,</span> <span class="s2">"price"</span><span class="p">:</span> <span class="mi">45</span><span class="p">},</span>
+<span class="p">]</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">price_of</span><span class="o">.</span><span class="n">batch</span><span class="p">(</span><span class="n">cart</span><span class="p">),</span> <span class="n">start</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"第</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">条："</span><span class="p">,</span> <span class="n">r</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="输入输出类型检查">输入输出类型检查</h3>
+<p>链是首尾相接的，<strong>每一环的输出必须能被下一环吃下</strong>。心里要有一张「数据形状表」：</p>
+<table>
+<thead>
+<tr>
+<th>环节</th>
+<th>吃什么</th>
+<th>吐什么</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ChatPromptTemplate</td>
+<td>dict（key 与模板变量对上）</td>
+<td>提示词消息（ChatPromptValue）</td>
+</tr>
+<tr>
+<td>ChatOllama</td>
+<td>提示词消息 / 消息列表</td>
+<td>AIMessage</td>
+</tr>
+<tr>
+<td>StrOutputParser</td>
+<td>消息对象</td>
+<td>str</td>
+</tr>
+<tr>
+<td>RunnableLambda</td>
+<td>你说了算</td>
+<td>你说了算</td>
+</tr>
+</tbody>
+</table>
+<p>想偷看某个组件的「接口形状」，查它的 schema：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.prompts</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChatPromptTemplate</span>
+
+<span class="n">prompt</span> <span class="o">=</span> <span class="n">ChatPromptTemplate</span><span class="o">.</span><span class="n">from_template</span><span class="p">(</span><span class="s2">"给《</span><span class="si">{book}</span><span class="s2">》写一句推荐语"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">prompt</span><span class="o">.</span><span class="n">input_schema</span><span class="o">.</span><span class="n">model_json_schema</span><span class="p">())</span>
+<span class="c1"># {'properties': {'book': {'title': 'Book', 'type': 'string'}}, 'required': ['book'], ...}</span>
+</code></pre></div>
+<p>给 <code>RunnableLambda</code> 包的函数加上类型标注，schema 会跟着变准——这也是我们坚持写标注的原因：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.runnables</span><span class="w"> </span><span class="kn">import</span> <span class="n">RunnableLambda</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Book</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">title</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">price</span><span class="p">:</span> <span class="nb">float</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">discount</span><span class="p">(</span><span class="n">b</span><span class="p">:</span> <span class="n">Book</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">"会员价：</span><span class="si">{</span><span class="n">b</span><span class="o">.</span><span class="n">price</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mf">0.9</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> 元"</span>
+
+<span class="n">checker</span> <span class="o">=</span> <span class="n">RunnableLambda</span><span class="p">(</span><span class="n">discount</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">checker</span><span class="o">.</span><span class="n">input_schema</span><span class="o">.</span><span class="n">model_json_schema</span><span class="p">())</span>   <span class="c1"># 能看到 title / price 两个字段</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">checker</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span><span class="n">Book</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">"夜航"</span><span class="p">,</span> <span class="n">price</span><span class="o">=</span><span class="mi">28</span><span class="p">)))</span>  <span class="c1"># 会员价：25.20 元</span>
+</code></pre></div>
+<p>类型对不上时，报错往往发生在<strong>下游消费数据的那一刻</strong>：函数里写 <code>x["title"]</code> 却传了个字符串进来，会得到 <code>TypeError: 'str' object is not subscriptable</code>。排查思路：沿着链一环一环单独 invoke，看断在哪一环。</p>
+<h3 id="常见坑_1">常见坑</h3>
+<ul>
+<li><strong>batch 和 stream 没法一次同时要</strong>：batch 的范式是「一批完整结果」，stream 的范式是「单条输入的碎片流」，两者返回结构不同，一次调用只能选一种。想要「批量 + 流式」，得自己控制并发——第 04 章专门讲这个。</li>
+<li><strong>batch 的输出顺序与输入顺序一一对应</strong>，不用担心乱序。</li>
+<li>对不支持真正流式的组件调 stream <strong>不会报错</strong>，只是退化成「一次性吐一大块」。</li>
+</ul>
+<hr />
+<h2 id="3-runnablelambda给普通函数发上岗证">3. RunnableLambda：给普通函数发上岗证</h2>
+<p><strong>比喻</strong>：转接头。普通函数是个两脚裸插头，插不进流水线的三孔插座；<code>RunnableLambda</code> 给它套个壳，立刻变成标准件。</p>
+<h3 id="作用_2">作用</h3>
+<p>把任意普通函数（含 async 函数）包装成 Runnable，从而能进管道、能被 invoke / stream / batch 驱动、能和模板模型混拼。</p>
+<h3 id="签名_1">签名</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.runnables</span><span class="w"> </span><span class="kn">import</span> <span class="n">RunnableLambda</span>
+
+<span class="n">runnable_fn</span> <span class="o">=</span> <span class="n">RunnableLambda</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>   <span class="c1"># 直接传函数本体</span>
+</code></pre></div>
+<h3 id="最小示例_2">最小示例</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.runnables</span><span class="w"> </span><span class="kn">import</span> <span class="n">RunnableLambda</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">highlight</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""给书名关键词加高亮记号"""</span>
+    <span class="k">return</span> <span class="n">text</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"小王子"</span><span class="p">,</span> <span class="s2">"★小王子★"</span><span class="p">)</span>
+
+<span class="n">embellish</span> <span class="o">=</span> <span class="n">RunnableLambda</span><span class="p">(</span><span class="n">highlight</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">embellish</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span><span class="s2">"本月共读书目是《小王子》"</span><span class="p">))</span>
+<span class="c1"># 本月共读书目是《★小王子★》</span>
+</code></pre></div>
+<p>接在模型链后面做后处理：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># chain = prompt | model | parser | RunnableLambda(highlight)</span>
+</code></pre></div>
+<p>经典用途：</p>
+<ul>
+<li>输出后处理：高亮、脱敏、格式清洗</li>
+<li>插日志、埋点</li>
+<li>调外部 API：翻译、情感分析、敏感词过滤</li>
+<li>条件中断：输入不合规就提前抛错，拦住后面的昂贵调用</li>
+</ul>
+<h3 id="常见坑_2">常见坑</h3>
+<ul>
+<li>从其他语言版本迁移过来的同学注意：Python 里是 <code>RunnableLambda(fn)</code>，<strong>没有</strong> <code>.from()</code> 这种静态方法。</li>
+<li>函数<strong>只吃一个输入</strong>，这个输入通常是整个 dict。想要多个参数？传 dict 进去，函数里自己解包。</li>
+<li>函数忘了 <code>return</code>，下游拿到 <code>None</code>——错误会在很远的下游才爆出来。这一环写完先单独 invoke 一下自查。</li>
+</ul>
+<hr />
+<h2 id="4-runnablepassthrough原样放行与顺手塞便签">4. RunnablePassthrough：原样放行与顺手塞便签</h2>
+<p><strong>比喻</strong>：过桥不留客。<code>RunnablePassthrough</code> 就是一段直管道，什么进来什么出去。单看似乎没用，但配上 <code>.assign()</code>，它就变成「过桥时顺手往包裹里塞便签」的组件——原数据一个不动，新字段并行追加。</p>
+<h3 id="作用_3">作用</h3>
+<ul>
+<li><strong>直通</strong>：输入原样传出。常用来占位、对齐链的结构。</li>
+<li><strong>assign</strong>：保留原有全部字段，并行计算若干新字段并追加进去。</li>
+</ul>
+<h3 id="签名_2">签名</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.runnables</span><span class="w"> </span><span class="kn">import</span> <span class="n">RunnablePassthrough</span>
+
+<span class="n">RunnablePassthrough</span><span class="p">()</span>                     <span class="c1"># 直通</span>
+<span class="n">RunnablePassthrough</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>      <span class="c1"># 追加字段，值可以是函数 / Runnable</span>
+</code></pre></div>
+<h3 id="最小示例_3">最小示例</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.runnables</span><span class="w"> </span><span class="kn">import</span> <span class="n">RunnablePassthrough</span>
+
+<span class="c1"># 直通：进什么，出什么</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">RunnablePassthrough</span><span class="p">()</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span><span class="s2">"拾光书屋"</span><span class="p">))</span>
+<span class="c1"># 拾光书屋</span>
+
+<span class="c1"># assign：原字段保留，新字段并行追加</span>
+<span class="n">contextualize</span> <span class="o">=</span> <span class="n">RunnablePassthrough</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span>
+    <span class="n">community</span><span class="o">=</span><span class="k">lambda</span> <span class="n">_</span><span class="p">:</span> <span class="s2">"拾光书屋"</span><span class="p">,</span>
+    <span class="n">member_level</span><span class="o">=</span><span class="k">lambda</span> <span class="n">q</span><span class="p">:</span> <span class="s2">"黄金会员"</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">q</span><span class="p">[</span><span class="s2">"query"</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">10</span> <span class="k">else</span> <span class="s2">"普通会员"</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">contextualize</span><span class="o">.</span><span class="n">invoke</span><span class="p">({</span><span class="s2">"query"</span><span class="p">:</span> <span class="s2">"推荐几本关于星际旅行的书"</span><span class="p">}))</span>
+<span class="c1"># {'query': '推荐几本关于星际旅行的书',</span>
+<span class="c1">#  'community': '拾光书屋',</span>
+<span class="c1">#  'member_level': '黄金会员'}</span>
+</code></pre></div>
+<p>真实项目里最常见的用法：把「检索结果」assign 进输入，再交给模板——第 08 章 RAG 会反复用这个套路：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># retrieve_docs 是一个 Runnable（比如向量检索器）</span>
+<span class="c1"># chain = RunnablePassthrough.assign(docs=retrieve_docs) | prompt | model | parser</span>
+</code></pre></div>
+<h3 id="常见坑_3">常见坑</h3>
+<ul>
+<li><strong>assign 的输入必须是 dict</strong>，传字符串进来会得到 <code>ValueError: The input to RunnablePassthrough.assign() must be a dict.</code></li>
+<li>assign 里的值函数拿到的也是<strong>整个输入 dict</strong>，不是某个字段。</li>
+<li>新字段与旧字段同名时，新字段直接覆盖。</li>
+<li>从其他语言版本迁移的同学注意：那边有 <code>new RunnablePassthrough({ func })</code> 这种「直通 + 副作用」玩法，Python 版没有对应参数——想加日志之类的副作用，用 <code>RunnableLambda</code> 打一行日志再 <code>return x</code> 原样返回即可。</li>
+</ul>
+<hr />
+<h2 id="5-runnableparallel一变多的分身术">5. RunnableParallel：一变多的分身术</h2>
+<p><strong>比喻</strong>：复印机。一页原稿（输入）复印几份，同时发给不同部门（分支）处理，最后各部门把结果装进同一个档案袋（dict）交回来。</p>
+<h3 id="作用_4">作用</h3>
+<p>多个分支拿到<strong>同一份输入</strong>并发执行，结果按键名汇总成一个 dict 返回。</p>
+<h3 id="签名_3">签名</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.runnables</span><span class="w"> </span><span class="kn">import</span> <span class="n">RunnableParallel</span>
+
+<span class="n">fan_out</span> <span class="o">=</span> <span class="n">RunnableParallel</span><span class="p">(</span>
+    <span class="n">summary</span><span class="o">=</span><span class="n">chain_a</span><span class="p">,</span>     <span class="c1"># 键名 = 输出字段名，值可以是函数 / Runnable / 子链</span>
+    <span class="n">keywords</span><span class="o">=</span><span class="n">chain_b</span><span class="p">,</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>偷懒写法：直接把 dict 交给 <code>|</code> 或 <code>.pipe()</code>，会被自动转成 RunnableParallel，效果完全一样：</p>
+<div class="highlight"><pre><span></span><code><span class="n">chain</span> <span class="o">=</span> <span class="n">some_runnable</span> <span class="o">|</span> <span class="p">{</span><span class="s2">"summary"</span><span class="p">:</span> <span class="n">chain_a</span><span class="p">,</span> <span class="s2">"keywords"</span><span class="p">:</span> <span class="n">chain_b</span><span class="p">}</span>
+</code></pre></div>
+<h3 id="最小示例_4">最小示例</h3>
+<p>纯数据版：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.runnables</span><span class="w"> </span><span class="kn">import</span> <span class="n">RunnableLambda</span><span class="p">,</span> <span class="n">RunnableParallel</span>
+
+<span class="n">stats</span> <span class="o">=</span> <span class="n">RunnableParallel</span><span class="p">(</span>
+    <span class="n">title_len</span><span class="o">=</span><span class="k">lambda</span> <span class="n">b</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">b</span><span class="p">[</span><span class="s2">"title"</span><span class="p">]),</span>
+    <span class="n">is_long</span><span class="o">=</span><span class="k">lambda</span> <span class="n">b</span><span class="p">:</span> <span class="n">b</span><span class="p">[</span><span class="s2">"pages"</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">300</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">stats</span><span class="o">.</span><span class="n">invoke</span><span class="p">({</span><span class="s2">"title"</span><span class="p">:</span> <span class="s2">"时间简史"</span><span class="p">,</span> <span class="s2">"pages"</span><span class="p">:</span> <span class="mi">268</span><span class="p">}))</span>
+<span class="c1"># {'title_len': 4, 'is_long': False}</span>
+</code></pre></div>
+<p>带模型版——一条输入同时要「摘要」和「关键词」，两路并发，总耗时约等于较慢的那一路：</p>
+<div class="highlight"><pre><span></span><code><span class="n">summary_chain</span> <span class="o">=</span> <span class="n">summary_prompt</span> <span class="o">|</span> <span class="n">model</span> <span class="o">|</span> <span class="n">parser</span>
+<span class="n">keywords_chain</span> <span class="o">=</span> <span class="n">keywords_prompt</span> <span class="o">|</span> <span class="n">model</span> <span class="o">|</span> <span class="n">parser</span>
+
+<span class="n">fan_out</span> <span class="o">=</span> <span class="n">RunnableParallel</span><span class="p">(</span><span class="n">summary</span><span class="o">=</span><span class="n">summary_chain</span><span class="p">,</span> <span class="n">keywords</span><span class="o">=</span><span class="n">keywords_chain</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">fan_out</span><span class="o">.</span><span class="n">invoke</span><span class="p">({</span><span class="s2">"topic"</span><span class="p">:</span> <span class="s2">"星际旅行"</span><span class="p">}))</span>
+<span class="c1"># {'summary': '……', 'keywords': '……'}</span>
+</code></pre></div>
+<p>顺带说一句：<code>RunnableMap</code> 是 <code>RunnableParallel</code> 的<strong>别名</strong>，两个名字指向同一个类。你在别的资料里看到 RunnableMap，搬到 Python 里直接写 RunnableParallel 就行。</p>
+<h3 id="常见坑_4">常见坑</h3>
+<ul>
+<li>每个分支拿到的是<strong>同一份完整输入</strong>，不是把输入切成片分发。想分片请用 batch。</li>
+<li>输出是 dict，键名就是你在 parallel 里写的名字——下一环（通常是模板）的变量名要和它对齐。</li>
+<li>分支之间别有先后依赖。真有依赖就别硬并行，老老实实用 <code>|</code> 串行。</li>
+</ul>
+<hr />
+<h2 id="6-条件路由流水线上的分诊台">6. 条件路由：流水线上的分诊台</h2>
+<p><strong>比喻</strong>：医院分诊台。先问诊（判别），再决定挂哪个科（选择），最后进科室看病（执行）。条件路由让系统不再押注单一路径，把「该走哪条路」本身设计成流水线的一环，避免「一个提示词走天下」。</p>
+<p>路由条件既可以是<strong>规则驱动</strong>（关键字、正则、用户等级、时间段），也可以是<strong>模型辅助</strong>（先让轻量模型判断意图，再分流）。命中不了要有兜底。</p>
+<h3 id="作用_5">作用</h3>
+<p>根据输入内容把请求分发到不同的子链。LangChain 提供两种姿势：</p>
+<ol>
+<li><strong>RunnableBranch</strong>：声明式路由表，从上往下匹配，命中即执行，最后必须给一个默认分支。</li>
+<li><strong>逻辑分支</strong>（官方更推荐）：在普通函数里写 if/else，自己决定走哪条子链。</li>
+</ol>
+<h3 id="签名_4">签名</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.runnables</span><span class="w"> </span><span class="kn">import</span> <span class="n">RunnableBranch</span>
+
+<span class="n">branch</span> <span class="o">=</span> <span class="n">RunnableBranch</span><span class="p">(</span>
+    <span class="p">(</span><span class="n">条件1</span><span class="p">,</span> <span class="n">子链1</span><span class="p">),</span>    <span class="c1"># 每项是一个 (条件, 子链) 元组</span>
+    <span class="p">(</span><span class="n">条件2</span><span class="p">,</span> <span class="n">子链2</span><span class="p">),</span>
+    <span class="n">默认子链</span><span class="p">,</span>           <span class="c1"># 最后一项不带元组，作为兜底，不能省</span>
+<span class="p">)</span>
+</code></pre></div>
+<h3 id="最小示例_5">最小示例</h3>
+<p>场景：拾光书屋客服台，读者提问分流到「订单」「荐书」「闲聊」三条支线。</p>
+<p>写法一，RunnableBranch：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.runnables</span><span class="w"> </span><span class="kn">import</span> <span class="n">RunnableBranch</span><span class="p">,</span> <span class="n">RunnableLambda</span>
+
+<span class="n">desk</span> <span class="o">=</span> <span class="n">RunnableBranch</span><span class="p">(</span>
+    <span class="p">(</span>
+        <span class="k">lambda</span> <span class="n">q</span><span class="p">:</span> <span class="s2">"订单"</span> <span class="ow">in</span> <span class="n">q</span><span class="p">[</span><span class="s2">"question"</span><span class="p">],</span>
+        <span class="n">RunnableLambda</span><span class="p">(</span><span class="k">lambda</span> <span class="n">q</span><span class="p">:</span> <span class="sa">f</span><span class="s2">"[订单台] 查询：</span><span class="si">{</span><span class="n">q</span><span class="p">[</span><span class="s1">'question'</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">),</span>
+    <span class="p">),</span>
+    <span class="p">(</span>
+        <span class="k">lambda</span> <span class="n">q</span><span class="p">:</span> <span class="nb">any</span><span class="p">(</span><span class="n">w</span> <span class="ow">in</span> <span class="n">q</span><span class="p">[</span><span class="s2">"question"</span><span class="p">]</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"推荐"</span><span class="p">,</span> <span class="s2">"找书"</span><span class="p">,</span> <span class="s2">"书单"</span><span class="p">)),</span>
+        <span class="n">RunnableLambda</span><span class="p">(</span><span class="k">lambda</span> <span class="n">q</span><span class="p">:</span> <span class="sa">f</span><span class="s2">"[荐书台] 荐书：</span><span class="si">{</span><span class="n">q</span><span class="p">[</span><span class="s1">'question'</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">),</span>
+    <span class="p">),</span>
+    <span class="n">RunnableLambda</span><span class="p">(</span><span class="k">lambda</span> <span class="n">q</span><span class="p">:</span> <span class="sa">f</span><span class="s2">"[前台] 闲聊：</span><span class="si">{</span><span class="n">q</span><span class="p">[</span><span class="s1">'question'</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">),</span>   <span class="c1"># 兜底</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">desk</span><span class="o">.</span><span class="n">invoke</span><span class="p">({</span><span class="s2">"question"</span><span class="p">:</span> <span class="s2">"我的订单到哪了"</span><span class="p">}))</span>      <span class="c1"># [订单台] 查询：我的订单到哪了</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">desk</span><span class="o">.</span><span class="n">invoke</span><span class="p">({</span><span class="s2">"question"</span><span class="p">:</span> <span class="s2">"推荐几本科幻小说"</span><span class="p">}))</span>    <span class="c1"># [荐书台] 荐书：推荐几本科幻小说</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">desk</span><span class="o">.</span><span class="n">invoke</span><span class="p">({</span><span class="s2">"question"</span><span class="p">:</span> <span class="s2">"今天天气不错"</span><span class="p">}))</span>        <span class="c1"># [前台] 闲聊：今天天气不错</span>
+</code></pre></div>
+<p>写法二，逻辑分支——把「判别 + 选择 + 执行」收进一个函数，条件想写多复杂都行：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.runnables</span><span class="w"> </span><span class="kn">import</span> <span class="n">RunnableLambda</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">triage</span><span class="p">(</span><span class="n">q</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">q</span><span class="p">[</span><span class="s2">"question"</span><span class="p">]</span>
+    <span class="k">if</span> <span class="s2">"订单"</span> <span class="ow">in</span> <span class="n">text</span><span class="p">:</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">"[订单台] 查询：</span><span class="si">{</span><span class="n">text</span><span class="si">}</span><span class="s2">"</span>
+    <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">w</span> <span class="ow">in</span> <span class="n">text</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"推荐"</span><span class="p">,</span> <span class="s2">"找书"</span><span class="p">,</span> <span class="s2">"书单"</span><span class="p">)):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">"[荐书台] 荐书：</span><span class="si">{</span><span class="n">text</span><span class="si">}</span><span class="s2">"</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">"[前台] 闲聊：</span><span class="si">{</span><span class="n">text</span><span class="si">}</span><span class="s2">"</span>
+
+<span class="n">triage_runnable</span> <span class="o">=</span> <span class="n">RunnableLambda</span><span class="p">(</span><span class="n">triage</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">triage_runnable</span><span class="o">.</span><span class="n">invoke</span><span class="p">({</span><span class="s2">"question"</span><span class="p">:</span> <span class="s2">"我的订单到哪了"</span><span class="p">}))</span>
+</code></pre></div>
+<p>带模型的进阶玩法（第 10、11 章会大量出现）：判别这一步也交给模型——先用一条「分类链」打标签，再按标签选子链：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># classify_chain = 分类提示词 | model | parser      # 输出「荐书 / 订单 / 闲聊」之一</span>
+<span class="c1"># def router(q: dict) -&gt; str:</span>
+<span class="c1">#     label = classify_chain.invoke(q)</span>
+<span class="c1">#     chain = {"荐书": book_chain, "订单": order_chain}.get(label, chat_chain)</span>
+<span class="c1">#     return chain.invoke(q)</span>
+<span class="c1">#</span>
+<span class="c1"># final_chain = RunnableLambda(router)</span>
+</code></pre></div>
+<p>两种姿势怎么选：</p>
+<ul>
+<li>分支少、条件简单、想让路由表一眼看清 → <strong>RunnableBranch</strong></li>
+<li>条件复杂、要动态挑链、要和外部系统联动 → <strong>逻辑分支</strong></li>
+</ul>
+<h3 id="常见坑_5">常见坑</h3>
+<ul>
+<li>Python 版 RunnableBranch 的分支是<strong>(条件, 子链) 元组</strong>，最后一项是<strong>不带元组的默认分支</strong>——构造时就要求至少两个分支（一条条件分支 + 兜底），少了直接 <code>ValueError</code>。</li>
+<li>条件<strong>从上到下短路匹配</strong>：上面的条件写得太宽，下面的分支永远轮不到。</li>
+<li>条件函数的返回值只要「真值」即可生效，但强烈建议规规矩矩返回 bool，避免字符串、数字带来的「意外为真」。</li>
+</ul>
+<hr />
+<h2 id="7-链的嵌套组合拼好的积木继续当零件">7. 链的嵌套组合：拼好的积木继续当零件</h2>
+<p><strong>比喻</strong>：乐高。几块小积木拼成一个「部件」，这个部件本身还能继续拼进更大的作品。链也一样——拼好的链是个 Runnable，天然可以继续 <code>|</code>。</p>
+<h3 id="作用_6">作用</h3>
+<p>把链当作更高层链的零件，搭出多层结构。<code>RunnableSequence</code> 则提供「显式声明步骤列表」的写法，步骤顺序一目了然，适合步骤较多的正式场景。</p>
+<h3 id="签名_5">签名</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.runnables</span><span class="w"> </span><span class="kn">import</span> <span class="n">RunnableSequence</span>
+
+<span class="n">chain</span> <span class="o">=</span> <span class="n">RunnableSequence</span><span class="p">(</span><span class="n">step1</span><span class="p">,</span> <span class="n">step2</span><span class="p">,</span> <span class="n">step3</span><span class="p">)</span>   <span class="c1"># 位置参数依次传入</span>
+</code></pre></div>
+<h3 id="最小示例_6">最小示例</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.runnables</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">RunnableLambda</span><span class="p">,</span>
+    <span class="n">RunnableParallel</span><span class="p">,</span>
+    <span class="n">RunnablePassthrough</span><span class="p">,</span>
+    <span class="n">RunnableSequence</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># 基础零件</span>
+<span class="n">clean</span> <span class="o">=</span> <span class="n">RunnableLambda</span><span class="p">(</span><span class="k">lambda</span> <span class="n">q</span><span class="p">:</span> <span class="p">{</span><span class="o">**</span><span class="n">q</span><span class="p">,</span> <span class="s2">"query"</span><span class="p">:</span> <span class="n">q</span><span class="p">[</span><span class="s2">"query"</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()})</span>
+<span class="n">enrich</span> <span class="o">=</span> <span class="n">RunnablePassthrough</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="k">lambda</span> <span class="n">_</span><span class="p">:</span> <span class="s2">"科幻"</span><span class="p">)</span>
+<span class="n">fanout</span> <span class="o">=</span> <span class="n">RunnableParallel</span><span class="p">(</span>
+    <span class="n">recommend</span><span class="o">=</span><span class="k">lambda</span> <span class="n">q</span><span class="p">:</span> <span class="sa">f</span><span class="s2">"荐书结果：</span><span class="si">{</span><span class="n">q</span><span class="p">[</span><span class="s1">'query'</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+    <span class="n">hot</span><span class="o">=</span><span class="k">lambda</span> <span class="n">_</span><span class="p">:</span> <span class="s2">"本周热门：《三体》"</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># 方式一：继续用 | 拼装</span>
+<span class="n">pipeline_a</span> <span class="o">=</span> <span class="n">clean</span> <span class="o">|</span> <span class="n">enrich</span> <span class="o">|</span> <span class="n">fanout</span>
+
+<span class="c1"># 方式二：RunnableSequence 显式声明步骤</span>
+<span class="n">pipeline_b</span> <span class="o">=</span> <span class="n">RunnableSequence</span><span class="p">(</span><span class="n">clean</span><span class="p">,</span> <span class="n">enrich</span><span class="p">,</span> <span class="n">fanout</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">pipeline_a</span><span class="o">.</span><span class="n">invoke</span><span class="p">({</span><span class="s2">"query"</span><span class="p">:</span> <span class="s2">"  星际旅行  "</span><span class="p">}))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">pipeline_b</span><span class="o">.</span><span class="n">invoke</span><span class="p">({</span><span class="s2">"query"</span><span class="p">:</span> <span class="s2">"  星际旅行  "</span><span class="p">}))</span>
+<span class="c1"># 两者输出相同：</span>
+<span class="c1"># {'recommend': '荐书结果：星际旅行', 'hot': '本周热门：《三体》'}</span>
+</code></pre></div>
+<p>带模型版的完整流水线（示意）：</p>
+<div class="highlight"><pre><span></span><code><span class="n">preprocess</span> <span class="o">=</span> <span class="n">RunnablePassthrough</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="k">lambda</span> <span class="n">_</span><span class="p">:</span> <span class="s2">"科幻"</span><span class="p">)</span>
+<span class="n">qa_chain</span> <span class="o">=</span> <span class="n">qa_prompt</span> <span class="o">|</span> <span class="n">model</span> <span class="o">|</span> <span class="n">parser</span>
+<span class="n">full</span> <span class="o">=</span> <span class="n">RunnableSequence</span><span class="p">(</span><span class="n">preprocess</span><span class="p">,</span> <span class="n">qa_chain</span><span class="p">,</span> <span class="n">RunnableLambda</span><span class="p">(</span><span class="n">save_to_log</span><span class="p">))</span>
+</code></pre></div>
+<h3 id="常见坑_6">常见坑</h3>
+<ul>
+<li>从其他语言版本迁移的同学注意：那边常见的 <code>RunnableSequence.from([a, b, c])</code>（传数组）习惯要改——<strong>Python 版直接传位置参数</strong>，把 list 传进去会报 <code>TypeError: Expected a Runnable, callable or dict</code>。</li>
+<li>用 <code>|</code> 拼出来的链本质上就是 RunnableSequence，两种写法可以混用、结果一致。</li>
+<li>嵌套别太深。层数一多，中间数据的形状最好用类型标注或注释交代清楚，不然三个月后的自己都读不懂。</li>
+</ul>
+<hr />
+<h2 id="8-runnable-到底统一了什么">8. Runnable 到底统一了什么</h2>
+<p><strong>比喻</strong>：会员卡。拾光书屋的会员卡一张通用：借书、听讲座、买咖啡都刷它。Runnable 就是 LangChain 世界的通用会员卡——只要实现了这套接口，就能刷进任何流水线。</p>
+<p>本章出场过的所有角色，底层全是 Runnable：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.prompts</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChatPromptTemplate</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.output_parsers</span><span class="w"> </span><span class="kn">import</span> <span class="n">StrOutputParser</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.runnables</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Runnable</span><span class="p">,</span>
+    <span class="n">RunnableLambda</span><span class="p">,</span>
+    <span class="n">RunnablePassthrough</span><span class="p">,</span>
+    <span class="n">RunnableParallel</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain_ollama</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChatOllama</span>
+
+<span class="n">members</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">ChatPromptTemplate</span><span class="o">.</span><span class="n">from_template</span><span class="p">(</span><span class="s2">"推荐《</span><span class="si">{book}</span><span class="s2">》"</span><span class="p">),</span>   <span class="c1"># 模板</span>
+    <span class="n">ChatOllama</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="s2">"qwen3:4b"</span><span class="p">),</span>                         <span class="c1"># 模型</span>
+    <span class="n">StrOutputParser</span><span class="p">(),</span>                                    <span class="c1"># 解析器</span>
+    <span class="n">RunnableLambda</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">),</span>                          <span class="c1"># 函数包装</span>
+    <span class="n">RunnablePassthrough</span><span class="p">(),</span>                                <span class="c1"># 直通</span>
+    <span class="n">RunnableParallel</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">),</span>                      <span class="c1"># 并行</span>
+<span class="p">]</span>
+<span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">members</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">m</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">:</span><span class="s2">20s</span><span class="si">}</span><span class="s2"> isinstance(m, Runnable) -&gt; </span><span class="si">{</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="w"> </span><span class="n">Runnable</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="c1"># 六行全是 True</span>
+</code></pre></div>
+<p>统一带来三个实打实的好处：</p>
+<ol>
+<li><strong>拼装自由</strong>：零件之间接口一致，任何两个都能用 <code>|</code> 相连，不用为「谁接谁」写胶水代码。</li>
+<li><strong>运行一致</strong>：invoke / stream / batch 对所有零件通用，三个方法学到手，整座工具箱都会用。</li>
+<li><strong>无限组合</strong>：链是 Runnable，链的链还是 Runnable——小链拼大链，大链拼系统，理论上可以一直套娃。</li>
+</ol>
+<p>这也是 LCEL 的设计初衷：与其给每种组件各设计一套调用方式，不如约定一个统一接口，让「组合」这件事变得零成本。</p>
+<hr />
+<h2 id="小结">小结</h2>
+<p>一张速查表带走本章：</p>
+<table>
+<thead>
+<tr>
+<th>组件 / 写法</th>
+<th>一句话定位</th>
+<th>典型场景</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>a \| b</code> / <code>a.pipe(b)</code></td>
+<td>串行拼装</td>
+<td>模板 → 模型 → 解析器</td>
+</tr>
+<tr>
+<td>invoke / stream / batch</td>
+<td>统一运行入口</td>
+<td>单条 / 流式 / 批量</td>
+</tr>
+<tr>
+<td>RunnableLambda</td>
+<td>普通函数变标准件</td>
+<td>后处理、埋点、路由</td>
+</tr>
+<tr>
+<td>RunnablePassthrough</td>
+<td>原样直通 + assign 补字段</td>
+<td>注入检索结果、上下文</td>
+</tr>
+<tr>
+<td>RunnableParallel</td>
+<td>同一输入并发分身</td>
+<td>摘要 + 关键词同时算</td>
+</tr>
+<tr>
+<td>RunnableBranch</td>
+<td>声明式条件路由</td>
+<td>意图分流、风控兜底</td>
+</tr>
+<tr>
+<td>RunnableSequence</td>
+<td>显式步骤列表</td>
+<td>多层流水线</td>
+</tr>
+</tbody>
+</table>
+<p>拼装术练完了，下一章把 stream 和 batch 这对能力展开讲透：流式输出怎么做打字机效果、批量请求怎么控制并发上限——LCEL 流水线的「驾驶技巧」全在下一章。</p>
+<p><strong>下一章</strong>：<a href="../langchain/04-liu-shi-yu-bing-fa.html">04 · 流式与并发</a></p></div>
+
+      </article>
+<nav class="pager"><a class="pg-card pg-prev" href="../langchain/02-ti-shi-ci-mu-ban-yu-xiao-xi.html"><span class="pg-label">← 上一篇</span><span class="pg-title">提示词模板与消息</span><span class="pg-mod">LangChain 指南</span></a><a class="pg-card pg-next" href="../langchain/04-liu-shi-yu-bing-fa.html"><span class="pg-label">下一篇 →</span><span class="pg-title">流式与并发</span><span class="pg-mod">LangChain 指南</span></a></nav>
+    </div>
+    <footer class="foot">
+      <span>深栈 DeepStack · AI Agent 工程师转型训练营配套文档</span>
+    </footer>
+  </main>
+<nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#开场从接龙到流水线">开场：从「接龙」到「流水线」</a><a class="toc-link toc-h2" href="#1-lcel-管道-与-pipe">1. LCEL 管道：| 与 .pipe()</a><a class="toc-link toc-h3" href="#作用">作用</a><a class="toc-link toc-h3" href="#签名两种等价写法">签名（两种等价写法）</a><a class="toc-link toc-h3" href="#最小示例">最小示例</a><a class="toc-link toc-h3" href="#常见坑">常见坑</a><a class="toc-link toc-h2" href="#2-runnable-统一接口invoke-stream-batch-三兄弟">2. Runnable 统一接口：invoke / stream / batch 三兄弟</a><a class="toc-link toc-h3" href="#作用_1">作用</a><a class="toc-link toc-h3" href="#签名">签名</a><a class="toc-link toc-h3" href="#最小示例_1">最小示例</a><a class="toc-link toc-h3" href="#输入输出类型检查">输入输出类型检查</a><a class="toc-link toc-h3" href="#常见坑_1">常见坑</a><a class="toc-link toc-h2" href="#3-runnablelambda给普通函数发上岗证">3. RunnableLambda：给普通函数发上岗证</a><a class="toc-link toc-h3" href="#作用_2">作用</a><a class="toc-link toc-h3" href="#签名_1">签名</a><a class="toc-link toc-h3" href="#最小示例_2">最小示例</a><a class="toc-link toc-h3" href="#常见坑_2">常见坑</a><a class="toc-link toc-h2" href="#4-runnablepassthrough原样放行与顺手塞便签">4. RunnablePassthrough：原样放行与顺手塞便签</a><a class="toc-link toc-h3" href="#作用_3">作用</a><a class="toc-link toc-h3" href="#签名_2">签名</a><a class="toc-link toc-h3" href="#最小示例_3">最小示例</a><a class="toc-link toc-h3" href="#常见坑_3">常见坑</a><a class="toc-link toc-h2" href="#5-runnableparallel一变多的分身术">5. RunnableParallel：一变多的分身术</a><a class="toc-link toc-h3" href="#作用_4">作用</a><a class="toc-link toc-h3" href="#签名_3">签名</a><a class="toc-link toc-h3" href="#最小示例_4">最小示例</a><a class="toc-link toc-h3" href="#常见坑_4">常见坑</a><a class="toc-link toc-h2" href="#6-条件路由流水线上的分诊台">6. 条件路由：流水线上的分诊台</a><a class="toc-link toc-h3" href="#作用_5">作用</a><a class="toc-link toc-h3" href="#签名_4">签名</a><a class="toc-link toc-h3" href="#最小示例_5">最小示例</a><a class="toc-link toc-h3" href="#常见坑_5">常见坑</a><a class="toc-link toc-h2" href="#7-链的嵌套组合拼好的积木继续当零件">7. 链的嵌套组合：拼好的积木继续当零件</a><a class="toc-link toc-h3" href="#作用_6">作用</a><a class="toc-link toc-h3" href="#签名_5">签名</a><a class="toc-link toc-h3" href="#最小示例_6">最小示例</a><a class="toc-link toc-h3" href="#常见坑_6">常见坑</a><a class="toc-link toc-h2" href="#8-runnable-到底统一了什么">8. Runnable 到底统一了什么</a><a class="toc-link toc-h2" href="#小结">小结</a></nav>
+</div>
+<div class="sb-mask" id="sbMask"></div>
+<script src="../assets/app.js"></script>
+</body>
+</html>

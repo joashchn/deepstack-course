@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>23 · 工程化工具链 · 深栈 DeepStack 课程文档</title>
+<meta name="description" content="上一章走完发布全流程的同学应该有体感：为了发布一个小小的库，我们动用了 venv 建环境、pip 装工具、build 做打包、twine 传产物……工具四散、命令一长串，换个工程还得从头再来一遍。多版本 Python 的…">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%23d9c39a' text-anchor='middle'%3EDS%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+<div class="progress" id="progress"></div>
+
+<div class="layout">
+<aside class="sidebar" id="sidebar">
+  <div class="sb-head">
+    <a class="brand" href="../index.html">
+      <span class="brand-mark">DS</span>
+      <span class="brand-text"><b>深栈 DeepStack</b><i>AI Agent 工程师转型训练营</i></span>
+    </a>
+    <button class="sb-close" id="sbClose" aria-label="关闭目录">✕</button>
+  </div>
+  <div class="sb-search"><input type="search" id="searchInput" placeholder="搜索 123 篇文档… ( / )" autocomplete="off">
+    <div class="sb-results" id="searchResults"></div></div>
+  <nav class="sb-nav">
+    <section class="sb-group open" data-mod="python">
+      <a class="sb-group-title" href="../modules/python.html" data-toggle="python">
+        <span class="sb-num">01</span>
+        <span class="sb-group-text"><b>Python 与数据实践</b><i>31 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../python/01-huan-jing-da-jian-yu-ban-ben-guan-li.html"><span class="sb-item-num">01</span><span class="sb-item-title">环境搭建与版本管理</span></a>
+        <a class="sb-item" href="../python/02-bian-liang-biao-da-shi-yu-liu-cheng-kong-zhi.html"><span class="sb-item-num">02</span><span class="sb-item-title">变量、表达式与流程控制</span></a>
+        <a class="sb-item" href="../python/03-xu-lie-zi-dian-yu-ji-he.html"><span class="sb-item-num">03</span><span class="sb-item-title">序列、字典与集合</span></a>
+        <a class="sb-item" href="../python/04-han-shu-she-ji-yu-lambda.html"><span class="sb-item-num">04</span><span class="sb-item-title">函数设计与 lambda</span></a>
+        <a class="sb-item" href="../python/05-zuo-yong-yu-gui-ze-yu-bi-bao.html"><span class="sb-item-num">05</span><span class="sb-item-title">作用域规则与闭包</span></a>
+        <a class="sb-item" href="../python/06-lei-de-ding-yi-yu-shi-li-hua.html"><span class="sb-item-num">06</span><span class="sb-item-title">类的定义与实例化</span></a>
+        <a class="sb-item" href="../python/07-lei-xing-pan-ding-yu-chou-xiang-ji-lei.html"><span class="sb-item-num">07</span><span class="sb-item-title">类型判定与抽象基类</span></a>
+        <a class="sb-item" href="../python/08-mo-shu-fang-fa-quan-jing.html"><span class="sb-item-num">08</span><span class="sb-item-title">魔术方法全景</span></a>
+        <a class="sb-item" href="../python/09-miao-shu-fu-yu-yuan-lei.html"><span class="sb-item-num">09</span><span class="sb-item-title">描述符与元类</span></a>
+        <a class="sb-item" href="../python/10-zhuang-shi-qi.html"><span class="sb-item-num">10</span><span class="sb-item-title">装饰器</span></a>
+        <a class="sb-item" href="../python/11-die-dai-xie-yi-yu-sheng-cheng-qi.html"><span class="sb-item-num">11</span><span class="sb-item-title">迭代协议与生成器</span></a>
+        <a class="sb-item" href="../python/12-with-yu-shang-xia-wen-xie-yi.html"><span class="sb-item-num">12</span><span class="sb-item-title">with 与上下文协议</span></a>
+        <a class="sb-item" href="../python/13-yi-chang-ti-xi-yu-chu-li.html"><span class="sb-item-num">13</span><span class="sb-item-title">异常体系与处理</span></a>
+        <a class="sb-item" href="../python/14-lei-xing-biao-zhu.html"><span class="sb-item-num">14</span><span class="sb-item-title">类型标注</span></a>
+        <a class="sb-item" href="../python/15-mo-kuai-yu-bao-de-zu-zhi.html"><span class="sb-item-num">15</span><span class="sb-item-title">模块与包的组织</span></a>
+        <a class="sb-item" href="../python/16-biao-zhun-ku-xun-li.html"><span class="sb-item-num">16</span><span class="sb-item-title">标准库巡礼</span></a>
+        <a class="sb-item" href="../python/17-yi-lai-guan-li-yu-di-san-fang-ku.html"><span class="sb-item-num">17</span><span class="sb-item-title">依赖管理与第三方库</span></a>
+        <a class="sb-item" href="../python/18-xian-cheng-yu-jin-cheng.html"><span class="sb-item-num">18</span><span class="sb-item-title">线程与进程</span></a>
+        <a class="sb-item" href="../python/19-shi-jian-xun-huan.html"><span class="sb-item-num">19</span><span class="sb-item-title">事件循环</span></a>
+        <a class="sb-item" href="../python/20-future-yu-xie-cheng.html"><span class="sb-item-num">20</span><span class="sb-item-title">Future 与协程</span></a>
+        <a class="sb-item" href="../python/21-asyncio-shi-zhan.html"><span class="sb-item-num">21</span><span class="sb-item-title">asyncio 实战</span></a>
+        <a class="sb-item" href="../python/22-gou-jian-yu-fa-bu.html"><span class="sb-item-num">22</span><span class="sb-item-title">构建与发布</span></a>
+        <a class="sb-item current" href="../python/23-gong-cheng-hua-gong-ju-lian.html"><span class="sb-item-num">23</span><span class="sb-item-title">工程化工具链</span></a>
+        <a class="sb-item" href="../python/24-monorepo-yu-tiao-shi.html"><span class="sb-item-num">24</span><span class="sb-item-title">monorepo 与调试</span></a>
+        <a class="sb-item" href="../python/25-jupyter-jiao-hu-huan-jing.html"><span class="sb-item-num">25</span><span class="sb-item-title">Jupyter 交互环境</span></a>
+        <a class="sb-item" href="../python/26-numpy-shu-zu-yu-xiang-liang-hua.html"><span class="sb-item-num">26</span><span class="sb-item-title">NumPy 数组与向量化</span></a>
+        <a class="sb-item" href="../python/27-pandas-shu-ju-jie-gou.html"><span class="sb-item-num">27</span><span class="sb-item-title">Pandas 数据结构</span></a>
+        <a class="sb-item" href="../python/28-pandas-shu-ju-qing-xi.html"><span class="sb-item-num">28</span><span class="sb-item-title">Pandas 数据清洗</span></a>
+        <a class="sb-item" href="../python/29-matplotlib-hui-tu-ti-xi.html"><span class="sb-item-num">29</span><span class="sb-item-title">Matplotlib 绘图体系</span></a>
+        <a class="sb-item" href="../python/30-matplotlib-dong-hua-yu-jiao-hu.html"><span class="sb-item-num">30</span><span class="sb-item-title">Matplotlib 动画与交互</span></a>
+        <a class="sb-item" href="../python/31-seaborn-tong-ji-ke-shi-hua.html"><span class="sb-item-num">31</span><span class="sb-item-title">Seaborn 统计可视化</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="agent">
+      <a class="sb-group-title" href="../modules/agent.html" data-toggle="agent">
+        <span class="sb-num">02</span>
+        <span class="sb-group-text"><b>Agent 核心</b><i>15 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../agent/01-token-yu-ci-qian-ru.html"><span class="sb-item-num">01</span><span class="sb-item-title">Token 与词嵌入</span></a>
+        <a class="sb-item" href="../agent/02-qian-xiang-chuan-bo-yu-fan-xiang-chuan-bo.html"><span class="sb-item-num">02</span><span class="sb-item-title">前向传播与反向传播</span></a>
+        <a class="sb-item" href="../agent/03-zhu-yi-li-ji-zhi-yu-transformer-jia-gou.html"><span class="sb-item-num">03</span><span class="sb-item-title">注意力机制与 Transformer 架构</span></a>
+        <a class="sb-item" href="../agent/04-yu-xun-lian-rlhf-yu-cai-yang-kv-cache.html"><span class="sb-item-num">04</span><span class="sb-item-title">预训练、RLHF 与采样（KV Cache）</span></a>
+        <a class="sb-item" href="../agent/05-ben-di-mo-xing-yu-xiao-xi-jie-gou.html"><span class="sb-item-num">05</span><span class="sb-item-title">本地模型与消息结构</span></a>
+        <a class="sb-item" href="../agent/06-hui-hua-guan-li-yu-json-shu-chu.html"><span class="sb-item-num">06</span><span class="sb-item-title">会话管理与 JSON 输出</span></a>
+        <a class="sb-item" href="../agent/07-tool-calling-xie-yi-yu-feng-zhuang.html"><span class="sb-item-num">07</span><span class="sb-item-title">Tool Calling：协议与封装</span></a>
+        <a class="sb-item" href="../agent/08-react-mo-shi-yu-zhu-xun-huan.html"><span class="sb-item-num">08</span><span class="sb-item-title">ReAct 模式与主循环</span></a>
+        <a class="sb-item" href="../agent/09-shi-zhan-deep-research-agent.html"><span class="sb-item-num">09</span><span class="sb-item-title">实战：Deep Research Agent</span></a>
+        <a class="sb-item" href="../agent/10-skill-yu-jian-jin-shi-pi-lu.html"><span class="sb-item-num">10</span><span class="sb-item-title">Skill 与渐进式披露</span></a>
+        <a class="sb-item" href="../agent/11-mcp-quan-jing.html"><span class="sb-item-num">11</span><span class="sb-item-title">MCP 全景</span></a>
+        <a class="sb-item" href="../agent/12-duo-agent-yu-xuan-xing-ce-lve.html"><span class="sb-item-num">12</span><span class="sb-item-title">多 Agent 与选型策略</span></a>
+        <a class="sb-item" href="../agent/13-ti-shi-ci-gong-cheng-yu-shang-xia-wen-gong.html"><span class="sb-item-num">13</span><span class="sb-item-title">提示词工程与上下文工程</span></a>
+        <a class="sb-item" href="../agent/14-xun-huan-tu-yu-gu-jia-gong-cheng.html"><span class="sb-item-num">14</span><span class="sb-item-title">循环、图与骨架工程</span></a>
+        <a class="sb-item" href="../agent/15-ji-yi-quan-xian-yu-ping-ce.html"><span class="sb-item-num">15</span><span class="sb-item-title">记忆、权限与评测</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="langchain">
+      <a class="sb-group-title" href="../modules/langchain.html" data-toggle="langchain">
+        <span class="sb-num">03</span>
+        <span class="sb-group-text"><b>LangChain 指南</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langchain/01-ren-shi-langchain.html"><span class="sb-item-num">01</span><span class="sb-item-title">认识 LangChain</span></a>
+        <a class="sb-item" href="../langchain/02-ti-shi-ci-mu-ban-yu-xiao-xi.html"><span class="sb-item-num">02</span><span class="sb-item-title">提示词模板与消息</span></a>
+        <a class="sb-item" href="../langchain/03-lcel-yu-runnable.html"><span class="sb-item-num">03</span><span class="sb-item-title">LCEL 与 Runnable</span></a>
+        <a class="sb-item" href="../langchain/04-liu-shi-yu-bing-fa.html"><span class="sb-item-num">04</span><span class="sb-item-title">流式与并发</span></a>
+        <a class="sb-item" href="../langchain/05-shu-chu-jie-xi-qi.html"><span class="sb-item-num">05</span><span class="sb-item-title">输出解析器</span></a>
+        <a class="sb-item" href="../langchain/06-wen-dang-jia-zai-yu-qie-ge.html"><span class="sb-item-num">06</span><span class="sb-item-title">文档加载与切割</span></a>
+        <a class="sb-item" href="../langchain/07-qian-ru-yu-xiang-liang-ku.html"><span class="sb-item-num">07</span><span class="sb-item-title">嵌入与向量库</span></a>
+        <a class="sb-item" href="../langchain/08-jian-suo-yu-rag.html"><span class="sb-item-num">08</span><span class="sb-item-title">检索与RAG</span></a>
+        <a class="sb-item" href="../langchain/09-dui-hua-ji-yi.html"><span class="sb-item-num">09</span><span class="sb-item-title">对话记忆</span></a>
+        <a class="sb-item" href="../langchain/10-gong-ju-diao-yong.html"><span class="sb-item-num">10</span><span class="sb-item-title">工具调用</span></a>
+        <a class="sb-item" href="../langchain/11-agent.html"><span class="sb-item-num">11</span><span class="sb-item-title">Agent</span></a>
+        <a class="sb-item" href="../langchain/12-hui-diao-yu-tiao-shi-quan-ke-cheng-shou-guan.html"><span class="sb-item-num">12</span><span class="sb-item-title">回调与调试（全课程收官章）</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="langgraph">
+      <a class="sb-group-title" href="../modules/langgraph.html" data-toggle="langgraph">
+        <span class="sb-num">04</span>
+        <span class="sb-group-text"><b>LangGraph 框架指南</b><i>17 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langgraph/01-di-1-zhang-cong-yi-ge-shi-kong-de-jiao.html"><span class="sb-item-num">01</span><span class="sb-item-title">第 1 章 从一个失控的脚本说起</span></a>
+        <a class="sb-item" href="../langgraph/02-di-2-zhang-zui-xiao-ke-yun-xing-tu.html"><span class="sb-item-num">02</span><span class="sb-item-title">第 2 章 最小可运行图</span></a>
+        <a class="sb-item" href="../langgraph/03-di-3-zhang-zhuang-tai-tu-de-shu-ju-xin.html"><span class="sb-item-num">03</span><span class="sb-item-title">第 3 章 状态：图的数据心脏</span></a>
+        <a class="sb-item" href="../langgraph/04-di-4-zhang-rang-liu-cheng-xue-hui-jue-ce.html"><span class="sb-item-num">04</span><span class="sb-item-title">第 4 章 让流程学会决策</span></a>
+        <a class="sb-item" href="../langgraph/05-di-5-zhang-bing-xing-shi-jie-chao-bu-zhi.html"><span class="sb-item-num">05</span><span class="sb-item-title">第 5 章 并行世界：超步执行模型</span></a>
+        <a class="sb-item" href="../langgraph/06-di-6-zhang-command-ba-kong-zhi-quan-jiao-jin.html"><span class="sb-item-num">06</span><span class="sb-item-title">第 6 章 Command：把控制权交进节点</span></a>
+        <a class="sb-item" href="../langgraph/07-di-7-zhang-dong-tai-bing-xing-send-yu-mapreduce.html"><span class="sb-item-num">07</span><span class="sb-item-title">第 7 章 动态并行：Send 与 MapReduce</span></a>
+        <a class="sb-item" href="../langgraph/08-di-8-zhang-gei-tu-zhuang-shang-shou-jiao-gong.html"><span class="sb-item-num">08</span><span class="sb-item-title">第 8 章 给图装上手脚：工具调用</span></a>
+        <a class="sb-item" href="../langgraph/09-di-9-zhang-fu-yong-yu-feng-zhuang-zi-tu.html"><span class="sb-item-num">09</span><span class="sb-item-title">第 9 章 复用与封装：子图</span></a>
+        <a class="sb-item" href="../langgraph/10-di-10-zhang-cong-dan-tu-dao-tuan-dui-duo.html"><span class="sb-item-num">10</span><span class="sb-item-title">第 10 章 从单图到团队：多 Agent 架构</span></a>
+        <a class="sb-item" href="../langgraph/11-di-11-zhang-liu-shi-shu-chu.html"><span class="sb-item-num">11</span><span class="sb-item-title">第 11 章 流式输出</span></a>
+        <a class="sb-item" href="../langgraph/12-di-12-zhang-chi-jiu-hua-checkpointer-yu-xian-cheng.html"><span class="sb-item-num">12</span><span class="sb-item-title">第 12 章 持久化：Checkpointer 与线程</span></a>
+        <a class="sb-item" href="../langgraph/13-di-13-zhang-shi-jian-lv-xing.html"><span class="sb-item-num">13</span><span class="sb-item-title">第 13 章 时间旅行</span></a>
+        <a class="sb-item" href="../langgraph/14-di-14-zhang-zhong-duan-yu-ren-zai-hui-lu.html"><span class="sb-item-num">14</span><span class="sb-item-title">第 14 章 中断与人在回路</span></a>
+        <a class="sb-item" href="../langgraph/15-di-15-zhang-ji-yi-guan-li.html"><span class="sb-item-num">15</span><span class="sb-item-title">第 15 章 记忆管理</span></a>
+        <a class="sb-item" href="../langgraph/16-di-16-zhang-rong-cuo-zhong-shi-chao-shi-yu.html"><span class="sb-item-num">16</span><span class="sb-item-title">第 16 章 容错：重试、超时与兜底</span></a>
+        <a class="sb-item" href="../langgraph/17-di-17-zhang-quan-jing-hui-gu.html"><span class="sb-item-num">17</span><span class="sb-item-title">第 17 章 全景回顾</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="backend">
+      <a class="sb-group-title" href="../modules/backend.html" data-toggle="backend">
+        <span class="sb-num">05</span>
+        <span class="sb-group-text"><b>Python 框架指南</b><i>14 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../backend/01-fastapi-ru-men-yu-asgi.html"><span class="sb-item-num">01</span><span class="sb-item-title">FastAPI 入门与 ASGI</span></a>
+        <a class="sb-item" href="../backend/02-lu-you-yu-qing-qiu-xiang-ying.html"><span class="sb-item-num">02</span><span class="sb-item-title">路由与请求响应</span></a>
+        <a class="sb-item" href="../backend/03-pydantic-shu-ju-jiao-yan-yu-pei-zhi.html"><span class="sb-item-num">03</span><span class="sb-item-title">Pydantic 数据校验与配置</span></a>
+        <a class="sb-item" href="../backend/04-sqlalchemy-yi-bu-yin-qing-yu-hui-hua.html"><span class="sb-item-num">04</span><span class="sb-item-title">SQLAlchemy 异步引擎与会话</span></a>
+        <a class="sb-item" href="../backend/05-orm-jian-mo.html"><span class="sb-item-num">05</span><span class="sb-item-title">ORM 建模</span></a>
+        <a class="sb-item" href="../backend/06-sql-biao-da-shi-yu-shu-ju-cao-zuo.html"><span class="sb-item-num">06</span><span class="sb-item-title">SQL 表达式与数据操作</span></a>
+        <a class="sb-item" href="../backend/07-alembic-shu-ju-qian-yi.html"><span class="sb-item-num">07</span><span class="sb-item-title">Alembic 数据迁移</span></a>
+        <a class="sb-item" href="../backend/08-yi-lai-zhu-ru.html"><span class="sb-item-num">08</span><span class="sb-item-title">依赖注入</span></a>
+        <a class="sb-item" href="../backend/09-tong-yi-yi-chang-chu-li.html"><span class="sb-item-num">09</span><span class="sb-item-title">统一异常处理</span></a>
+        <a class="sb-item" href="../backend/10-zhong-jian-jian.html"><span class="sb-item-num">10</span><span class="sb-item-title">中间件</span></a>
+        <a class="sb-item" href="../backend/11-ren-zheng-yu-jwt.html"><span class="sb-item-num">11</span><span class="sb-item-title">认证与 JWT</span></a>
+        <a class="sb-item" href="../backend/12-pytest-ce-shi.html"><span class="sb-item-num">12</span><span class="sb-item-title">pytest 测试</span></a>
+        <a class="sb-item" href="../backend/13-ri-zhi-loguru.html"><span class="sb-item-num">13</span><span class="sb-item-title">日志 loguru</span></a>
+        <a class="sb-item" href="../backend/14-liu-shi-xiang-ying-sse-yu-websocket.html"><span class="sb-item-num">14</span><span class="sb-item-title">流式响应 SSE 与 WebSocket</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="interview">
+      <a class="sb-group-title" href="../modules/interview.html" data-toggle="interview">
+        <span class="sb-num">06</span>
+        <span class="sb-group-text"><b>面试题库</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../interview/01-llm-yuan-li-pian.html"><span class="sb-item-num">01</span><span class="sb-item-title">LLM 原理篇</span></a>
+        <a class="sb-item" href="../interview/02-rag-yu-jian-suo-pian.html"><span class="sb-item-num">02</span><span class="sb-item-title">RAG 与检索篇</span></a>
+        <a class="sb-item" href="../interview/03-agent-he-xin-pian.html"><span class="sb-item-num">03</span><span class="sb-item-title">Agent 核心篇</span></a>
+        <a class="sb-item" href="../interview/04-langgraph-pian.html"><span class="sb-item-num">04</span><span class="sb-item-title">LangGraph 篇</span></a>
+        <a class="sb-item" href="../interview/05-langchain-pian.html"><span class="sb-item-num">05</span><span class="sb-item-title">LangChain 篇</span></a>
+        <a class="sb-item" href="../interview/06-xi-tong-she-ji-pian.html"><span class="sb-item-num">06</span><span class="sb-item-title">系统设计篇</span></a>
+        <a class="sb-item" href="../interview/07-xiang-mu-shen-wa-pian.html"><span class="sb-item-num">07</span><span class="sb-item-title">项目深挖篇</span></a>
+        <a class="sb-item" href="../interview/08-gu-zhang-pai-cha-pian.html"><span class="sb-item-num">08</span><span class="sb-item-title">故障排查篇</span></a>
+        <a class="sb-item" href="../interview/09-python-ji-chu-pian.html"><span class="sb-item-num">09</span><span class="sb-item-title">Python 基础篇</span></a>
+        <a class="sb-item" href="../interview/10-fastapi-yu-hou-duan-pian.html"><span class="sb-item-num">10</span><span class="sb-item-title">FastAPI 与后端篇</span></a>
+        <a class="sb-item" href="../interview/11-ti-shi-ci-gong-cheng-yu-an-quan-pian.html"><span class="sb-item-num">11</span><span class="sb-item-title">提示词工程与安全篇</span></a>
+        <a class="sb-item" href="../interview/12-mo-xing-xuan-xing-yu-jiang-ben-pian.html"><span class="sb-item-num">12</span><span class="sb-item-title">模型选型与降本篇</span></a>
+      </div>
+    </section>
+  </nav>
+</aside>
+  <main class="main">
+    <header class="topbar">
+      <button class="menu-btn" id="menuBtn" aria-label="目录">☰</button>
+      <div class="crumbs"><a href="../index.html">首页</a><span>/</span><a href="../modules/python.html">Python 与数据实践</a><span>/</span><span class="cur">工程化工具链</span></div>
+      <div class="topbar-actions">
+        <button class="icon-btn" id="themeBtn" title="切换深浅色" aria-label="切换深浅色">◐</button>
+      </div>
+    </header>
+    <div class="content">
+      <article class="article">
+
+<header class="page-head">
+  <div class="page-kicker">Python 与数据实践 · 第 23 章</div>
+  <h1 class="page-title">工程化工具链</h1>
+  <p class="page-desc">上一章走完发布全流程的同学应该有体感：为了发布一个小小的库，我们动用了 venv 建环境、pip 装工具、build 做打包、twine 传产物……工具四散、命令一长串，换个工程还得从头再来一遍。多版本 Python 的…</p>
+  <div class="page-meta">
+    <span>约 18 分钟</span><span>7,313 字</span><span>33 个代码示例</span>
+  </div>
+</header>
+<div class="md"><p>上一章走完发布全流程的同学应该有体感：为了发布一个小小的库，我们动用了 <code>venv</code> 建环境、<code>pip</code> 装工具、<code>build</code> 做打包、<code>twine</code> 传产物……工具四散、命令一长串，换个工程还得从头再来一遍。多版本 Python 的管理之前也是另一套工具在管。</p>
+<p>这一章换个思路：<strong>把整个工具箱换成一件趁手的兵器——uv</strong>。</p>
+<blockquote>
+<p>官方文档：https://docs.astral.sh/uv/</p>
+</blockquote>
+<hr />
+<h2 id="1-可选先送走-pyenv">1. 【可选】先送走 pyenv</h2>
+<p>前面章节用 pyenv 装多版本 Python。uv 自己就带完整的版本管理（第 4 节会讲），pyenv 可以功成身退了。不卸也不影响使用 uv，纯属清爽起见。</p>
+<h3 id="macoshomebrew-装的">macOS（Homebrew 装的）</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># 1. 卸载本体</span>
+brew<span class="w"> </span>uninstall<span class="w"> </span>pyenv
+
+<span class="c1"># 2. 清掉残留目录</span>
+rm<span class="w"> </span>-rf<span class="w"> </span>~/.pyenv
+
+<span class="c1"># 3. 打开 ~/.zshrc，删掉当初加的这两行：</span>
+<span class="c1">#    eval "$(pyenv init -)"</span>
+<span class="c1">#    export PYTHON_BUILD_MIRROR_URL="..."</span>
+<span class="c1">#    改完执行 source ~/.zshrc 生效</span>
+</code></pre></div>
+<h3 id="windowspyenv-win">Windows（pyenv-win）</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># 1. 删掉安装目录（默认在用户目录下）</span>
+rm<span class="w"> </span>-r<span class="w"> </span><span class="nv">$env</span>:USERPROFILE<span class="se">\.</span>pyenv
+
+<span class="c1"># 2. 打开「系统环境变量」面板，逐项清理：</span>
+<span class="c1">#    - 用户变量 PYENV</span>
+<span class="c1">#    - 用户变量 PYTHON_BUILD_MIRROR_URL</span>
+<span class="c1">#    - Path 里的 %USERPROFILE%\.pyenv\pyenv-win\bin</span>
+<span class="c1">#    - Path 里的 %USERPROFILE%\.pyenv\pyenv-win\shims</span>
+</code></pre></div>
+<h3 id="确认送走了">确认送走了</h3>
+<div class="highlight"><pre><span></span><code>pyenv<span class="w"> </span>--version
+<span class="c1"># 提示 command not found: pyenv，说明清理干净了</span>
+</code></pre></div>
+<h2 id="2-uv-是何方神圣">2. uv 是何方神圣</h2>
+<p>uv 是 Astral 公司用 Rust 写的 Python 包管理与工程管理工具，野心是把上面那一堆零散工具全部收编：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">被收编的工具</th>
+<th style="text-align: left;">uv 的对应能力</th>
+<th style="text-align: left;">干的事</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>pip</code></td>
+<td style="text-align: left;"><code>uv pip</code></td>
+<td style="text-align: left;">装包、卸包</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>pip-tools</code></td>
+<td style="text-align: left;"><code>uv lock</code> / <code>uv sync</code></td>
+<td style="text-align: left;">锁版本、对齐环境</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>pipx</code></td>
+<td style="text-align: left;"><code>uv tool</code></td>
+<td style="text-align: left;">运行/常驻 CLI 工具</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>virtualenv</code> / <code>venv</code></td>
+<td style="text-align: left;"><code>uv venv</code></td>
+<td style="text-align: left;">虚拟环境</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>pyenv</code></td>
+<td style="text-align: left;"><code>uv python</code></td>
+<td style="text-align: left;">多版本 Python</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>poetry</code> / <code>pdm</code></td>
+<td style="text-align: left;"><code>uv init</code> / <code>uv add</code> / <code>uv remove</code></td>
+<td style="text-align: left;">建工程、管依赖</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>build</code> + <code>twine</code></td>
+<td style="text-align: left;"><code>uv build</code> / <code>uv publish</code></td>
+<td style="text-align: left;">构建、发布（上一章的两步棋）</td>
+</tr>
+</tbody>
+</table>
+<p>它的招牌是<strong>速度</strong>：官方口径比 pip 快 10～100 倍——并行下载、全局缓存、Rust 实现，装一批依赖经常是"回车还没松手就完事了"的体验。</p>
+<h2 id="3-安装">3. 安装</h2>
+<div class="highlight"><pre><span></span><code><span class="c1"># macOS / Linux</span>
+curl<span class="w"> </span>-LsSf<span class="w"> </span>https://astral.sh/uv/install.sh<span class="w"> </span><span class="p">|</span><span class="w"> </span>sh
+
+<span class="c1"># Windows（PowerShell）</span>
+powershell<span class="w"> </span>-ExecutionPolicy<span class="w"> </span>ByPass<span class="w"> </span>-c<span class="w"> </span><span class="s2">"powershell -c \"irm https://astral.sh/uv/install.ps1 | iex\""</span>
+
+<span class="c1"># macOS 也可以走 brew</span>
+brew<span class="w"> </span>install<span class="w"> </span>uv
+</code></pre></div>
+<p>装完验证一下：</p>
+<div class="highlight"><pre><span></span><code>uv<span class="w"> </span>--version
+</code></pre></div>
+<blockquote>
+<p>安装脚本会自动把 uv 加进 <code>PATH</code>。万一终端喊找不到命令，手动把 <code>~/.local/bin</code> 补进 <code>PATH</code> 即可。</p>
+</blockquote>
+<h3 id="给下载提速镜像源">给下载提速：镜像源</h3>
+<p>国内网络直连 PyPI 经常龟速，建议配好镜像再干活。编辑 <code>~/.config/uv/uv.toml</code>：</p>
+<div class="highlight"><pre><span></span><code><span class="k">[[index]]</span>
+<span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"company-private"</span>
+<span class="n">url</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"公司私有源地址"</span>
+<span class="n">default</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span>
+
+<span class="k">[[index]]</span>
+<span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"tuna"</span>
+<span class="n">url</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"https://pypi.tuna.tsinghua.edu.cn/simple"</span>
+</code></pre></div>
+<p>私有源放在 <code>default</code> 位置优先命中，公有镜像兜底——与上一章 pip 配置里 <code>index-url</code> / <code>extra-index-url</code> 的思路完全同构。</p>
+<h3 id="顺手改一下-code-runner">顺手改一下 Code Runner</h3>
+<p>如果你在用 VSCode 的 Code Runner 插件跑代码，把执行器换成 uv，运行时自动带项目环境：</p>
+<div class="highlight"><pre><span></span><code><span class="nt">"python"</span><span class="p">:</span><span class="w"> </span><span class="s2">"uv run"</span>
+</code></pre></div>
+<h2 id="4-python-版本管理pyenv-的班-uv-来接">4. Python 版本管理：pyenv 的班 uv 来接</h2>
+<p>先看 uv 顺手替掉 pyenv 的那部分。</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 列出所有可安装的 Python 版本</span>
+uv<span class="w"> </span>python<span class="w"> </span>list
+
+<span class="c1"># 只看本地已经装了的</span>
+uv<span class="w"> </span>python<span class="w"> </span>list<span class="w"> </span>--only-installed
+
+<span class="c1"># 装指定版本</span>
+uv<span class="w"> </span>python<span class="w"> </span>install<span class="w"> </span><span class="m">3</span>.12.3
+
+<span class="c1"># 不带参数 = 装最新稳定版</span>
+uv<span class="w"> </span>python<span class="w"> </span>install
+
+<span class="c1"># 一口气装多个</span>
+uv<span class="w"> </span>python<span class="w"> </span>install<span class="w"> </span><span class="m">3</span>.11.9<span class="w"> </span><span class="m">3</span>.12.3
+
+<span class="c1"># 卸载某个版本</span>
+uv<span class="w"> </span>python<span class="w"> </span>uninstall<span class="w"> </span><span class="m">3</span>.12.3
+
+<span class="c1"># 当前环境实际用的是哪个解释器（打印路径）</span>
+uv<span class="w"> </span>python<span class="w"> </span>find
+
+<span class="c1"># 给当前工程钉死版本（目录下生成 .python-version 文件）</span>
+uv<span class="w"> </span>python<span class="w"> </span>pin<span class="w"> </span><span class="m">3</span>.12
+
+<span class="c1"># 解除钉死（删掉 .python-version）</span>
+uv<span class="w"> </span>python<span class="w"> </span>pin<span class="w"> </span>--rm
+
+<span class="c1"># 查看当前工程钉的是哪个版本</span>
+uv<span class="w"> </span>python<span class="w"> </span>pin
+
+<span class="c1"># 临时换版本跑条命令，不动工程配置</span>
+uv<span class="w"> </span>run<span class="w"> </span>--python<span class="w"> </span><span class="m">3</span>.11<span class="w"> </span>python<span class="w"> </span>--version
+
+<span class="c1"># 建虚拟环境时直接指定版本</span>
+uv<span class="w"> </span>venv<span class="w"> </span>--python<span class="w"> </span><span class="m">3</span>.12
+
+<span class="c1"># 也可以给一个版本范围，uv 会挑范围内可用的</span>
+uv<span class="w"> </span>venv<span class="w"> </span>--python<span class="w"> </span><span class="s2">"&gt;=3.10"</span>
+
+<span class="c1"># 带路径查看所有已装版本</span>
+uv<span class="w"> </span>python<span class="w"> </span>list<span class="w"> </span>--only-installed<span class="w"> </span>--verbose
+</code></pre></div>
+<p>重点记住 <code>uv python pin</code>：它把版本钉在 <code>.python-version</code> 文件里，跟着工程走。别人克隆你的工程后一条 <code>uv sync</code>，连 Python 版本都会自动对齐——协作时少吵很多架。</p>
+<h2 id="5-五分钟起一个新工程">5. 五分钟起一个新工程</h2>
+<h3 id="初始化">初始化</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># 新建目录并初始化</span>
+uv<span class="w"> </span>init<span class="w"> </span>my-project
+<span class="nb">cd</span><span class="w"> </span>my-project
+
+<span class="c1"># 也可以对当前目录就地初始化</span>
+uv<span class="w"> </span>init
+
+<span class="c1"># 不想让它顺手建 git 仓库</span>
+uv<span class="w"> </span>init<span class="w"> </span>--vcs<span class="w"> </span>none
+
+<span class="c1"># 想要库工程的 src 布局（上一章 daylab-toolkit 那种）</span>
+uv<span class="w"> </span>init<span class="w"> </span>--lib
+</code></pre></div>
+<h3 id="配一个命令行入口">配一个命令行入口</h3>
+<p><code>uv init</code> 默认不注册任何命令。想让工程支持 <code>uv run xxx</code> 直接执行、或发布后给用户一个终端命令，需要在 <code>pyproject.toml</code> 里加 <code>[project.scripts]</code>：</p>
+<div class="highlight"><pre><span></span><code><span class="k">[project.scripts]</span>
+<span class="c1"># 左边是命令名，右边是 "模块路径:函数名"</span>
+<span class="n">my-cli</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"my_project:main"</span>
+</code></pre></div>
+<p>配置生效后：</p>
+<ul>
+<li>工程内 <code>uv run my-cli</code>，就会调用 <code>my_project/__init__.py</code> 里的 <code>main()</code>；</li>
+<li>一旦发布到 PyPI，用户 <code>pip install</code> 之后终端里就有 <code>my-cli</code> 这个命令可用。</li>
+</ul>
+<h3 id="加依赖">加依赖</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># 加一个运行依赖</span>
+uv<span class="w"> </span>add<span class="w"> </span>requests
+
+<span class="c1"># 加开发依赖（测试、格式化这类不随包发布的工具）</span>
+uv<span class="w"> </span>add<span class="w"> </span>--dev<span class="w"> </span>pytest
+
+<span class="c1"># 带版本约束地加</span>
+uv<span class="w"> </span>add<span class="w"> </span><span class="s2">"fastapi&gt;=0.100.0"</span>
+</code></pre></div>
+<p><code>uv add</code> 敲下去，背后自动完成四件事：</p>
+<ol>
+<li>解析整棵依赖树，挑出满足全部约束的最新版本；</li>
+<li>把包安装进当前工程的虚拟环境；</li>
+<li>把声明写进 <code>pyproject.toml</code> 的 <code>dependencies</code>；</li>
+<li>生成/更新 <code>uv.lock</code> 锁文件，把每个包的精确版本和哈希钉死。</li>
+</ol>
+<p>看看依赖长什么样：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 打印依赖树（pipdeptree 的活儿）</span>
+uv<span class="w"> </span>tree
+</code></pre></div>
+<p>以本章作业工程 <code>headline-lab</code> 为例，输出形如：</p>
+<div class="highlight"><pre><span></span><code>headline-lab v0.1.0
+├── aiofiles v25.1.0
+├── httpx v0.28.1
+│   ├── anyio v4.13.0
+│   │   └── idna v3.17
+│   ├── certifi v2026.5.20
+│   ├── httpcore v1.0.9
+│   │   ├── h11 v0.16.0
+│   ├── idna v3.17
+│   └── ...
+└── python-dotenv v1.2.2
+</code></pre></div>
+<h3 id="删依赖">删依赖</h3>
+<div class="highlight"><pre><span></span><code>uv<span class="w"> </span>remove<span class="w"> </span>requests
+</code></pre></div>
+<h3 id="对齐环境">对齐环境</h3>
+<p>同事拉取了你的代码，或你想按锁文件把环境重建出来：</p>
+<div class="highlight"><pre><span></span><code>uv<span class="w"> </span>sync
+</code></pre></div>
+<p>它会按 <code>uv.lock</code>（没有锁文件就按 <code>pyproject.toml</code>）把依赖一步到位装齐，保证所有人的环境完全一致。</p>
+<h3 id="跑起来">跑起来</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># 跑某个文件</span>
+uv<span class="w"> </span>run<span class="w"> </span>src/main.py
+
+<span class="c1"># 以模块方式跑</span>
+uv<span class="w"> </span>run<span class="w"> </span>-m<span class="w"> </span>src.main
+</code></pre></div>
+<p><code>uv run</code> 的妙处：它自动找到工程环境并在其中执行，<strong>不需要先 activate</strong>。从"进目录先激活环境"的老习惯里解放出来吧。</p>
+<h2 id="6-虚拟环境项目内-vs-项目外">6. 虚拟环境：项目内 vs 项目外</h2>
+<p>uv 管环境有"跟项目绑定"和"独立使用"两种姿势。</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 当前目录建 .venv</span>
+uv<span class="w"> </span>venv
+
+<span class="c1"># 建到指定目录</span>
+uv<span class="w"> </span>venv<span class="w"> </span>my-env
+
+<span class="c1"># 指定 Python 版本</span>
+uv<span class="w"> </span>venv<span class="w"> </span>--python<span class="w"> </span><span class="m">3</span>.13
+</code></pre></div>
+<p>激活与退出（老一套）：</p>
+<div class="highlight"><pre><span></span><code><span class="nb">source</span><span class="w"> </span>.venv/bin/activate<span class="w">   </span><span class="c1"># 进入</span>
+deactivate<span class="w">                  </span><span class="c1"># 出来</span>
+</code></pre></div>
+<p>查看信息：</p>
+<div class="highlight"><pre><span></span><code>uv<span class="w"> </span>venv<span class="w"> </span>--list<span class="w">   </span><span class="c1"># 列出托管的环境（配合工程使用）</span>
+</code></pre></div>
+<blockquote>
+<p>uv 在工程根目录创建 <code>.venv</code> 并自动识别。日常根本不用记 <code>.venv</code> 在哪、要不要激活——<code>uv run</code> 全替你料理了。</p>
+</blockquote>
+<h3 id="两种模式对照">两种模式对照</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">模式</th>
+<th style="text-align: left;">命令</th>
+<th style="text-align: left;">适用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">项目模式</td>
+<td style="text-align: left;"><code>uv add</code> / <code>uv sync</code> / <code>uv run</code></td>
+<td style="text-align: left;">依赖写进 <code>pyproject.toml</code>，随工程走</td>
+</tr>
+<tr>
+<td style="text-align: left;">全局模式</td>
+<td style="text-align: left;"><code>uv pip install</code> / <code>uv venv</code></td>
+<td style="text-align: left;">不绑定工程，像传统 pip 一样用</td>
+</tr>
+</tbody>
+</table>
+<p>全局模式兼容 pip 习惯，手头有老的 <code>requirements.txt</code> 也能直接喂给它：</p>
+<div class="highlight"><pre><span></span><code>uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements.txt
+</code></pre></div>
+<blockquote>
+<p>日常优先项目模式：声明式管理，环境可复现，团队协作不扯皮。</p>
+</blockquote>
+<h3 id="全局缓存">全局缓存</h3>
+<p>uv 把下载过的包存在全局缓存（<code>~/.cache/uv</code>）里，多个工程共享同一份，装得飞快的秘诀之一。</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 看缓存目录在哪</span>
+uv<span class="w"> </span>cache<span class="w"> </span>dir
+
+<span class="c1"># 缓吃紧时清空</span>
+uv<span class="w"> </span>cache<span class="w"> </span>clean
+</code></pre></div>
+<h2 id="7-临时工具与常驻工具">7. 临时工具与常驻工具</h2>
+<p>开发中经常要临时用一把 <code>ruff</code>、<code>black</code> 之类的工具。老做法是装完用完再卸，麻烦且容易忘。uv 给了两个新姿势。</p>
+<h3 id="uvx用完即走">uvx：用完即走</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># 不安装，直接跑</span>
+uvx<span class="w"> </span>ruff<span class="w"> </span>check<span class="w"> </span>.
+
+<span class="c1"># 等价于传统操作：</span>
+<span class="c1"># pip install ruff &amp;&amp; ruff check . &amp;&amp; pip uninstall ruff</span>
+
+<span class="c1"># 指定版本跑</span>
+uvx<span class="w"> </span>bandit@1.7.5<span class="w"> </span>.
+
+<span class="c1"># 给工具本体传参时，用 -- 隔开</span>
+uvx<span class="w"> </span>cowsay<span class="w"> </span>--<span class="w"> </span><span class="s2">"Hello, UV!"</span>
+</code></pre></div>
+<p>uvx 的三步舞：临时建个环境 → 装包运行 → 用完即焚。</p>
+<h3 id="uv-tool常驻安装">uv tool：常驻安装</h3>
+<p>打算长期用的 CLI 工具，装进工具区，终端全局可用：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 安装</span>
+uv<span class="w"> </span>tool<span class="w"> </span>install<span class="w"> </span>ruff
+
+<span class="c1"># 之后直接敲命令</span>
+ruff<span class="w"> </span>check<span class="w"> </span>.
+
+<span class="c1"># 看装了哪些</span>
+uv<span class="w"> </span>tool<span class="w"> </span>list
+
+<span class="c1"># 升级</span>
+uv<span class="w"> </span>tool<span class="w"> </span>upgrade<span class="w"> </span>ruff
+
+<span class="c1"># 卸载</span>
+uv<span class="w"> </span>tool<span class="w"> </span>uninstall<span class="w"> </span>ruff
+</code></pre></div>
+<h3 id="第三条路作为开发依赖进工程">第三条路：作为开发依赖进工程</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># 把工具声明为工程的开发依赖</span>
+uv<span class="w"> </span>add<span class="w"> </span>--dev<span class="w"> </span>ruff<span class="w"> </span>black<span class="w"> </span>mypy
+</code></pre></div>
+<p>随后在工程内：</p>
+<div class="highlight"><pre><span></span><code>uv<span class="w"> </span>run<span class="w"> </span>ruff<span class="w"> </span>check<span class="w"> </span>.
+uv<span class="w"> </span>run<span class="w"> </span>black<span class="w"> </span>.
+uv<span class="w"> </span>run<span class="w"> </span>mypy<span class="w"> </span>src/
+</code></pre></div>
+<blockquote>
+<p>这条路是团队协作的首选：工具跟着 <code>pyproject.toml</code> 走，同事一条 <code>uv sync</code>，工具和依赖一起就位，版本还完全一致。</p>
+</blockquote>
+<h2 id="8-构建与发布一条命令的事">8. 构建与发布：一条命令的事</h2>
+<p>上一章用 <code>build</code> + <code>twine</code> 两件套完成的事，uv 全包了。</p>
+<h3 id="构建">构建</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># sdist 和 wheel 一起出</span>
+uv<span class="w"> </span>build
+
+<span class="c1"># 产物落在 dist/ 目录</span>
+ls<span class="w"> </span>dist/
+<span class="c1"># headline_lab-0.1.0.tar.gz</span>
+<span class="c1"># headline_lab-0.1.0-py3-none-any.whl</span>
+</code></pre></div>
+<blockquote>
+<p><code>uv build</code> 照样读 <code>pyproject.toml</code> 的 <code>[build-system]</code>，后端还是 hatchling 那些老朋友——底层协议没变，只是前台换人了。</p>
+</blockquote>
+<h3 id="发布">发布</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># 发到 PyPI</span>
+uv<span class="w"> </span>publish
+
+<span class="c1"># 令牌建议走环境变量，别硬编码</span>
+<span class="nv">UV_PUBLISH_TOKEN</span><span class="o">=</span>pypi-xxxxx<span class="w"> </span>uv<span class="w"> </span>publish
+
+<span class="c1"># 发到私有仓库</span>
+uv<span class="w"> </span>publish<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--publish-url<span class="w"> </span>私有仓库地址<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--username<span class="w"> </span>你的用户名<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--password<span class="w"> </span>你的密码<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>dist/*
+</code></pre></div>
+<blockquote>
+<p><code>uv publish</code> 完整替代 <code>twine upload</code>。首次使用同样要先在 pypi.org 注册并创建 API token；uv 也认 <code>.pypirc</code> 配置文件。</p>
+</blockquote>
+<h2 id="9-makefile把常用命令钉在墙上">9. Makefile：把常用命令钉在墙上</h2>
+<blockquote>
+<p><code>make</code> 在 macOS / Linux 上开箱即有，Windows 默认没有，可任选其一补装：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 方式一：Chocolatey（推荐）</span>
+choco<span class="w"> </span>install<span class="w"> </span>make
+
+<span class="c1"># 方式二：winget</span>
+winget<span class="w"> </span>install<span class="w"> </span>GnuWin32.Make
+
+<span class="c1"># 方式三：装 Git 时勾选 Git Bash，在 Git Bash 里用 make</span>
+</code></pre></div>
+<p>装完验证：<code>make --version</code></p>
+</blockquote>
+<p>uv 已经把命令压缩了很多，但 <code>uv run pytest</code>、<code>uv run ruff check .</code>、<code>uv build</code> 这类组合，团队成员（以及三个月后的你自己）未必记得住。<strong>Makefile</strong> 的作用就是把这些操作"钉"成几个固定短词。</p>
+<h3 id="一份够用的工程-makefile">一份够用的工程 Makefile</h3>
+<div class="highlight"><pre><span></span><code><span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">install</span> <span class="n">test</span> <span class="n">lint</span> <span class="n">format</span> <span class="n">build</span> <span class="n">clean</span>
+
+<span class="c"># 装齐依赖</span>
+<span class="nf">install</span><span class="o">:</span>
+<span class="w">    </span>uv<span class="w"> </span>sync
+
+<span class="c"># 跑测试</span>
+<span class="nf">test</span><span class="o">:</span>
+<span class="w">    </span>uv<span class="w"> </span>run<span class="w"> </span>pytest
+
+<span class="c"># 静态检查</span>
+<span class="nf">lint</span><span class="o">:</span>
+<span class="w">    </span>uv<span class="w"> </span>run<span class="w"> </span>ruff<span class="w"> </span>check<span class="w"> </span>.
+
+<span class="c"># 自动格式化</span>
+<span class="nf">format</span><span class="o">:</span>
+<span class="w">    </span>uv<span class="w"> </span>run<span class="w"> </span>ruff<span class="w"> </span>format<span class="w"> </span>.
+
+<span class="c"># 打分发包</span>
+<span class="nf">build</span><span class="o">:</span>
+<span class="w">    </span>uv<span class="w"> </span>build
+
+<span class="c"># 清产物与缓存</span>
+<span class="nf">clean</span><span class="o">:</span>
+<span class="w">    </span>rm<span class="w"> </span>-rf<span class="w"> </span>dist/
+<span class="w">    </span>rm<span class="w"> </span>-rf<span class="w"> </span>.pytest_cache/
+<span class="w">    </span>uv<span class="w"> </span>cache<span class="w"> </span>clean
+</code></pre></div>
+<p>用起来：</p>
+<div class="highlight"><pre><span></span><code>make<span class="w"> </span>install<span class="w">   </span><span class="c1"># 等于 uv sync</span>
+make<span class="w"> </span><span class="nb">test</span><span class="w">      </span><span class="c1"># 等于 uv run pytest</span>
+make<span class="w"> </span>lint<span class="w">      </span><span class="c1"># 等于 uv run ruff check .</span>
+make<span class="w"> </span>format<span class="w">    </span><span class="c1"># 等于 uv run ruff format .</span>
+make<span class="w"> </span>build<span class="w">     </span><span class="c1"># 等于 uv build</span>
+make<span class="w"> </span>clean<span class="w">     </span><span class="c1"># 大扫除</span>
+</code></pre></div>
+<h3 id="接收参数的目标">接收参数的目标</h3>
+<div class="highlight"><pre><span></span><code><span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">upload</span>
+
+<span class="c"># 推送到指定仓库，用法：make upload REPO_URL=https://...</span>
+<span class="nf">upload</span><span class="o">:</span>
+<span class="w">    </span>uv<span class="w"> </span>publish<span class="w"> </span>--publish-url<span class="w"> </span><span class="k">$(</span>REPO_URL<span class="k">)</span><span class="w"> </span>dist/*
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>make<span class="w"> </span>upload<span class="w"> </span><span class="nv">REPO_URL</span><span class="o">=</span>https://packages.example.com/simple
+</code></pre></div>
+<h3 id="目标串目标">目标串目标</h3>
+<div class="highlight"><pre><span></span><code><span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">ci</span>
+
+<span class="c"># 本地过一遍 CI 流程：检查 → 测试 → 打包</span>
+<span class="nf">ci</span><span class="o">:</span><span class="w"> </span><span class="n">lint</span> <span class="n">test</span> <span class="n">build</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>make<span class="w"> </span>ci<span class="w">   </span><span class="c1"># 依序执行 lint、test、build</span>
+</code></pre></div>
+<p>（顺带纠个新手坑：上面 <code>ci: lint test build</code> 这一行依赖串接才是正确写法；把命令名直接写成一行 tab 缩进的 shell 命令是不行的。）</p>
+<blockquote>
+<p>Makefile 的精髓是<strong>约定优于记忆</strong>：无论工程底层用什么工具链，新人只需要知道 <code>make test</code> 能跑测试、<code>make build</code> 能出包。CI/CD 脚本里引用同样的目标，本地和流水线行为天然一致。</p>
+</blockquote>
+<h2 id="10-常用命令速查">10. 常用命令速查</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">命令</th>
+<th style="text-align: left;">干什么</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>uv init</code></td>
+<td style="text-align: left;">初始化工程</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>uv add</code></td>
+<td style="text-align: left;">加依赖</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>uv remove</code></td>
+<td style="text-align: left;">删依赖</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>uv sync</code></td>
+<td style="text-align: left;">按锁文件对齐环境</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>uv lock</code></td>
+<td style="text-align: left;">刷新锁文件</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>uv run</code></td>
+<td style="text-align: left;">在工程环境里执行命令</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>uv tree</code></td>
+<td style="text-align: left;">打印依赖树</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>uv build</code></td>
+<td style="text-align: left;">打出 sdist + wheel</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>uv publish</code></td>
+<td style="text-align: left;">发布到仓库</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>uv venv</code></td>
+<td style="text-align: left;">建虚拟环境</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>uv python install</code></td>
+<td style="text-align: left;">装 Python 版本</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>uv python list</code></td>
+<td style="text-align: left;">列 Python 版本</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>uv python pin</code></td>
+<td style="text-align: left;">钉死工程 Python 版本</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>uv tool install</code></td>
+<td style="text-align: left;">常驻安装 CLI 工具</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>uv tool run</code> / <code>uvx</code></td>
+<td style="text-align: left;">临时运行 CLI 工具</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>uv cache clean</code></td>
+<td style="text-align: left;">清全局缓存</td>
+</tr>
+</tbody>
+</table>
+<p>顺带预告：uv 还能跨工程管依赖（workspace 机制），把一个仓库里的多个包统一调度——这是下一章的主角之一，连同调试手段一起讲。</p>
+<h2 id="作业">作业</h2>
+<ol>
+<li>把第 21 章的异步工程（或你手头任意一个 asyncio 程序）迁移成 uv 管理的工程：<code>uv init</code> 起骨架、<code>uv add</code> 声明依赖、<code>uv python pin</code> 钉版本，最后用 <code>uv run</code> 跑通。</li>
+<li>给第 22 章的 <code>daylab-toolkit</code> 升个版本号，用 <code>uv build</code> 重新打包，并通过 <code>uv publish</code> 把它发到私有制品仓库；顺手为工程补一个 Makefile，把"构建 + 上传"封装成 <code>make</code> 目标。</li>
+</ol>
+<hr />
+<p><strong>下一章</strong>：<a href="../python/24-monorepo-yu-tiao-shi.html">24 · monorepo 与调试</a></p></div>
+
+      </article>
+<nav class="pager"><a class="pg-card pg-prev" href="../python/22-gou-jian-yu-fa-bu.html"><span class="pg-label">← 上一篇</span><span class="pg-title">构建与发布</span><span class="pg-mod">Python 与数据实践</span></a><a class="pg-card pg-next" href="../python/24-monorepo-yu-tiao-shi.html"><span class="pg-label">下一篇 →</span><span class="pg-title">monorepo 与调试</span><span class="pg-mod">Python 与数据实践</span></a></nav>
+    </div>
+    <footer class="foot">
+      <span>深栈 DeepStack · AI Agent 工程师转型训练营配套文档</span>
+    </footer>
+  </main>
+<nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#1-可选先送走-pyenv">1. 【可选】先送走 pyenv</a><a class="toc-link toc-h3" href="#macoshomebrew-装的">macOS（Homebrew 装的）</a><a class="toc-link toc-h3" href="#windowspyenv-win">Windows（pyenv-win）</a><a class="toc-link toc-h3" href="#确认送走了">确认送走了</a><a class="toc-link toc-h2" href="#2-uv-是何方神圣">2. uv 是何方神圣</a><a class="toc-link toc-h2" href="#3-安装">3. 安装</a><a class="toc-link toc-h3" href="#给下载提速镜像源">给下载提速：镜像源</a><a class="toc-link toc-h3" href="#顺手改一下-code-runner">顺手改一下 Code Runner</a><a class="toc-link toc-h2" href="#4-python-版本管理pyenv-的班-uv-来接">4. Python 版本管理：pyenv 的班 uv 来接</a><a class="toc-link toc-h2" href="#5-五分钟起一个新工程">5. 五分钟起一个新工程</a><a class="toc-link toc-h3" href="#初始化">初始化</a><a class="toc-link toc-h3" href="#配一个命令行入口">配一个命令行入口</a><a class="toc-link toc-h3" href="#加依赖">加依赖</a><a class="toc-link toc-h3" href="#删依赖">删依赖</a><a class="toc-link toc-h3" href="#对齐环境">对齐环境</a><a class="toc-link toc-h3" href="#跑起来">跑起来</a><a class="toc-link toc-h2" href="#6-虚拟环境项目内-vs-项目外">6. 虚拟环境：项目内 vs 项目外</a><a class="toc-link toc-h3" href="#两种模式对照">两种模式对照</a><a class="toc-link toc-h3" href="#全局缓存">全局缓存</a><a class="toc-link toc-h2" href="#7-临时工具与常驻工具">7. 临时工具与常驻工具</a><a class="toc-link toc-h3" href="#uvx用完即走">uvx：用完即走</a><a class="toc-link toc-h3" href="#uv-tool常驻安装">uv tool：常驻安装</a><a class="toc-link toc-h3" href="#第三条路作为开发依赖进工程">第三条路：作为开发依赖进工程</a><a class="toc-link toc-h2" href="#8-构建与发布一条命令的事">8. 构建与发布：一条命令的事</a><a class="toc-link toc-h3" href="#构建">构建</a><a class="toc-link toc-h3" href="#发布">发布</a><a class="toc-link toc-h2" href="#9-makefile把常用命令钉在墙上">9. Makefile：把常用命令钉在墙上</a><a class="toc-link toc-h3" href="#一份够用的工程-makefile">一份够用的工程 Makefile</a><a class="toc-link toc-h3" href="#接收参数的目标">接收参数的目标</a><a class="toc-link toc-h3" href="#目标串目标">目标串目标</a><a class="toc-link toc-h2" href="#10-常用命令速查">10. 常用命令速查</a><a class="toc-link toc-h2" href="#作业">作业</a></nav>
+</div>
+<div class="sb-mask" id="sbMask"></div>
+<script src="../assets/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>06 · 文档加载与切割 · 深栈 DeepStack 课程文档</title>
+<meta name="description" content="本章你将学会
+
+ - Document 对象：LangChain 的「统一集装箱」——不管数据来自 txt、PDF、CSV 还是网页，装进箱子后长一个样
+ - 本地 Loader：TextLoader、PyPDFLoad…">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%23d9c39a' text-anchor='middle'%3EDS%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+<div class="progress" id="progress"></div>
+
+<div class="layout">
+<aside class="sidebar" id="sidebar">
+  <div class="sb-head">
+    <a class="brand" href="../index.html">
+      <span class="brand-mark">DS</span>
+      <span class="brand-text"><b>深栈 DeepStack</b><i>AI Agent 工程师转型训练营</i></span>
+    </a>
+    <button class="sb-close" id="sbClose" aria-label="关闭目录">✕</button>
+  </div>
+  <div class="sb-search"><input type="search" id="searchInput" placeholder="搜索 123 篇文档… ( / )" autocomplete="off">
+    <div class="sb-results" id="searchResults"></div></div>
+  <nav class="sb-nav">
+    <section class="sb-group" data-mod="python">
+      <a class="sb-group-title" href="../modules/python.html" data-toggle="python">
+        <span class="sb-num">01</span>
+        <span class="sb-group-text"><b>Python 与数据实践</b><i>31 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../python/01-huan-jing-da-jian-yu-ban-ben-guan-li.html"><span class="sb-item-num">01</span><span class="sb-item-title">环境搭建与版本管理</span></a>
+        <a class="sb-item" href="../python/02-bian-liang-biao-da-shi-yu-liu-cheng-kong-zhi.html"><span class="sb-item-num">02</span><span class="sb-item-title">变量、表达式与流程控制</span></a>
+        <a class="sb-item" href="../python/03-xu-lie-zi-dian-yu-ji-he.html"><span class="sb-item-num">03</span><span class="sb-item-title">序列、字典与集合</span></a>
+        <a class="sb-item" href="../python/04-han-shu-she-ji-yu-lambda.html"><span class="sb-item-num">04</span><span class="sb-item-title">函数设计与 lambda</span></a>
+        <a class="sb-item" href="../python/05-zuo-yong-yu-gui-ze-yu-bi-bao.html"><span class="sb-item-num">05</span><span class="sb-item-title">作用域规则与闭包</span></a>
+        <a class="sb-item" href="../python/06-lei-de-ding-yi-yu-shi-li-hua.html"><span class="sb-item-num">06</span><span class="sb-item-title">类的定义与实例化</span></a>
+        <a class="sb-item" href="../python/07-lei-xing-pan-ding-yu-chou-xiang-ji-lei.html"><span class="sb-item-num">07</span><span class="sb-item-title">类型判定与抽象基类</span></a>
+        <a class="sb-item" href="../python/08-mo-shu-fang-fa-quan-jing.html"><span class="sb-item-num">08</span><span class="sb-item-title">魔术方法全景</span></a>
+        <a class="sb-item" href="../python/09-miao-shu-fu-yu-yuan-lei.html"><span class="sb-item-num">09</span><span class="sb-item-title">描述符与元类</span></a>
+        <a class="sb-item" href="../python/10-zhuang-shi-qi.html"><span class="sb-item-num">10</span><span class="sb-item-title">装饰器</span></a>
+        <a class="sb-item" href="../python/11-die-dai-xie-yi-yu-sheng-cheng-qi.html"><span class="sb-item-num">11</span><span class="sb-item-title">迭代协议与生成器</span></a>
+        <a class="sb-item" href="../python/12-with-yu-shang-xia-wen-xie-yi.html"><span class="sb-item-num">12</span><span class="sb-item-title">with 与上下文协议</span></a>
+        <a class="sb-item" href="../python/13-yi-chang-ti-xi-yu-chu-li.html"><span class="sb-item-num">13</span><span class="sb-item-title">异常体系与处理</span></a>
+        <a class="sb-item" href="../python/14-lei-xing-biao-zhu.html"><span class="sb-item-num">14</span><span class="sb-item-title">类型标注</span></a>
+        <a class="sb-item" href="../python/15-mo-kuai-yu-bao-de-zu-zhi.html"><span class="sb-item-num">15</span><span class="sb-item-title">模块与包的组织</span></a>
+        <a class="sb-item" href="../python/16-biao-zhun-ku-xun-li.html"><span class="sb-item-num">16</span><span class="sb-item-title">标准库巡礼</span></a>
+        <a class="sb-item" href="../python/17-yi-lai-guan-li-yu-di-san-fang-ku.html"><span class="sb-item-num">17</span><span class="sb-item-title">依赖管理与第三方库</span></a>
+        <a class="sb-item" href="../python/18-xian-cheng-yu-jin-cheng.html"><span class="sb-item-num">18</span><span class="sb-item-title">线程与进程</span></a>
+        <a class="sb-item" href="../python/19-shi-jian-xun-huan.html"><span class="sb-item-num">19</span><span class="sb-item-title">事件循环</span></a>
+        <a class="sb-item" href="../python/20-future-yu-xie-cheng.html"><span class="sb-item-num">20</span><span class="sb-item-title">Future 与协程</span></a>
+        <a class="sb-item" href="../python/21-asyncio-shi-zhan.html"><span class="sb-item-num">21</span><span class="sb-item-title">asyncio 实战</span></a>
+        <a class="sb-item" href="../python/22-gou-jian-yu-fa-bu.html"><span class="sb-item-num">22</span><span class="sb-item-title">构建与发布</span></a>
+        <a class="sb-item" href="../python/23-gong-cheng-hua-gong-ju-lian.html"><span class="sb-item-num">23</span><span class="sb-item-title">工程化工具链</span></a>
+        <a class="sb-item" href="../python/24-monorepo-yu-tiao-shi.html"><span class="sb-item-num">24</span><span class="sb-item-title">monorepo 与调试</span></a>
+        <a class="sb-item" href="../python/25-jupyter-jiao-hu-huan-jing.html"><span class="sb-item-num">25</span><span class="sb-item-title">Jupyter 交互环境</span></a>
+        <a class="sb-item" href="../python/26-numpy-shu-zu-yu-xiang-liang-hua.html"><span class="sb-item-num">26</span><span class="sb-item-title">NumPy 数组与向量化</span></a>
+        <a class="sb-item" href="../python/27-pandas-shu-ju-jie-gou.html"><span class="sb-item-num">27</span><span class="sb-item-title">Pandas 数据结构</span></a>
+        <a class="sb-item" href="../python/28-pandas-shu-ju-qing-xi.html"><span class="sb-item-num">28</span><span class="sb-item-title">Pandas 数据清洗</span></a>
+        <a class="sb-item" href="../python/29-matplotlib-hui-tu-ti-xi.html"><span class="sb-item-num">29</span><span class="sb-item-title">Matplotlib 绘图体系</span></a>
+        <a class="sb-item" href="../python/30-matplotlib-dong-hua-yu-jiao-hu.html"><span class="sb-item-num">30</span><span class="sb-item-title">Matplotlib 动画与交互</span></a>
+        <a class="sb-item" href="../python/31-seaborn-tong-ji-ke-shi-hua.html"><span class="sb-item-num">31</span><span class="sb-item-title">Seaborn 统计可视化</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="agent">
+      <a class="sb-group-title" href="../modules/agent.html" data-toggle="agent">
+        <span class="sb-num">02</span>
+        <span class="sb-group-text"><b>Agent 核心</b><i>15 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../agent/01-token-yu-ci-qian-ru.html"><span class="sb-item-num">01</span><span class="sb-item-title">Token 与词嵌入</span></a>
+        <a class="sb-item" href="../agent/02-qian-xiang-chuan-bo-yu-fan-xiang-chuan-bo.html"><span class="sb-item-num">02</span><span class="sb-item-title">前向传播与反向传播</span></a>
+        <a class="sb-item" href="../agent/03-zhu-yi-li-ji-zhi-yu-transformer-jia-gou.html"><span class="sb-item-num">03</span><span class="sb-item-title">注意力机制与 Transformer 架构</span></a>
+        <a class="sb-item" href="../agent/04-yu-xun-lian-rlhf-yu-cai-yang-kv-cache.html"><span class="sb-item-num">04</span><span class="sb-item-title">预训练、RLHF 与采样（KV Cache）</span></a>
+        <a class="sb-item" href="../agent/05-ben-di-mo-xing-yu-xiao-xi-jie-gou.html"><span class="sb-item-num">05</span><span class="sb-item-title">本地模型与消息结构</span></a>
+        <a class="sb-item" href="../agent/06-hui-hua-guan-li-yu-json-shu-chu.html"><span class="sb-item-num">06</span><span class="sb-item-title">会话管理与 JSON 输出</span></a>
+        <a class="sb-item" href="../agent/07-tool-calling-xie-yi-yu-feng-zhuang.html"><span class="sb-item-num">07</span><span class="sb-item-title">Tool Calling：协议与封装</span></a>
+        <a class="sb-item" href="../agent/08-react-mo-shi-yu-zhu-xun-huan.html"><span class="sb-item-num">08</span><span class="sb-item-title">ReAct 模式与主循环</span></a>
+        <a class="sb-item" href="../agent/09-shi-zhan-deep-research-agent.html"><span class="sb-item-num">09</span><span class="sb-item-title">实战：Deep Research Agent</span></a>
+        <a class="sb-item" href="../agent/10-skill-yu-jian-jin-shi-pi-lu.html"><span class="sb-item-num">10</span><span class="sb-item-title">Skill 与渐进式披露</span></a>
+        <a class="sb-item" href="../agent/11-mcp-quan-jing.html"><span class="sb-item-num">11</span><span class="sb-item-title">MCP 全景</span></a>
+        <a class="sb-item" href="../agent/12-duo-agent-yu-xuan-xing-ce-lve.html"><span class="sb-item-num">12</span><span class="sb-item-title">多 Agent 与选型策略</span></a>
+        <a class="sb-item" href="../agent/13-ti-shi-ci-gong-cheng-yu-shang-xia-wen-gong.html"><span class="sb-item-num">13</span><span class="sb-item-title">提示词工程与上下文工程</span></a>
+        <a class="sb-item" href="../agent/14-xun-huan-tu-yu-gu-jia-gong-cheng.html"><span class="sb-item-num">14</span><span class="sb-item-title">循环、图与骨架工程</span></a>
+        <a class="sb-item" href="../agent/15-ji-yi-quan-xian-yu-ping-ce.html"><span class="sb-item-num">15</span><span class="sb-item-title">记忆、权限与评测</span></a>
+      </div>
+    </section>
+    <section class="sb-group open" data-mod="langchain">
+      <a class="sb-group-title" href="../modules/langchain.html" data-toggle="langchain">
+        <span class="sb-num">03</span>
+        <span class="sb-group-text"><b>LangChain 指南</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langchain/01-ren-shi-langchain.html"><span class="sb-item-num">01</span><span class="sb-item-title">认识 LangChain</span></a>
+        <a class="sb-item" href="../langchain/02-ti-shi-ci-mu-ban-yu-xiao-xi.html"><span class="sb-item-num">02</span><span class="sb-item-title">提示词模板与消息</span></a>
+        <a class="sb-item" href="../langchain/03-lcel-yu-runnable.html"><span class="sb-item-num">03</span><span class="sb-item-title">LCEL 与 Runnable</span></a>
+        <a class="sb-item" href="../langchain/04-liu-shi-yu-bing-fa.html"><span class="sb-item-num">04</span><span class="sb-item-title">流式与并发</span></a>
+        <a class="sb-item" href="../langchain/05-shu-chu-jie-xi-qi.html"><span class="sb-item-num">05</span><span class="sb-item-title">输出解析器</span></a>
+        <a class="sb-item current" href="../langchain/06-wen-dang-jia-zai-yu-qie-ge.html"><span class="sb-item-num">06</span><span class="sb-item-title">文档加载与切割</span></a>
+        <a class="sb-item" href="../langchain/07-qian-ru-yu-xiang-liang-ku.html"><span class="sb-item-num">07</span><span class="sb-item-title">嵌入与向量库</span></a>
+        <a class="sb-item" href="../langchain/08-jian-suo-yu-rag.html"><span class="sb-item-num">08</span><span class="sb-item-title">检索与RAG</span></a>
+        <a class="sb-item" href="../langchain/09-dui-hua-ji-yi.html"><span class="sb-item-num">09</span><span class="sb-item-title">对话记忆</span></a>
+        <a class="sb-item" href="../langchain/10-gong-ju-diao-yong.html"><span class="sb-item-num">10</span><span class="sb-item-title">工具调用</span></a>
+        <a class="sb-item" href="../langchain/11-agent.html"><span class="sb-item-num">11</span><span class="sb-item-title">Agent</span></a>
+        <a class="sb-item" href="../langchain/12-hui-diao-yu-tiao-shi-quan-ke-cheng-shou-guan.html"><span class="sb-item-num">12</span><span class="sb-item-title">回调与调试（全课程收官章）</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="langgraph">
+      <a class="sb-group-title" href="../modules/langgraph.html" data-toggle="langgraph">
+        <span class="sb-num">04</span>
+        <span class="sb-group-text"><b>LangGraph 框架指南</b><i>17 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langgraph/01-di-1-zhang-cong-yi-ge-shi-kong-de-jiao.html"><span class="sb-item-num">01</span><span class="sb-item-title">第 1 章 从一个失控的脚本说起</span></a>
+        <a class="sb-item" href="../langgraph/02-di-2-zhang-zui-xiao-ke-yun-xing-tu.html"><span class="sb-item-num">02</span><span class="sb-item-title">第 2 章 最小可运行图</span></a>
+        <a class="sb-item" href="../langgraph/03-di-3-zhang-zhuang-tai-tu-de-shu-ju-xin.html"><span class="sb-item-num">03</span><span class="sb-item-title">第 3 章 状态：图的数据心脏</span></a>
+        <a class="sb-item" href="../langgraph/04-di-4-zhang-rang-liu-cheng-xue-hui-jue-ce.html"><span class="sb-item-num">04</span><span class="sb-item-title">第 4 章 让流程学会决策</span></a>
+        <a class="sb-item" href="../langgraph/05-di-5-zhang-bing-xing-shi-jie-chao-bu-zhi.html"><span class="sb-item-num">05</span><span class="sb-item-title">第 5 章 并行世界：超步执行模型</span></a>
+        <a class="sb-item" href="../langgraph/06-di-6-zhang-command-ba-kong-zhi-quan-jiao-jin.html"><span class="sb-item-num">06</span><span class="sb-item-title">第 6 章 Command：把控制权交进节点</span></a>
+        <a class="sb-item" href="../langgraph/07-di-7-zhang-dong-tai-bing-xing-send-yu-mapreduce.html"><span class="sb-item-num">07</span><span class="sb-item-title">第 7 章 动态并行：Send 与 MapReduce</span></a>
+        <a class="sb-item" href="../langgraph/08-di-8-zhang-gei-tu-zhuang-shang-shou-jiao-gong.html"><span class="sb-item-num">08</span><span class="sb-item-title">第 8 章 给图装上手脚：工具调用</span></a>
+        <a class="sb-item" href="../langgraph/09-di-9-zhang-fu-yong-yu-feng-zhuang-zi-tu.html"><span class="sb-item-num">09</span><span class="sb-item-title">第 9 章 复用与封装：子图</span></a>
+        <a class="sb-item" href="../langgraph/10-di-10-zhang-cong-dan-tu-dao-tuan-dui-duo.html"><span class="sb-item-num">10</span><span class="sb-item-title">第 10 章 从单图到团队：多 Agent 架构</span></a>
+        <a class="sb-item" href="../langgraph/11-di-11-zhang-liu-shi-shu-chu.html"><span class="sb-item-num">11</span><span class="sb-item-title">第 11 章 流式输出</span></a>
+        <a class="sb-item" href="../langgraph/12-di-12-zhang-chi-jiu-hua-checkpointer-yu-xian-cheng.html"><span class="sb-item-num">12</span><span class="sb-item-title">第 12 章 持久化：Checkpointer 与线程</span></a>
+        <a class="sb-item" href="../langgraph/13-di-13-zhang-shi-jian-lv-xing.html"><span class="sb-item-num">13</span><span class="sb-item-title">第 13 章 时间旅行</span></a>
+        <a class="sb-item" href="../langgraph/14-di-14-zhang-zhong-duan-yu-ren-zai-hui-lu.html"><span class="sb-item-num">14</span><span class="sb-item-title">第 14 章 中断与人在回路</span></a>
+        <a class="sb-item" href="../langgraph/15-di-15-zhang-ji-yi-guan-li.html"><span class="sb-item-num">15</span><span class="sb-item-title">第 15 章 记忆管理</span></a>
+        <a class="sb-item" href="../langgraph/16-di-16-zhang-rong-cuo-zhong-shi-chao-shi-yu.html"><span class="sb-item-num">16</span><span class="sb-item-title">第 16 章 容错：重试、超时与兜底</span></a>
+        <a class="sb-item" href="../langgraph/17-di-17-zhang-quan-jing-hui-gu.html"><span class="sb-item-num">17</span><span class="sb-item-title">第 17 章 全景回顾</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="backend">
+      <a class="sb-group-title" href="../modules/backend.html" data-toggle="backend">
+        <span class="sb-num">05</span>
+        <span class="sb-group-text"><b>Python 框架指南</b><i>14 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../backend/01-fastapi-ru-men-yu-asgi.html"><span class="sb-item-num">01</span><span class="sb-item-title">FastAPI 入门与 ASGI</span></a>
+        <a class="sb-item" href="../backend/02-lu-you-yu-qing-qiu-xiang-ying.html"><span class="sb-item-num">02</span><span class="sb-item-title">路由与请求响应</span></a>
+        <a class="sb-item" href="../backend/03-pydantic-shu-ju-jiao-yan-yu-pei-zhi.html"><span class="sb-item-num">03</span><span class="sb-item-title">Pydantic 数据校验与配置</span></a>
+        <a class="sb-item" href="../backend/04-sqlalchemy-yi-bu-yin-qing-yu-hui-hua.html"><span class="sb-item-num">04</span><span class="sb-item-title">SQLAlchemy 异步引擎与会话</span></a>
+        <a class="sb-item" href="../backend/05-orm-jian-mo.html"><span class="sb-item-num">05</span><span class="sb-item-title">ORM 建模</span></a>
+        <a class="sb-item" href="../backend/06-sql-biao-da-shi-yu-shu-ju-cao-zuo.html"><span class="sb-item-num">06</span><span class="sb-item-title">SQL 表达式与数据操作</span></a>
+        <a class="sb-item" href="../backend/07-alembic-shu-ju-qian-yi.html"><span class="sb-item-num">07</span><span class="sb-item-title">Alembic 数据迁移</span></a>
+        <a class="sb-item" href="../backend/08-yi-lai-zhu-ru.html"><span class="sb-item-num">08</span><span class="sb-item-title">依赖注入</span></a>
+        <a class="sb-item" href="../backend/09-tong-yi-yi-chang-chu-li.html"><span class="sb-item-num">09</span><span class="sb-item-title">统一异常处理</span></a>
+        <a class="sb-item" href="../backend/10-zhong-jian-jian.html"><span class="sb-item-num">10</span><span class="sb-item-title">中间件</span></a>
+        <a class="sb-item" href="../backend/11-ren-zheng-yu-jwt.html"><span class="sb-item-num">11</span><span class="sb-item-title">认证与 JWT</span></a>
+        <a class="sb-item" href="../backend/12-pytest-ce-shi.html"><span class="sb-item-num">12</span><span class="sb-item-title">pytest 测试</span></a>
+        <a class="sb-item" href="../backend/13-ri-zhi-loguru.html"><span class="sb-item-num">13</span><span class="sb-item-title">日志 loguru</span></a>
+        <a class="sb-item" href="../backend/14-liu-shi-xiang-ying-sse-yu-websocket.html"><span class="sb-item-num">14</span><span class="sb-item-title">流式响应 SSE 与 WebSocket</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="interview">
+      <a class="sb-group-title" href="../modules/interview.html" data-toggle="interview">
+        <span class="sb-num">06</span>
+        <span class="sb-group-text"><b>面试题库</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../interview/01-llm-yuan-li-pian.html"><span class="sb-item-num">01</span><span class="sb-item-title">LLM 原理篇</span></a>
+        <a class="sb-item" href="../interview/02-rag-yu-jian-suo-pian.html"><span class="sb-item-num">02</span><span class="sb-item-title">RAG 与检索篇</span></a>
+        <a class="sb-item" href="../interview/03-agent-he-xin-pian.html"><span class="sb-item-num">03</span><span class="sb-item-title">Agent 核心篇</span></a>
+        <a class="sb-item" href="../interview/04-langgraph-pian.html"><span class="sb-item-num">04</span><span class="sb-item-title">LangGraph 篇</span></a>
+        <a class="sb-item" href="../interview/05-langchain-pian.html"><span class="sb-item-num">05</span><span class="sb-item-title">LangChain 篇</span></a>
+        <a class="sb-item" href="../interview/06-xi-tong-she-ji-pian.html"><span class="sb-item-num">06</span><span class="sb-item-title">系统设计篇</span></a>
+        <a class="sb-item" href="../interview/07-xiang-mu-shen-wa-pian.html"><span class="sb-item-num">07</span><span class="sb-item-title">项目深挖篇</span></a>
+        <a class="sb-item" href="../interview/08-gu-zhang-pai-cha-pian.html"><span class="sb-item-num">08</span><span class="sb-item-title">故障排查篇</span></a>
+        <a class="sb-item" href="../interview/09-python-ji-chu-pian.html"><span class="sb-item-num">09</span><span class="sb-item-title">Python 基础篇</span></a>
+        <a class="sb-item" href="../interview/10-fastapi-yu-hou-duan-pian.html"><span class="sb-item-num">10</span><span class="sb-item-title">FastAPI 与后端篇</span></a>
+        <a class="sb-item" href="../interview/11-ti-shi-ci-gong-cheng-yu-an-quan-pian.html"><span class="sb-item-num">11</span><span class="sb-item-title">提示词工程与安全篇</span></a>
+        <a class="sb-item" href="../interview/12-mo-xing-xuan-xing-yu-jiang-ben-pian.html"><span class="sb-item-num">12</span><span class="sb-item-title">模型选型与降本篇</span></a>
+      </div>
+    </section>
+  </nav>
+</aside>
+  <main class="main">
+    <header class="topbar">
+      <button class="menu-btn" id="menuBtn" aria-label="目录">☰</button>
+      <div class="crumbs"><a href="../index.html">首页</a><span>/</span><a href="../modules/langchain.html">LangChain 指南</a><span>/</span><span class="cur">文档加载与切割</span></div>
+      <div class="topbar-actions">
+        <button class="icon-btn" id="themeBtn" title="切换深浅色" aria-label="切换深浅色">◐</button>
+      </div>
+    </header>
+    <div class="content">
+      <article class="article">
+
+<header class="page-head">
+  <div class="page-kicker">LangChain 指南 · 第 06 章</div>
+  <h1 class="page-title">文档加载与切割</h1>
+  <p class="page-desc">本章你将学会
+
+ - Document 对象：LangChain 的「统一集装箱」——不管数据来自 txt、PDF、CSV 还是网页，装进箱子后长一个样
+ - 本地 Loader：TextLoader、PyPDFLoad…</p>
+  <div class="page-meta">
+    <span>约 53 分钟</span><span>21,127 字</span><span>28 个代码示例</span>
+  </div>
+</header>
+<div class="md"><blockquote>
+<p><strong>本章你将学会</strong></p>
+<ul>
+<li><code>Document</code> 对象：LangChain 的「统一集装箱」——不管数据来自 txt、PDF、CSV 还是网页，装进箱子后长一个样</li>
+<li>本地 Loader：<code>TextLoader</code>、<code>PyPDFLoader</code>、<code>CSVLoader</code>、<code>DirectoryLoader</code> 各管一摊，以及 <code>UnstructuredMarkdownLoader</code> 的适用思路</li>
+<li>Web Loader：<code>WebBaseLoader</code> 抓网页、用 <code>bs4</code> 的 <code>SoupStrainer</code> 只取正文；网络依赖有哪些坑</li>
+<li>文本切割：<code>RecursiveCharacterTextSplitter</code> 的 <code>chunk_size</code> / <code>chunk_overlap</code> / <code>separators</code> 三大旋钮，中文分隔符怎么配，按字符切 vs 按 token 切</li>
+<li>结构化切割：<code>MarkdownHeaderTextSplitter</code> 按标题层级切、标题进 metadata，再和递归切割器打一套「先结构、后长度」的组合拳</li>
+</ul>
+</blockquote>
+<p>上一章（05 · 输出解析器）管的是<strong>出口</strong>——模型吐出来的字符串，怎么变成代码能用的结构化数据。这一章开始管<strong>进口</strong>：拾光书屋的 AI 荐书官光靠模型的「出厂记忆」是不够的，店里的宝贝都在本地——店长手写的共读笔记（Markdown）、出版社寄来的书摘手册（PDF）、会员台账（CSV）、官网的夏夜共读活动页（网页）。要把它们变成模型随取随用的知识，第一步就是把<strong>各种格式的原始文件，变成模型认识的统一格式</strong>；第二步是<strong>把大块头切成小块</strong>，因为检索和嵌入都吃不动整本书。</p>
+<p>这正是 RAG（检索增强生成）的前半程：<strong>加载 → 切割 → 嵌入入库</strong>。本章拿下前两步，下一章把切好的块送进向量库。</p>
+<p><strong>技术基线</strong>：Python + LangChain 1.x。本章新增依赖：</p>
+<div class="highlight"><pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span>langchain<span class="w"> </span>langchain-community<span class="w"> </span>langchain-text-splitters<span class="w"> </span>pypdf<span class="w"> </span>beautifulsoup4
+</code></pre></div>
+<p>说明：<code>langchain-community</code> 是各类 Loader 的聚集地（导入时可能打印一条「维护模式」的提示，属正常现象，文末细说）；<code>pypdf</code> 是 <code>PyPDFLoader</code> 的解析引擎；<code>beautifulsoup4</code> 是网页 Loader 的解析引擎。</p>
+<hr />
+<h2 id="1-document-对象一切数据的统一集装箱">1. Document 对象：一切数据的统一集装箱</h2>
+<p><strong>作用</strong>：码头上的货千奇百怪——冷冻金枪鱼、成衣、钢琴——但吊机不关心货是什么，它只认<strong>集装箱</strong>。LangChain 也一样：不管数据来自文本文件、PDF、表格还是网页，Loader 的最终产出都是同一种规格的 <code>Document</code>。后续的切割器、嵌入器、向量库只跟集装箱打交道，完全不关心货是从哪个码头来的。</p>
+<p>一个 <code>Document</code> 由三部分构成：</p>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>类型</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>page_content</code></td>
+<td><code>str</code></td>
+<td>正文内容，这段文档的主体</td>
+</tr>
+<tr>
+<td><code>metadata</code></td>
+<td><code>dict</code></td>
+<td>附加信息：来源文件、页码、行号、标题……装在箱侧的标签</td>
+</tr>
+<tr>
+<td><code>id</code></td>
+<td><code>str \| None</code></td>
+<td>可选的唯一编号，默认不填</td>
+</tr>
+</tbody>
+</table>
+<p><strong>签名</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.documents</span><span class="w"> </span><span class="kn">import</span> <span class="n">Document</span>
+
+<span class="n">Document</span><span class="p">(</span><span class="n">page_content</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">metadata</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>最小示例</strong>——手动造一个集装箱看看内部：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.documents</span><span class="w"> </span><span class="kn">import</span> <span class="n">Document</span>
+
+<span class="n">doc</span> <span class="o">=</span> <span class="n">Document</span><span class="p">(</span>
+    <span class="n">page_content</span><span class="o">=</span><span class="s2">"拾光书屋今晚八点共读《夜航船》，座位有限，先到先得。"</span><span class="p">,</span>
+    <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">"来源"</span><span class="p">:</span> <span class="s2">"门店黑板"</span><span class="p">,</span> <span class="s2">"日期"</span><span class="p">:</span> <span class="s2">"7月1日"</span><span class="p">},</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">doc</span><span class="o">.</span><span class="n">page_content</span><span class="p">)</span>  <span class="c1"># 正文</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">doc</span><span class="o">.</span><span class="n">metadata</span><span class="p">)</span>      <span class="c1"># {'来源': '门店黑板', '日期': '7月1日'}</span>
+</code></pre></div>
+<p>真实项目里很少手动创建，更多是让 Loader 批量产出 <code>list[Document]</code>。那这个列表里什么时候只有一项、什么时候有很多项？</p>
+<ol>
+<li><code>TextLoader</code> 读一个 txt → 1 项（整个文件一份正文）</li>
+<li><code>PyPDFLoader</code> 读一个 PDF → 每页 1 项</li>
+<li><code>CSVLoader</code> 读一张表 → 每行 1 项</li>
+<li><code>DirectoryLoader</code> 读一个目录 → 每个文件至少 1 项</li>
+<li>文档被切割之后 → 每个 chunk 1 项</li>
+</ol>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li><strong>JS 写法的肌肉记忆要改</strong>：JS 里是 <code>pageContent</code>（驼峰），Python 里是 <code>page_content</code>（蛇形）。同理 JS 的 <code>metadata</code> 没变，但访问 <code>doc.pageContent</code> 在 Python 里只会拿到 <code>AttributeError</code>。</li>
+<li><strong>metadata 里有什么，完全取决于谁给你装的箱</strong>：<code>TextLoader</code> 会放 <code>source</code>（文件路径），<code>PyPDFLoader</code> 会多放 <code>page</code>（页码）。别假设字段一定存在，取值前先确认（或用 <code>doc.metadata.get(...)</code>）。</li>
+<li><code>Document</code> 是普通的数据类，可以随时改：<code>doc.metadata["租期"] = "永久"</code> 这样追加字段完全合法，后面讲切割时会大量利用这一点。</li>
+</ul>
+<hr />
+<h2 id="2-本地-loader把硬盘上的文件装进集装箱">2. 本地 Loader：把硬盘上的文件装进集装箱</h2>
+<p>本地 Loader 主要住在 <code>langchain_community.document_loaders</code> 里，导入方式统一：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_community.document_loaders</span><span class="w"> </span><span class="kn">import</span> <span class="n">TextLoader</span><span class="p">,</span> <span class="n">PyPDFLoader</span><span class="p">,</span> <span class="n">CSVLoader</span><span class="p">,</span> <span class="n">DirectoryLoader</span>
+</code></pre></div>
+<h3 id="21-textloader一个-txt一张单">2.1 TextLoader：一个 txt，一张单</h3>
+<p><strong>作用</strong>：最朴素的 Loader——把整个文本文件原样读进一个 <code>Document</code> 的 <code>page_content</code>。不解析任何语法，Markdown 读进来也只是带 <code>#</code> 号的纯文本。</p>
+<p><strong>签名</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="n">TextLoader</span><span class="p">(</span><span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span><span class="p">,</span> <span class="n">encoding</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">autodetect_encoding</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>最小示例</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_community.document_loaders</span><span class="w"> </span><span class="kn">import</span> <span class="n">TextLoader</span>
+
+<span class="n">loader</span> <span class="o">=</span> <span class="n">TextLoader</span><span class="p">(</span><span class="s2">"data/story.txt"</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span>
+<span class="n">docs</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>          <span class="c1"># 返回 list[Document]，同步方法，没有 await</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">docs</span><span class="p">))</span>              <span class="c1"># 1 —— 一个文件就是一份正文</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">docs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">metadata</span><span class="p">)</span>       <span class="c1"># {'source': 'data/story.txt'}</span>
+</code></pre></div>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li><strong>中文编码是头号坑</strong>。<code>TextLoader</code> 默认按 UTF-8 读；如果文件是 Windows 记事本存的 GBK/GB2312，<code>.load()</code> 会直接抛 <code>RuntimeError</code>（里面裹着一个 <code>UnicodeDecodeError</code>）。两种解法：明确指定 <code>TextLoader(path, encoding="gbk")</code>，或者 <code>autodetect_encoding=True</code> 让它自己猜（猜错率不低，能指定就指定）。</li>
+<li>JS 的 <code>await loader.load()</code> 在 Python 里是同步的 <code>loader.load()</code>——文件就在本地硬盘上，读完即返，没有异步那回事。</li>
+<li>路径既可以是字符串也可以是 <code>pathlib.Path</code>，但 metadata 里的 <code>source</code> 存的是你传进去的样子：传相对路径它就记相对路径。</li>
+</ul>
+<h3 id="22-pypdfloader一页一张单">2.2 PyPDFLoader：一页一张单</h3>
+<p><strong>作用</strong>：读取 PDF 并抽取文字。PDF 是知识密集场景最常见的格式——拾光书屋每本书的「编辑导读」都是出版社发的 PDF。它的默认行为是<strong>每一页拆成一个独立的 <code>Document</code></strong>，页码写进 metadata，方便后续检索时标注「出自第几页」。</p>
+<p><strong>签名</strong>（节选关键参数）：</p>
+<div class="highlight"><pre><span></span><code><span class="n">PyPDFLoader</span><span class="p">(</span>
+    <span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">PurePath</span><span class="p">,</span>
+    <span class="n">password</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>   <span class="c1"># 加密 PDF 的密码</span>
+    <span class="n">mode</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"single"</span><span class="p">,</span> <span class="s2">"page"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"page"</span><span class="p">,</span>  <span class="c1"># "page" 每页一个 Document；"single" 整本合一</span>
+    <span class="n">extract_images</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>          <span class="c1"># 是否尝试提取图片里的文字</span>
+<span class="p">)</span>
+</code></pre></div>
+<p><strong>最小示例</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_community.document_loaders</span><span class="w"> </span><span class="kn">import</span> <span class="n">PyPDFLoader</span>
+
+<span class="n">loader</span> <span class="o">=</span> <span class="n">PyPDFLoader</span><span class="p">(</span><span class="s2">"data/novel.pdf"</span><span class="p">)</span>   <span class="c1"># 换成你自己的 PDF 文件</span>
+<span class="n">docs</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">docs</span><span class="p">))</span>                  <span class="c1"># 页数</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">docs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">"page"</span><span class="p">])</span>   <span class="c1"># 0 —— 注意页码从 0 开始计</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">docs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">"total_pages"</span><span class="p">])</span>  <span class="c1"># 总页数</span>
+
+<span class="c1"># 整本合成一个 Document：</span>
+<span class="n">loader</span> <span class="o">=</span> <span class="n">PyPDFLoader</span><span class="p">(</span><span class="s2">"data/novel.pdf"</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">"single"</span><span class="p">)</span>
+<span class="n">docs</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>              <span class="c1"># 只有 1 个，正文里页与页之间用 \n\x0c 分隔</span>
+</code></pre></div>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li><strong>JS 版的 <code>splitPages: false</code>，Python 版叫 <code>mode="single"</code></strong>——同一个开关，两个名字，迁移时最容易踩的点之一。</li>
+<li><strong><code>page</code> 从 0 开始计</strong>。跟用户展示「第 3 页」时记得 +1，别把第 0 页说出去。</li>
+<li><strong>扫描版 PDF 等于图片</strong>：整页是扫描图像、没有文字层的话，<code>PyPDFLoader</code> 只能提出空字符串。要 OCR 才有救（<code>extract_images</code> 配合多模态解析，属于进阶话题）。</li>
+<li>页数多的大 PDF，<code>load()</code> 会一次性读入内存；对几百兆的扫描合集考虑 <code>loader.lazy_load()</code> 逐页迭代。</li>
+</ul>
+<h3 id="23-csvloader一行一张单">2.3 CSVLoader：一行一张单</h3>
+<p><strong>作用</strong>：把 CSV 表格转成 <code>Document</code>。逻辑是<strong>一行记录 = 一个 <code>Document</code></strong>，表头变成「字段名: 值」的键值对文本。拾光书屋的藏书台账是 CSV，加载后每本书都能单独被检索到。</p>
+<p><strong>签名</strong>（节选关键参数）：</p>
+<div class="highlight"><pre><span></span><code><span class="n">CSVLoader</span><span class="p">(</span>
+    <span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span><span class="p">,</span>
+    <span class="n">source_column</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>       <span class="c1"># 用哪一列的值顶替 metadata 里的 source</span>
+    <span class="n">content_columns</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(),</span>    <span class="c1"># 只把哪些列拼进正文（默认全部）</span>
+    <span class="n">metadata_columns</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(),</span>   <span class="c1"># 额外把哪些列写进 metadata</span>
+    <span class="n">encoding</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span>
+</code></pre></div>
+<p><strong>最小示例</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_community.document_loaders</span><span class="w"> </span><span class="kn">import</span> <span class="n">CSVLoader</span>
+
+<span class="c1"># books.csv 内容：</span>
+<span class="c1"># 书名,作者,评分,标签</span>
+<span class="c1"># 夜航船,张岱,4.8,古代百科</span>
+<span class="n">loader</span> <span class="o">=</span> <span class="n">CSVLoader</span><span class="p">(</span><span class="s2">"data/books.csv"</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span>
+<span class="n">docs</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>   <span class="c1"># 5 行数据 → 5 个 Document</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">docs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">page_content</span><span class="p">)</span>
+<span class="c1"># 书名: 夜航船</span>
+<span class="c1"># 作者: 张岱</span>
+<span class="c1"># 评分: 4.8</span>
+<span class="c1"># 标签: 古代百科</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">docs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">metadata</span><span class="p">)</span>  <span class="c1"># {'source': 'data/books.csv', 'row': 0}</span>
+</code></pre></div>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li><strong>正文不是原始 CSV 行，而是「字段名: 值」的换行文本</strong>。这个格式对嵌入很友好（语义完整），但如果你想要回原始行，得自己拼。</li>
+<li><strong><code>row</code> 也是从 0 开始</strong>，且<strong>表头行不算</strong>——第一行数据就是 <code>row: 0</code>。</li>
+<li>用 <code>source_column="书名"</code> 可以让 metadata 的 <code>source</code> 变成《夜航船》这种有业务含义的值，比一串文件路径更适合展示「命中了哪本书」。</li>
+<li>CSV 同样有编码坑（Excel 导出的中文 CSV 常是 GBK），解法同 <code>TextLoader</code>。</li>
+</ul>
+<h3 id="24-directoryloader整仓扫货">2.4 DirectoryLoader：整仓扫货</h3>
+<p><strong>作用</strong>：知识库通常不是一个文件，而是一整个目录——<code>notes/</code> 下混着 <code>.txt</code>、<code>.md</code>、<code>.pdf</code>。<code>DirectoryLoader</code> 负责按模式批量扫货，对命中的每个文件调用你指定的 Loader。</p>
+<p><strong>这里有一个 JS → Python 的大差异，必须重点说</strong>：JS 版的 <code>DirectoryLoader</code> 接收一个「后缀名 → Loader 工厂」的映射对象，一个实例通吃所有格式；<strong>Python 版没有这个映射机制</strong>，它是「一个 <code>loader_cls</code> + 一个 <code>glob</code> 模式」——每次只认一种 Loader。要加载多种格式，就多跑几趟再合并结果。</p>
+<p><strong>签名</strong>（节选关键参数）：</p>
+<div class="highlight"><pre><span></span><code><span class="n">DirectoryLoader</span><span class="p">(</span>
+    <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">glob</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"**/[!.]*"</span><span class="p">,</span>          <span class="c1"># 文件匹配模式，** 表示递归子目录</span>
+    <span class="n">loader_cls</span><span class="p">:</span> <span class="nb">type</span> <span class="o">=</span> <span class="n">UnstructuredFileLoader</span><span class="p">,</span>  <span class="c1"># 注意默认值！</span>
+    <span class="n">loader_kwargs</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>  <span class="c1"># 传给 loader_cls 构造器的参数</span>
+    <span class="n">silent_errors</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>     <span class="c1"># 单个文件加载失败时是跳过还是抛错</span>
+    <span class="n">show_progress</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>     <span class="c1"># 显示进度条（需要 tqdm）</span>
+<span class="p">)</span>
+</code></pre></div>
+<p><strong>最小示例</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_community.document_loaders</span><span class="w"> </span><span class="kn">import</span> <span class="n">DirectoryLoader</span><span class="p">,</span> <span class="n">TextLoader</span>
+
+<span class="c1"># 第一趟：收所有 .txt（** 递归子目录）</span>
+<span class="n">txt_docs</span> <span class="o">=</span> <span class="n">DirectoryLoader</span><span class="p">(</span>
+    <span class="s2">"data"</span><span class="p">,</span> <span class="n">glob</span><span class="o">=</span><span class="s2">"**/*.txt"</span><span class="p">,</span>
+    <span class="n">loader_cls</span><span class="o">=</span><span class="n">TextLoader</span><span class="p">,</span> <span class="n">loader_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">"encoding"</span><span class="p">:</span> <span class="s2">"utf-8"</span><span class="p">},</span>
+<span class="p">)</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+
+<span class="c1"># 第二趟：收所有 .md（Markdown 也先当纯文本读入）</span>
+<span class="n">md_docs</span> <span class="o">=</span> <span class="n">DirectoryLoader</span><span class="p">(</span>
+    <span class="s2">"data"</span><span class="p">,</span> <span class="n">glob</span><span class="o">=</span><span class="s2">"**/*.md"</span><span class="p">,</span>
+    <span class="n">loader_cls</span><span class="o">=</span><span class="n">TextLoader</span><span class="p">,</span> <span class="n">loader_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">"encoding"</span><span class="p">:</span> <span class="s2">"utf-8"</span><span class="p">},</span>
+<span class="p">)</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+
+<span class="n">all_docs</span> <span class="o">=</span> <span class="n">txt_docs</span> <span class="o">+</span> <span class="n">md_docs</span>
+</code></pre></div>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li><strong>默认 <code>loader_cls</code> 是 <code>UnstructuredFileLoader</code></strong>。不显式传 <code>loader_cls=TextLoader</code>，又没安装 <code>unstructured</code> 这个大依赖，加载时直接报错。记住：Python 版必须每次明说用哪个 Loader。</li>
+<li><strong><code>glob</code> 决定递归与否</strong>：<code>**/*.txt</code> 连子目录一起扫；<code>*.txt</code> 只看当前层。默认值 <code>**/[!.]*</code> 会递归扫所有非隐藏文件，一般要替换成你自己的模式。</li>
+<li>目录里混着一个坏文件（编码错、被锁住）会让整趟扫描翻车；批量导入知识库时建议开 <code>silent_errors=True</code>，事后再核对数量。</li>
+<li>适合「多类型文件批量导入」「大型知识库统一入库」；单个小文档老老实实用对应的单个 Loader，配置成本更低。</li>
+</ul>
+<h3 id="25-unstructuredmarkdownloader-的思路">2.5 UnstructuredMarkdownLoader 的思路</h3>
+<p><strong>作用</strong>：<code>UnstructuredMarkdownLoader</code> 属于 <code>unstructured</code> 生态——这个生态用一套统一的解析引擎，把 Markdown、Word、PPT、HTML 等各种格式都拆成<strong>结构化元素</strong>（标题、段落、列表、表格……），每个元素可以变成一个 <code>Document</code>，<code>metadata</code> 里记录元素类型（<code>category</code>）等信息。</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 思路示意（运行前需安装：pip install "unstructured[md]"）</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain_community.document_loaders</span><span class="w"> </span><span class="kn">import</span> <span class="n">UnstructuredMarkdownLoader</span>
+
+<span class="n">docs</span> <span class="o">=</span> <span class="n">UnstructuredMarkdownLoader</span><span class="p">(</span><span class="s2">"data/notes.md"</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">"elements"</span><span class="p">)</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+<span class="c1"># mode="elements"：按结构元素拆分，标题、段落各成一个 Document</span>
+<span class="c1"># mode="single"：整篇合成一个 Document（默认）</span>
+</code></pre></div>
+<p><strong>什么时候选它</strong>：</p>
+<ul>
+<li>优点：解析能力强，元素类型进了 metadata，适合处理格式混杂、来源复杂的企业文档</li>
+<li>代价：<code>unstructured</code> 依赖树庞大（拖家带口一堆系统库），装一次够喝一壶</li>
+</ul>
+<p><strong>轻量替代</strong>（本章 demo 采用的路线）：如果只是想「按 Markdown 的标题结构切分、标题进 metadata」，完全不必请出 <code>unstructured</code>——<code>TextLoader</code> 原样读入 + 5.1 节的 <code>MarkdownHeaderTextSplitter</code> 结构化切割，零额外依赖就能拿到几乎等价的效果。轻量手册的选型原则：能用小工具解决，就不请重型机械进场。</p>
+<hr />
+<h2 id="3-web-loader把网页装进集装箱">3. Web Loader：把网页装进集装箱</h2>
+<h3 id="31-webbaseloader抓网页提正文">3.1 WebBaseLoader：抓网页、提正文</h3>
+<p><strong>作用</strong>：给一个 URL，抓回 HTML，解析出纯文本，装进 <code>Document</code>。JS 版这一讲的主角 <code>CheerioWebBaseLoader</code> 底层用 cheerio（jQuery 风格的 HTML 解析器）；<strong>Python 版的 <code>WebBaseLoader</code> 底层用 <code>requests</code> 发请求 + <code>BeautifulSoup</code>（bs4）解析 HTML</strong>——两者角色对等，CSS 选择器语法也相通，迁移成本主要在「包名和 API 位置」。</p>
+<p><strong>签名</strong>（节选关键参数）：</p>
+<div class="highlight"><pre><span></span><code><span class="n">WebBaseLoader</span><span class="p">(</span>
+    <span class="n">web_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>      <span class="c1"># 一个或多个 URL</span>
+    <span class="n">bs_kwargs</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>      <span class="c1"># 传给 BeautifulSoup 构造器的参数（如 parse_only）</span>
+    <span class="n">bs_get_text_kwargs</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>  <span class="c1"># 传给 soup.get_text() 的参数（如 separator）</span>
+    <span class="n">requests_per_second</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>       <span class="c1"># 多 URL 时的限速</span>
+    <span class="n">verify_ssl</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+</code></pre></div>
+<p><strong>最小示例</strong>——抓取拾光书屋官网的夏夜共读活动页（URL 换成你自己的目标页）：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_community.document_loaders</span><span class="w"> </span><span class="kn">import</span> <span class="n">WebBaseLoader</span>
+
+<span class="n">loader</span> <span class="o">=</span> <span class="n">WebBaseLoader</span><span class="p">(</span>
+    <span class="s2">"https://www.shiguang-bookstore.example/events"</span><span class="p">,</span>
+    <span class="n">bs_get_text_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">"separator"</span><span class="p">:</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span> <span class="s2">"strip"</span><span class="p">:</span> <span class="kc">True</span><span class="p">},</span>  <span class="c1"># 防文字粘连，见下方坑</span>
+<span class="p">)</span>
+<span class="n">docs</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">docs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">metadata</span><span class="p">)</span>
+<span class="c1"># {'source': 'https://...', 'title': '拾光书屋 · 夏夜共读计划',</span>
+<span class="c1">#  'description': '……', 'language': 'zh-CN'}</span>
+</code></pre></div>
+<p><code>metadata</code> 是白送的：<code>WebBaseLoader</code> 会顺手从 HTML 里提取 <code>title</code>、<code>meta description</code>、<code>lang</code> 写进标签——后续检索展示「命中页面的标题」时直接可用。</p>
+<p><strong>只取正文（JS <code>selector</code> 参数的 Python 对应物）</strong>：JS 版有 <code>selector: "h2"</code> 直接筛元素；Python 版没有这个直接参数，标准姿势是把 <code>bs4.SoupStrainer</code> 塞进 <code>bs_kwargs</code>，让 BeautifulSoup 只解析你关心的那部分 DOM：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">bs4</span><span class="w"> </span><span class="kn">import</span> <span class="n">SoupStrainer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain_community.document_loaders</span><span class="w"> </span><span class="kn">import</span> <span class="n">WebBaseLoader</span>
+
+<span class="c1"># 只解析 &lt;article&gt; 标签里的内容，导航栏、页脚全部被挡在门外</span>
+<span class="n">loader</span> <span class="o">=</span> <span class="n">WebBaseLoader</span><span class="p">(</span>
+    <span class="s2">"https://www.shiguang-bookstore.example/events"</span><span class="p">,</span>
+    <span class="n">bs_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">"parse_only"</span><span class="p">:</span> <span class="n">SoupStrainer</span><span class="p">(</span><span class="s2">"article"</span><span class="p">)},</span>
+    <span class="n">bs_get_text_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">"separator"</span><span class="p">:</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span> <span class="s2">"strip"</span><span class="p">:</span> <span class="kc">True</span><span class="p">},</span>
+<span class="p">)</span>
+<span class="n">docs</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>   <span class="c1"># page_content 里只剩活动正文</span>
+</code></pre></div>
+<p>更复杂的筛选（比如按 class 取）用 <code>SoupStrainer(class_="post-content")</code>；要拿元素列表做后处理，也可以直接 <code>loader.scrape()</code> 拿到 <code>BeautifulSoup</code> 对象自己 <code>.select("h2")</code>——和 cheerio 的 <code>$</code> 选择器玩法一一对应。</p>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li><strong>网络依赖是天然的不稳定源</strong>：断网、超时、对方 502，都会让 <code>load()</code> 直接抛异常。生产环境记得包一层重试/兜底（04 章的 <code>with_retry</code> / <code>with_fallbacks</code> 在这里正好能用上）。这也是本章 demo 不演示网页抓取的原因——课堂环境网络不可控。</li>
+<li><strong><code>get_text()</code> 默认没有分隔符</strong>：不同标签的文字会被直接拼在一起——<code>&lt;h2&gt;</code> 里的「夏夜共读计划」和 <code>&lt;p&gt;</code> 里的「晚八点开始」会粘成「夏夜共读计划晚八点开始」，中文还算能忍，英文单词粘连最伤（<code>bookstore</code> 和 <code>keeping</code> 撞成 <code>bookstorekeeping</code>）。务必传 <code>bs_get_text_kwargs={"separator": "\n", "strip": True}</code>。</li>
+<li><strong>用了 <code>parse_only</code> 之后，metadata 会缩水</strong>：BeautifulSoup 只解析了 <code>&lt;article&gt;</code>，页面里的 <code>&lt;title&gt;</code> 自然找不到了，metadata 只剩 <code>source</code>。要标题就别筛太狠，或自己再抓一次。</li>
+<li><strong>动态渲染的页面抓不到</strong>：<code>WebBaseLoader</code> 拿到的是服务端返回的原始 HTML。内容靠 JavaScript 执行后才出现的 SPA 页面（大量前端框架站点），抓回来是空壳。这种得换 <code>playwright</code> 之类的无头浏览器方案。</li>
+<li><strong>反爬与礼仪</strong>：一些站点会拦截无 UA 的请求或频次过高的访问；批量抓取遵守 <code>requests_per_second</code> 限速，别把人家服务器当自家书架翻。</li>
+</ul>
+<h3 id="32-更多抓取思路代码仓库与搜索结果">3.2 更多抓取思路：代码仓库与搜索结果</h3>
+<p>顺着「给模型喂外部知识」这个需求，还有两类常见数据源，思路了解即可：</p>
+<p><strong>代码仓库</strong>：想让模型理解一个项目的结构和实现（回答「这个函数怎么用」「报错在源码哪里」），可以把整个仓库抓进来。langchain-community 提供了 GitHub 相关 Loader，套路是：指定仓库和分支 → 按 <code>ignorePaths</code> 之类的参数过滤 → 每个代码文件变成一个 <code>Document</code>。抓之前想清楚规模——整仓递归可能拖回几千个文件，先从小目录试起。</p>
+<p><strong>搜索 API</strong>：模型要回答「今天的科技新闻」这类实时问题时，本地知识库无能为力，得先搜索再抓取。LangChain 里有对接 SearchApi、SerpAPI 等搜索服务的 Loader，套路是两步走：</p>
+<ol>
+<li><code>SearchApiLoader(query=..., api_key=...)</code> 拿到搜索结果——每个结果一个 <code>Document</code>，metadata 里标注结果类型（百科、普通网页、新闻、视频……），按需过滤</li>
+<li>取出结果里的链接，再用 <code>WebBaseLoader</code> 抓正文——和 3.1 节完全一样</li>
+</ol>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li>搜索类 Loader 都要 API key，注册后有每月免费额度。<strong>key 千万别写死在代码里</strong>（课件示例里明文写 key 是反面教材），用环境变量 <code>os.environ["SEARCH_API_KEY"]</code> 读取。</li>
+<li>第一步拿到的只是「搜索结果摘要」，不是正文；急着把摘要喂给模型，答案会又浅又糙——两步走的第二步不能省。</li>
+</ul>
+<hr />
+<h2 id="4-文本切割把整头牛切成牛排">4. 文本切割：把整头牛切成牛排</h2>
+<h3 id="41-为什么必须切">4.1 为什么必须切</h3>
+<p>回忆 RAG 的流程：用户提问 → 从知识库检索相关内容 → 相关内容和问题一起交给模型。如果文档不切割：</p>
+<ol>
+<li><strong>检索粒度太粗</strong>：只能整篇为单位去匹配，一篇 2 万字的笔记和一句提问的相似度会被大量无关文字稀释，检索根本瞄不准</li>
+<li><strong>超出模型的 token 限制</strong>：长文一次性塞进上下文窗口，要么报错，要么贵到肉疼</li>
+</ol>
+<p>所以要把大块头切成大小合适的「牛排」。但切割不能乱剁——把一句话拦腰斩断、把一个定义劈成两半，检索到哪半都不完整。理想的切法像老屠夫：<strong>先沿着关节（段落）下刀，块太大再沿肌理（句子）切，实在不行才动用蛮力</strong>。这就是 <code>RecursiveCharacterTextSplitter</code> 的「递归」二字的含义。</p>
+<h3 id="42-两个核心旋钮chunk_size-与-chunk_overlap">4.2 两个核心旋钮：chunk_size 与 chunk_overlap</h3>
+<p><strong>作用</strong>：<code>RecursiveCharacterTextSplitter</code> 是最通用的切割器，普通文本（小说、说明、笔记）闭眼选它。</p>
+<p><strong>签名</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="n">RecursiveCharacterTextSplitter</span><span class="p">(</span>
+    <span class="n">separators</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>   <span class="c1"># 分隔符层级，默认 ["\n\n", "\n", " ", ""]</span>
+    <span class="n">keep_separator</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"start"</span><span class="p">,</span> <span class="s2">"end"</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">chunk_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4000</span><span class="p">,</span>                <span class="c1"># 每块的最大长度（单位见 4.5 节）</span>
+    <span class="n">chunk_overlap</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">200</span><span class="p">,</span>              <span class="c1"># 相邻块之间的重叠长度</span>
+    <span class="n">length_function</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">,</span>
+    <span class="n">add_start_index</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>         <span class="c1"># 把每块在原文的起始位置写进 metadata</span>
+    <span class="n">is_separator_regex</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>      <span class="c1"># separators 是否按正则解释</span>
+<span class="p">)</span>
+</code></pre></div>
+<ul>
+<li><code>chunk_size</code>：每块的最大长度。切糕的模具尺寸。</li>
+<li><code>chunk_overlap</code>：相邻两块之间重叠的部分。撕书时每页多留几行「接缝」——关键句正好骑在切割线上时，两块各执一半谁都说不清；留了接缝，至少有一块能拿着完整的前半句，另一块拿着完整的后半句。</li>
+</ul>
+<p><strong>最小示例</strong>——同一个文本，接缝有无的对比：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_text_splitters</span><span class="w"> </span><span class="kn">import</span> <span class="n">RecursiveCharacterTextSplitter</span>
+
+<span class="n">text</span> <span class="o">=</span> <span class="s2">"夜里灯还亮着。风翻动了书页。少年在找一句话。店长递上热可可。雨点敲着玻璃。灯影落进书里。"</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">cut</span><span class="p">(</span><span class="n">overlap</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+    <span class="n">splitter</span> <span class="o">=</span> <span class="n">RecursiveCharacterTextSplitter</span><span class="p">(</span>
+        <span class="n">chunk_size</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+        <span class="n">chunk_overlap</span><span class="o">=</span><span class="n">overlap</span><span class="p">,</span>
+        <span class="n">separators</span><span class="o">=</span><span class="p">[</span><span class="s2">"</span><span class="se">\n\n</span><span class="s2">"</span><span class="p">,</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span> <span class="s2">"。"</span><span class="p">,</span> <span class="s2">"，"</span><span class="p">,</span> <span class="s2">" "</span><span class="p">,</span> <span class="s2">""</span><span class="p">],</span>
+        <span class="n">keep_separator</span><span class="o">=</span><span class="s2">"end"</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">splitter</span><span class="o">.</span><span class="n">split_text</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">cut</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+<span class="c1"># ['夜里灯还亮着。风翻动了书页。', '少年在找一句话。店长递上热可可。', '雨点敲着玻璃。灯影落进书里。']</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">cut</span><span class="p">(</span><span class="mi">9</span><span class="p">))</span>
+<span class="c1"># ['夜里灯还亮着。风翻动了书页。',</span>
+<span class="c1">#  '风翻动了书页。少年在找一句话。',     ← 开头重复了上一块的最后一句</span>
+<span class="c1">#  '少年在找一句话。店长递上热可可。',</span>
+<span class="c1">#  '店长递上热可可。雨点敲着玻璃。',</span>
+<span class="c1">#  '雨点敲着玻璃。灯影落进书里。']</span>
+</code></pre></div>
+<p>起步推荐值：<code>chunk_size=1000, chunk_overlap=200</code>，再用官方可视化工具（搜索 chunkviz）对着自己的真实文档调参。找到检索效果好的那组值之前，别迷信任何「最优参数」。</p>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li><strong><code>chunk_overlap</code> 必须小于 <code>chunk_size</code></strong>，否则构造时直接 <code>ValueError</code>。</li>
+<li><strong>接缝的携带单位是「完整的分隔单元」，不是任意字符数</strong>。看上面 <code>overlap=9</code> 的例子：接缝恰好是一句 9 字的话。如果某句话本身就有 30 字，而 <code>chunk_overlap=20</code>，这句话没法掰开只带一半——它整个带不过去，接缝在这里就断了。所以中文长句场景，overlap 别设太小（句子平均长度以下基本无效）。</li>
+<li>切出来的块<strong>可能小于</strong> <code>chunk_size</code>（沿分隔符切，尽量凑满但不硬凑），<strong>也可能偶尔超过</strong>（一个不可分割的超长单元，比如一整行没有标点的文本）——<code>chunk_size</code> 是「目标上限」，不是硬保证。</li>
+</ul>
+<h3 id="43-separators分隔符的层级">4.3 separators：分隔符的层级</h3>
+<p><strong>作用</strong>：递归切割器的「递归」靠它实现。<code>separators</code> 是一张<strong>从粗到细的切割清单</strong>，切割器拿着文本从第一项开始试：</p>
+<ol>
+<li>先用 <code>"\n\n"</code>（空行，即段落边界）切——切出的块 ≤ <code>chunk_size</code>？收工</li>
+<li>还有超标的块？对超标的块用 <code>"\n"</code>（换行）再切</li>
+<li>还超标？继续往下用更细的分隔符，直到最后的 <code>""</code>——纯按长度硬切，保底不丢内容</li>
+</ol>
+<p><strong>默认值是 <code>["\n\n", "\n", " ", ""]</code></strong>，这是为英文设计的：英文靠空格分词，<code>" "</code> 这一级很好用。<strong>但中文没有空格</strong>——一句话几十个字中间一个空格都没有，默认清单在中文上会一路退到 <code>""</code> 硬切，结果就是句子被拦腰斩断、句号孤零零漂在块外：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_text_splitters</span><span class="w"> </span><span class="kn">import</span> <span class="n">RecursiveCharacterTextSplitter</span>
+
+<span class="n">text</span> <span class="o">=</span> <span class="s2">"第一句讲夜读。第二句讲晨读。第三句讲午读。"</span>
+
+<span class="c1"># 默认分隔符：退到 "" 硬切</span>
+<span class="n">RecursiveCharacterTextSplitter</span><span class="p">(</span><span class="n">chunk_size</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">chunk_overlap</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">split_text</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+<span class="c1"># ['第一句讲夜读。第二句', '讲晨读。第三句讲午读', '。']   ← 句子被斩断，句号成孤块</span>
+
+<span class="c1"># 中文分隔符：句号优先，其次逗号</span>
+<span class="n">RecursiveCharacterTextSplitter</span><span class="p">(</span>
+    <span class="n">chunk_size</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">chunk_overlap</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">separators</span><span class="o">=</span><span class="p">[</span><span class="s2">"</span><span class="se">\n\n</span><span class="s2">"</span><span class="p">,</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span> <span class="s2">"。"</span><span class="p">,</span> <span class="s2">"，"</span><span class="p">,</span> <span class="s2">" "</span><span class="p">,</span> <span class="s2">""</span><span class="p">],</span>
+    <span class="n">keep_separator</span><span class="o">=</span><span class="s2">"end"</span><span class="p">,</span>   <span class="c1"># 句号归入前一句的尾部，切出完整句</span>
+<span class="p">)</span><span class="o">.</span><span class="n">split_text</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+<span class="c1"># ['第一句讲夜读。', '第二句讲晨读。', '第三句讲午读。']   ← 每块都是完整句</span>
+</code></pre></div>
+<p><strong>中文场景的推荐配置</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="n">separators</span><span class="o">=</span><span class="p">[</span><span class="s2">"</span><span class="se">\n\n</span><span class="s2">"</span><span class="p">,</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span> <span class="s2">"。"</span><span class="p">,</span> <span class="s2">"；"</span><span class="p">,</span> <span class="s2">"，"</span><span class="p">,</span> <span class="s2">" "</span><span class="p">,</span> <span class="s2">""</span><span class="p">]</span>
+</code></pre></div>
+<p>段落 → 换行 → 句号 → 分号 → 逗号 → 空格 → 硬切，从粗到细。</p>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li><strong><code>keep_separator</code> 的三个状态</strong>：<code>False</code> 丢弃分隔符（块里没有句号）；<code>True</code> / <code>"start"</code> 分隔符归下一块的<strong>开头</strong>（<code>。第二句……</code> 开头一个句号很丑）；<code>"end"</code> 归上一块的<strong>结尾</strong>（<code>……第二句。</code>——中文最自然）。切中文记得配 <code>keep_separator="end"</code>。</li>
+<li>分隔符<strong>只在「块超标」时才逐级降级</strong>：一小段 50 字的文本配 <code>chunk_size=1000</code>，第一刀 <code>"\n\n"</code> 切完就收工，后面的分隔符根本轮不上出场。</li>
+<li>想用正则当分隔符（比如同时匹配中英文句号 <code>"[。.]"</code>），把 <code>is_separator_regex=True</code> 打开，否则特殊字符会被当普通文本找。</li>
+</ul>
+<h3 id="44-三个入口split_text-create_documents-split_documents">4.4 三个入口：split_text / create_documents / split_documents</h3>
+<p><strong>作用</strong>：切割器有三个长得很像的方法，区别只在「喂什么、吐什么」：</p>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>输入</th>
+<th>输出</th>
+<th>metadata</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>split_text(text: str)</code></td>
+<td>纯字符串</td>
+<td><code>list[str]</code></td>
+<td>无（字符串没有 metadata）</td>
+</tr>
+<tr>
+<td><code>create_documents(texts, metadatas=None)</code></td>
+<td>字符串列表（可附 metadata）</td>
+<td><code>list[Document]</code></td>
+<td>你传入的</td>
+</tr>
+<tr>
+<td><code>split_documents(docs)</code></td>
+<td><code>list[Document]</code></td>
+<td><code>list[Document]</code></td>
+<td><strong>原样继承</strong>，还可追加</td>
+</tr>
+</tbody>
+</table>
+<p><strong>最小示例</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_text_splitters</span><span class="w"> </span><span class="kn">import</span> <span class="n">RecursiveCharacterTextSplitter</span>
+
+<span class="n">splitter</span> <span class="o">=</span> <span class="n">RecursiveCharacterTextSplitter</span><span class="p">(</span>
+    <span class="n">chunk_size</span><span class="o">=</span><span class="mi">80</span><span class="p">,</span> <span class="n">chunk_overlap</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">separators</span><span class="o">=</span><span class="p">[</span><span class="s2">"</span><span class="se">\n\n</span><span class="s2">"</span><span class="p">,</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span> <span class="s2">"。"</span><span class="p">,</span> <span class="s2">"，"</span><span class="p">,</span> <span class="s2">" "</span><span class="p">,</span> <span class="s2">""</span><span class="p">],</span>
+    <span class="n">keep_separator</span><span class="o">=</span><span class="s2">"end"</span><span class="p">,</span>
+    <span class="n">add_start_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>   <span class="c1"># 每块在原文的起始位置写进 metadata</span>
+<span class="p">)</span>
+
+<span class="c1"># 入口一：手里只有一段字符串（比如接口返回的文本）</span>
+<span class="n">chunks</span> <span class="o">=</span> <span class="n">splitter</span><span class="o">.</span><span class="n">split_text</span><span class="p">(</span><span class="s2">"很长的正文……"</span><span class="p">)</span>
+
+<span class="c1"># 入口二：字符串 + 手工 metadata</span>
+<span class="n">docs</span> <span class="o">=</span> <span class="n">splitter</span><span class="o">.</span><span class="n">create_documents</span><span class="p">(</span>
+    <span class="p">[</span><span class="s2">"很长的正文……"</span><span class="p">],</span>
+    <span class="n">metadatas</span><span class="o">=</span><span class="p">[{</span><span class="s2">"册子"</span><span class="p">:</span> <span class="s2">"打烊之后"</span><span class="p">}],</span>   <span class="c1"># 与 texts 一一对应</span>
+<span class="p">)</span>
+
+<span class="c1"># 入口三：Loader 产出的 Document 直接切（最常用）</span>
+<span class="c1"># loader_docs = TextLoader("data/story.txt", encoding="utf-8").load()</span>
+<span class="c1"># docs = splitter.split_documents(loader_docs)</span>
+<span class="c1"># docs[0].metadata  →  {'source': 'data/story.txt', 'start_index': 0}</span>
+</code></pre></div>
+<p><strong>metadata 的保留与追加</strong>是这三个入口的分水岭：</p>
+<ul>
+<li><code>split_documents</code> 把原 <code>Document</code> 的 metadata <strong>原样带给每个切块</strong>——文件切成 8 块，8 块都带着 <code>source</code></li>
+<li><code>add_start_index=True</code> 会<strong>追加</strong>一个 <code>start_index</code> 字段——块在原文的起始字符位置，方便回溯定位原文</li>
+<li>后续环节（嵌入、入库、检索）都在 metadata 里做文章：先按 <code>source</code> 过滤、再按 <code>start_index</code> 排序，就能把切块还原成原文</li>
+</ul>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li>JS 版对应方法是 <code>createDocuments(texts, metadatas)</code>（驼峰），Python 是 <code>create_documents</code>（蛇形）——同类迁移的通用规律。</li>
+<li><code>create_documents</code> 的 <code>metadatas</code> 是<strong>按序对应</strong>的外层列表（每个 text 一个 dict），不是「给所有块统一打的标签」。想给所有块打同一个标签，切完自己循环加。</li>
+<li><code>split_text</code> 返回的是裸字符串，丢掉了 metadata——只要后面还要走 RAG 流程，就别贪这一步的省事。</li>
+</ul>
+<h3 id="45-按字符切-vs-按-token-切">4.5 按字符切 vs 按 token 切</h3>
+<p><strong>作用</strong>：<code>chunk_size</code> 的「长度」用什么尺子量？默认用 <code>len</code>——<strong>按字符数</strong>。但模型的上下文窗口按 <strong>token</strong> 计费计量，同样的 <code>chunk_size=1000</code>：</p>
+<ul>
+<li>中文字符：约 1 字 ≈ 1 token，字符尺子和 token 尺子差不多</li>
+<li>英文字符：约 4 字符 ≈ 1 token，字符尺子量出的 1000 字符其实只占约 250 token——<strong>块比想象中「小」，token 预算浪费了</strong></li>
+</ul>
+<p>token 预算敏感的场景（按 token 计费的嵌入 API、上下文窗口紧张），要换把尺子量。</p>
+<p><strong>换尺子的两种方式</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 方式一：换 length_function——尺子随便定义（本节 demo 用它做离线演示）</span>
+<span class="n">splitter</span> <span class="o">=</span> <span class="n">RecursiveCharacterTextSplitter</span><span class="p">(</span>
+    <span class="n">chunk_size</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">chunk_overlap</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">length_function</span><span class="o">=</span><span class="n">my_token_counter</span><span class="p">,</span>   <span class="c1"># 任何 Callable[[str], int]</span>
+<span class="p">)</span>
+
+<span class="c1"># 方式二：from_tiktoken_encoder——用 OpenAI 系的 tiktoken 分词器精确计数</span>
+<span class="c1"># 前提：pip install tiktoken；注意首次使用会联网下载编码表</span>
+<span class="n">splitter</span> <span class="o">=</span> <span class="n">RecursiveCharacterTextSplitter</span><span class="o">.</span><span class="n">from_tiktoken_encoder</span><span class="p">(</span>
+    <span class="n">encoding_name</span><span class="o">=</span><span class="s2">"cl100k_base"</span><span class="p">,</span>   <span class="c1"># 或 model_name="gpt-4o-mini" 自动选对应编码</span>
+    <span class="n">chunk_size</span><span class="o">=</span><span class="mi">512</span><span class="p">,</span> <span class="n">chunk_overlap</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span>
+<span class="p">)</span>
+</code></pre></div>
+<p><strong>实测对比</strong>（demo 里的中英混排文本，<code>chunk_size=20</code> 不变，只换尺子）：</p>
+<div class="highlight"><pre><span></span><code>按字符（len）       → 6 块，每块字符数 [18, 16, 13, 8, 19, 4]
+按粗略 token 计数  → 3 块，每块 token 数 [15, 19, 4]
+</code></pre></div>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li><strong>tiktoken 是「联网刺客」</strong>：首次调用要从网络下载编码表，离线环境直接挂。内网部署的项目要么提前缓存，要么用自定义 <code>length_function</code> 兜底。</li>
+<li>tiktoken 的 token 数是 <strong>OpenAI 系模型的口径</strong>；换其他模型（本地 Ollama 跑 qwen），tokenizer 不同，token 数会有偏差。预算卡得很死时，留 10–20% 余量。</li>
+<li>还有更硬的 <code>TokenTextSplitter</code>：纯按 token 数切，完全不考虑句子边界——可能出现一句话被切成两半、一半在上一块的情况。检索质量优先就用递归切割器，token 精度优先才用它。</li>
+</ul>
+<h3 id="46-代码切割from_language">4.6 代码切割：from_language</h3>
+<p><strong>作用</strong>：代码有语法结构，按普通文本切很容易把一个函数从中间切开——前半块有 <code>def</code> 没有函数体，后半块凭空多出缩进，模型看了直摇头。<code>from_language</code> 给切割器换一套<strong>为编程语言定制的分隔符层级</strong>：优先在函数/类定义边界下刀，其次按语句结束符，再次按换行、空格兜底。</p>
+<p><strong>签名</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="n">RecursiveCharacterTextSplitter</span><span class="o">.</span><span class="n">from_language</span><span class="p">(</span><span class="n">language</span><span class="p">:</span> <span class="n">Language</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>最小示例</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_text_splitters</span><span class="w"> </span><span class="kn">import</span> <span class="n">Language</span><span class="p">,</span> <span class="n">RecursiveCharacterTextSplitter</span>
+
+<span class="c1"># JS 版：RecursiveCharacterTextSplitter.fromLanguage("js", {...})</span>
+<span class="c1"># Python 版：推荐传 Language 枚举（小写字符串也能识别，见下方坑）</span>
+<span class="n">splitter</span> <span class="o">=</span> <span class="n">RecursiveCharacterTextSplitter</span><span class="o">.</span><span class="n">from_language</span><span class="p">(</span>
+    <span class="n">Language</span><span class="o">.</span><span class="n">PYTHON</span><span class="p">,</span>
+    <span class="n">chunk_size</span><span class="o">=</span><span class="mi">320</span><span class="p">,</span> <span class="n">chunk_overlap</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">code_docs</span> <span class="o">=</span> <span class="n">splitter</span><span class="o">.</span><span class="n">split_text</span><span class="p">(</span><span class="n">source_code_text</span><span class="p">)</span>
+
+<span class="c1"># 看看都支持哪些语言：</span>
+<span class="nb">print</span><span class="p">([</span><span class="n">lang</span> <span class="k">for</span> <span class="n">lang</span> <span class="ow">in</span> <span class="n">Language</span><span class="p">])</span>  <span class="c1"># CPP、GO、JAVA、JS、PYTHON、RUST、TS、MARKDOWN……</span>
+</code></pre></div>
+<p>Python 版为 Python 定制的层级大致是：先按类/函数定义切，再按语句切，再按缩进块、换行兜底——尽量保住语法单元的完整性。</p>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li><strong>JS 传字符串 <code>"js"</code>，Python 传枚举 <code>Language.JS</code></strong>——<code>Language</code> 是字符串枚举，传 <code>"js"</code> 这类小写字符串也能跑（实测行为一致），但枚举有代码补全和拼写保护，手滑写个 <code>"JAVASCRIPT"</code> 不会静默给出错误分隔符表。</li>
+<li><code>from_language</code> 只是<strong>换了分隔符清单</strong>，<code>chunk_size</code> / <code>chunk_overlap</code> 等参数照旧要自己传；它不保证每个块都是「完整可运行的语法单元」，只是尽力沿着结构边界下刀。</li>
+<li>Markdown 也在 <code>Language</code> 枚举里（<code>Language.MARKDOWN</code>），但按标题结构化切割有更专业的 5.1 节工具，别用错了场合。</li>
+</ul>
+<hr />
+<h2 id="5-markdown-结构化切割markdownheadertextsplitter">5. Markdown 结构化切割：MarkdownHeaderTextSplitter</h2>
+<h3 id="51-按标题切标题进-metadata">5.1 按标题切，标题进 metadata</h3>
+<p><strong>作用</strong>：拾光书屋的共读笔记是标准 Markdown：<code>#</code> 一级标题（笔记册名）、<code>##</code> 二级（每本书）、<code>###</code> 三级（金句摘录/讨论记录）。这种文档天然自带章节骨架，按标题切割比按长度切割<strong>语义完整得多</strong>——而且<strong>标题路径会写进每个块的 metadata</strong>。检索命中某个块时，顺着 metadata 就知道它来自「拾光书屋共读笔记 → 《山月记》共读夜 → 金句摘录」，展示和过滤都有了抓手。</p>
+<p><strong>签名</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="n">MarkdownHeaderTextSplitter</span><span class="p">(</span>
+    <span class="n">headers_to_split_on</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]],</span>  <span class="c1"># [(标题符号, metadata 字段名), ...]</span>
+    <span class="n">strip_headers</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>   <span class="c1"># 标题本身是否从正文里剔除（默认剔除）</span>
+<span class="p">)</span>
+</code></pre></div>
+<p><strong>最小示例</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_text_splitters</span><span class="w"> </span><span class="kn">import</span> <span class="n">MarkdownHeaderTextSplitter</span>
+
+<span class="n">md_text</span> <span class="o">=</span> <span class="s2">"""# 拾光书屋共读笔记</span>
+
+<span class="s2">馆主的话。</span>
+
+<span class="s2">## 夜读指南</span>
+
+<span class="s2">关灯前读诗。</span>
+
+<span class="s2">## 晨读指南</span>
+
+<span class="s2">早起读散文。</span>
+<span class="s2">"""</span>
+
+<span class="n">splitter</span> <span class="o">=</span> <span class="n">MarkdownHeaderTextSplitter</span><span class="p">(</span>
+    <span class="n">headers_to_split_on</span><span class="o">=</span><span class="p">[(</span><span class="s2">"#"</span><span class="p">,</span> <span class="s2">"h1"</span><span class="p">),</span> <span class="p">(</span><span class="s2">"##"</span><span class="p">,</span> <span class="s2">"h2"</span><span class="p">)],</span>
+    <span class="n">strip_headers</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">docs</span> <span class="o">=</span> <span class="n">splitter</span><span class="o">.</span><span class="n">split_text</span><span class="p">(</span><span class="n">md_text</span><span class="p">)</span>   <span class="c1"># 注意：吃字符串，吐 list[Document]</span>
+
+<span class="k">for</span> <span class="n">doc</span> <span class="ow">in</span> <span class="n">docs</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">doc</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span> <span class="s2">"←"</span><span class="p">,</span> <span class="n">doc</span><span class="o">.</span><span class="n">page_content</span><span class="p">)</span>
+<span class="c1"># {'h1': '拾光书屋共读笔记'}                          ← 馆主的话。</span>
+<span class="c1"># {'h1': '拾光书屋共读笔记', 'h2': '夜读指南'}          ← 关灯前读诗。</span>
+<span class="c1"># {'h1': '拾光书屋共读笔记', 'h2': '晨读指南'}          ← 早起读散文。</span>
+</code></pre></div>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li><strong><code>headers_to_split_on</code> 是元组列表</strong>：<code>("#", "h1")</code> 的意思是「<code>#</code> 开头的标题，值存进 metadata 的 <code>h1</code> 字段」。字段名随便起（<code>"chapter"</code>、<code>"section"</code> 都行），但一旦定了就是检索时的过滤键，团队要统一。</li>
+<li><strong>metadata 是「路径式」累积的</strong>：三级标题的块会同时带 <code>h1</code>、<code>h2</code>、<code>h3</code> 三个字段——它的祖先标题都在。做 metadata 过滤时这个特性非常好用。</li>
+<li>它<strong>没有 <code>chunk_size</code> 参数</strong>——只按标题切，不管块多大。标题下动辄几千字的「巨型小节」它会整块吐出来。块太大怎么办？看 5.2。</li>
+<li>JS 版教程里用的 <code>MarkdownTextSplitter</code>（按 Markdown 语法加分隔符的普通切割）Python 里也有，但<strong>更推荐 <code>MarkdownHeaderTextSplitter</code></strong>——前者只是切得 smarter 一点，后者把标题变成了可检索的 metadata，是质的提升。</li>
+<li><code>split_text</code> 返回的 <code>Document</code> 没有经过 Loader，<strong>不带 <code>source</code></strong>；源头信息要自己补，或者走 5.2 的组合拳让 Loader 的 metadata 流转下来。</li>
+</ul>
+<h3 id="52-组合拳先按结构粗切再按长度细切">5.2 组合拳：先按结构粗切，再按长度细切</h3>
+<p><strong>作用</strong>：两把刀各管一段——<code>MarkdownHeaderTextSplitter</code> 管<strong>结构</strong>（在哪切：标题边界），<code>RecursiveCharacterTextSplitter</code> 管<strong>大小</strong>（切多大：<code>chunk_size</code>）。先用结构刀把文档切成语义完整的小节，再用长度刀把超标的小节进一步细分。关键是：<strong>第二刀用 <code>split_documents</code> 切，第一刀产出的标题 metadata 会原样流转到每个细块上</strong>——这就是 4.4 节「metadata 保留」特性的高光时刻。</p>
+<p><strong>最小示例</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_community.document_loaders</span><span class="w"> </span><span class="kn">import</span> <span class="n">TextLoader</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain_text_splitters</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">MarkdownHeaderTextSplitter</span><span class="p">,</span>
+    <span class="n">RecursiveCharacterTextSplitter</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># 第 0 步：Loader 读入（此时 metadata 只有 source）</span>
+<span class="n">docs</span> <span class="o">=</span> <span class="n">TextLoader</span><span class="p">(</span><span class="s2">"data/notes.md"</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+
+<span class="c1"># 第一刀：按标题结构切（标题路径进 metadata）</span>
+<span class="n">header_splitter</span> <span class="o">=</span> <span class="n">MarkdownHeaderTextSplitter</span><span class="p">(</span>
+    <span class="n">headers_to_split_on</span><span class="o">=</span><span class="p">[(</span><span class="s2">"#"</span><span class="p">,</span> <span class="s2">"h1"</span><span class="p">),</span> <span class="p">(</span><span class="s2">"##"</span><span class="p">,</span> <span class="s2">"h2"</span><span class="p">),</span> <span class="p">(</span><span class="s2">"###"</span><span class="p">,</span> <span class="s2">"h3"</span><span class="p">)],</span>
+<span class="p">)</span>
+<span class="n">sections</span> <span class="o">=</span> <span class="n">header_splitter</span><span class="o">.</span><span class="n">split_text</span><span class="p">(</span><span class="n">docs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">page_content</span><span class="p">)</span>
+
+<span class="c1"># 第二刀：按长度细切（标题 metadata 自动继承，start_index 是追加的）</span>
+<span class="n">size_splitter</span> <span class="o">=</span> <span class="n">RecursiveCharacterTextSplitter</span><span class="p">(</span>
+    <span class="n">chunk_size</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span> <span class="n">chunk_overlap</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+    <span class="n">separators</span><span class="o">=</span><span class="p">[</span><span class="s2">"</span><span class="se">\n\n</span><span class="s2">"</span><span class="p">,</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span> <span class="s2">"。"</span><span class="p">,</span> <span class="s2">"，"</span><span class="p">,</span> <span class="s2">" "</span><span class="p">,</span> <span class="s2">""</span><span class="p">],</span>
+    <span class="n">keep_separator</span><span class="o">=</span><span class="s2">"end"</span><span class="p">,</span>
+    <span class="n">add_start_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">final_docs</span> <span class="o">=</span> <span class="n">size_splitter</span><span class="o">.</span><span class="n">split_documents</span><span class="p">(</span><span class="n">sections</span><span class="p">)</span>
+
+<span class="c1"># 同一小节被切成两块时，标题路径完全相同，只有 start_index 不同：</span>
+<span class="c1"># {'h1': '拾光书屋共读笔记', 'h2': '《夜航船》共读夜', 'h3': '金句摘录', 'start_index': 0}</span>
+<span class="c1"># {'h1': '拾光书屋共读笔记', 'h2': '《夜航船》共读夜', 'h3': '金句摘录', 'start_index': 40}</span>
+</code></pre></div>
+<p>这套「结构刀 + 长度刀」的思路可以推广：PDF 可以先按页切（Loader 已经做了）、再按长度细切；HTML 可以先按标题结构切、再细切。<strong>先粗后细、metadata 层层流转</strong>，是文本切割的通用心法。</p>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li>第二刀必须用 <code>split_documents</code>（喂 <code>Document</code>），用 <code>split_text</code>（喂字符串）会把第一刀攒下的标题 metadata 全部丢掉。</li>
+<li>顺序不能反：先按长度切再按标题切没有意义——长度刀不认识标题，切完的碎块里标题文本和正文混在一起，结构信息已经没了。</li>
+<li>每个小节独立计量 <code>start_index</code>（块在自己小节里的位置），不是在全文里的位置。要全局定位，给每个小节手动追加一个「小节序号」字段。</li>
+</ul>
+<hr />
+<h2 id="6-本章小结">6. 本章小结</h2>
+<p>一张表带走本章所有工具：</p>
+<table>
+<thead>
+<tr>
+<th>你的需求</th>
+<th>用什么</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>统一各种数据的格式</td>
+<td><code>Document</code>（<code>page_content</code> + <code>metadata</code>）</td>
+</tr>
+<tr>
+<td>读 txt</td>
+<td><code>TextLoader</code>（中文记得 <code>encoding="utf-8"</code>）</td>
+</tr>
+<tr>
+<td>读 PDF，每页一块</td>
+<td><code>PyPDFLoader</code>（整本合一用 <code>mode="single"</code>）</td>
+</tr>
+<tr>
+<td>读 CSV，每行一块</td>
+<td><code>CSVLoader</code>（<code>source_column</code> 让 source 有业务含义）</td>
+</tr>
+<tr>
+<td>批量扫一个目录</td>
+<td><code>DirectoryLoader</code>（<code>glob</code> + <code>loader_cls</code>，一种格式一趟）</td>
+</tr>
+<tr>
+<td>抓静态网页</td>
+<td><code>WebBaseLoader</code>（<code>SoupStrainer</code> 只取正文）</td>
+</tr>
+<tr>
+<td>通用文本切割</td>
+<td><code>RecursiveCharacterTextSplitter</code></td>
+</tr>
+<tr>
+<td>中文切得体面</td>
+<td><code>separators</code> 加 <code>。；，</code> + <code>keep_separator="end"</code></td>
+</tr>
+<tr>
+<td>块之间留接缝</td>
+<td><code>chunk_overlap</code>（单位是完整分隔单元，别小于句子平均长度）</td>
+</tr>
+<tr>
+<td>按 token 预算切</td>
+<td><code>from_tiktoken_encoder</code> / 自定义 <code>length_function</code></td>
+</tr>
+<tr>
+<td>切代码</td>
+<td><code>from_language(Language.PYTHON, ...)</code></td>
+</tr>
+<tr>
+<td>Markdown 按标题切</td>
+<td><code>MarkdownHeaderTextSplitter</code>（标题路径进 metadata）</td>
+</tr>
+<tr>
+<td>结构 + 大小都要管</td>
+<td>先 <code>MarkdownHeaderTextSplitter</code> 后 <code>RecursiveCharacterTextSplitter.split_documents</code></td>
+</tr>
+</tbody>
+</table>
+<p>配套 demo（都在本章 <code>demo/</code> 目录）：</p>
+<ul>
+<li><code>demo_loader.py</code>：手动创建 <code>Document</code>、<code>TextLoader</code> / <code>CSVLoader</code> / <code>DirectoryLoader</code> 逐个上手、<code>notes.md</code> 按标题结构化切割——<strong>不需要模型、不需要网络，直接跑</strong>。</li>
+<li><code>demo_splitter.py</code>：<code>chunk_overlap</code> 接缝对比、默认分隔符 vs 中文分隔符、字符尺子 vs token 尺子、三个切割入口、Markdown 组合拳——<strong>同样离线可跑</strong>。</li>
+<li><code>demo/data/</code>：<code>story.txt</code>（自创短文）、<code>notes.md</code>（共读笔记）、<code>books.csv</code>（藏书台账），都是演示用的小文件。</li>
+</ul>
+<p><strong>关于那条 DeprecationWarning</strong>：导入 <code>langchain_community</code> 时会看到「sunset / 迁移到独立集成包」的提示。这是官方在把 Loader 们逐步拆到各自独立的包里（如 <code>langchain-unstructured</code>）。目前 <code>langchain-community</code> 里的这些经典 Loader 依然可用，教学和原型开发照常写；等某个 Loader 有了独立包，再按提示逐个迁移即可——<strong>写的代码不用变思路，只换 import 来源</strong>。</p>
+<p>到这里，RAG 前半程的「加载 → 切割」已经打通：任何格式的知识都能变成带 metadata 的小块。下一章给这些小块「办入住」——把它们变成向量、存进向量库。<strong>下一章</strong>：<a href="../langchain/07-qian-ru-yu-xiang-liang-ku.html">07 · 嵌入与向量库</a></p></div>
+
+      </article>
+<nav class="pager"><a class="pg-card pg-prev" href="../langchain/05-shu-chu-jie-xi-qi.html"><span class="pg-label">← 上一篇</span><span class="pg-title">输出解析器</span><span class="pg-mod">LangChain 指南</span></a><a class="pg-card pg-next" href="../langchain/07-qian-ru-yu-xiang-liang-ku.html"><span class="pg-label">下一篇 →</span><span class="pg-title">嵌入与向量库</span><span class="pg-mod">LangChain 指南</span></a></nav>
+    </div>
+    <footer class="foot">
+      <span>深栈 DeepStack · AI Agent 工程师转型训练营配套文档</span>
+    </footer>
+  </main>
+<nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#1-document-对象一切数据的统一集装箱">1. Document 对象：一切数据的统一集装箱</a><a class="toc-link toc-h2" href="#2-本地-loader把硬盘上的文件装进集装箱">2. 本地 Loader：把硬盘上的文件装进集装箱</a><a class="toc-link toc-h3" href="#21-textloader一个-txt一张单">2.1 TextLoader：一个 txt，一张单</a><a class="toc-link toc-h3" href="#22-pypdfloader一页一张单">2.2 PyPDFLoader：一页一张单</a><a class="toc-link toc-h3" href="#23-csvloader一行一张单">2.3 CSVLoader：一行一张单</a><a class="toc-link toc-h3" href="#24-directoryloader整仓扫货">2.4 DirectoryLoader：整仓扫货</a><a class="toc-link toc-h3" href="#25-unstructuredmarkdownloader-的思路">2.5 UnstructuredMarkdownLoader 的思路</a><a class="toc-link toc-h2" href="#3-web-loader把网页装进集装箱">3. Web Loader：把网页装进集装箱</a><a class="toc-link toc-h3" href="#31-webbaseloader抓网页提正文">3.1 WebBaseLoader：抓网页、提正文</a><a class="toc-link toc-h3" href="#32-更多抓取思路代码仓库与搜索结果">3.2 更多抓取思路：代码仓库与搜索结果</a><a class="toc-link toc-h2" href="#4-文本切割把整头牛切成牛排">4. 文本切割：把整头牛切成牛排</a><a class="toc-link toc-h3" href="#41-为什么必须切">4.1 为什么必须切</a><a class="toc-link toc-h3" href="#42-两个核心旋钮chunk_size-与-chunk_overlap">4.2 两个核心旋钮：chunk_size 与 chunk_overlap</a><a class="toc-link toc-h3" href="#43-separators分隔符的层级">4.3 separators：分隔符的层级</a><a class="toc-link toc-h3" href="#44-三个入口split_text-create_documents-split_documents">4.4 三个入口：split_text / create_documents / split_documents</a><a class="toc-link toc-h3" href="#45-按字符切-vs-按-token-切">4.5 按字符切 vs 按 token 切</a><a class="toc-link toc-h3" href="#46-代码切割from_language">4.6 代码切割：from_language</a><a class="toc-link toc-h2" href="#5-markdown-结构化切割markdownheadertextsplitter">5. Markdown 结构化切割：MarkdownHeaderTextSplitter</a><a class="toc-link toc-h3" href="#51-按标题切标题进-metadata">5.1 按标题切，标题进 metadata</a><a class="toc-link toc-h3" href="#52-组合拳先按结构粗切再按长度细切">5.2 组合拳：先按结构粗切，再按长度细切</a><a class="toc-link toc-h2" href="#6-本章小结">6. 本章小结</a></nav>
+</div>
+<div class="sb-mask" id="sbMask"></div>
+<script src="../assets/app.js"></script>
+</body>
+</html>

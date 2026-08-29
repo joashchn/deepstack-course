@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>10 · 中间件 · 深栈 DeepStack 课程文档</title>
+<meta name="description" content="本章你将学会
+
+ - 听懂「横切关注点」「AOP」两个唬人的词，明白中间件到底在替你干什么活
+ - 中间件的标准模板：request → callnext → 返回，以及洋葱模型
+ - 两种写法的取舍：@app.midd…">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%23d9c39a' text-anchor='middle'%3EDS%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+<div class="progress" id="progress"></div>
+
+<div class="layout">
+<aside class="sidebar" id="sidebar">
+  <div class="sb-head">
+    <a class="brand" href="../index.html">
+      <span class="brand-mark">DS</span>
+      <span class="brand-text"><b>深栈 DeepStack</b><i>AI Agent 工程师转型训练营</i></span>
+    </a>
+    <button class="sb-close" id="sbClose" aria-label="关闭目录">✕</button>
+  </div>
+  <div class="sb-search"><input type="search" id="searchInput" placeholder="搜索 123 篇文档… ( / )" autocomplete="off">
+    <div class="sb-results" id="searchResults"></div></div>
+  <nav class="sb-nav">
+    <section class="sb-group" data-mod="python">
+      <a class="sb-group-title" href="../modules/python.html" data-toggle="python">
+        <span class="sb-num">01</span>
+        <span class="sb-group-text"><b>Python 与数据实践</b><i>31 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../python/01-huan-jing-da-jian-yu-ban-ben-guan-li.html"><span class="sb-item-num">01</span><span class="sb-item-title">环境搭建与版本管理</span></a>
+        <a class="sb-item" href="../python/02-bian-liang-biao-da-shi-yu-liu-cheng-kong-zhi.html"><span class="sb-item-num">02</span><span class="sb-item-title">变量、表达式与流程控制</span></a>
+        <a class="sb-item" href="../python/03-xu-lie-zi-dian-yu-ji-he.html"><span class="sb-item-num">03</span><span class="sb-item-title">序列、字典与集合</span></a>
+        <a class="sb-item" href="../python/04-han-shu-she-ji-yu-lambda.html"><span class="sb-item-num">04</span><span class="sb-item-title">函数设计与 lambda</span></a>
+        <a class="sb-item" href="../python/05-zuo-yong-yu-gui-ze-yu-bi-bao.html"><span class="sb-item-num">05</span><span class="sb-item-title">作用域规则与闭包</span></a>
+        <a class="sb-item" href="../python/06-lei-de-ding-yi-yu-shi-li-hua.html"><span class="sb-item-num">06</span><span class="sb-item-title">类的定义与实例化</span></a>
+        <a class="sb-item" href="../python/07-lei-xing-pan-ding-yu-chou-xiang-ji-lei.html"><span class="sb-item-num">07</span><span class="sb-item-title">类型判定与抽象基类</span></a>
+        <a class="sb-item" href="../python/08-mo-shu-fang-fa-quan-jing.html"><span class="sb-item-num">08</span><span class="sb-item-title">魔术方法全景</span></a>
+        <a class="sb-item" href="../python/09-miao-shu-fu-yu-yuan-lei.html"><span class="sb-item-num">09</span><span class="sb-item-title">描述符与元类</span></a>
+        <a class="sb-item" href="../python/10-zhuang-shi-qi.html"><span class="sb-item-num">10</span><span class="sb-item-title">装饰器</span></a>
+        <a class="sb-item" href="../python/11-die-dai-xie-yi-yu-sheng-cheng-qi.html"><span class="sb-item-num">11</span><span class="sb-item-title">迭代协议与生成器</span></a>
+        <a class="sb-item" href="../python/12-with-yu-shang-xia-wen-xie-yi.html"><span class="sb-item-num">12</span><span class="sb-item-title">with 与上下文协议</span></a>
+        <a class="sb-item" href="../python/13-yi-chang-ti-xi-yu-chu-li.html"><span class="sb-item-num">13</span><span class="sb-item-title">异常体系与处理</span></a>
+        <a class="sb-item" href="../python/14-lei-xing-biao-zhu.html"><span class="sb-item-num">14</span><span class="sb-item-title">类型标注</span></a>
+        <a class="sb-item" href="../python/15-mo-kuai-yu-bao-de-zu-zhi.html"><span class="sb-item-num">15</span><span class="sb-item-title">模块与包的组织</span></a>
+        <a class="sb-item" href="../python/16-biao-zhun-ku-xun-li.html"><span class="sb-item-num">16</span><span class="sb-item-title">标准库巡礼</span></a>
+        <a class="sb-item" href="../python/17-yi-lai-guan-li-yu-di-san-fang-ku.html"><span class="sb-item-num">17</span><span class="sb-item-title">依赖管理与第三方库</span></a>
+        <a class="sb-item" href="../python/18-xian-cheng-yu-jin-cheng.html"><span class="sb-item-num">18</span><span class="sb-item-title">线程与进程</span></a>
+        <a class="sb-item" href="../python/19-shi-jian-xun-huan.html"><span class="sb-item-num">19</span><span class="sb-item-title">事件循环</span></a>
+        <a class="sb-item" href="../python/20-future-yu-xie-cheng.html"><span class="sb-item-num">20</span><span class="sb-item-title">Future 与协程</span></a>
+        <a class="sb-item" href="../python/21-asyncio-shi-zhan.html"><span class="sb-item-num">21</span><span class="sb-item-title">asyncio 实战</span></a>
+        <a class="sb-item" href="../python/22-gou-jian-yu-fa-bu.html"><span class="sb-item-num">22</span><span class="sb-item-title">构建与发布</span></a>
+        <a class="sb-item" href="../python/23-gong-cheng-hua-gong-ju-lian.html"><span class="sb-item-num">23</span><span class="sb-item-title">工程化工具链</span></a>
+        <a class="sb-item" href="../python/24-monorepo-yu-tiao-shi.html"><span class="sb-item-num">24</span><span class="sb-item-title">monorepo 与调试</span></a>
+        <a class="sb-item" href="../python/25-jupyter-jiao-hu-huan-jing.html"><span class="sb-item-num">25</span><span class="sb-item-title">Jupyter 交互环境</span></a>
+        <a class="sb-item" href="../python/26-numpy-shu-zu-yu-xiang-liang-hua.html"><span class="sb-item-num">26</span><span class="sb-item-title">NumPy 数组与向量化</span></a>
+        <a class="sb-item" href="../python/27-pandas-shu-ju-jie-gou.html"><span class="sb-item-num">27</span><span class="sb-item-title">Pandas 数据结构</span></a>
+        <a class="sb-item" href="../python/28-pandas-shu-ju-qing-xi.html"><span class="sb-item-num">28</span><span class="sb-item-title">Pandas 数据清洗</span></a>
+        <a class="sb-item" href="../python/29-matplotlib-hui-tu-ti-xi.html"><span class="sb-item-num">29</span><span class="sb-item-title">Matplotlib 绘图体系</span></a>
+        <a class="sb-item" href="../python/30-matplotlib-dong-hua-yu-jiao-hu.html"><span class="sb-item-num">30</span><span class="sb-item-title">Matplotlib 动画与交互</span></a>
+        <a class="sb-item" href="../python/31-seaborn-tong-ji-ke-shi-hua.html"><span class="sb-item-num">31</span><span class="sb-item-title">Seaborn 统计可视化</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="agent">
+      <a class="sb-group-title" href="../modules/agent.html" data-toggle="agent">
+        <span class="sb-num">02</span>
+        <span class="sb-group-text"><b>Agent 核心</b><i>15 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../agent/01-token-yu-ci-qian-ru.html"><span class="sb-item-num">01</span><span class="sb-item-title">Token 与词嵌入</span></a>
+        <a class="sb-item" href="../agent/02-qian-xiang-chuan-bo-yu-fan-xiang-chuan-bo.html"><span class="sb-item-num">02</span><span class="sb-item-title">前向传播与反向传播</span></a>
+        <a class="sb-item" href="../agent/03-zhu-yi-li-ji-zhi-yu-transformer-jia-gou.html"><span class="sb-item-num">03</span><span class="sb-item-title">注意力机制与 Transformer 架构</span></a>
+        <a class="sb-item" href="../agent/04-yu-xun-lian-rlhf-yu-cai-yang-kv-cache.html"><span class="sb-item-num">04</span><span class="sb-item-title">预训练、RLHF 与采样（KV Cache）</span></a>
+        <a class="sb-item" href="../agent/05-ben-di-mo-xing-yu-xiao-xi-jie-gou.html"><span class="sb-item-num">05</span><span class="sb-item-title">本地模型与消息结构</span></a>
+        <a class="sb-item" href="../agent/06-hui-hua-guan-li-yu-json-shu-chu.html"><span class="sb-item-num">06</span><span class="sb-item-title">会话管理与 JSON 输出</span></a>
+        <a class="sb-item" href="../agent/07-tool-calling-xie-yi-yu-feng-zhuang.html"><span class="sb-item-num">07</span><span class="sb-item-title">Tool Calling：协议与封装</span></a>
+        <a class="sb-item" href="../agent/08-react-mo-shi-yu-zhu-xun-huan.html"><span class="sb-item-num">08</span><span class="sb-item-title">ReAct 模式与主循环</span></a>
+        <a class="sb-item" href="../agent/09-shi-zhan-deep-research-agent.html"><span class="sb-item-num">09</span><span class="sb-item-title">实战：Deep Research Agent</span></a>
+        <a class="sb-item" href="../agent/10-skill-yu-jian-jin-shi-pi-lu.html"><span class="sb-item-num">10</span><span class="sb-item-title">Skill 与渐进式披露</span></a>
+        <a class="sb-item" href="../agent/11-mcp-quan-jing.html"><span class="sb-item-num">11</span><span class="sb-item-title">MCP 全景</span></a>
+        <a class="sb-item" href="../agent/12-duo-agent-yu-xuan-xing-ce-lve.html"><span class="sb-item-num">12</span><span class="sb-item-title">多 Agent 与选型策略</span></a>
+        <a class="sb-item" href="../agent/13-ti-shi-ci-gong-cheng-yu-shang-xia-wen-gong.html"><span class="sb-item-num">13</span><span class="sb-item-title">提示词工程与上下文工程</span></a>
+        <a class="sb-item" href="../agent/14-xun-huan-tu-yu-gu-jia-gong-cheng.html"><span class="sb-item-num">14</span><span class="sb-item-title">循环、图与骨架工程</span></a>
+        <a class="sb-item" href="../agent/15-ji-yi-quan-xian-yu-ping-ce.html"><span class="sb-item-num">15</span><span class="sb-item-title">记忆、权限与评测</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="langchain">
+      <a class="sb-group-title" href="../modules/langchain.html" data-toggle="langchain">
+        <span class="sb-num">03</span>
+        <span class="sb-group-text"><b>LangChain 指南</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langchain/01-ren-shi-langchain.html"><span class="sb-item-num">01</span><span class="sb-item-title">认识 LangChain</span></a>
+        <a class="sb-item" href="../langchain/02-ti-shi-ci-mu-ban-yu-xiao-xi.html"><span class="sb-item-num">02</span><span class="sb-item-title">提示词模板与消息</span></a>
+        <a class="sb-item" href="../langchain/03-lcel-yu-runnable.html"><span class="sb-item-num">03</span><span class="sb-item-title">LCEL 与 Runnable</span></a>
+        <a class="sb-item" href="../langchain/04-liu-shi-yu-bing-fa.html"><span class="sb-item-num">04</span><span class="sb-item-title">流式与并发</span></a>
+        <a class="sb-item" href="../langchain/05-shu-chu-jie-xi-qi.html"><span class="sb-item-num">05</span><span class="sb-item-title">输出解析器</span></a>
+        <a class="sb-item" href="../langchain/06-wen-dang-jia-zai-yu-qie-ge.html"><span class="sb-item-num">06</span><span class="sb-item-title">文档加载与切割</span></a>
+        <a class="sb-item" href="../langchain/07-qian-ru-yu-xiang-liang-ku.html"><span class="sb-item-num">07</span><span class="sb-item-title">嵌入与向量库</span></a>
+        <a class="sb-item" href="../langchain/08-jian-suo-yu-rag.html"><span class="sb-item-num">08</span><span class="sb-item-title">检索与RAG</span></a>
+        <a class="sb-item" href="../langchain/09-dui-hua-ji-yi.html"><span class="sb-item-num">09</span><span class="sb-item-title">对话记忆</span></a>
+        <a class="sb-item" href="../langchain/10-gong-ju-diao-yong.html"><span class="sb-item-num">10</span><span class="sb-item-title">工具调用</span></a>
+        <a class="sb-item" href="../langchain/11-agent.html"><span class="sb-item-num">11</span><span class="sb-item-title">Agent</span></a>
+        <a class="sb-item" href="../langchain/12-hui-diao-yu-tiao-shi-quan-ke-cheng-shou-guan.html"><span class="sb-item-num">12</span><span class="sb-item-title">回调与调试（全课程收官章）</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="langgraph">
+      <a class="sb-group-title" href="../modules/langgraph.html" data-toggle="langgraph">
+        <span class="sb-num">04</span>
+        <span class="sb-group-text"><b>LangGraph 框架指南</b><i>17 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langgraph/01-di-1-zhang-cong-yi-ge-shi-kong-de-jiao.html"><span class="sb-item-num">01</span><span class="sb-item-title">第 1 章 从一个失控的脚本说起</span></a>
+        <a class="sb-item" href="../langgraph/02-di-2-zhang-zui-xiao-ke-yun-xing-tu.html"><span class="sb-item-num">02</span><span class="sb-item-title">第 2 章 最小可运行图</span></a>
+        <a class="sb-item" href="../langgraph/03-di-3-zhang-zhuang-tai-tu-de-shu-ju-xin.html"><span class="sb-item-num">03</span><span class="sb-item-title">第 3 章 状态：图的数据心脏</span></a>
+        <a class="sb-item" href="../langgraph/04-di-4-zhang-rang-liu-cheng-xue-hui-jue-ce.html"><span class="sb-item-num">04</span><span class="sb-item-title">第 4 章 让流程学会决策</span></a>
+        <a class="sb-item" href="../langgraph/05-di-5-zhang-bing-xing-shi-jie-chao-bu-zhi.html"><span class="sb-item-num">05</span><span class="sb-item-title">第 5 章 并行世界：超步执行模型</span></a>
+        <a class="sb-item" href="../langgraph/06-di-6-zhang-command-ba-kong-zhi-quan-jiao-jin.html"><span class="sb-item-num">06</span><span class="sb-item-title">第 6 章 Command：把控制权交进节点</span></a>
+        <a class="sb-item" href="../langgraph/07-di-7-zhang-dong-tai-bing-xing-send-yu-mapreduce.html"><span class="sb-item-num">07</span><span class="sb-item-title">第 7 章 动态并行：Send 与 MapReduce</span></a>
+        <a class="sb-item" href="../langgraph/08-di-8-zhang-gei-tu-zhuang-shang-shou-jiao-gong.html"><span class="sb-item-num">08</span><span class="sb-item-title">第 8 章 给图装上手脚：工具调用</span></a>
+        <a class="sb-item" href="../langgraph/09-di-9-zhang-fu-yong-yu-feng-zhuang-zi-tu.html"><span class="sb-item-num">09</span><span class="sb-item-title">第 9 章 复用与封装：子图</span></a>
+        <a class="sb-item" href="../langgraph/10-di-10-zhang-cong-dan-tu-dao-tuan-dui-duo.html"><span class="sb-item-num">10</span><span class="sb-item-title">第 10 章 从单图到团队：多 Agent 架构</span></a>
+        <a class="sb-item" href="../langgraph/11-di-11-zhang-liu-shi-shu-chu.html"><span class="sb-item-num">11</span><span class="sb-item-title">第 11 章 流式输出</span></a>
+        <a class="sb-item" href="../langgraph/12-di-12-zhang-chi-jiu-hua-checkpointer-yu-xian-cheng.html"><span class="sb-item-num">12</span><span class="sb-item-title">第 12 章 持久化：Checkpointer 与线程</span></a>
+        <a class="sb-item" href="../langgraph/13-di-13-zhang-shi-jian-lv-xing.html"><span class="sb-item-num">13</span><span class="sb-item-title">第 13 章 时间旅行</span></a>
+        <a class="sb-item" href="../langgraph/14-di-14-zhang-zhong-duan-yu-ren-zai-hui-lu.html"><span class="sb-item-num">14</span><span class="sb-item-title">第 14 章 中断与人在回路</span></a>
+        <a class="sb-item" href="../langgraph/15-di-15-zhang-ji-yi-guan-li.html"><span class="sb-item-num">15</span><span class="sb-item-title">第 15 章 记忆管理</span></a>
+        <a class="sb-item" href="../langgraph/16-di-16-zhang-rong-cuo-zhong-shi-chao-shi-yu.html"><span class="sb-item-num">16</span><span class="sb-item-title">第 16 章 容错：重试、超时与兜底</span></a>
+        <a class="sb-item" href="../langgraph/17-di-17-zhang-quan-jing-hui-gu.html"><span class="sb-item-num">17</span><span class="sb-item-title">第 17 章 全景回顾</span></a>
+      </div>
+    </section>
+    <section class="sb-group open" data-mod="backend">
+      <a class="sb-group-title" href="../modules/backend.html" data-toggle="backend">
+        <span class="sb-num">05</span>
+        <span class="sb-group-text"><b>Python 框架指南</b><i>14 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../backend/01-fastapi-ru-men-yu-asgi.html"><span class="sb-item-num">01</span><span class="sb-item-title">FastAPI 入门与 ASGI</span></a>
+        <a class="sb-item" href="../backend/02-lu-you-yu-qing-qiu-xiang-ying.html"><span class="sb-item-num">02</span><span class="sb-item-title">路由与请求响应</span></a>
+        <a class="sb-item" href="../backend/03-pydantic-shu-ju-jiao-yan-yu-pei-zhi.html"><span class="sb-item-num">03</span><span class="sb-item-title">Pydantic 数据校验与配置</span></a>
+        <a class="sb-item" href="../backend/04-sqlalchemy-yi-bu-yin-qing-yu-hui-hua.html"><span class="sb-item-num">04</span><span class="sb-item-title">SQLAlchemy 异步引擎与会话</span></a>
+        <a class="sb-item" href="../backend/05-orm-jian-mo.html"><span class="sb-item-num">05</span><span class="sb-item-title">ORM 建模</span></a>
+        <a class="sb-item" href="../backend/06-sql-biao-da-shi-yu-shu-ju-cao-zuo.html"><span class="sb-item-num">06</span><span class="sb-item-title">SQL 表达式与数据操作</span></a>
+        <a class="sb-item" href="../backend/07-alembic-shu-ju-qian-yi.html"><span class="sb-item-num">07</span><span class="sb-item-title">Alembic 数据迁移</span></a>
+        <a class="sb-item" href="../backend/08-yi-lai-zhu-ru.html"><span class="sb-item-num">08</span><span class="sb-item-title">依赖注入</span></a>
+        <a class="sb-item" href="../backend/09-tong-yi-yi-chang-chu-li.html"><span class="sb-item-num">09</span><span class="sb-item-title">统一异常处理</span></a>
+        <a class="sb-item current" href="../backend/10-zhong-jian-jian.html"><span class="sb-item-num">10</span><span class="sb-item-title">中间件</span></a>
+        <a class="sb-item" href="../backend/11-ren-zheng-yu-jwt.html"><span class="sb-item-num">11</span><span class="sb-item-title">认证与 JWT</span></a>
+        <a class="sb-item" href="../backend/12-pytest-ce-shi.html"><span class="sb-item-num">12</span><span class="sb-item-title">pytest 测试</span></a>
+        <a class="sb-item" href="../backend/13-ri-zhi-loguru.html"><span class="sb-item-num">13</span><span class="sb-item-title">日志 loguru</span></a>
+        <a class="sb-item" href="../backend/14-liu-shi-xiang-ying-sse-yu-websocket.html"><span class="sb-item-num">14</span><span class="sb-item-title">流式响应 SSE 与 WebSocket</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="interview">
+      <a class="sb-group-title" href="../modules/interview.html" data-toggle="interview">
+        <span class="sb-num">06</span>
+        <span class="sb-group-text"><b>面试题库</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../interview/01-llm-yuan-li-pian.html"><span class="sb-item-num">01</span><span class="sb-item-title">LLM 原理篇</span></a>
+        <a class="sb-item" href="../interview/02-rag-yu-jian-suo-pian.html"><span class="sb-item-num">02</span><span class="sb-item-title">RAG 与检索篇</span></a>
+        <a class="sb-item" href="../interview/03-agent-he-xin-pian.html"><span class="sb-item-num">03</span><span class="sb-item-title">Agent 核心篇</span></a>
+        <a class="sb-item" href="../interview/04-langgraph-pian.html"><span class="sb-item-num">04</span><span class="sb-item-title">LangGraph 篇</span></a>
+        <a class="sb-item" href="../interview/05-langchain-pian.html"><span class="sb-item-num">05</span><span class="sb-item-title">LangChain 篇</span></a>
+        <a class="sb-item" href="../interview/06-xi-tong-she-ji-pian.html"><span class="sb-item-num">06</span><span class="sb-item-title">系统设计篇</span></a>
+        <a class="sb-item" href="../interview/07-xiang-mu-shen-wa-pian.html"><span class="sb-item-num">07</span><span class="sb-item-title">项目深挖篇</span></a>
+        <a class="sb-item" href="../interview/08-gu-zhang-pai-cha-pian.html"><span class="sb-item-num">08</span><span class="sb-item-title">故障排查篇</span></a>
+        <a class="sb-item" href="../interview/09-python-ji-chu-pian.html"><span class="sb-item-num">09</span><span class="sb-item-title">Python 基础篇</span></a>
+        <a class="sb-item" href="../interview/10-fastapi-yu-hou-duan-pian.html"><span class="sb-item-num">10</span><span class="sb-item-title">FastAPI 与后端篇</span></a>
+        <a class="sb-item" href="../interview/11-ti-shi-ci-gong-cheng-yu-an-quan-pian.html"><span class="sb-item-num">11</span><span class="sb-item-title">提示词工程与安全篇</span></a>
+        <a class="sb-item" href="../interview/12-mo-xing-xuan-xing-yu-jiang-ben-pian.html"><span class="sb-item-num">12</span><span class="sb-item-title">模型选型与降本篇</span></a>
+      </div>
+    </section>
+  </nav>
+</aside>
+  <main class="main">
+    <header class="topbar">
+      <button class="menu-btn" id="menuBtn" aria-label="目录">☰</button>
+      <div class="crumbs"><a href="../index.html">首页</a><span>/</span><a href="../modules/backend.html">Python 框架指南</a><span>/</span><span class="cur">中间件</span></div>
+      <div class="topbar-actions">
+        <button class="icon-btn" id="themeBtn" title="切换深浅色" aria-label="切换深浅色">◐</button>
+      </div>
+    </header>
+    <div class="content">
+      <article class="article">
+
+<header class="page-head">
+  <div class="page-kicker">Python 框架指南 · 第 10 章</div>
+  <h1 class="page-title">中间件</h1>
+  <p class="page-desc">本章你将学会
+
+ - 听懂「横切关注点」「AOP」两个唬人的词，明白中间件到底在替你干什么活
+ - 中间件的标准模板：request → callnext → 返回，以及洋葱模型
+ - 两种写法的取舍：@app.midd…</p>
+  <div class="page-meta">
+    <span>约 45 分钟</span><span>18,150 字</span><span>36 个代码示例</span>
+  </div>
+</header>
+<div class="md"><blockquote>
+<p><strong>本章你将学会</strong></p>
+<ul>
+<li>听懂「横切关注点」「AOP」两个唬人的词，明白中间件到底在替你干什么活</li>
+<li>中间件的标准模板：<code>request</code> → <code>call_next</code> → 返回，以及洋葱模型</li>
+<li>两种写法的取舍：<code>@app.middleware("http")</code> 装饰器 与 <code>BaseHTTPMiddleware</code> 类</li>
+<li>计时中间件：给每个响应盖一枚 <code>X-Process-Time</code> 章</li>
+<li>CORS 中间件：<code>CORSMiddleware</code> 全参数用法，同源策略到底在防什么</li>
+<li>统一响应信封：所有 JSON 响应重打包成 <code>{code, data, message}</code>，流式/文件放行，错误响应防二次包裹</li>
+<li>注册顺序的真相：<strong>后注册的在外层</strong>（附实测办法，这个知识点八成和你想的不一样）</li>
+<li><code>add_middleware</code> 与装饰器的关系，以及集中注册的工程化写法</li>
+</ul>
+</blockquote>
+<p>上一章我们把所有异常出口统一成了 <code>{code, message}</code> 的样子——但这是「出错了怎么办」。这一章处理另一类烦人的事：<strong>每个接口都要干、又跟业务毫无关系的活</strong>。老板要求每个接口报耗时、前端要求统一返回格式、浏览器要求跨域放行——这三件事如果写进每个端点函数，30 个端点就得抄 30 遍。中间件（Middleware）就是来终结这种复制粘贴的。本章继续用墨集 inkhub 内容平台做示例。</p>
+<hr />
+<h2 id="1-先把两个唬人的词拆了横切关注点与-aop">1. 先把两个唬人的词拆了：横切关注点与 AOP</h2>
+<p><strong>作用</strong>：给「为什么需要中间件」建立一个心智模型。</p>
+<p>墨集 inkhub 的接口越写越多，某天老板提了三个要求：</p>
+<ol>
+<li>每个接口的响应头里带上处理耗时（性能监控要用）；</li>
+<li>所有接口的返回统一成 <code>{code, data, message}</code> 格式（前端统一处理）；</li>
+<li>允许墨集前端（另一个端口）跨域访问。</li>
+</ol>
+<p>最直觉的做法：打开 <code>posts.py</code>、<code>channels.py</code>、<code>authors.py</code>……在每个处理函数的开头 <code>time.perf_counter()</code>，结尾包一层 dict，再给响应加头。这种写法有个学名叫<strong>侵入式</strong>——业务代码被非业务代码污染了，而且每新增一个端点就要再抄一遍，漏抄一个就是 bug。</p>
+<p>这类「像切香肠一样横穿所有业务功能」的需求，术语叫<strong>横切关注点（Cross-Cutting Concerns）</strong>。解决它的思路叫 <strong>AOP（Aspect Oriented Programming，面向切面编程）</strong>：把这些逻辑从业务代码里抽出去，挪到<strong>请求的必经之路</strong>上统一处理。</p>
+<p>打个比方：墨集大厦里有三十家公司（三十个端点），家家都需要照明、安保、消防。没有哪家公司会自己雇一支消防队——物业统一在楼层层面解决。<strong>中间件就是这座写字楼的物业</strong>：请求进楼必须过物业这一层，响应出楼也得再过一次。你在端点函数里看不到任何计时、格式化的代码，但每个请求都享受了这些服务。</p>
+<p>在 FastAPI 生态里，AOP 有两个落地手段：第 08 章的<strong>依赖注入</strong>（可以被单个路由按需使用）和本章的<strong>中间件</strong>（无差别作用于所有请求）。横扫全站的活交给中间件，按需使用的活交给依赖注入。</p>
+<hr />
+<h2 id="2-中间件的标准模板requestcall_next-和洋葱模型">2. 中间件的标准模板：request、call_next 和洋葱模型</h2>
+<p><strong>作用</strong>：一个中间件函数只有三样东西——进来的请求、交给下一层的动作、回来的响应。</p>
+<p><strong>签名</strong>（两种写法共用同一套逻辑）：</p>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">my_middleware</span><span class="p">(</span><span class="n">request</span><span class="p">:</span> <span class="n">Request</span><span class="p">,</span> <span class="n">call_next</span><span class="p">):</span>
+    <span class="c1"># ── 时机①「进」：请求还没到路由，可以看/改 request ──</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="k">await</span> <span class="n">call_next</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+    <span class="c1"># ── 时机②「出」：拿到下一层的响应，可以看/改 response ──</span>
+    <span class="k">return</span> <span class="n">response</span>
+</code></pre></div>
+<p>三个可用时机，对应三种典型用法：</p>
+<table>
+<thead>
+<tr>
+<th>时机</th>
+<th>位置</th>
+<th>能干什么</th>
+<th>例子</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>① 进</td>
+<td><code>call_next</code> 之前</td>
+<td>检查请求，甚至<strong>直接短路</strong>不往下传</td>
+<td>黑名单 IP 直接返回 403</td>
+</tr>
+<tr>
+<td>② 交</td>
+<td><code>await call_next(request)</code></td>
+<td>把请求交给下一层（下一个中间件或路由）</td>
+<td>不动它，照抄</td>
+</tr>
+<tr>
+<td>③ 出</td>
+<td><code>call_next</code> 之后</td>
+<td>查看/修改响应</td>
+<td>加响应头、重打包响应体</td>
+</tr>
+</tbody>
+</table>
+<p>短路长这样——<code>call_next</code> 压根不执行，请求到不了路由：</p>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">block_scanners</span><span class="p">(</span><span class="n">request</span><span class="p">:</span> <span class="n">Request</span><span class="p">,</span> <span class="n">call_next</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"user-agent"</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"scrapy"</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">JSONResponse</span><span class="p">({</span><span class="s2">"code"</span><span class="p">:</span> <span class="s2">"40303"</span><span class="p">,</span> <span class="s2">"message"</span><span class="p">:</span> <span class="s2">"爬虫走开"</span><span class="p">},</span> <span class="n">status_code</span><span class="o">=</span><span class="mi">403</span><span class="p">)</span>
+    <span class="k">return</span> <span class="k">await</span> <span class="n">call_next</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>洋葱模型</strong>：多个中间件层层嵌套，请求一层层穿进去，响应一层层穿出来。用墨集的话说：一篇文章的请求从大门进编辑部，要过「初审台 → 复审台 → 排版台」才能到主编（你的处理函数），出来的稿子再原路经过排版、复审、初审逐层盖章返回。</p>
+<p>关键是<strong>完整的洋葱不止你写的这几层</strong>，Starlette 在最外和最内各塞了一层自带中间件：</p>
+<div class="highlight"><pre><span></span><code>客户端请求
+  ↓
+ServerErrorMiddleware（Starlette 自带，最外层：兜住没人处理的异常 → 500）
+  ↓
+你注册的中间件（后注册的在外层，本章主角）
+  ↓
+ExceptionMiddleware（Starlette 自带，最内层：第 09 章的异常处理器住在这里）
+  ↓
+路由 → 依赖注入 → 校验 → 你的处理函数
+</code></pre></div>
+<p>记住一个伏笔：<strong>异常处理器住在洋葱最内层</strong>。这意味着端点抛出的异常会先被第 09 章的统一异常处理器变成一个普通的 <code>{code, message}</code> 响应，然后才流到你的中间件眼前——中间件拿到的永远是「处理完的响应」，而不是异常本身。这正是第 6 节信封能包裹错误响应的前提。</p>
+<hr />
+<h2 id="3-两种写法装饰器与-basehttpmiddleware-怎么选">3. 两种写法：装饰器与 BaseHTTPMiddleware 怎么选</h2>
+<h3 id="31-装饰器写法函数式">3.1 装饰器写法（函数式）</h3>
+<p><strong>作用</strong>：用 <code>@app.middleware("http")</code> 把一个函数升级成中间件。写起来最快，适合项目内的一次性逻辑。</p>
+<p><strong>签名</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="nd">@app</span><span class="o">.</span><span class="n">middleware</span><span class="p">(</span><span class="s2">"http"</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">任意名字</span><span class="p">(</span><span class="n">request</span><span class="p">:</span> <span class="n">Request</span><span class="p">,</span> <span class="n">call_next</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Request</span><span class="p">],</span> <span class="n">Awaitable</span><span class="p">[</span><span class="n">Response</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">Response</span><span class="p">:</span>
+    <span class="o">...</span>
+</code></pre></div>
+<p><strong>最小示例</strong>——给墨集每个响应加一个自定义头：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Awaitable</span><span class="p">,</span> <span class="n">Callable</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">fastapi</span><span class="w"> </span><span class="kn">import</span> <span class="n">FastAPI</span><span class="p">,</span> <span class="n">Request</span><span class="p">,</span> <span class="n">Response</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">FastAPI</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">"墨集 inkhub"</span><span class="p">)</span>
+
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">middleware</span><span class="p">(</span><span class="s2">"http"</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">add_server_banner</span><span class="p">(</span>
+    <span class="n">request</span><span class="p">:</span> <span class="n">Request</span><span class="p">,</span> <span class="n">call_next</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Request</span><span class="p">],</span> <span class="n">Awaitable</span><span class="p">[</span><span class="n">Response</span><span class="p">]]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Response</span><span class="p">:</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="k">await</span> <span class="n">call_next</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+    <span class="n">response</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s2">"X-Powered-By"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"inkhub"</span>
+    <span class="k">return</span> <span class="n">response</span>
+</code></pre></div>
+<p><strong>它的底牌</strong>：装饰器只是语法糖，FastAPI 内部执行的就是一行</p>
+<div class="highlight"><pre><span></span><code><span class="n">app</span><span class="o">.</span><span class="n">add_middleware</span><span class="p">(</span><span class="n">BaseHTTPMiddleware</span><span class="p">,</span> <span class="n">dispatch</span><span class="o">=</span><span class="n">add_server_banner</span><span class="p">)</span>
+</code></pre></div>
+<p>所以「装饰器中间件」的本质是 <code>BaseHTTPMiddleware</code>——这句话在下面 3.3 和第 8 节还会反复用到。</p>
+<h3 id="32-类写法继承-basehttpmiddleware">3.2 类写法（继承 BaseHTTPMiddleware）</h3>
+<p><strong>作用</strong>：把中间件写成一个类，<code>dispatch</code> 方法里放逻辑，<code>__init__</code> 里收配置。适合要传参数、要复用、要发布成包的中间件。</p>
+<p><strong>最小示例</strong>——同一个「加横幅」中间件，横幅名字可配置：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">starlette.middleware.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseHTTPMiddleware</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">starlette.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">ASGIApp</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">BannerMiddleware</span><span class="p">(</span><span class="n">BaseHTTPMiddleware</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">app</span><span class="p">:</span> <span class="n">ASGIApp</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">banner</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"inkhub"</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">banner</span> <span class="o">=</span> <span class="n">banner</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">dispatch</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">:</span> <span class="n">Request</span><span class="p">,</span> <span class="n">call_next</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Request</span><span class="p">],</span> <span class="n">Awaitable</span><span class="p">[</span><span class="n">Response</span><span class="p">]]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Response</span><span class="p">:</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="k">await</span> <span class="n">call_next</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+        <span class="n">response</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s2">"X-Powered-By"</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">banner</span>
+        <span class="k">return</span> <span class="n">response</span>
+
+
+<span class="c1"># 注册时把配置传进去</span>
+<span class="n">app</span><span class="o">.</span><span class="n">add_middleware</span><span class="p">(</span><span class="n">BannerMiddleware</span><span class="p">,</span> <span class="n">banner</span><span class="o">=</span><span class="s2">"inkhub-editors"</span><span class="p">)</span>
+</code></pre></div>
+<p>注意两个固定动作：<code>__init__</code> 里必须 <code>super().__init__(app)</code>；注册时<strong>不要自己传 <code>app</code> 参数</strong>（框架会穿针引线），只传你自己的配置参数。</p>
+<h3 id="33-选型速查">3.3 选型速查</h3>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>装饰器（函数式）</th>
+<th>类（BaseHTTPMiddleware）</th>
+<th>纯 ASGI 类</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>上手速度</td>
+<td>最快，三行搞定</td>
+<td>要写类骨架</td>
+<td>要理解 ASGI 协议</td>
+</tr>
+<tr>
+<td>可配置</td>
+<td>只能靠闭包/全局变量</td>
+<td><code>__init__</code> 传参，干净</td>
+<td><code>__init__</code> 传参，干净</td>
+</tr>
+<tr>
+<td>复用/发布</td>
+<td>难</td>
+<td>容易</td>
+<td>容易</td>
+</tr>
+<tr>
+<td>性能</td>
+<td>每请求多一层任务包装</td>
+<td>同左</td>
+<td>最快，零包装</td>
+</tr>
+<tr>
+<td>典型用户</td>
+<td>项目内私有逻辑</td>
+<td>团队内通用组件</td>
+<td>CORSMiddleware 这类官方件</td>
+</tr>
+</tbody>
+</table>
+<p>「纯 ASGI 类」长什么样，认个脸即可，本章不展开：</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">PureASGIMiddleware</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">app</span><span class="p">:</span> <span class="n">ASGIApp</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">app</span> <span class="o">=</span> <span class="n">app</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scope</span><span class="p">:</span> <span class="n">Scope</span><span class="p">,</span> <span class="n">receive</span><span class="p">:</span> <span class="n">Receive</span><span class="p">,</span> <span class="n">send</span><span class="p">:</span> <span class="n">Send</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="p">(</span><span class="n">scope</span><span class="p">,</span> <span class="n">receive</span><span class="p">,</span> <span class="n">send</span><span class="p">)</span>  <span class="c1"># 直接操作协议层，没有 request/response 包装</span>
+</code></pre></div>
+<p><code>CORSMiddleware</code> 就是这一类——它直接在 ASGI 协议层干活，不走 <code>BaseHTTPMiddleware</code> 那套包装，所以<strong>它根本没法用 <code>@app.middleware("http")</code> 装饰器写出来</strong>，只能 <code>add_middleware</code> 注册。这也回答了一个常见疑问：「为什么 CORS 不写个装饰器版？」</p>
+<h3 id="34-basehttpmiddleware-的两个真实怪癖实测过">3.4 BaseHTTPMiddleware 的两个真实怪癖（实测过）</h3>
+<p>装饰器和类写法本质都是 <code>BaseHTTPMiddleware</code>，它有两个值得知道的怪癖：</p>
+<p><strong>怪癖一：contextvars「只进不出」。</strong> 在中间件里设置的 contextvar，端点能读到；但在端点里设置的 contextvar，中间件在 <code>call_next</code> 之后读不到（原因：下游跑在另一个任务里，上下文是副本）。实测：</p>
+<div class="highlight"><pre><span></span><code><span class="n">rid</span> <span class="o">=</span> <span class="n">contextvars</span><span class="o">.</span><span class="n">ContextVar</span><span class="p">(</span><span class="s2">"rid"</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">"unset"</span><span class="p">)</span>
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">middleware</span><span class="p">(</span><span class="s2">"http"</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">mw</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">call_next</span><span class="p">):</span>
+    <span class="n">resp</span> <span class="o">=</span> <span class="k">await</span> <span class="n">call_next</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+    <span class="n">resp</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s2">"X-Rid-After"</span><span class="p">]</span> <span class="o">=</span> <span class="n">rid</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>  <span class="c1"># 读到的是 "unset"，不是端点设置的值！</span>
+    <span class="k">return</span> <span class="n">resp</span>
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"/probe"</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">probe</span><span class="p">():</span>
+    <span class="n">rid</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">"set-by-endpoint"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">"ok"</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
+</code></pre></div>
+<p>第 13 章用 loguru 给日志绑定「请求 ID」时会撞上这个坑——绑定动作要么放在中间件最外层入口做，要么别指望回读。</p>
+<p><strong>怪癖二：每个请求多一层任务包装。</strong> <code>BaseHTTPMiddleware</code> 会把下游应用包进一个额外任务里跑，有一点点性能开销。绝大多数项目无感；超高并发的网关类服务才需要认真考虑换纯 ASGI 中间件。</p>
+<hr />
+<h2 id="4-实战一计时中间件给每个响应盖耗时章">4. 实战一：计时中间件，给每个响应盖耗时章</h2>
+<p><strong>作用</strong>：在响应头写入本次处理耗时，前端或网关拿到就能做性能监控，完全不动业务代码。</p>
+<p><strong>签名</strong>（响应头的写入方式）：</p>
+<div class="highlight"><pre><span></span><code><span class="n">response</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s2">"X-Process-Time"</span><span class="p">]</span> <span class="o">=</span> <span class="n">耗时字符串</span>
+</code></pre></div>
+<p><strong>最小示例</strong>（本章 demo 采用的版本，单位毫秒）：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Awaitable</span><span class="p">,</span> <span class="n">Callable</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">fastapi</span><span class="w"> </span><span class="kn">import</span> <span class="n">Request</span><span class="p">,</span> <span class="n">Response</span>
+
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">middleware</span><span class="p">(</span><span class="s2">"http"</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">timing_middleware</span><span class="p">(</span>
+    <span class="n">request</span><span class="p">:</span> <span class="n">Request</span><span class="p">,</span> <span class="n">call_next</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Request</span><span class="p">],</span> <span class="n">Awaitable</span><span class="p">[</span><span class="n">Response</span><span class="p">]]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Response</span><span class="p">:</span>
+    <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="k">await</span> <span class="n">call_next</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+    <span class="n">elapsed_ms</span> <span class="o">=</span> <span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1000</span>
+    <span class="n">response</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s2">"X-Process-Time"</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">elapsed_ms</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">"</span>
+    <span class="k">return</span> <span class="n">response</span>
+</code></pre></div>
+<p><strong>验证</strong>：</p>
+<div class="highlight"><pre><span></span><code>curl<span class="w"> </span>-i<span class="w"> </span>http://127.0.0.1:8000/api/posts
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>HTTP/1.1 200 OK
+x-process-time: 0.584        ← 这枚章
+content-type: application/json
+
+{"code":"0","data":[...],"message":"success"}
+</code></pre></div>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li><strong>为什么叫 <code>X-</code> 开头？</strong>HTTP 约定：非标准自定义头都建议冠 <code>X-</code> 前缀，明示「这是我们家私设的头」，跟官方头区分开。</li>
+<li><strong>计时用 <code>time.perf_counter()</code>，别用 <code>time.time()</code>。</strong>前者是单调高精度计时器（专测耗时），后者会被系统校时掰弯——NTP 一校时，耗时可能出现负数。</li>
+<li><strong>改响应头必须在 <code>return response</code> 之前</strong>，return 之后就晚了。</li>
+<li>计时中间件放<strong>最内层</strong>量的是「业务处理耗时」，放最外层量的是「全链路耗时」。没有对错，但你得知道自己量的是哪一段。</li>
+</ul>
+<hr />
+<h2 id="5-实战二cors-中间件跟浏览器的同源门禁打交道">5. 实战二：CORS 中间件，跟浏览器的「同源门禁」打交道</h2>
+<h3 id="51-先搞懂敌人同源策略是什么">5.1 先搞懂敌人：同源策略是什么</h3>
+<p>墨集前端跑在 <code>http://localhost:5173</code>（Vite 开发服务器），后端跑在 <code>http://127.0.0.1:8000</code>。前端一调接口，浏览器控制台劈头一句：</p>
+<div class="highlight"><pre><span></span><code>Access to fetch at 'http://127.0.0.1:8000/api/posts' from origin
+'http://localhost:5173' has been blocked by CORS policy
+</code></pre></div>
+<p>这不是后端的错，也不是网络的错，而是<strong>浏览器</strong>的保安条例——<strong>同源策略</strong>：协议、域名、端口三件套完全一致才算「同源」。<code>localhost:5173</code> 和 <code>127.0.0.1:8000</code>：域名不同、端口也不同，跨了两条，浏览器默认禁止页面里的 JS 读取这个响应。</p>
+<p>打个比方：浏览器是小区物业，只放行<strong>本小区</strong>（同源）住户互相串门。想跨小区送快递？可以，但收件小区的物业（后端）得先登记你的门牌——这就是 CORS 的本质：<strong>服务器明确声明「我允许哪些小区的住户来串门」</strong>，浏览器看到声明才放行 JS 读响应。</p>
+<p>两个关键认知：</p>
+<ul>
+<li><strong>CORS 是浏览器的行为，不是服务器的。</strong>curl、Postman、后端之间的互调永远不受影响——它们不带 <code>Origin</code> 请求头，CORS 中间件对这种请求直接放行、什么都不加。</li>
+<li>服务器怎么「声明」？在响应里加 <code>Access-Control-Allow-Origin</code> 等响应头。CORSMiddleware 做的就是这件事。</li>
+</ul>
+<h3 id="52-预检请求先敲门再搬家">5.2 预检请求：先敲门，再搬家</h3>
+<p>浏览器对「简单请求」（GET、POST 表单那种）会直接发出去再检查响应头；但对<strong>复杂请求</strong>（带自定义头的 POST、PUT、DELETE 等），会先发一个<strong>预检请求</strong>：方法为 <code>OPTIONS</code>，带上两个特殊请求头，先问物业一句「我等会儿想用这个方法、带这些头来，行不行？」：</p>
+<div class="highlight"><pre><span></span><code>OPTIONS /api/posts
+Origin: http://localhost:5173
+Access-Control-Request-Method: POST
+Access-Control-Request-Headers: content-type
+</code></pre></div>
+<p>物业（CORSMiddleware）检查白名单后回一张「通行证」：</p>
+<div class="highlight"><pre><span></span><code>HTTP/1.1 200 OK
+access-control-allow-origin: http://localhost:5173
+access-control-allow-methods: GET, POST
+access-control-allow-headers: Accept, Accept-Language, Authorization, Content-Language, Content-Type
+access-control-max-age: 600
+</code></pre></div>
+<p>通行证有效期 <code>max_age</code> 秒内，同类请求不再预检，浏览器这才把真正的 POST 发出来。</p>
+<h3 id="53-corsmiddleware-参数手册">5.3 CORSMiddleware 参数手册</h3>
+<p><strong>注册方式</strong>（它是纯 ASGI 中间件，只能这么注册）：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">starlette.middleware.cors</span><span class="w"> </span><span class="kn">import</span> <span class="n">CORSMiddleware</span>
+
+<span class="n">app</span><span class="o">.</span><span class="n">add_middleware</span><span class="p">(</span>
+    <span class="n">CORSMiddleware</span><span class="p">,</span>
+    <span class="n">allow_origins</span><span class="o">=</span><span class="p">[</span><span class="s2">"http://localhost:5173"</span><span class="p">,</span> <span class="s2">"http://127.0.0.1:5173"</span><span class="p">],</span>
+    <span class="n">allow_credentials</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">allow_methods</span><span class="o">=</span><span class="p">[</span><span class="s2">"GET"</span><span class="p">,</span> <span class="s2">"POST"</span><span class="p">],</span>
+    <span class="n">allow_headers</span><span class="o">=</span><span class="p">[</span><span class="s2">"Authorization"</span><span class="p">,</span> <span class="s2">"Content-Type"</span><span class="p">],</span>
+    <span class="n">expose_headers</span><span class="o">=</span><span class="p">[</span><span class="s2">"X-Process-Time"</span><span class="p">],</span>
+<span class="p">)</span>
+</code></pre></div>
+<p><strong>参数逐个讲</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>管什么</th>
+<th>常用值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>allow_origins</code></td>
+<td>哪些<strong>源</strong>可以来串门</td>
+<td>精确写前端地址；<code>["*"]</code> 表示谁来都行</td>
+</tr>
+<tr>
+<td><code>allow_methods</code></td>
+<td>允许哪些 <strong>HTTP 方法</strong></td>
+<td><code>["*"]</code> 或按需列举</td>
+</tr>
+<tr>
+<td><code>allow_headers</code></td>
+<td>允许请求带哪些<strong>自定义请求头</strong></td>
+<td>常见 <code>Authorization</code>、<code>Content-Type</code></td>
+</tr>
+<tr>
+<td><code>expose_headers</code></td>
+<td>允许前端 JS 读哪些<strong>响应头</strong></td>
+<td>把 <code>X-Process-Time</code> 登记进来</td>
+</tr>
+<tr>
+<td><code>allow_credentials</code></td>
+<td>是否允许带 cookie/凭据</td>
+<td>要带就 <code>True</code>，但见下方坑</td>
+</tr>
+<tr>
+<td><code>max_age</code></td>
+<td>预检通行证有效期（秒）</td>
+<td>默认 600</td>
+</tr>
+<tr>
+<td><code>allow_origin_regex</code></td>
+<td>用正则匹配一批源</td>
+<td><code>r"https://\w+\.inkhub\.cn"</code></td>
+</tr>
+</tbody>
+</table>
+<p>最容易搞反的一对：<code>allow_headers</code> 管<strong>请求头</strong>白名单（浏览器发请求时能带什么头），<code>expose_headers</code> 管<strong>响应头</strong>白名单（前端 JS 能从响应里读到什么头）。方向一个朝外一个朝内。</p>
+<h3 id="54-curl-验证">5.4 curl 验证</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># 预检：三个请求头缺一不可，缺了就不是预检，只是个普通 OPTIONS</span>
+curl<span class="w"> </span>-i<span class="w"> </span>-X<span class="w"> </span>OPTIONS<span class="w"> </span>http://127.0.0.1:8000/api/posts<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-H<span class="w"> </span><span class="s2">"Origin: http://localhost:5173"</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-H<span class="w"> </span><span class="s2">"Access-Control-Request-Method: POST"</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-H<span class="w"> </span><span class="s2">"Access-Control-Request-Headers: content-type"</span>
+
+<span class="c1"># 普通请求带 Origin：看响应头回显</span>
+curl<span class="w"> </span>-i<span class="w"> </span>http://127.0.0.1:8000/api/posts<span class="w"> </span>-H<span class="w"> </span><span class="s2">"Origin: http://localhost:5173"</span>
+</code></pre></div>
+<p>实测响应（节选）：回显源 <code>access-control-allow-origin: http://localhost:5173</code>，登记的暴露头 <code>access-control-expose-headers: X-Process-Time</code> 也如约出现。</p>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li><strong><code>allow_origins=["*"]</code> 与 <code>allow_credentials=True</code> 不能同时用。</strong>带凭据时浏览器要求服务器必须回显精确来源，<code>*</code> 会被浏览器直接判死。要带 cookie 就老老实实列来源清单。</li>
+<li><strong>前端读不到 <code>X-Process-Time</code>？</strong>不是没盖章，是没登记。非标响应头默认对前端 JS 不可见，必须写进 <code>expose_headers</code>。</li>
+<li><strong><code>localhost</code> 和 <code>127.0.0.1</code> 是两个不同的源。</strong>域名不同就算跨域，白名单里最好两个都写上（或者用 <code>allow_origin_regex</code>）。</li>
+<li><strong>预检被拒不报错码以外的信息</strong>：方法不在 <code>allow_methods</code> 里，CORSMiddleware 直接回 <code>400 Disallowed CORS method</code>——看到这个串，先查白名单。</li>
+<li>预检请求由 CORSMiddleware 在<strong>最外层直接短路应答</strong>（所以第 7 节的排兵布阵里 CORS 要放最外层），它根本不会进到你的路由。</li>
+</ul>
+<hr />
+<h2 id="6-实战三统一响应信封包裹-09-章的异常响应">6. 实战三：统一响应信封，包裹 09 章的异常响应</h2>
+<h3 id="61-目标">6.1 目标</h3>
+<p>墨集前端要求：所有 <code>/api/</code> 接口的成功响应长这样——</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span><span class="nt">"code"</span><span class="p">:</span><span class="w"> </span><span class="s2">"0"</span><span class="p">,</span><span class="w"> </span><span class="nt">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="nt">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"中间件：FastAPI 的物业部"</span><span class="p">},</span><span class="w"> </span><span class="nt">"message"</span><span class="p">:</span><span class="w"> </span><span class="s2">"success"</span><span class="p">}</span>
+</code></pre></div>
+<p>错误响应长这样（<code>data</code> 恒为 <code>null</code>，<code>code</code>/<code>message</code> 直接来自第 09 章的统一异常格式）——</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span><span class="nt">"code"</span><span class="p">:</span><span class="w"> </span><span class="s2">"40404"</span><span class="p">,</span><span class="w"> </span><span class="nt">"data"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w"> </span><span class="nt">"message"</span><span class="p">:</span><span class="w"> </span><span class="s2">"文章不存在"</span><span class="p">}</span>
+</code></pre></div>
+<p>错误格式已经在第 09 章由异常处理器统一好了，本章的活是：<strong>用中间件在出口处统一打包</strong>，一个端点都不用改。</p>
+<h3 id="62-完整代码分四段讲">6.2 完整代码，分四段讲</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">fastapi.responses</span><span class="w"> </span><span class="kn">import</span> <span class="n">JSONResponse</span>
+
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">middleware</span><span class="p">(</span><span class="s2">"http"</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">envelope_middleware</span><span class="p">(</span>
+    <span class="n">request</span><span class="p">:</span> <span class="n">Request</span><span class="p">,</span> <span class="n">call_next</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Request</span><span class="p">],</span> <span class="n">Awaitable</span><span class="p">[</span><span class="n">Response</span><span class="p">]]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Response</span><span class="p">:</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="k">await</span> <span class="n">call_next</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+
+    <span class="c1"># 放行判断①：非业务接口（/docs、/openapi.json、/healthz……）不动</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">request</span><span class="o">.</span><span class="n">url</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"/api/"</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">response</span>
+
+    <span class="c1"># 放行判断②：非 JSON 响应（SSE 流、文件下载）原样放行</span>
+    <span class="k">if</span> <span class="s2">"json"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"content-type"</span><span class="p">,</span> <span class="s2">""</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">response</span>
+
+    <span class="c1"># 第一段：读出响应体。body_iterator 只能消费一次，读完回不了头</span>
+    <span class="n">body</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">""</span>
+    <span class="k">async</span> <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">body_iterator</span><span class="p">:</span>
+        <span class="n">body</span> <span class="o">+=</span> <span class="n">chunk</span>
+
+    <span class="c1"># 第二段：复制原响应头（保住 X-Process-Time 等），删掉旧长度</span>
+    <span class="n">headers</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">headers</span><span class="p">)</span>
+    <span class="n">headers</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">"content-length"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+    <span class="n">payload</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">body</span><span class="p">)</span> <span class="k">if</span> <span class="n">body</span> <span class="k">else</span> <span class="kc">None</span>
+
+    <span class="c1"># 第三段：错误分支——拍平，防二次包裹</span>
+    <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">&gt;=</span> <span class="mi">400</span><span class="p">:</span>
+        <span class="n">err</span> <span class="o">=</span> <span class="n">payload</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="k">else</span> <span class="p">{}</span>
+        <span class="k">return</span> <span class="n">JSONResponse</span><span class="p">(</span>
+            <span class="n">content</span><span class="o">=</span><span class="p">{</span>
+                <span class="s2">"code"</span><span class="p">:</span> <span class="n">err</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"code"</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="p">)),</span>
+                <span class="s2">"data"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="s2">"message"</span><span class="p">:</span> <span class="n">err</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"message"</span><span class="p">,</span> <span class="s2">""</span><span class="p">),</span>
+            <span class="p">},</span>
+            <span class="n">status_code</span><span class="o">=</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span>
+            <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="c1"># 第四段：成功分支——原数据整体放进 data</span>
+    <span class="k">return</span> <span class="n">JSONResponse</span><span class="p">(</span>
+        <span class="n">content</span><span class="o">=</span><span class="p">{</span><span class="s2">"code"</span><span class="p">:</span> <span class="s2">"0"</span><span class="p">,</span> <span class="s2">"data"</span><span class="p">:</span> <span class="n">payload</span><span class="p">,</span> <span class="s2">"message"</span><span class="p">:</span> <span class="s2">"success"</span><span class="p">},</span>
+        <span class="n">status_code</span><span class="o">=</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span>
+        <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span>
+    <span class="p">)</span>
+</code></pre></div>
+<p><strong>第一段（读流）</strong>：<code>call_next</code> 给你的响应体不是现成字符串，而是一个异步迭代器 <code>body_iterator</code>，要自己拼。注意它是<strong>一次性</strong>的——消费过就无法原样退回。</p>
+<p><strong>第二段（保头删长）</strong>：重打包后响应体长度必然变化。JSONResponse 构造时发现 <code>headers</code> 里已有 <code>content-length</code> 就不再重算——实测不删的话，旧头声称 7 字节、新体实际 27 字节，严格按头收包的浏览器会把 JSON 拦腰截断。而 <code>X-Process-Time</code> 这类头必须复制过来，否则内层盖的章就丢了。</p>
+<p><strong>第三段（错误拍平）</strong>：状态码 ≥400 的响应，正文已经是第 09 章异常处理器产出的 <code>{code, message}</code>。<strong>正确动作是把这两个字段拍平到信封顶层，<code>data</code> 置 <code>null</code></strong>。错误做法是把整个错误体塞进 <code>data</code>——那样前端会拿到 <code>data: {"code": "40404", "message": "文章不存在"}</code>，两层 <code>code</code> 套娃，这就是「二次包裹」事故。</p>
+<p><strong>第四段（成功包裹）</strong>：原数据整个放进 <code>data</code>，状态码原样保留（201 还是 201）。</p>
+<p><strong>两个放行判断为什么必须有</strong>：</p>
+<ul>
+<li><strong>路径判断</strong>：<code>/docs</code>、<code>/openapi.json</code> 是给浏览器和工具用的，包进信封会直接弄坏交互界面；健康检查这类运维接口也没必要跟前端共用格式。</li>
+<li><strong>content-type 判断</strong>：SSE 流（第 14 章的主角）要边生成边推给客户端，文件下载要按字节流吐——它们没有「完整的 JSON 响应体」可供读取和重打包。硬读 <code>body_iterator</code> 会把流缓冲干死，重打包更是直接毁掉功能。判断依据很朴素：响应的 <code>content-type</code> 里没有 <code>json</code>，就不是我们该碰的东西。</li>
+</ul>
+<h3 id="63-为什么这活必须在中间件层干">6.3 为什么这活必须在中间件层干</h3>
+<p>回头看第 1 节的图：信封是典型的横切关注点。三个候选位置：</p>
+<ol>
+<li><strong>写进每个端点</strong>——侵入式，抄 30 遍，最先排除；</li>
+<li><strong>前端拦截器统一包</strong>——治标不治本：多个前端（Web、小程序、第三方调用方）就得各包一遍，且错误格式已经在后端统一了，成功格式却靠前端补，不对称；</li>
+<li><strong>中间件层统一包</strong>——后端出口唯一收口，所有调用方拿到的格式天然一致。</li>
+</ol>
+<p>再配合 09 章：异常处理器住在洋葱最内层，先把所有异常变成 <code>{code, message}</code> 响应；信封中间件在出口处统一拍平。两层接力，错误和成功都只有一个出口格式。</p>
+<h3 id="64-常见坑">6.4 常见坑</h3>
+<ul>
+<li><strong><code>body_iterator</code> 消费后不能反悔。</strong>读完才发现「这单不该包」已经晚了——要么在消费前做完所有判断（本节代码的顺序就是为此），要么消费后用 <code>JSONResponse(content=payload, ...)</code> 重建一个等价响应，绝不能把消费过的 <code>response</code> 原样 return。</li>
+<li><strong>某些端点已经自带信封怎么办？</strong>如果历史接口本来就返回 <code>{code, data, message}</code>，会被包成双层。防法：成功分支里加一个判断——</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="s2">"code"</span> <span class="ow">in</span> <span class="n">payload</span> <span class="ow">and</span> <span class="s2">"data"</span> <span class="ow">in</span> <span class="n">payload</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">JSONResponse</span><span class="p">(</span><span class="n">content</span><span class="o">=</span><span class="n">payload</span><span class="p">,</span> <span class="n">status_code</span><span class="o">=</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>  <span class="c1"># 已是信封，原样重建</span>
+</code></pre></div>
+<p>但更好的做法是立规矩：<strong>端点永远只返回裸数据</strong>，格式一律交给中间件。
+- <strong><code>/docs</code> 里的响应模型不会跟着变。</strong>信封是运行时动态打包的，而 OpenAPI 文档里的响应模型还是端点声明的裸模型——文档和真实返回对不上。进阶解法是改写 <code>app.openapi()</code> 把文档里的响应 schema 也包上信封，属于锦上添花的工程活，知道方向即可，本章不展开。
+- <strong>204、重定向这类没有响应体的</strong>，<code>content-type</code> 多半为空，会被放行判断②自然放行，不用特判。</p>
+<hr />
+<h2 id="7-注册顺序的真相后注册的在外层">7. 注册顺序的真相：后注册的在外层</h2>
+<p><strong>作用</strong>：中间件一层套一层，谁在外面决定了请求先进谁家、响应后出谁家。这个顺序规则和多数人的直觉<strong>相反</strong>，先说结论：</p>
+<blockquote>
+<p><strong>后注册（后执行注册语句）的中间件在 外层，先接触请求；先注册的在 内层，更靠近路由。</strong></p>
+</blockquote>
+<h3 id="71-为什么看一眼源码机制">7.1 为什么：看一眼源码机制</h3>
+<p>Starlette 注册中间件时用的是 <code>insert(0, ...)</code>——新来的插到队伍<strong>最前面</strong>；构建洋葱时从最内层（路由）开始，<strong>倒着</strong>逐层包裹。两下一配合：注册越晚，包得越外。</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># starlette/applications.py（简化）</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">add_middleware</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">middleware_class</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">user_middleware</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">Middleware</span><span class="p">(</span><span class="n">middleware_class</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>  <span class="c1"># 插队首</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">build_middleware_stack</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="n">middleware</span> <span class="o">=</span> <span class="p">[</span><span class="n">ServerError</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_middleware</span> <span class="o">+</span> <span class="p">[</span><span class="ne">Exception</span><span class="p">]</span>
+    <span class="n">app</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">router</span>                       <span class="c1"># 从路由开始</span>
+    <span class="k">for</span> <span class="bp">cls</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="n">middleware</span><span class="p">):</span>   <span class="c1"># 从列表尾（最内层）往外包</span>
+        <span class="n">app</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">app</span><span class="o">=</span><span class="n">app</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">app</span>
+</code></pre></div>
+<h3 id="72-实测别信记忆信-trace">7.2 实测：别信记忆，信 trace</h3>
+<p>三个中间件、一个端点，各自往全局列表里塞记号：</p>
+<div class="highlight"><pre><span></span><code><span class="n">trace</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">middleware</span><span class="p">(</span><span class="s2">"http"</span><span class="p">)</span>          <span class="c1"># 代码里写在上面</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">mw_a</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">call_next</span><span class="p">):</span>
+    <span class="n">trace</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"a-in"</span><span class="p">)</span>
+    <span class="n">resp</span> <span class="o">=</span> <span class="k">await</span> <span class="n">call_next</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+    <span class="n">trace</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"a-out"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">resp</span>
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">middleware</span><span class="p">(</span><span class="s2">"http"</span><span class="p">)</span>          <span class="c1"># 代码里写在下面</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">mw_b</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">call_next</span><span class="p">):</span>
+    <span class="n">trace</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"b-in"</span><span class="p">)</span>
+    <span class="n">resp</span> <span class="o">=</span> <span class="k">await</span> <span class="n">call_next</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+    <span class="n">trace</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"b-out"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">resp</span>
+</code></pre></div>
+<p>实测输出：</p>
+<div class="highlight"><pre><span></span><code>trace: ['b-in', 'a-in', 'route', 'a-out', 'b-out']
+</code></pre></div>
+<p>注意看：<strong>写在下面的 <code>mw_b</code> 反而先进</strong>（外层），写在上面、先注册的 <code>mw_a</code> 在内层。因为装饰器注册语句是按代码从上到下执行的——<code>mw_a</code> 先注册进内层，<code>mw_b</code> 后注册包在外面。看着别扭？记住一句话：<strong>「后来者居上（外）」</strong>。</p>
+<h3 id="73-本章三件套的排兵布阵">7.3 本章三件套的排兵布阵</h3>
+<p>知道规则后，回头看 demo 里三个中间件为什么这么排（注册顺序：计时 → 信封 → CORS，洋葱从外到内：CORS → 信封 → 计时）：</p>
+<table>
+<thead>
+<tr>
+<th>层次</th>
+<th>中间件</th>
+<th>为什么在这层</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>最外</td>
+<td>CORS</td>
+<td>预检 OPTIONS 在这里直接短路应答，根本不必惊动里面两层</td>
+</tr>
+<tr>
+<td>中间</td>
+<td>信封</td>
+<td>重打包时复制内层盖好的 <code>X-Process-Time</code>，一枚章都不丢</td>
+</tr>
+<tr>
+<td>最内</td>
+<td>计时</td>
+<td>紧贴路由，量出来的就是纯业务耗时</td>
+</tr>
+</tbody>
+</table>
+<p>排错的代价：把信封放最外层，CORS 的预检响应也会被塞进信封（虽然响应头都在、多半还能用，但语义脏了）；把计时放最外层，耗时就混进了外层中间件的处理时间。<strong>中间件顺序是架构的一部分，改动前拿 7.2 的 trace 法实测一遍。</strong></p>
+<h3 id="74-常见坑">7.4 常见坑</h3>
+<ul>
+<li><strong>Django 老兵最容易栽这里</strong>：Django 的 <code>MIDDLEWARE</code> 列表从上到下正好是<strong>从外到内</strong>——先注册的在外层。FastAPI/Starlette 正相反。从 Django 迁过来的同学请把 7.2 的实测代码跑一遍再动手。</li>
+<li><strong>应用启动后不能再 <code>add_middleware</code></strong>。中间件栈在收到第一个请求前就已搭好，之后再注册直接 <code>RuntimeError: Cannot add middleware after an application has started</code>。所有注册必须发生在应用启动阶段（模块顶层）。</li>
+<li>装饰器和 <code>add_middleware</code> 混用时，判断层次只看一个标准：<strong>注册语句谁后执行，谁在外层</strong>，别按代码的视觉位置想当然。</li>
+</ul>
+<hr />
+<h2 id="8-add_middleware-与装饰器一个注册口两副面孔">8. add_middleware 与装饰器：一个注册口，两副面孔</h2>
+<p><strong>作用</strong>：把注册这件事彻底说透。<code>add_middleware</code> 是唯一的注册入口，装饰器只是它的一件马甲。</p>
+<p>3.1 节看过装饰器的底牌：</p>
+<div class="highlight"><pre><span></span><code><span class="nd">@app</span><span class="o">.</span><span class="n">middleware</span><span class="p">(</span><span class="s2">"http"</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">my_middleware</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">call_next</span><span class="p">):</span> <span class="o">...</span>
+<span class="c1"># 等价于</span>
+<span class="n">app</span><span class="o">.</span><span class="n">add_middleware</span><span class="p">(</span><span class="n">BaseHTTPMiddleware</span><span class="p">,</span> <span class="n">dispatch</span><span class="o">=</span><span class="n">my_middleware</span><span class="p">)</span>
+<span class="c1"># 也等价于：不写装饰器，拿到函数后手动注册</span>
+<span class="n">app</span><span class="o">.</span><span class="n">middleware</span><span class="p">(</span><span class="s2">"http"</span><span class="p">)(</span><span class="n">my_middleware</span><span class="p">)</span>
+</code></pre></div>
+<p>而 <code>add_middleware</code> 这一个口子能装下三类东西：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># ① 函数式（上面那种等价写法）</span>
+<span class="n">app</span><span class="o">.</span><span class="n">middleware</span><span class="p">(</span><span class="s2">"http"</span><span class="p">)(</span><span class="n">my_middleware</span><span class="p">)</span>
+
+<span class="c1"># ② BaseHTTPMiddleware 子类——可以传配置参数</span>
+<span class="n">app</span><span class="o">.</span><span class="n">add_middleware</span><span class="p">(</span><span class="n">BannerMiddleware</span><span class="p">,</span> <span class="n">banner</span><span class="o">=</span><span class="s2">"inkhub-editors"</span><span class="p">)</span>
+
+<span class="c1"># ③ 纯 ASGI 中间件类——CORSMiddleware 这种，装饰器根本写不了</span>
+<span class="n">app</span><span class="o">.</span><span class="n">add_middleware</span><span class="p">(</span><span class="n">CORSMiddleware</span><span class="p">,</span> <span class="n">allow_origins</span><span class="o">=</span><span class="p">[</span><span class="s2">"http://localhost:5173"</span><span class="p">])</span>
+</code></pre></div>
+<p><strong>工程化建议：集中注册</strong>。中间件散落在各文件里到处 <code>add_middleware</code>，顺序关系很难一眼看清。把本章三件套收进一个注册函数，顺序即文档：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">fastapi</span><span class="w"> </span><span class="kn">import</span> <span class="n">FastAPI</span>
+
+<span class="c1"># 列表顺序 = 注册顺序 = 洋葱从内到外（第一个注册的在最内层）</span>
+<span class="n">MIDDLEWARES</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">type</span> <span class="o">|</span> <span class="n">Callable</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">(</span><span class="n">timing_middleware</span><span class="p">,</span> <span class="p">{}),</span>          <span class="c1"># 最内层</span>
+    <span class="p">(</span><span class="n">envelope_middleware</span><span class="p">,</span> <span class="p">{}),</span>
+    <span class="p">(</span><span class="n">CORSMiddleware</span><span class="p">,</span> <span class="p">{</span><span class="s2">"allow_origins"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"http://localhost:5173"</span><span class="p">],</span> <span class="s2">"expose_headers"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"X-Process-Time"</span><span class="p">]}),</span>  <span class="c1"># 最外层</span>
+<span class="p">]</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">register_middleware</span><span class="p">(</span><span class="n">app</span><span class="p">:</span> <span class="n">FastAPI</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">mw</span><span class="p">,</span> <span class="n">kwargs</span> <span class="ow">in</span> <span class="n">MIDDLEWARES</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">inspect</span><span class="o">.</span><span class="n">isclass</span><span class="p">(</span><span class="n">mw</span><span class="p">):</span>
+            <span class="n">app</span><span class="o">.</span><span class="n">add_middleware</span><span class="p">(</span><span class="n">mw</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>      <span class="c1"># 类 → add_middleware</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">app</span><span class="o">.</span><span class="n">middleware</span><span class="p">(</span><span class="s2">"http"</span><span class="p">)(</span><span class="n">mw</span><span class="p">)</span>            <span class="c1"># 函数 → 装饰器等价注册</span>
+</code></pre></div>
+<p><code>inspect.isclass</code> 分流：是类就走 <code>add_middleware</code>（能带构造参数），是函数就走 <code>app.middleware("http")</code>。列表顺序就是注册顺序，谁内谁外一目了然，将来插入新中间件只需挪一行。</p>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li><code>add_middleware</code> 传参传的是<strong>中间件类的构造参数</strong>（如 <code>banner="..."</code>），不是 dispatch 函数的参数——函数式中间件想要配置，只能靠闭包，要配置就升级成类写法。</li>
+<li><code>app.middleware("http")</code> 的参数目前只有 <code>"http"</code> 一个合法值——它处理的是 HTTP 请求；WebSocket 流量走不到这层中间件（第 14 章见）。</li>
+</ul>
+<hr />
+<h2 id="9-跑一下本章-demo">9. 跑一下本章 demo</h2>
+<p>完整代码在 <code>demo/demo_middleware.py</code>：内存假数据 + 计时、CORS、信封三个中间件 + 健康检查、文章列表/详情/创建、SSE 流、文件导出一组路由，单文件自足。</p>
+<div class="highlight"><pre><span></span><code>uv<span class="w"> </span>add<span class="w"> </span>fastapi<span class="w"> </span><span class="s2">"uvicorn[standard]"</span>
+python<span class="w"> </span>demo_middleware.py<span class="w">        </span><span class="c1"># 内嵌 uvicorn，等价 uvicorn demo_middleware:app --port 8000</span>
+</code></pre></div>
+<p>另开一个终端，按顺序验证三件套（以下均为实测输出，节选）：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># ① 计时章 + 信封一起看</span>
+curl<span class="w"> </span>-i<span class="w"> </span>http://127.0.0.1:8000/api/posts
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>HTTP/1.1 200 OK
+x-process-time: 0.584
+content-type: application/json
+
+{"code":"0","data":[{"id":1,"title":"中间件：FastAPI 的物业部","summary":"横切关注点一次性解决"},{"id":2,"title":"SQLAlchemy 异步会话的正确姿势","summary":null}],"message":"success"}
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="c1"># ② 错误响应拍平（防二次包裹）：注意 data 是 null，code/message 来自 09 章格式</span>
+curl<span class="w"> </span>-i<span class="w"> </span>http://127.0.0.1:8000/api/posts/999
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>HTTP/1.1 404 Not Found
+x-process-time: 0.477
+
+{"code":"40404","data":null,"message":"文章不存在"}
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="c1"># ③ SSE 流式放行：不进信封，逐条收到 data: 事件</span>
+curl<span class="w"> </span>-N<span class="w"> </span>http://127.0.0.1:8000/api/posts/1/stream
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>data: 墨
+
+data: 集
+
+data: inkhub
+
+data: 中间件：FastAPI 的物业部
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="c1"># ④ 文件下载放行：拿到的是原始 markdown，不是信封</span>
+curl<span class="w"> </span>-i<span class="w"> </span>http://127.0.0.1:8000/api/posts/export
+
+<span class="c1"># ⑤ 非 /api/ 路径放行：原样返回，但计时章还在</span>
+curl<span class="w"> </span>-i<span class="w"> </span>http://127.0.0.1:8000/healthz
+
+<span class="c1"># ⑥ CORS 预检：200 + Allow-* 头，且预检响应没被信封包裹（CORS 在最外层短路）</span>
+curl<span class="w"> </span>-i<span class="w"> </span>-X<span class="w"> </span>OPTIONS<span class="w"> </span>http://127.0.0.1:8000/api/posts<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-H<span class="w"> </span><span class="s2">"Origin: http://localhost:5173"</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-H<span class="w"> </span><span class="s2">"Access-Control-Request-Method: POST"</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-H<span class="w"> </span><span class="s2">"Access-Control-Request-Headers: content-type"</span>
+
+<span class="c1"># ⑦ 带 Origin 的普通请求：看 allow-origin 回显和 expose-headers</span>
+curl<span class="w"> </span>-i<span class="w"> </span>http://127.0.0.1:8000/api/posts<span class="w"> </span>-H<span class="w"> </span><span class="s2">"Origin: http://localhost:5173"</span>
+</code></pre></div>
+<p>预检实测响应（节选）：</p>
+<div class="highlight"><pre><span></span><code>HTTP/1.1 200 OK
+access-control-allow-methods: GET, POST
+access-control-allow-origin: http://localhost:5173
+access-control-allow-headers: Accept, Accept-Language, Authorization, Content-Language, Content-Type
+access-control-max-age: 600
+content-length: 2        ← 预检响应体只是 "OK"，没进信封
+</code></pre></div>
+<p>另外注意 <code>④ 文件导出</code> 的一个路由细节：<code>/api/posts/export</code> 必须声明在 <code>/api/posts/{post_id}</code> <strong>之前</strong>，否则 <code>export</code> 会被当成 <code>post_id</code> 去做 int 校验，返回 422。</p>
+<hr />
+<h2 id="10-小结速查">10. 小结速查</h2>
+<table>
+<thead>
+<tr>
+<th>需求</th>
+<th>用法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>注册函数式中间件</td>
+<td><code>@app.middleware("http")</code>，本质 <code>add_middleware(BaseHTTPMiddleware, dispatch=fn)</code></td>
+</tr>
+<tr>
+<td>注册可配置的类中间件</td>
+<td>继承 <code>BaseHTTPMiddleware</code>，<code>add_middleware(类, **配置)</code></td>
+</tr>
+<tr>
+<td>短路请求</td>
+<td><code>call_next</code> 之前直接 <code>return JSONResponse(...)</code></td>
+</tr>
+<tr>
+<td>给响应盖耗时章</td>
+<td><code>response.headers["X-Process-Time"] = f"{ms:.3f}"</code></td>
+</tr>
+<tr>
+<td>解决跨域</td>
+<td><code>add_middleware(CORSMiddleware, allow_origins=[...], ...)</code></td>
+</tr>
+<tr>
+<td>让前端读到自定义响应头</td>
+<td><code>expose_headers=["X-Process-Time"]</code></td>
+</tr>
+<tr>
+<td>统一响应信封</td>
+<td>消费 <code>body_iterator</code> → 重打包 <code>JSONResponse</code>，删旧 <code>content-length</code></td>
+</tr>
+<tr>
+<td>信封放行</td>
+<td>非 <code>/api/</code> 路径、非 JSON <code>content-type</code></td>
+</tr>
+<tr>
+<td>错误防二次包裹</td>
+<td>≥400 时把 09 章的 <code>code</code>/<code>message</code> 拍平到信封顶层，<code>data=None</code></td>
+</tr>
+<tr>
+<td>中间件顺序</td>
+<td><strong>后注册的在外层</strong>；装饰器写在代码下面的反而在外层</td>
+</tr>
+<tr>
+<td>集中注册</td>
+<td>列表 + <code>inspect.isclass</code> 分流 + <code>register_middleware(app)</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>自测三问</strong>：</p>
+<ol>
+<li>三个中间件按 A、B、C 的顺序执行注册语句，请求先经过谁家？响应最后经过谁家？</li>
+<li>信封中间件里，为什么读完 <code>body_iterator</code> 之后就不能再把原响应返回了？<code>content-length</code> 不删会发生什么？</li>
+<li>前端 fetch 能正常收数据，却读不到 <code>X-Process-Time</code> 响应头——列出两个可能的原因。</li>
+</ol>
+<p>横切关注点的地基打好了：计时、跨域、统一格式，全都不再侵入业务代码。下一章要在「请求进门的必经之路」上再设一道更重要的关卡——你是谁？你的令牌呢？</p>
+<hr />
+<p><strong>下一章</strong>：<a href="../backend/11-ren-zheng-yu-jwt.html">11 · 认证与 JWT</a></p></div>
+
+      </article>
+<nav class="pager"><a class="pg-card pg-prev" href="../backend/09-tong-yi-yi-chang-chu-li.html"><span class="pg-label">← 上一篇</span><span class="pg-title">统一异常处理</span><span class="pg-mod">Python 框架指南</span></a><a class="pg-card pg-next" href="../backend/11-ren-zheng-yu-jwt.html"><span class="pg-label">下一篇 →</span><span class="pg-title">认证与 JWT</span><span class="pg-mod">Python 框架指南</span></a></nav>
+    </div>
+    <footer class="foot">
+      <span>深栈 DeepStack · AI Agent 工程师转型训练营配套文档</span>
+    </footer>
+  </main>
+<nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#1-先把两个唬人的词拆了横切关注点与-aop">1. 先把两个唬人的词拆了：横切关注点与 AOP</a><a class="toc-link toc-h2" href="#2-中间件的标准模板requestcall_next-和洋葱模型">2. 中间件的标准模板：request、call_next 和洋葱模型</a><a class="toc-link toc-h2" href="#3-两种写法装饰器与-basehttpmiddleware-怎么选">3. 两种写法：装饰器与 BaseHTTPMiddleware 怎么选</a><a class="toc-link toc-h3" href="#31-装饰器写法函数式">3.1 装饰器写法（函数式）</a><a class="toc-link toc-h3" href="#32-类写法继承-basehttpmiddleware">3.2 类写法（继承 BaseHTTPMiddleware）</a><a class="toc-link toc-h3" href="#33-选型速查">3.3 选型速查</a><a class="toc-link toc-h3" href="#34-basehttpmiddleware-的两个真实怪癖实测过">3.4 BaseHTTPMiddleware 的两个真实怪癖（实测过）</a><a class="toc-link toc-h2" href="#4-实战一计时中间件给每个响应盖耗时章">4. 实战一：计时中间件，给每个响应盖耗时章</a><a class="toc-link toc-h2" href="#5-实战二cors-中间件跟浏览器的同源门禁打交道">5. 实战二：CORS 中间件，跟浏览器的「同源门禁」打交道</a><a class="toc-link toc-h3" href="#51-先搞懂敌人同源策略是什么">5.1 先搞懂敌人：同源策略是什么</a><a class="toc-link toc-h3" href="#52-预检请求先敲门再搬家">5.2 预检请求：先敲门，再搬家</a><a class="toc-link toc-h3" href="#53-corsmiddleware-参数手册">5.3 CORSMiddleware 参数手册</a><a class="toc-link toc-h3" href="#54-curl-验证">5.4 curl 验证</a><a class="toc-link toc-h2" href="#6-实战三统一响应信封包裹-09-章的异常响应">6. 实战三：统一响应信封，包裹 09 章的异常响应</a><a class="toc-link toc-h3" href="#61-目标">6.1 目标</a><a class="toc-link toc-h3" href="#62-完整代码分四段讲">6.2 完整代码，分四段讲</a><a class="toc-link toc-h3" href="#63-为什么这活必须在中间件层干">6.3 为什么这活必须在中间件层干</a><a class="toc-link toc-h3" href="#64-常见坑">6.4 常见坑</a><a class="toc-link toc-h2" href="#7-注册顺序的真相后注册的在外层">7. 注册顺序的真相：后注册的在外层</a><a class="toc-link toc-h3" href="#71-为什么看一眼源码机制">7.1 为什么：看一眼源码机制</a><a class="toc-link toc-h3" href="#72-实测别信记忆信-trace">7.2 实测：别信记忆，信 trace</a><a class="toc-link toc-h3" href="#73-本章三件套的排兵布阵">7.3 本章三件套的排兵布阵</a><a class="toc-link toc-h3" href="#74-常见坑">7.4 常见坑</a><a class="toc-link toc-h2" href="#8-add_middleware-与装饰器一个注册口两副面孔">8. add_middleware 与装饰器：一个注册口，两副面孔</a><a class="toc-link toc-h2" href="#9-跑一下本章-demo">9. 跑一下本章 demo</a><a class="toc-link toc-h2" href="#10-小结速查">10. 小结速查</a></nav>
+</div>
+<div class="sb-mask" id="sbMask"></div>
+<script src="../assets/app.js"></script>
+</body>
+</html>

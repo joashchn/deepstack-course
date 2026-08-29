@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>03 · 序列、字典与集合 · 深栈 DeepStack 课程文档</title>
+<meta name="description" content="前面学过的变量，一次只能攥住一个值。可现实里的数据很少这么&quot;独来独往&quot;：一张订单挂着好几件商品，一张名片挤着姓名、电话、职位好几个字段，一个商品可能贴着一堆标签。Python 为这类&quot;批量数据&quot;准备了一整套内置的打包工具…">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%23d9c39a' text-anchor='middle'%3EDS%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+<div class="progress" id="progress"></div>
+
+<div class="layout">
+<aside class="sidebar" id="sidebar">
+  <div class="sb-head">
+    <a class="brand" href="../index.html">
+      <span class="brand-mark">DS</span>
+      <span class="brand-text"><b>深栈 DeepStack</b><i>AI Agent 工程师转型训练营</i></span>
+    </a>
+    <button class="sb-close" id="sbClose" aria-label="关闭目录">✕</button>
+  </div>
+  <div class="sb-search"><input type="search" id="searchInput" placeholder="搜索 123 篇文档… ( / )" autocomplete="off">
+    <div class="sb-results" id="searchResults"></div></div>
+  <nav class="sb-nav">
+    <section class="sb-group open" data-mod="python">
+      <a class="sb-group-title" href="../modules/python.html" data-toggle="python">
+        <span class="sb-num">01</span>
+        <span class="sb-group-text"><b>Python 与数据实践</b><i>31 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../python/01-huan-jing-da-jian-yu-ban-ben-guan-li.html"><span class="sb-item-num">01</span><span class="sb-item-title">环境搭建与版本管理</span></a>
+        <a class="sb-item" href="../python/02-bian-liang-biao-da-shi-yu-liu-cheng-kong-zhi.html"><span class="sb-item-num">02</span><span class="sb-item-title">变量、表达式与流程控制</span></a>
+        <a class="sb-item current" href="../python/03-xu-lie-zi-dian-yu-ji-he.html"><span class="sb-item-num">03</span><span class="sb-item-title">序列、字典与集合</span></a>
+        <a class="sb-item" href="../python/04-han-shu-she-ji-yu-lambda.html"><span class="sb-item-num">04</span><span class="sb-item-title">函数设计与 lambda</span></a>
+        <a class="sb-item" href="../python/05-zuo-yong-yu-gui-ze-yu-bi-bao.html"><span class="sb-item-num">05</span><span class="sb-item-title">作用域规则与闭包</span></a>
+        <a class="sb-item" href="../python/06-lei-de-ding-yi-yu-shi-li-hua.html"><span class="sb-item-num">06</span><span class="sb-item-title">类的定义与实例化</span></a>
+        <a class="sb-item" href="../python/07-lei-xing-pan-ding-yu-chou-xiang-ji-lei.html"><span class="sb-item-num">07</span><span class="sb-item-title">类型判定与抽象基类</span></a>
+        <a class="sb-item" href="../python/08-mo-shu-fang-fa-quan-jing.html"><span class="sb-item-num">08</span><span class="sb-item-title">魔术方法全景</span></a>
+        <a class="sb-item" href="../python/09-miao-shu-fu-yu-yuan-lei.html"><span class="sb-item-num">09</span><span class="sb-item-title">描述符与元类</span></a>
+        <a class="sb-item" href="../python/10-zhuang-shi-qi.html"><span class="sb-item-num">10</span><span class="sb-item-title">装饰器</span></a>
+        <a class="sb-item" href="../python/11-die-dai-xie-yi-yu-sheng-cheng-qi.html"><span class="sb-item-num">11</span><span class="sb-item-title">迭代协议与生成器</span></a>
+        <a class="sb-item" href="../python/12-with-yu-shang-xia-wen-xie-yi.html"><span class="sb-item-num">12</span><span class="sb-item-title">with 与上下文协议</span></a>
+        <a class="sb-item" href="../python/13-yi-chang-ti-xi-yu-chu-li.html"><span class="sb-item-num">13</span><span class="sb-item-title">异常体系与处理</span></a>
+        <a class="sb-item" href="../python/14-lei-xing-biao-zhu.html"><span class="sb-item-num">14</span><span class="sb-item-title">类型标注</span></a>
+        <a class="sb-item" href="../python/15-mo-kuai-yu-bao-de-zu-zhi.html"><span class="sb-item-num">15</span><span class="sb-item-title">模块与包的组织</span></a>
+        <a class="sb-item" href="../python/16-biao-zhun-ku-xun-li.html"><span class="sb-item-num">16</span><span class="sb-item-title">标准库巡礼</span></a>
+        <a class="sb-item" href="../python/17-yi-lai-guan-li-yu-di-san-fang-ku.html"><span class="sb-item-num">17</span><span class="sb-item-title">依赖管理与第三方库</span></a>
+        <a class="sb-item" href="../python/18-xian-cheng-yu-jin-cheng.html"><span class="sb-item-num">18</span><span class="sb-item-title">线程与进程</span></a>
+        <a class="sb-item" href="../python/19-shi-jian-xun-huan.html"><span class="sb-item-num">19</span><span class="sb-item-title">事件循环</span></a>
+        <a class="sb-item" href="../python/20-future-yu-xie-cheng.html"><span class="sb-item-num">20</span><span class="sb-item-title">Future 与协程</span></a>
+        <a class="sb-item" href="../python/21-asyncio-shi-zhan.html"><span class="sb-item-num">21</span><span class="sb-item-title">asyncio 实战</span></a>
+        <a class="sb-item" href="../python/22-gou-jian-yu-fa-bu.html"><span class="sb-item-num">22</span><span class="sb-item-title">构建与发布</span></a>
+        <a class="sb-item" href="../python/23-gong-cheng-hua-gong-ju-lian.html"><span class="sb-item-num">23</span><span class="sb-item-title">工程化工具链</span></a>
+        <a class="sb-item" href="../python/24-monorepo-yu-tiao-shi.html"><span class="sb-item-num">24</span><span class="sb-item-title">monorepo 与调试</span></a>
+        <a class="sb-item" href="../python/25-jupyter-jiao-hu-huan-jing.html"><span class="sb-item-num">25</span><span class="sb-item-title">Jupyter 交互环境</span></a>
+        <a class="sb-item" href="../python/26-numpy-shu-zu-yu-xiang-liang-hua.html"><span class="sb-item-num">26</span><span class="sb-item-title">NumPy 数组与向量化</span></a>
+        <a class="sb-item" href="../python/27-pandas-shu-ju-jie-gou.html"><span class="sb-item-num">27</span><span class="sb-item-title">Pandas 数据结构</span></a>
+        <a class="sb-item" href="../python/28-pandas-shu-ju-qing-xi.html"><span class="sb-item-num">28</span><span class="sb-item-title">Pandas 数据清洗</span></a>
+        <a class="sb-item" href="../python/29-matplotlib-hui-tu-ti-xi.html"><span class="sb-item-num">29</span><span class="sb-item-title">Matplotlib 绘图体系</span></a>
+        <a class="sb-item" href="../python/30-matplotlib-dong-hua-yu-jiao-hu.html"><span class="sb-item-num">30</span><span class="sb-item-title">Matplotlib 动画与交互</span></a>
+        <a class="sb-item" href="../python/31-seaborn-tong-ji-ke-shi-hua.html"><span class="sb-item-num">31</span><span class="sb-item-title">Seaborn 统计可视化</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="agent">
+      <a class="sb-group-title" href="../modules/agent.html" data-toggle="agent">
+        <span class="sb-num">02</span>
+        <span class="sb-group-text"><b>Agent 核心</b><i>15 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../agent/01-token-yu-ci-qian-ru.html"><span class="sb-item-num">01</span><span class="sb-item-title">Token 与词嵌入</span></a>
+        <a class="sb-item" href="../agent/02-qian-xiang-chuan-bo-yu-fan-xiang-chuan-bo.html"><span class="sb-item-num">02</span><span class="sb-item-title">前向传播与反向传播</span></a>
+        <a class="sb-item" href="../agent/03-zhu-yi-li-ji-zhi-yu-transformer-jia-gou.html"><span class="sb-item-num">03</span><span class="sb-item-title">注意力机制与 Transformer 架构</span></a>
+        <a class="sb-item" href="../agent/04-yu-xun-lian-rlhf-yu-cai-yang-kv-cache.html"><span class="sb-item-num">04</span><span class="sb-item-title">预训练、RLHF 与采样（KV Cache）</span></a>
+        <a class="sb-item" href="../agent/05-ben-di-mo-xing-yu-xiao-xi-jie-gou.html"><span class="sb-item-num">05</span><span class="sb-item-title">本地模型与消息结构</span></a>
+        <a class="sb-item" href="../agent/06-hui-hua-guan-li-yu-json-shu-chu.html"><span class="sb-item-num">06</span><span class="sb-item-title">会话管理与 JSON 输出</span></a>
+        <a class="sb-item" href="../agent/07-tool-calling-xie-yi-yu-feng-zhuang.html"><span class="sb-item-num">07</span><span class="sb-item-title">Tool Calling：协议与封装</span></a>
+        <a class="sb-item" href="../agent/08-react-mo-shi-yu-zhu-xun-huan.html"><span class="sb-item-num">08</span><span class="sb-item-title">ReAct 模式与主循环</span></a>
+        <a class="sb-item" href="../agent/09-shi-zhan-deep-research-agent.html"><span class="sb-item-num">09</span><span class="sb-item-title">实战：Deep Research Agent</span></a>
+        <a class="sb-item" href="../agent/10-skill-yu-jian-jin-shi-pi-lu.html"><span class="sb-item-num">10</span><span class="sb-item-title">Skill 与渐进式披露</span></a>
+        <a class="sb-item" href="../agent/11-mcp-quan-jing.html"><span class="sb-item-num">11</span><span class="sb-item-title">MCP 全景</span></a>
+        <a class="sb-item" href="../agent/12-duo-agent-yu-xuan-xing-ce-lve.html"><span class="sb-item-num">12</span><span class="sb-item-title">多 Agent 与选型策略</span></a>
+        <a class="sb-item" href="../agent/13-ti-shi-ci-gong-cheng-yu-shang-xia-wen-gong.html"><span class="sb-item-num">13</span><span class="sb-item-title">提示词工程与上下文工程</span></a>
+        <a class="sb-item" href="../agent/14-xun-huan-tu-yu-gu-jia-gong-cheng.html"><span class="sb-item-num">14</span><span class="sb-item-title">循环、图与骨架工程</span></a>
+        <a class="sb-item" href="../agent/15-ji-yi-quan-xian-yu-ping-ce.html"><span class="sb-item-num">15</span><span class="sb-item-title">记忆、权限与评测</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="langchain">
+      <a class="sb-group-title" href="../modules/langchain.html" data-toggle="langchain">
+        <span class="sb-num">03</span>
+        <span class="sb-group-text"><b>LangChain 指南</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langchain/01-ren-shi-langchain.html"><span class="sb-item-num">01</span><span class="sb-item-title">认识 LangChain</span></a>
+        <a class="sb-item" href="../langchain/02-ti-shi-ci-mu-ban-yu-xiao-xi.html"><span class="sb-item-num">02</span><span class="sb-item-title">提示词模板与消息</span></a>
+        <a class="sb-item" href="../langchain/03-lcel-yu-runnable.html"><span class="sb-item-num">03</span><span class="sb-item-title">LCEL 与 Runnable</span></a>
+        <a class="sb-item" href="../langchain/04-liu-shi-yu-bing-fa.html"><span class="sb-item-num">04</span><span class="sb-item-title">流式与并发</span></a>
+        <a class="sb-item" href="../langchain/05-shu-chu-jie-xi-qi.html"><span class="sb-item-num">05</span><span class="sb-item-title">输出解析器</span></a>
+        <a class="sb-item" href="../langchain/06-wen-dang-jia-zai-yu-qie-ge.html"><span class="sb-item-num">06</span><span class="sb-item-title">文档加载与切割</span></a>
+        <a class="sb-item" href="../langchain/07-qian-ru-yu-xiang-liang-ku.html"><span class="sb-item-num">07</span><span class="sb-item-title">嵌入与向量库</span></a>
+        <a class="sb-item" href="../langchain/08-jian-suo-yu-rag.html"><span class="sb-item-num">08</span><span class="sb-item-title">检索与RAG</span></a>
+        <a class="sb-item" href="../langchain/09-dui-hua-ji-yi.html"><span class="sb-item-num">09</span><span class="sb-item-title">对话记忆</span></a>
+        <a class="sb-item" href="../langchain/10-gong-ju-diao-yong.html"><span class="sb-item-num">10</span><span class="sb-item-title">工具调用</span></a>
+        <a class="sb-item" href="../langchain/11-agent.html"><span class="sb-item-num">11</span><span class="sb-item-title">Agent</span></a>
+        <a class="sb-item" href="../langchain/12-hui-diao-yu-tiao-shi-quan-ke-cheng-shou-guan.html"><span class="sb-item-num">12</span><span class="sb-item-title">回调与调试（全课程收官章）</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="langgraph">
+      <a class="sb-group-title" href="../modules/langgraph.html" data-toggle="langgraph">
+        <span class="sb-num">04</span>
+        <span class="sb-group-text"><b>LangGraph 框架指南</b><i>17 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langgraph/01-di-1-zhang-cong-yi-ge-shi-kong-de-jiao.html"><span class="sb-item-num">01</span><span class="sb-item-title">第 1 章 从一个失控的脚本说起</span></a>
+        <a class="sb-item" href="../langgraph/02-di-2-zhang-zui-xiao-ke-yun-xing-tu.html"><span class="sb-item-num">02</span><span class="sb-item-title">第 2 章 最小可运行图</span></a>
+        <a class="sb-item" href="../langgraph/03-di-3-zhang-zhuang-tai-tu-de-shu-ju-xin.html"><span class="sb-item-num">03</span><span class="sb-item-title">第 3 章 状态：图的数据心脏</span></a>
+        <a class="sb-item" href="../langgraph/04-di-4-zhang-rang-liu-cheng-xue-hui-jue-ce.html"><span class="sb-item-num">04</span><span class="sb-item-title">第 4 章 让流程学会决策</span></a>
+        <a class="sb-item" href="../langgraph/05-di-5-zhang-bing-xing-shi-jie-chao-bu-zhi.html"><span class="sb-item-num">05</span><span class="sb-item-title">第 5 章 并行世界：超步执行模型</span></a>
+        <a class="sb-item" href="../langgraph/06-di-6-zhang-command-ba-kong-zhi-quan-jiao-jin.html"><span class="sb-item-num">06</span><span class="sb-item-title">第 6 章 Command：把控制权交进节点</span></a>
+        <a class="sb-item" href="../langgraph/07-di-7-zhang-dong-tai-bing-xing-send-yu-mapreduce.html"><span class="sb-item-num">07</span><span class="sb-item-title">第 7 章 动态并行：Send 与 MapReduce</span></a>
+        <a class="sb-item" href="../langgraph/08-di-8-zhang-gei-tu-zhuang-shang-shou-jiao-gong.html"><span class="sb-item-num">08</span><span class="sb-item-title">第 8 章 给图装上手脚：工具调用</span></a>
+        <a class="sb-item" href="../langgraph/09-di-9-zhang-fu-yong-yu-feng-zhuang-zi-tu.html"><span class="sb-item-num">09</span><span class="sb-item-title">第 9 章 复用与封装：子图</span></a>
+        <a class="sb-item" href="../langgraph/10-di-10-zhang-cong-dan-tu-dao-tuan-dui-duo.html"><span class="sb-item-num">10</span><span class="sb-item-title">第 10 章 从单图到团队：多 Agent 架构</span></a>
+        <a class="sb-item" href="../langgraph/11-di-11-zhang-liu-shi-shu-chu.html"><span class="sb-item-num">11</span><span class="sb-item-title">第 11 章 流式输出</span></a>
+        <a class="sb-item" href="../langgraph/12-di-12-zhang-chi-jiu-hua-checkpointer-yu-xian-cheng.html"><span class="sb-item-num">12</span><span class="sb-item-title">第 12 章 持久化：Checkpointer 与线程</span></a>
+        <a class="sb-item" href="../langgraph/13-di-13-zhang-shi-jian-lv-xing.html"><span class="sb-item-num">13</span><span class="sb-item-title">第 13 章 时间旅行</span></a>
+        <a class="sb-item" href="../langgraph/14-di-14-zhang-zhong-duan-yu-ren-zai-hui-lu.html"><span class="sb-item-num">14</span><span class="sb-item-title">第 14 章 中断与人在回路</span></a>
+        <a class="sb-item" href="../langgraph/15-di-15-zhang-ji-yi-guan-li.html"><span class="sb-item-num">15</span><span class="sb-item-title">第 15 章 记忆管理</span></a>
+        <a class="sb-item" href="../langgraph/16-di-16-zhang-rong-cuo-zhong-shi-chao-shi-yu.html"><span class="sb-item-num">16</span><span class="sb-item-title">第 16 章 容错：重试、超时与兜底</span></a>
+        <a class="sb-item" href="../langgraph/17-di-17-zhang-quan-jing-hui-gu.html"><span class="sb-item-num">17</span><span class="sb-item-title">第 17 章 全景回顾</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="backend">
+      <a class="sb-group-title" href="../modules/backend.html" data-toggle="backend">
+        <span class="sb-num">05</span>
+        <span class="sb-group-text"><b>Python 框架指南</b><i>14 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../backend/01-fastapi-ru-men-yu-asgi.html"><span class="sb-item-num">01</span><span class="sb-item-title">FastAPI 入门与 ASGI</span></a>
+        <a class="sb-item" href="../backend/02-lu-you-yu-qing-qiu-xiang-ying.html"><span class="sb-item-num">02</span><span class="sb-item-title">路由与请求响应</span></a>
+        <a class="sb-item" href="../backend/03-pydantic-shu-ju-jiao-yan-yu-pei-zhi.html"><span class="sb-item-num">03</span><span class="sb-item-title">Pydantic 数据校验与配置</span></a>
+        <a class="sb-item" href="../backend/04-sqlalchemy-yi-bu-yin-qing-yu-hui-hua.html"><span class="sb-item-num">04</span><span class="sb-item-title">SQLAlchemy 异步引擎与会话</span></a>
+        <a class="sb-item" href="../backend/05-orm-jian-mo.html"><span class="sb-item-num">05</span><span class="sb-item-title">ORM 建模</span></a>
+        <a class="sb-item" href="../backend/06-sql-biao-da-shi-yu-shu-ju-cao-zuo.html"><span class="sb-item-num">06</span><span class="sb-item-title">SQL 表达式与数据操作</span></a>
+        <a class="sb-item" href="../backend/07-alembic-shu-ju-qian-yi.html"><span class="sb-item-num">07</span><span class="sb-item-title">Alembic 数据迁移</span></a>
+        <a class="sb-item" href="../backend/08-yi-lai-zhu-ru.html"><span class="sb-item-num">08</span><span class="sb-item-title">依赖注入</span></a>
+        <a class="sb-item" href="../backend/09-tong-yi-yi-chang-chu-li.html"><span class="sb-item-num">09</span><span class="sb-item-title">统一异常处理</span></a>
+        <a class="sb-item" href="../backend/10-zhong-jian-jian.html"><span class="sb-item-num">10</span><span class="sb-item-title">中间件</span></a>
+        <a class="sb-item" href="../backend/11-ren-zheng-yu-jwt.html"><span class="sb-item-num">11</span><span class="sb-item-title">认证与 JWT</span></a>
+        <a class="sb-item" href="../backend/12-pytest-ce-shi.html"><span class="sb-item-num">12</span><span class="sb-item-title">pytest 测试</span></a>
+        <a class="sb-item" href="../backend/13-ri-zhi-loguru.html"><span class="sb-item-num">13</span><span class="sb-item-title">日志 loguru</span></a>
+        <a class="sb-item" href="../backend/14-liu-shi-xiang-ying-sse-yu-websocket.html"><span class="sb-item-num">14</span><span class="sb-item-title">流式响应 SSE 与 WebSocket</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="interview">
+      <a class="sb-group-title" href="../modules/interview.html" data-toggle="interview">
+        <span class="sb-num">06</span>
+        <span class="sb-group-text"><b>面试题库</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../interview/01-llm-yuan-li-pian.html"><span class="sb-item-num">01</span><span class="sb-item-title">LLM 原理篇</span></a>
+        <a class="sb-item" href="../interview/02-rag-yu-jian-suo-pian.html"><span class="sb-item-num">02</span><span class="sb-item-title">RAG 与检索篇</span></a>
+        <a class="sb-item" href="../interview/03-agent-he-xin-pian.html"><span class="sb-item-num">03</span><span class="sb-item-title">Agent 核心篇</span></a>
+        <a class="sb-item" href="../interview/04-langgraph-pian.html"><span class="sb-item-num">04</span><span class="sb-item-title">LangGraph 篇</span></a>
+        <a class="sb-item" href="../interview/05-langchain-pian.html"><span class="sb-item-num">05</span><span class="sb-item-title">LangChain 篇</span></a>
+        <a class="sb-item" href="../interview/06-xi-tong-she-ji-pian.html"><span class="sb-item-num">06</span><span class="sb-item-title">系统设计篇</span></a>
+        <a class="sb-item" href="../interview/07-xiang-mu-shen-wa-pian.html"><span class="sb-item-num">07</span><span class="sb-item-title">项目深挖篇</span></a>
+        <a class="sb-item" href="../interview/08-gu-zhang-pai-cha-pian.html"><span class="sb-item-num">08</span><span class="sb-item-title">故障排查篇</span></a>
+        <a class="sb-item" href="../interview/09-python-ji-chu-pian.html"><span class="sb-item-num">09</span><span class="sb-item-title">Python 基础篇</span></a>
+        <a class="sb-item" href="../interview/10-fastapi-yu-hou-duan-pian.html"><span class="sb-item-num">10</span><span class="sb-item-title">FastAPI 与后端篇</span></a>
+        <a class="sb-item" href="../interview/11-ti-shi-ci-gong-cheng-yu-an-quan-pian.html"><span class="sb-item-num">11</span><span class="sb-item-title">提示词工程与安全篇</span></a>
+        <a class="sb-item" href="../interview/12-mo-xing-xuan-xing-yu-jiang-ben-pian.html"><span class="sb-item-num">12</span><span class="sb-item-title">模型选型与降本篇</span></a>
+      </div>
+    </section>
+  </nav>
+</aside>
+  <main class="main">
+    <header class="topbar">
+      <button class="menu-btn" id="menuBtn" aria-label="目录">☰</button>
+      <div class="crumbs"><a href="../index.html">首页</a><span>/</span><a href="../modules/python.html">Python 与数据实践</a><span>/</span><span class="cur">序列、字典与集合</span></div>
+      <div class="topbar-actions">
+        <button class="icon-btn" id="themeBtn" title="切换深浅色" aria-label="切换深浅色">◐</button>
+      </div>
+    </header>
+    <div class="content">
+      <article class="article">
+
+<header class="page-head">
+  <div class="page-kicker">Python 与数据实践 · 第 03 章</div>
+  <h1 class="page-title">序列、字典与集合</h1>
+  <p class="page-desc">前面学过的变量，一次只能攥住一个值。可现实里的数据很少这么&quot;独来独往&quot;：一张订单挂着好几件商品，一张名片挤着姓名、电话、职位好几个字段，一个商品可能贴着一堆标签。Python 为这类&quot;批量数据&quot;准备了一整套内置的打包工具…</p>
+  <div class="page-meta">
+    <span>约 38 分钟</span><span>15,101 字</span><span>30 个代码示例</span>
+  </div>
+</header>
+<div class="md"><h2 id="一个变量装下一组数据">一个变量，装下一组数据</h2>
+<p>前面学过的变量，一次只能攥住一个值。可现实里的数据很少这么"独来独往"：一张订单挂着好几件商品，一张名片挤着姓名、电话、职位好几个字段，一个商品可能贴着一堆标签。Python 为这类"批量数据"准备了一整套内置的打包工具，统称容器。</p>
+<p>先来一张全家福：</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>俗称</th>
+<th>能否原地修改</th>
+<th>是否有序</th>
+<th>元素可否重复</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>list</code></td>
+<td>列表</td>
+<td>能</td>
+<td>有序</td>
+<td>可重复</td>
+<td><code>[1, 2, 2, 3]</code></td>
+</tr>
+<tr>
+<td><code>tuple</code></td>
+<td>元组</td>
+<td>不能</td>
+<td>有序</td>
+<td>可重复</td>
+<td><code>(1, 2, 3)</code></td>
+</tr>
+<tr>
+<td><code>dict</code></td>
+<td>字典</td>
+<td>能</td>
+<td>有序（3.7 版本起保证）</td>
+<td>键不可重复</td>
+<td><code>{"a": 1, "b": 2}</code></td>
+</tr>
+<tr>
+<td><code>set</code></td>
+<td>集合</td>
+<td>能</td>
+<td>无序</td>
+<td>不可重复</td>
+<td><code>{1, 2, 3}</code></td>
+</tr>
+<tr>
+<td><code>str</code></td>
+<td>字符串</td>
+<td>不能</td>
+<td>有序</td>
+<td>可重复</td>
+<td><code>"hello"</code></td>
+</tr>
+</tbody>
+</table>
+<p>顺带说一句：字符串其实也可以当成"一串排好队的字符"来用，本章的不少操作对它照样有效，讲解过程中会穿插演示。</p>
+<hr />
+<h2 id="列表随改随用的活页本">列表：随改随用的活页本</h2>
+<p>列表大概是日后出场率最高的容器——它有顺序、能随时往里加东西、删东西、改东西，装什么类型的元素都行。</p>
+<h3 id="怎么造一个列表">怎么造一个列表</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># 直接写出字面量</span>
+<span class="n">orders</span> <span class="o">=</span> <span class="p">[</span><span class="mi">301</span><span class="p">,</span> <span class="mi">302</span><span class="p">,</span> <span class="mi">303</span><span class="p">,</span> <span class="mi">304</span><span class="p">,</span> <span class="mi">305</span><span class="p">]</span>
+<span class="n">mixed_bag</span> <span class="o">=</span> <span class="p">[</span><span class="mi">42</span><span class="p">,</span> <span class="s2">"少冰"</span><span class="p">,</span> <span class="mf">3.5</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
+<span class="n">blank</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># 空列表，先备着，回头往里装</span>
+
+<span class="c1"># 用 list() 从别的数据转换而来</span>
+<span class="n">letters</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="s2">"abc"</span><span class="p">)</span>        <span class="c1"># ['a', 'b', 'c']</span>
+<span class="n">from_tuple</span> <span class="o">=</span> <span class="nb">list</span><span class="p">((</span><span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">))</span>  <span class="c1"># [7, 8, 9]</span>
+</code></pre></div>
+<h3 id="按位置取值索引与切片">按位置取值：索引与切片</h3>
+<div class="highlight"><pre><span></span><code><span class="n">menu</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"美式"</span><span class="p">,</span> <span class="s2">"拿铁"</span><span class="p">,</span> <span class="s2">"卡布奇诺"</span><span class="p">,</span> <span class="s2">"摩卡"</span><span class="p">,</span> <span class="s2">"冷萃"</span><span class="p">]</span>
+
+<span class="c1"># 索引从 0 开始数</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">menu</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>   <span class="c1"># 美式</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">menu</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>  <span class="c1"># 冷萃（负数表示从队尾倒着数）</span>
+
+<span class="c1"># 切片格式 [起点:终点:步长]，特点是"包头不包尾"</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">menu</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">4</span><span class="p">])</span>    <span class="c1"># ['拿铁', '卡布奇诺', '摩卡'] —— 落在区间 [1, 4) 内的元素</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">menu</span><span class="p">[:</span><span class="mi">3</span><span class="p">])</span>     <span class="c1"># ['美式', '拿铁', '卡布奇诺'] —— 起点不写就从头开始</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">menu</span><span class="p">[</span><span class="mi">2</span><span class="p">:])</span>     <span class="c1"># ['卡布奇诺', '摩卡', '冷萃'] —— 终点不写就取到队尾</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">menu</span><span class="p">[::</span><span class="mi">2</span><span class="p">])</span>    <span class="c1"># ['美式', '卡布奇诺', '冷萃'] —— 步长 2，隔一个取一个</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">menu</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">4</span><span class="p">:</span><span class="mi">2</span><span class="p">])</span>  <span class="c1"># ['拿铁', '摩卡'] —— 区间 [1, 4)，步长 2</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">menu</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>   <span class="c1"># ['冷萃', '摩卡', '卡布奇诺', '拿铁', '美式'] —— 步长为负，整串倒着走</span>
+</code></pre></div>
+<h3 id="增删改查一把抓">增删改查一把抓</h3>
+<div class="highlight"><pre><span></span><code><span class="n">queue</span> <span class="o">=</span> <span class="p">[</span><span class="mi">11</span><span class="p">,</span> <span class="mi">22</span><span class="p">,</span> <span class="mi">33</span><span class="p">]</span>
+
+<span class="c1"># 往里加</span>
+<span class="n">queue</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">44</span><span class="p">)</span>        <span class="c1"># [11, 22, 33, 44]      追加到队尾</span>
+<span class="n">queue</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>      <span class="c1"># [5, 11, 22, 33, 44]   插队到指定位置</span>
+<span class="n">queue</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="mi">55</span><span class="p">,</span> <span class="mi">66</span><span class="p">])</span>  <span class="c1"># [5, 11, 22, 33, 44, 55, 66]  把另一份列表整个接上来</span>
+
+<span class="c1"># 往外删</span>
+<span class="n">queue</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>      <span class="c1"># [11, 22, 33, 44, 55, 66]  按值删，只删碰到的第一个</span>
+<span class="n">tail</span> <span class="o">=</span> <span class="n">queue</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>   <span class="c1"># 66，队列变为 [11, 22, 33, 44, 55]  弹出队尾并返回</span>
+<span class="n">head</span> <span class="o">=</span> <span class="n">queue</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># 11，队列变为 [22, 33, 44, 55]      弹出指定位置并返回</span>
+<span class="k">del</span> <span class="n">queue</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>         <span class="c1"># [33, 44, 55]  按位置删</span>
+<span class="n">queue</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>        <span class="c1"># []             一键清空</span>
+
+<span class="c1"># 查位置、数次数</span>
+<span class="n">votes</span> <span class="o">=</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">40</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">votes</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="mi">20</span><span class="p">))</span>  <span class="c1"># 1  第一次出现的位置</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">votes</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="mi">20</span><span class="p">))</span>  <span class="c1"># 2  总共出现了几回</span>
+
+<span class="c1"># 排序与翻转（会直接改动原列表）</span>
+<span class="n">fares</span> <span class="o">=</span> <span class="p">[</span><span class="mi">23</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">42</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">15</span><span class="p">]</span>
+<span class="n">fares</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>              <span class="c1"># [8, 8, 15, 23, 42]  从小到大，原地排</span>
+<span class="n">fares</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># [42, 23, 15, 8, 8]  从大到小</span>
+<span class="n">fares</span><span class="o">.</span><span class="n">reverse</span><span class="p">()</span>           <span class="c1"># [8, 8, 15, 23, 42]  原地翻转</span>
+
+<span class="c1"># 想保留原始顺序？改用 sorted()，它返回新列表</span>
+<span class="n">fares</span> <span class="o">=</span> <span class="p">[</span><span class="mi">23</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">42</span><span class="p">]</span>
+<span class="n">ordered</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">fares</span><span class="p">)</span>   <span class="c1"># [8, 23, 42]，fares 本身原封不动</span>
+
+<span class="c1"># 修改指定位置</span>
+<span class="n">fares</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">99</span>   <span class="c1"># [99, 8, 42]</span>
+<span class="c1"># fares[3] = 1  # IndexError: list assignment index out of range</span>
+</code></pre></div>
+<hr />
+<h2 id="元组一次定稿终身只读">元组：一次定稿、终身只读</h2>
+<p>元组像是"塑封"过的列表：内容一旦写好就不许再动。适合存放那些不该被意外修改的数据，比如坐标、配置项。</p>
+<h3 id="怎么造一个元组">怎么造一个元组</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># 字面量写法，圆括号可以偷懒不写</span>
+<span class="n">pixel</span> <span class="o">=</span> <span class="p">(</span><span class="mi">120</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">60</span><span class="p">)</span>
+<span class="n">pixel</span> <span class="o">=</span> <span class="mi">120</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">60</span>    <span class="c1"># 和上面完全等价</span>
+<span class="n">single</span> <span class="o">=</span> <span class="p">(</span><span class="mi">9</span><span class="p">,)</span>           <span class="c1"># 只有一个元素时，逗号不能省！写成 (9) 只是个普通数字</span>
+<span class="n">empty</span> <span class="o">=</span> <span class="p">()</span>              <span class="c1"># 空元组</span>
+
+<span class="c1"># 用 tuple() 转换</span>
+<span class="n">t</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">([</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">])</span>    <span class="c1"># (4, 5, 6)</span>
+<span class="n">t</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="s2">"hi"</span><span class="p">)</span>         <span class="c1"># ('h', 'i')</span>
+</code></pre></div>
+<h3 id="能做什么不能做什么">能做什么、不能做什么</h3>
+<div class="highlight"><pre><span></span><code><span class="n">t</span> <span class="o">=</span> <span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">12</span><span class="p">)</span>
+
+<span class="c1"># 索引和切片，玩法与列表完全一致</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>    <span class="c1"># 6</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>   <span class="c1"># 12</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">4</span><span class="p">])</span>  <span class="c1"># (3, 9, 3)</span>
+
+<span class="c1"># 查询没问题</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>  <span class="c1"># 1</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>  <span class="c1"># 2</span>
+<span class="nb">print</span><span class="p">(</span><span class="mi">9</span> <span class="ow">in</span> <span class="n">t</span><span class="p">)</span>      <span class="c1"># True</span>
+
+<span class="c1"># 但改动是禁区</span>
+<span class="c1"># t[0] = 66   # TypeError: 'tuple' object does not support item assignment</span>
+<span class="c1"># t.append(7) # AttributeError</span>
+</code></pre></div>
+<h3 id="解包一口气把值分给多个变量">解包：一口气把值分给多个变量</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># 基础解包</span>
+<span class="n">rgb</span> <span class="o">=</span> <span class="p">(</span><span class="mi">52</span><span class="p">,</span> <span class="mi">96</span><span class="p">,</span> <span class="mi">235</span><span class="p">)</span>
+<span class="n">r</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="n">rgb</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>  <span class="c1"># 52 96 235</span>
+
+<span class="c1"># 星号解包：剩下的统统归它</span>
+<span class="n">head</span><span class="p">,</span> <span class="o">*</span><span class="n">tail</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">head</span><span class="p">)</span>  <span class="c1"># 1</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">tail</span><span class="p">)</span>  <span class="c1"># [2, 3, 4]</span>
+
+<span class="o">*</span><span class="n">front</span><span class="p">,</span> <span class="n">tail</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">front</span><span class="p">)</span>  <span class="c1"># [1, 2, 3]</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">tail</span><span class="p">)</span>   <span class="c1"># 4</span>
+
+<span class="c1"># 交换两个变量的经典写法</span>
+<span class="n">left</span><span class="p">,</span> <span class="n">right</span> <span class="o">=</span> <span class="s2">"前"</span><span class="p">,</span> <span class="s2">"后"</span>
+<span class="n">left</span><span class="p">,</span> <span class="n">right</span> <span class="o">=</span> <span class="n">right</span><span class="p">,</span> <span class="n">left</span>  <span class="c1"># 现在 left="后"，right="前"</span>
+</code></pre></div>
+<hr />
+<h2 id="字典拿名字去查数据的登记簿">字典：拿"名字"去查数据的登记簿</h2>
+<p>字典不靠位置找数据，而是靠键（key）直达对应的值（value），查起来非常快。</p>
+<h3 id="怎么造一个字典">怎么造一个字典</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># 字面量写法</span>
+<span class="n">book</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">"title"</span><span class="p">:</span> <span class="s2">"三体"</span><span class="p">,</span>
+    <span class="s2">"author"</span><span class="p">:</span> <span class="s2">"刘慈欣"</span><span class="p">,</span>
+    <span class="s2">"year"</span><span class="p">:</span> <span class="mi">2008</span>
+<span class="p">}</span>
+<span class="n">empty</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># 空字典</span>
+
+<span class="c1"># 用 dict() 创建</span>
+<span class="n">book</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">"球状闪电"</span><span class="p">,</span> <span class="n">author</span><span class="o">=</span><span class="s2">"刘慈欣"</span><span class="p">,</span> <span class="n">year</span><span class="o">=</span><span class="mi">2004</span><span class="p">)</span>
+<span class="n">book</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">([(</span><span class="s2">"title"</span><span class="p">,</span> <span class="s2">"三体"</span><span class="p">),</span> <span class="p">(</span><span class="s2">"year"</span><span class="p">,</span> <span class="mi">2008</span><span class="p">)])</span>
+
+<span class="c1"># 拿一串键批量开空档，值先统一填充</span>
+<span class="n">shifts</span> <span class="o">=</span> <span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">([</span><span class="s2">"早班"</span><span class="p">,</span> <span class="s2">"中班"</span><span class="p">,</span> <span class="s2">"晚班"</span><span class="p">],</span> <span class="mi">0</span><span class="p">)</span>
+<span class="c1"># {'早班': 0, '中班': 0, '晚班': 0}</span>
+</code></pre></div>
+<h3 id="读与写">读与写</h3>
+<div class="highlight"><pre><span></span><code><span class="n">book</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"title"</span><span class="p">:</span> <span class="s2">"三体"</span><span class="p">,</span> <span class="s2">"author"</span><span class="p">:</span> <span class="s2">"刘慈欣"</span><span class="p">}</span>
+
+<span class="c1"># 读取：方括号直取</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">book</span><span class="p">[</span><span class="s2">"title"</span><span class="p">])</span>     <span class="c1"># 三体</span>
+<span class="c1"># print(book["price"])   # KeyError！键不存在就直接翻脸</span>
+
+<span class="c1"># 稳妥的读法：get，查不到也不炸</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">book</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"price"</span><span class="p">))</span>          <span class="c1"># None（不传默认值时）</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">book</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"price"</span><span class="p">,</span> <span class="s2">"未登记"</span><span class="p">))</span>  <span class="c1"># 未登记（给个兜底值）</span>
+
+<span class="c1"># 新增 / 修改</span>
+<span class="n">book</span><span class="p">[</span><span class="s2">"price"</span><span class="p">]</span> <span class="o">=</span> <span class="mf">45.5</span>   <span class="c1"># 原来没有这个键 → 新增</span>
+<span class="n">book</span><span class="p">[</span><span class="s2">"year"</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2008</span>    <span class="c1"># 已有这个键 → 覆盖旧值</span>
+
+<span class="c1"># 批量写入</span>
+<span class="n">book</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">"publisher"</span><span class="p">:</span> <span class="s2">"重庆出版社"</span><span class="p">,</span> <span class="s2">"year"</span><span class="p">:</span> <span class="mi">2008</span><span class="p">})</span>
+
+<span class="c1"># 删除</span>
+<span class="k">del</span> <span class="n">book</span><span class="p">[</span><span class="s2">"publisher"</span><span class="p">]</span>        <span class="c1"># 按键删</span>
+<span class="n">value</span> <span class="o">=</span> <span class="n">book</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">"price"</span><span class="p">)</span>    <span class="c1"># 删掉并顺手把值拿回来</span>
+<span class="n">last_item</span> <span class="o">=</span> <span class="n">book</span><span class="o">.</span><span class="n">popitem</span><span class="p">()</span>   <span class="c1"># 弹出最后写进来的那对键值（3.7 版本起）</span>
+<span class="n">book</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>                 <span class="c1"># 清空</span>
+</code></pre></div>
+<h3 id="两条铁律">两条铁律</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># 铁律一：键必须是不可变（可哈希）的类型</span>
+<span class="n">workable</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">"level"</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>       <span class="c1"># str ✓</span>
+    <span class="mi">1024</span><span class="p">:</span> <span class="s2">"内存"</span><span class="p">,</span>     <span class="c1"># int ✓</span>
+    <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">):</span> <span class="s2">"坐标"</span><span class="p">,</span>   <span class="c1"># tuple ✓</span>
+    <span class="c1"># [1, 2]: " Nope",  # list ✗ 列表可变，没法当键！</span>
+<span class="p">}</span>
+
+<span class="c1"># 铁律二：键天然去重，后来者覆盖先行者</span>
+<span class="n">floor</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"楼层"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"楼层"</span><span class="p">:</span> <span class="mi">3</span><span class="p">}</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">floor</span><span class="p">)</span>  <span class="c1"># {'楼层': 3}</span>
+</code></pre></div>
+<hr />
+<h2 id="集合自动去重的百宝袋">集合：自动去重的百宝袋</h2>
+<p>集合有两大人设：<strong>元素不重复、不讲究顺序</strong>。它还是做数学集合运算的一把好手。</p>
+<h3 id="怎么造一个集合">怎么造一个集合</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># 字面量写法，重复的元素会被自动吞掉</span>
+<span class="n">labels</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"新品"</span><span class="p">,</span> <span class="s2">"热销"</span><span class="p">,</span> <span class="s2">"新品"</span><span class="p">,</span> <span class="s2">"热销"</span><span class="p">}</span>  <span class="c1"># {'新品', '热销'}</span>
+<span class="n">empty</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>  <span class="c1"># 注意：空集合必须用 set()，写成 {} 造出来的是空字典！</span>
+
+<span class="c1"># 用 set() 转换</span>
+<span class="n">nums</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>  <span class="c1"># {1, 2, 3}</span>
+<span class="n">chars</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="s2">"moon"</span><span class="p">)</span>       <span class="c1"># {'m', 'o', 'n'}</span>
+</code></pre></div>
+<h3 id="集合的日常操作">集合的日常操作</h3>
+<div class="highlight"><pre><span></span><code><span class="n">s</span> <span class="o">=</span> <span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">}</span>
+
+<span class="c1"># 添加与删除</span>
+<span class="n">s</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>        <span class="c1"># {1, 2, 3, 4}</span>
+<span class="n">s</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>     <span class="c1"># {1, 3, 4} —— 要删的元素不存在会抛 KeyError</span>
+<span class="n">s</span><span class="o">.</span><span class="n">discard</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>   <span class="c1"># 删不存在的元素也一声不吭，不报错</span>
+<span class="n">s</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>         <span class="c1"># 随机弹出一个元素并返回（谁先谁后说不准）</span>
+<span class="n">s</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>       <span class="c1"># set()</span>
+
+<span class="c1"># 去重是集合的主场</span>
+<span class="n">orders</span> <span class="o">=</span> <span class="p">[</span><span class="mi">501</span><span class="p">,</span> <span class="mi">502</span><span class="p">,</span> <span class="mi">501</span><span class="p">,</span> <span class="mi">503</span><span class="p">,</span> <span class="mi">502</span><span class="p">,</span> <span class="mi">502</span><span class="p">]</span>
+<span class="n">unique</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">orders</span><span class="p">))</span>  <span class="c1"># [501, 502, 503]（顺序不保证）</span>
+</code></pre></div>
+<hr />
+<h2 id="五类容器通吃的工具函数">五类容器通吃的工具函数</h2>
+<p>下面这批内置函数，<code>list</code>、<code>tuple</code>、<code>dict</code>、<code>set</code>、<code>str</code> 全部适用：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># len() —— 数一数有多少个元素</span>
+<span class="nb">len</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>         <span class="c1"># 3</span>
+<span class="nb">len</span><span class="p">((</span><span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">))</span>         <span class="c1"># 3</span>
+<span class="nb">len</span><span class="p">({</span><span class="s2">"冷萃"</span><span class="p">:</span> <span class="mi">12</span><span class="p">,</span> <span class="s2">"拿铁"</span><span class="p">:</span> <span class="mi">8</span><span class="p">})</span>  <span class="c1"># 2（按键值对计数）</span>
+<span class="nb">len</span><span class="p">(</span><span class="s2">"cake"</span><span class="p">)</span>            <span class="c1"># 4</span>
+
+<span class="c1"># max() / min() —— 挑最大、挑最小</span>
+<span class="nb">max</span><span class="p">([</span><span class="mi">23</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">42</span><span class="p">,</span> <span class="mi">15</span><span class="p">])</span>   <span class="c1"># 42</span>
+<span class="nb">min</span><span class="p">((</span><span class="mi">6</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>         <span class="c1"># 1</span>
+<span class="nb">max</span><span class="p">(</span><span class="s2">"cake"</span><span class="p">)</span>            <span class="c1"># 'k'（按字符编码比较）</span>
+
+<span class="c1"># sum() —— 求和（元素得是数字）</span>
+<span class="nb">sum</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">8</span><span class="p">])</span>      <span class="c1"># 20</span>
+<span class="nb">sum</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>         <span class="c1"># 6</span>
+
+<span class="c1"># sorted() —— 排序，一律返回新列表</span>
+<span class="nb">sorted</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>               <span class="c1"># [1, 2, 3]</span>
+<span class="nb">sorted</span><span class="p">((</span><span class="mi">9</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="p">))</span>               <span class="c1"># [5, 7, 9] —— 元组进来，列表出去</span>
+<span class="nb">sorted</span><span class="p">(</span><span class="s2">"onion"</span><span class="p">)</span>                 <span class="c1"># ['i', 'n', 'n', 'o', 'o']</span>
+<span class="nb">sorted</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># [3, 2, 1]</span>
+
+<span class="c1"># reversed() —— 反转，返回的是迭代器，套一层 list() 再看</span>
+<span class="nb">list</span><span class="p">(</span><span class="nb">reversed</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]))</span>  <span class="c1"># [3, 2, 1]</span>
+<span class="nb">list</span><span class="p">(</span><span class="nb">reversed</span><span class="p">(</span><span class="s2">"abc"</span><span class="p">))</span>      <span class="c1"># ['c', 'b', 'a']</span>
+</code></pre></div>
+<hr />
+<h2 id="容器身边的运算符">容器身边的运算符</h2>
+<h3 id="判断在不在in-not-in">判断"在不在"：<code>in</code> / <code>not in</code></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># 列表</span>
+<span class="mi">42</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">23</span><span class="p">,</span> <span class="mi">42</span><span class="p">,</span> <span class="mi">8</span><span class="p">]</span>      <span class="c1"># True</span>
+<span class="mi">9</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">23</span><span class="p">,</span> <span class="mi">42</span><span class="p">,</span> <span class="mi">8</span><span class="p">]</span>   <span class="c1"># True</span>
+
+<span class="c1"># 元组</span>
+<span class="s2">"春"</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"春"</span><span class="p">,</span> <span class="s2">"夏"</span><span class="p">,</span> <span class="s2">"秋"</span><span class="p">)</span>  <span class="c1"># True</span>
+
+<span class="c1"># 字符串 —— 查的是子串</span>
+<span class="s2">"ca"</span> <span class="ow">in</span> <span class="s2">"cake"</span>      <span class="c1"># True</span>
+<span class="s2">"z"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="s2">"cake"</span>   <span class="c1"># True</span>
+
+<span class="c1"># 字典 —— 查的是键，跟值没关系</span>
+<span class="s2">"冷萃"</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">"冷萃"</span><span class="p">:</span> <span class="mi">12</span><span class="p">,</span> <span class="s2">"拿铁"</span><span class="p">:</span> <span class="mi">8</span><span class="p">}</span>   <span class="c1"># True</span>
+<span class="mi">12</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">"冷萃"</span><span class="p">:</span> <span class="mi">12</span><span class="p">,</span> <span class="s2">"拿铁"</span><span class="p">:</span> <span class="mi">8</span><span class="p">}</span>      <span class="c1"># False</span>
+
+<span class="c1"># 集合</span>
+<span class="mi">2</span> <span class="ow">in</span> <span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">}</span>       <span class="c1"># True</span>
+</code></pre></div>
+<h3 id="拼接与复制-与">拼接与复制：<code>+</code> 与 <code>*</code></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># + 拼接（只有有序容器支持）</span>
+<span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]</span>      <span class="c1"># [1, 2, 3, 4]</span>
+<span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>      <span class="c1"># (1, 2, 3, 4)</span>
+<span class="s2">"hot"</span> <span class="o">+</span> <span class="s2">"dog"</span>        <span class="c1"># "hotdog"</span>
+<span class="c1"># {1, 2} + {3, 4}    # TypeError！集合不吃这一套</span>
+
+<span class="c1"># * 复制（同样只限有序容器）</span>
+<span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span>           <span class="c1"># [0, 1, 0, 1, 0, 1]</span>
+<span class="s2">"~"</span> <span class="o">*</span> <span class="mi">8</span>              <span class="c1"># "~~~~~~~~"</span>
+</code></pre></div>
+<h3 id="比内容">比内容：<code>==</code> / <code>!=</code></h3>
+<p><code>==</code> 关心的是两个容器<strong>装的东西是否一样</strong>，而不是它们是不是同一个对象。</p>
+<p><strong>判定的四步逻辑：</strong></p>
+<ol>
+<li><strong>类型先对上</strong>：类型不同，哪怕内容看着一样也不算相等，<code>[1, 2] == (1, 2)</code> 是 <code>False</code>。</li>
+<li><strong>长度得一样</strong>：长度对不上，直接判不等。</li>
+<li><strong>逐个位置比</strong>：从第 0 位开始一对一对地比；碰到嵌套容器，会一层层递归往里比。</li>
+<li><strong>元素自己说了算</strong>：容器不掺和元素怎么算相等，而是调用元素自己的比较逻辑，所以 <code>[1, 2] == [1.0, 2.0]</code> 是 <code>True</code>。</li>
+</ol>
+<div class="highlight"><pre><span></span><code><span class="c1"># 基本比较</span>
+<span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">]</span> <span class="o">==</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">]</span>    <span class="c1"># True，内容一致</span>
+<span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">]</span> <span class="o">==</span> <span class="p">[</span><span class="mi">6</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>    <span class="c1"># False，顺序也是内容的一部分</span>
+
+<span class="c1"># 类型不同</span>
+<span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>          <span class="c1"># False</span>
+
+<span class="c1"># 嵌套结构递归比较</span>
+<span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">]]</span> <span class="o">==</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">]]</span>  <span class="c1"># True</span>
+
+<span class="c1"># 字典只看键值对是否一致</span>
+<span class="p">{</span><span class="s2">"a"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"b"</span><span class="p">:</span> <span class="mi">2</span><span class="p">}</span> <span class="o">==</span> <span class="p">{</span><span class="s2">"b"</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">"a"</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>  <span class="c1"># True，书写顺序不影响</span>
+</code></pre></div>
+<blockquote>
+<p><strong>提醒</strong>：<code>==</code> 判断的是<strong>值相等</strong>，不是<strong>身份相同</strong>（内存里是不是同一个对象）。想知道身份，得用下面的 <code>is</code>。</p>
+</blockquote>
+<h3 id="比身份is-is-not">比身份：<code>is</code> / <code>is not</code></h3>
+<p><code>is</code> 回答的问题是：两个变量是不是指着内存里<strong>同一个对象</strong>？等价于比较它们的 <code>id()</code>。</p>
+<div class="highlight"><pre><span></span><code><span class="n">a</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+<span class="n">b</span> <span class="o">=</span> <span class="n">a</span>          <span class="c1"># b 和 a 指向同一个列表</span>
+<span class="n">c</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>  <span class="c1"># c 另起炉灶，新建了一个列表</span>
+
+<span class="n">a</span> <span class="ow">is</span> <span class="n">b</span>        <span class="c1"># True，确实是同一个对象</span>
+<span class="n">a</span> <span class="ow">is</span> <span class="n">c</span>        <span class="c1"># False，内容虽同，对象是两个</span>
+<span class="n">a</span> <span class="o">==</span> <span class="n">c</span>        <span class="c1"># True，光看内容是相等的</span>
+<span class="n">a</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">c</span>    <span class="c1"># True</span>
+</code></pre></div>
+<p><strong>高频使用场景：</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 判断是否为 None —— 官方推荐写法</span>
+<span class="n">value</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"空值"</span><span class="p">)</span>
+
+<span class="c1"># 判断单例对象</span>
+<span class="n">flag</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">flag</span> <span class="ow">is</span> <span class="kc">True</span>  <span class="c1"># True</span>
+
+<span class="c1"># 小整数缓存：解释器的优化手段</span>
+<span class="n">a</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="n">b</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="n">a</span> <span class="ow">is</span> <span class="n">b</span>        <span class="c1"># True（-5 到 256 范围内的整数会被缓存共用）</span>
+
+<span class="n">x</span> <span class="o">=</span> <span class="mi">1000</span>
+<span class="n">y</span> <span class="o">=</span> <span class="mi">1000</span>
+<span class="n">x</span> <span class="ow">is</span> <span class="n">y</span>        <span class="c1"># False（通常如此，具体取决于解释器实现）</span>
+</code></pre></div>
+<blockquote>
+<p><strong>一句话分清</strong>：
+- <code>==</code> 问"你们俩长得一样吗？"（比值）
+- <code>is</code> 问"你们俩是同一个人吗？"（比身份）
+- 跟 <code>None</code> 比较时，<strong>永远用 <code>is</code></strong>，别用 <code>==</code></p>
+</blockquote>
+<h3 id="集合专属-">集合专属：<code>&amp;</code>、<code>|</code>、<code>-</code>、<code>^</code></h3>
+<p>这四个位运算符放在集合身上，含义摇身一变成了集合运算：</p>
+<div class="highlight"><pre><span></span><code><span class="n">vip_old</span> <span class="o">=</span> <span class="p">{</span><span class="mi">101</span><span class="p">,</span> <span class="mi">102</span><span class="p">,</span> <span class="mi">103</span><span class="p">}</span>
+<span class="n">vip_new</span> <span class="o">=</span> <span class="p">{</span><span class="mi">102</span><span class="p">,</span> <span class="mi">103</span><span class="p">,</span> <span class="mi">104</span><span class="p">}</span>
+
+<span class="c1"># &amp; 交集 —— 两边都有的</span>
+<span class="n">vip_old</span> <span class="o">&amp;</span> <span class="n">vip_new</span>   <span class="c1"># {102, 103}</span>
+
+<span class="c1"># | 并集 —— 两边合起来，自动去重</span>
+<span class="n">vip_old</span> <span class="o">|</span> <span class="n">vip_new</span>   <span class="c1"># {101, 102, 103, 104}</span>
+
+<span class="c1"># - 差集 —— 我有而你没有的</span>
+<span class="n">vip_old</span> <span class="o">-</span> <span class="n">vip_new</span>   <span class="c1"># {101}</span>
+<span class="n">vip_new</span> <span class="o">-</span> <span class="n">vip_old</span>   <span class="c1"># {104}</span>
+
+<span class="c1"># ^ 对称差集 —— 只属于其中一边的</span>
+<span class="n">vip_old</span> <span class="o">^</span> <span class="n">vip_new</span>   <span class="c1"># {101, 104}</span>
+
+<span class="c1"># ~ 是整数按位取反用的，跟集合没关系</span>
+</code></pre></div>
+<p><strong>两种写法对照：运算符 vs 方法名</strong></p>
+<div class="highlight"><pre><span></span><code><span class="n">vip_old</span> <span class="o">=</span> <span class="p">{</span><span class="mi">101</span><span class="p">,</span> <span class="mi">102</span><span class="p">,</span> <span class="mi">103</span><span class="p">}</span>
+<span class="n">vip_new</span> <span class="o">=</span> <span class="p">{</span><span class="mi">102</span><span class="p">,</span> <span class="mi">103</span><span class="p">,</span> <span class="mi">104</span><span class="p">}</span>
+
+<span class="c1"># 运算符风格</span>
+<span class="n">vip_old</span> <span class="o">&amp;</span> <span class="n">vip_new</span>   <span class="c1"># {102, 103}</span>
+<span class="n">vip_old</span> <span class="o">|</span> <span class="n">vip_new</span>   <span class="c1"># {101, 102, 103, 104}</span>
+<span class="n">vip_old</span> <span class="o">-</span> <span class="n">vip_new</span>   <span class="c1"># {101}</span>
+<span class="n">vip_old</span> <span class="o">^</span> <span class="n">vip_new</span>   <span class="c1"># {101, 104}</span>
+
+<span class="c1"># 方法风格（效果一样）</span>
+<span class="n">vip_old</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">vip_new</span><span class="p">)</span>          <span class="c1"># {102, 103}</span>
+<span class="n">vip_old</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">vip_new</span><span class="p">)</span>                 <span class="c1"># {101, 102, 103, 104}</span>
+<span class="n">vip_old</span><span class="o">.</span><span class="n">difference</span><span class="p">(</span><span class="n">vip_new</span><span class="p">)</span>            <span class="c1"># {101}</span>
+<span class="n">vip_old</span><span class="o">.</span><span class="n">symmetric_difference</span><span class="p">(</span><span class="n">vip_new</span><span class="p">)</span>  <span class="c1"># {101, 104}</span>
+</code></pre></div>
+<blockquote>
+<p><strong>注意</strong>：这四个符号只对集合（set）生效，套在 <code>list</code>、<code>tuple</code>、<code>dict</code> 上会直接报错。</p>
+</blockquote>
+<hr />
+<h2 id="遍历容器的几种姿势">遍历容器的几种姿势</h2>
+<h3 id="最朴素的-for">最朴素的 for</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># 列表</span>
+<span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">30</span><span class="p">]:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+
+<span class="c1"># 元组</span>
+<span class="k">for</span> <span class="n">season</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"春"</span><span class="p">,</span> <span class="s2">"夏"</span><span class="p">,</span> <span class="s2">"秋"</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">season</span><span class="p">)</span>
+
+<span class="c1"># 字符串</span>
+<span class="k">for</span> <span class="n">ch</span> <span class="ow">in</span> <span class="s2">"tea"</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">ch</span><span class="p">)</span>  <span class="c1"># t, e, a</span>
+</code></pre></div>
+<h3 id="字典的三种遍历角度">字典的三种遍历角度</h3>
+<div class="highlight"><pre><span></span><code><span class="n">cafe</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"冷萃"</span><span class="p">:</span> <span class="mi">18</span><span class="p">,</span> <span class="s2">"拿铁"</span><span class="p">:</span> <span class="mi">22</span><span class="p">,</span> <span class="s2">"抹茶"</span><span class="p">:</span> <span class="mi">25</span><span class="p">}</span>
+
+<span class="c1"># 默认拿到的是键</span>
+<span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">cafe</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
+<span class="c1"># 键值成对拿</span>
+<span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">price</span> <span class="ow">in</span> <span class="n">cafe</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">price</span><span class="p">)</span>
+
+<span class="c1"># 只看值</span>
+<span class="k">for</span> <span class="n">price</span> <span class="ow">in</span> <span class="n">cafe</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">price</span><span class="p">)</span>
+
+<span class="c1"># 只看键（写明白一点）</span>
+<span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">cafe</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="集合也能遍历但别指望顺序">集合也能遍历，但别指望顺序</h3>
+<div class="highlight"><pre><span></span><code><span class="n">tags</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"科幻"</span><span class="p">,</span> <span class="s2">"悬疑"</span><span class="p">,</span> <span class="s2">"剧情"</span><span class="p">}</span>
+<span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="n">tags</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span>
+<span class="c1"># 集合内部无序，每次遍历输出的先后不一定相同</span>
+</code></pre></div>
+<h3 id="enumerate序号和数据一起发"><code>enumerate()</code>：序号和数据一起发</h3>
+<p>光遍历不够，还想知道"这是第几个"，就请 <code>enumerate()</code> 出场：</p>
+<div class="highlight"><pre><span></span><code><span class="n">steps</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"取号"</span><span class="p">,</span> <span class="s2">"等待"</span><span class="p">,</span> <span class="s2">"办理"</span><span class="p">]</span>
+
+<span class="c1"># 基本用法</span>
+<span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">step</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">steps</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">step</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="c1"># 0: 取号</span>
+<span class="c1"># 1: 等待</span>
+<span class="c1"># 2: 办理</span>
+
+<span class="c1"># 让编号从 1 开始</span>
+<span class="k">for</span> <span class="n">no</span><span class="p">,</span> <span class="n">step</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">steps</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">no</span><span class="si">}</span><span class="s2">. </span><span class="si">{</span><span class="n">step</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="c1"># 1. 取号</span>
+<span class="c1"># 2. 等待</span>
+<span class="c1"># 3. 办理</span>
+</code></pre></div>
+<h3 id="zip多条队伍并排走"><code>zip()</code>：多条队伍并排走</h3>
+<p>把多个容器按位置两两配对，同步遍历：</p>
+<div class="highlight"><pre><span></span><code><span class="n">lines</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"1号线"</span><span class="p">,</span> <span class="s2">"2号线"</span><span class="p">,</span> <span class="s2">"3号线"</span><span class="p">]</span>
+<span class="n">loads</span> <span class="o">=</span> <span class="p">[</span><span class="mi">850</span><span class="p">,</span> <span class="mi">620</span><span class="p">,</span> <span class="mi">730</span><span class="p">]</span>
+
+<span class="k">for</span> <span class="n">line</span><span class="p">,</span> <span class="n">load</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">lines</span><span class="p">,</span> <span class="n">loads</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">line</span><span class="si">}</span><span class="s2">今日客流 </span><span class="si">{</span><span class="n">load</span><span class="si">}</span><span class="s2"> 万人次"</span><span class="p">)</span>
+
+<span class="c1"># zip 以最短的那条为准，长了的部分直接舍弃</span>
+<span class="n">short</span> <span class="o">=</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">]</span>
+<span class="n">long</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"a"</span><span class="p">,</span> <span class="s2">"b"</span><span class="p">,</span> <span class="s2">"c"</span><span class="p">]</span>
+<span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">short</span><span class="p">,</span> <span class="n">long</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="c1"># 只会输出两组：10 a 和 20 b</span>
+</code></pre></div>
+<h2 id="练习">练习</h2>
+<h3 id="练习一副本与本尊列表-身份运算符">练习一：副本与本尊（列表 + 身份运算符）</h3>
+<p>逐行阅读下面的代码，先在纸上写出每个 <code>print</code> 的输出，再运行验证。</p>
+<div class="highlight"><pre><span></span><code><span class="n">points</span> <span class="o">=</span> <span class="p">[</span><span class="mi">6</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">]</span>
+<span class="n">mirror</span> <span class="o">=</span> <span class="n">points</span><span class="p">[:]</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">points</span> <span class="o">==</span> <span class="n">mirror</span><span class="p">,</span> <span class="n">points</span> <span class="ow">is</span> <span class="n">mirror</span><span class="p">)</span>
+<span class="n">points</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">10</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">points</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mirror</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">points</span> <span class="o">==</span> <span class="n">mirror</span><span class="p">,</span> <span class="n">points</span> <span class="ow">is</span> <span class="n">mirror</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">points</span><span class="p">))</span>
+
+<span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">hits</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">points</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">points</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="n">hits</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">hits</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="练习二元组集合与成员判断">练习二：元组、集合与成员判断</h3>
+<p>逐行阅读下面的代码，先在纸上写出每个 <code>print</code> 的输出，再运行验证。</p>
+<div class="highlight"><pre><span></span><code><span class="n">t</span> <span class="o">=</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">7</span><span class="p">)</span>
+<span class="n">head</span><span class="p">,</span> <span class="o">*</span><span class="n">tail</span> <span class="o">=</span> <span class="n">t</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">head</span><span class="p">,</span> <span class="n">tail</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">t</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="mi">7</span> <span class="ow">in</span> <span class="n">t</span><span class="p">,</span> <span class="mi">3</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">t</span><span class="p">)</span>
+
+<span class="n">s</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">))</span>
+<span class="n">s2</span> <span class="o">=</span> <span class="p">{</span><span class="mi">7</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">9</span><span class="p">}</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">s</span> <span class="o">&amp;</span> <span class="n">s2</span><span class="p">,</span> <span class="n">s</span> <span class="o">|</span> <span class="n">s2</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="练习三字典的增删与遍历">练习三：字典的增删与遍历</h3>
+<p>逐行阅读下面的代码，先在纸上写出每个 <code>print</code> 的输出，再运行验证。</p>
+<div class="highlight"><pre><span></span><code><span class="n">menu</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"面条"</span><span class="p">:</span> <span class="mi">12</span><span class="p">,</span> <span class="s2">"米饭"</span><span class="p">:</span> <span class="mi">22</span><span class="p">}</span>
+<span class="n">menu</span><span class="p">[</span><span class="s2">"饺子"</span><span class="p">]</span> <span class="o">=</span> <span class="mi">30</span>
+<span class="n">menu</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">"面条"</span><span class="p">:</span> <span class="mi">15</span><span class="p">})</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">menu</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"面条"</span> <span class="ow">in</span> <span class="n">menu</span><span class="p">,</span> <span class="mi">22</span> <span class="ow">in</span> <span class="n">menu</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">menu</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"汉堡"</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+
+<span class="n">keys</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">menu</span><span class="p">:</span>
+    <span class="n">keys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">keys</span><span class="p">)</span>
+
+<span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">keys</span><span class="p">):</span>
+    <span class="n">k</span> <span class="o">=</span> <span class="n">keys</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">menu</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">15</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+    <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+</code></pre></div>
+<h3 id="练习四字符串与循环">练习四：字符串与循环</h3>
+<p>逐行阅读下面的代码，先在纸上写出每个 <code>print</code> 的输出，再运行验证。</p>
+<div class="highlight"><pre><span></span><code><span class="n">word</span> <span class="o">=</span> <span class="s2">"banana"</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">word</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">4</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"na"</span> <span class="ow">in</span> <span class="n">word</span><span class="p">,</span> <span class="s2">"q"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">word</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">word</span> <span class="o">+</span> <span class="s2">" juice"</span><span class="p">,</span> <span class="n">word</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span>
+
+<span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">vowels</span> <span class="o">=</span> <span class="s2">"aeiou"</span>
+<span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">word</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">word</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">in</span> <span class="n">vowels</span><span class="p">:</span>
+        <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">count</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"length: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">word</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="练习五zip-与-enumerate-联合作业">练习五：zip 与 enumerate 联合作业</h3>
+<p>逐行阅读下面的代码，先在纸上写出每个 <code>print</code> 的输出，再运行验证。</p>
+<div class="highlight"><pre><span></span><code><span class="n">dishes</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"宫保鸡丁"</span><span class="p">,</span> <span class="s2">"麻婆豆腐"</span><span class="p">]</span>
+<span class="n">prices</span> <span class="o">=</span> <span class="p">(</span><span class="mi">38</span><span class="p">,</span> <span class="mi">26</span><span class="p">)</span>
+
+<span class="n">pairs</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">dish</span><span class="p">,</span> <span class="n">price</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">dishes</span><span class="p">,</span> <span class="n">prices</span><span class="p">):</span>
+    <span class="n">pairs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">dish</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">price</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">pairs</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">no</span><span class="p">,</span> <span class="n">dish</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">dishes</span><span class="p">,</span> <span class="mi">1</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">no</span><span class="p">,</span> <span class="n">dish</span><span class="p">)</span>
+
+<span class="n">d</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">dishes</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">prices</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">20</span><span class="p">:</span>
+        <span class="n">d</span><span class="p">[</span><span class="n">dishes</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">=</span> <span class="n">prices</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+    <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">d</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"宫保鸡丁"</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"回锅肉"</span><span class="p">,</span> <span class="s2">"今日无货"</span><span class="p">))</span>
+</code></pre></div>
+<h3 id="练习六员工档案综合实战">练习六：员工档案综合实战</h3>
+<p>下面是一份员工信息列表，请按任务要求逐一编写代码。</p>
+<p><strong>要求：</strong> 全部任务只用循环和条件判断实现，先不要使用列表推导式。</p>
+<div class="highlight"><pre><span></span><code><span class="n">staff</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span><span class="s2">"id"</span><span class="p">:</span> <span class="mi">100237</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"周建军"</span><span class="p">,</span> <span class="s2">"sex"</span><span class="p">:</span> <span class="s2">"男"</span><span class="p">,</span> <span class="s2">"age"</span><span class="p">:</span> <span class="mi">35</span><span class="p">,</span> <span class="s2">"city"</span><span class="p">:</span> <span class="s2">"四川省 成都市"</span><span class="p">,</span> <span class="s2">"phone"</span><span class="p">:</span> <span class="s2">"13801234567"</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">"id"</span><span class="p">:</span> <span class="mi">205481</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"吴丽华"</span><span class="p">,</span> <span class="s2">"sex"</span><span class="p">:</span> <span class="s2">"女"</span><span class="p">,</span> <span class="s2">"age"</span><span class="p">:</span> <span class="mi">28</span><span class="p">,</span> <span class="s2">"city"</span><span class="p">:</span> <span class="s2">"浙江省 杭州市"</span><span class="p">,</span> <span class="s2">"phone"</span><span class="p">:</span> <span class="s2">"15923456789"</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">"id"</span><span class="p">:</span> <span class="mi">309712</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"孙志强"</span><span class="p">,</span> <span class="s2">"sex"</span><span class="p">:</span> <span class="s2">"男"</span><span class="p">,</span> <span class="s2">"age"</span><span class="p">:</span> <span class="mi">42</span><span class="p">,</span> <span class="s2">"city"</span><span class="p">:</span> <span class="s2">"山东省 济南市"</span><span class="p">,</span> <span class="s2">"phone"</span><span class="p">:</span> <span class="s2">"18634567890"</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">"id"</span><span class="p">:</span> <span class="mi">415836</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"李雪梅"</span><span class="p">,</span> <span class="s2">"sex"</span><span class="p">:</span> <span class="s2">"女"</span><span class="p">,</span> <span class="s2">"age"</span><span class="p">:</span> <span class="mi">31</span><span class="p">,</span> <span class="s2">"city"</span><span class="p">:</span> <span class="s2">"江苏省 南京市"</span><span class="p">,</span> <span class="s2">"phone"</span><span class="p">:</span> <span class="s2">"17745678901"</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">"id"</span><span class="p">:</span> <span class="mi">520318</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"陈国栋"</span><span class="p">,</span> <span class="s2">"sex"</span><span class="p">:</span> <span class="s2">"男"</span><span class="p">,</span> <span class="s2">"age"</span><span class="p">:</span> <span class="mi">38</span><span class="p">,</span> <span class="s2">"city"</span><span class="p">:</span> <span class="s2">"广东省 广州市"</span><span class="p">,</span> <span class="s2">"phone"</span><span class="p">:</span> <span class="s2">"13556789012"</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">"id"</span><span class="p">:</span> <span class="mi">601942</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"王秀兰"</span><span class="p">,</span> <span class="s2">"sex"</span><span class="p">:</span> <span class="s2">"女"</span><span class="p">,</span> <span class="s2">"age"</span><span class="p">:</span> <span class="mi">44</span><span class="p">,</span> <span class="s2">"city"</span><span class="p">:</span> <span class="s2">"河南省 郑州市"</span><span class="p">,</span> <span class="s2">"phone"</span><span class="p">:</span> <span class="s2">"15867890123"</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">"id"</span><span class="p">:</span> <span class="mi">714728</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"周敏"</span><span class="p">,</span> <span class="s2">"sex"</span><span class="p">:</span> <span class="s2">"女"</span><span class="p">,</span> <span class="s2">"age"</span><span class="p">:</span> <span class="mi">26</span><span class="p">,</span> <span class="s2">"city"</span><span class="p">:</span> <span class="s2">"湖北省 武汉市"</span><span class="p">,</span> <span class="s2">"phone"</span><span class="p">:</span> <span class="s2">"13678901234"</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">"id"</span><span class="p">:</span> <span class="mi">826503</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"郑涛"</span><span class="p">,</span> <span class="s2">"sex"</span><span class="p">:</span> <span class="s2">"男"</span><span class="p">,</span> <span class="s2">"age"</span><span class="p">:</span> <span class="mi">29</span><span class="p">,</span> <span class="s2">"city"</span><span class="p">:</span> <span class="s2">"福建省 福州市"</span><span class="p">,</span> <span class="s2">"phone"</span><span class="p">:</span> <span class="s2">"18890123456"</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">"id"</span><span class="p">:</span> <span class="mi">937215</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"何静"</span><span class="p">,</span> <span class="s2">"sex"</span><span class="p">:</span> <span class="s2">"女"</span><span class="p">,</span> <span class="s2">"age"</span><span class="p">:</span> <span class="mi">33</span><span class="p">,</span> <span class="s2">"city"</span><span class="p">:</span> <span class="s2">"湖南省 长沙市"</span><span class="p">,</span> <span class="s2">"phone"</span><span class="p">:</span> <span class="s2">"15601237893"</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">"id"</span><span class="p">:</span> <span class="mi">104836</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"罗建国"</span><span class="p">,</span> <span class="s2">"sex"</span><span class="p">:</span> <span class="s2">"男"</span><span class="p">,</span> <span class="s2">"age"</span><span class="p">:</span> <span class="mi">45</span><span class="p">,</span> <span class="s2">"city"</span><span class="p">:</span> <span class="s2">"陕西省 西安市"</span><span class="p">,</span> <span class="s2">"phone"</span><span class="p">:</span> <span class="s2">"13912345678"</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">"id"</span><span class="p">:</span> <span class="mi">215940</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"高芳"</span><span class="p">,</span> <span class="s2">"sex"</span><span class="p">:</span> <span class="s2">"女"</span><span class="p">,</span> <span class="s2">"age"</span><span class="p">:</span> <span class="mi">24</span><span class="p">,</span> <span class="s2">"city"</span><span class="p">:</span> <span class="s2">"四川省 绵阳市"</span><span class="p">,</span> <span class="s2">"phone"</span><span class="p">:</span> <span class="s2">"15023456781"</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">"id"</span><span class="p">:</span> <span class="mi">327164</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"林伟"</span><span class="p">,</span> <span class="s2">"sex"</span><span class="p">:</span> <span class="s2">"男"</span><span class="p">,</span> <span class="s2">"age"</span><span class="p">:</span> <span class="mi">36</span><span class="p">,</span> <span class="s2">"city"</span><span class="p">:</span> <span class="s2">"安徽省 合肥市"</span><span class="p">,</span> <span class="s2">"phone"</span><span class="p">:</span> <span class="s2">"18734567892"</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">"id"</span><span class="p">:</span> <span class="mi">438579</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"黄丽"</span><span class="p">,</span> <span class="s2">"sex"</span><span class="p">:</span> <span class="s2">"女"</span><span class="p">,</span> <span class="s2">"age"</span><span class="p">:</span> <span class="mi">27</span><span class="p">,</span> <span class="s2">"city"</span><span class="p">:</span> <span class="s2">"江西省 南昌市"</span><span class="p">,</span> <span class="s2">"phone"</span><span class="p">:</span> <span class="s2">"13645678933"</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">"id"</span><span class="p">:</span> <span class="mi">541690</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"张勇"</span><span class="p">,</span> <span class="s2">"sex"</span><span class="p">:</span> <span class="s2">"男"</span><span class="p">,</span> <span class="s2">"age"</span><span class="p">:</span> <span class="mi">41</span><span class="p">,</span> <span class="s2">"city"</span><span class="p">:</span> <span class="s2">"辽宁省 沈阳市"</span><span class="p">,</span> <span class="s2">"phone"</span><span class="p">:</span> <span class="s2">"15956789012"</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">"id"</span><span class="p">:</span> <span class="mi">652873</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"徐桂英"</span><span class="p">,</span> <span class="s2">"sex"</span><span class="p">:</span> <span class="s2">"女"</span><span class="p">,</span> <span class="s2">"age"</span><span class="p">:</span> <span class="mi">43</span><span class="p">,</span> <span class="s2">"city"</span><span class="p">:</span> <span class="s2">"黑龙江省 哈尔滨市"</span><span class="p">,</span> <span class="s2">"phone"</span><span class="p">:</span> <span class="s2">"13867890123"</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">"id"</span><span class="p">:</span> <span class="mi">763915</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"周涛"</span><span class="p">,</span> <span class="s2">"sex"</span><span class="p">:</span> <span class="s2">"男"</span><span class="p">,</span> <span class="s2">"age"</span><span class="p">:</span> <span class="mi">30</span><span class="p">,</span> <span class="s2">"city"</span><span class="p">:</span> <span class="s2">"河北省 石家庄市"</span><span class="p">,</span> <span class="s2">"phone"</span><span class="p">:</span> <span class="s2">"18678901273"</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">"id"</span><span class="p">:</span> <span class="mi">874620</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"谢婷"</span><span class="p">,</span> <span class="s2">"sex"</span><span class="p">:</span> <span class="s2">"女"</span><span class="p">,</span> <span class="s2">"age"</span><span class="p">:</span> <span class="mi">22</span><span class="p">,</span> <span class="s2">"city"</span><span class="p">:</span> <span class="s2">"云南省 昆明市"</span><span class="p">,</span> <span class="s2">"phone"</span><span class="p">:</span> <span class="s2">"15789012346"</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">"id"</span><span class="p">:</span> <span class="mi">985134</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"马超"</span><span class="p">,</span> <span class="s2">"sex"</span><span class="p">:</span> <span class="s2">"男"</span><span class="p">,</span> <span class="s2">"age"</span><span class="p">:</span> <span class="mi">34</span><span class="p">,</span> <span class="s2">"city"</span><span class="p">:</span> <span class="s2">"贵州省 贵阳市"</span><span class="p">,</span> <span class="s2">"phone"</span><span class="p">:</span> <span class="s2">"13501234568"</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">"id"</span><span class="p">:</span> <span class="mi">109257</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"唐秀英"</span><span class="p">,</span> <span class="s2">"sex"</span><span class="p">:</span> <span class="s2">"女"</span><span class="p">,</span> <span class="s2">"age"</span><span class="p">:</span> <span class="mi">39</span><span class="p">,</span> <span class="s2">"city"</span><span class="p">:</span> <span class="s2">"广西壮族自治区 南宁市"</span><span class="p">,</span> <span class="s2">"phone"</span><span class="p">:</span> <span class="s2">"15812345673"</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">"id"</span><span class="p">:</span> <span class="mi">210348</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"冯军"</span><span class="p">,</span> <span class="s2">"sex"</span><span class="p">:</span> <span class="s2">"男"</span><span class="p">,</span> <span class="s2">"age"</span><span class="p">:</span> <span class="mi">25</span><span class="p">,</span> <span class="s2">"city"</span><span class="p">:</span> <span class="s2">"山西省 太原市"</span><span class="p">,</span> <span class="s2">"phone"</span><span class="p">:</span> <span class="s2">"18623456789"</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">"id"</span><span class="p">:</span> <span class="mi">321569</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"曹丽华"</span><span class="p">,</span> <span class="s2">"sex"</span><span class="p">:</span> <span class="s2">"女"</span><span class="p">,</span> <span class="s2">"age"</span><span class="p">:</span> <span class="mi">37</span><span class="p">,</span> <span class="s2">"city"</span><span class="p">:</span> <span class="s2">"吉林省 长春市"</span><span class="p">,</span> <span class="s2">"phone"</span><span class="p">:</span> <span class="s2">"13734567890"</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">"id"</span><span class="p">:</span> <span class="mi">432680</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"邓强"</span><span class="p">,</span> <span class="s2">"sex"</span><span class="p">:</span> <span class="s2">"男"</span><span class="p">,</span> <span class="s2">"age"</span><span class="p">:</span> <span class="mi">28</span><span class="p">,</span> <span class="s2">"city"</span><span class="p">:</span> <span class="s2">"重庆市 重庆市"</span><span class="p">,</span> <span class="s2">"phone"</span><span class="p">:</span> <span class="s2">"15945678901"</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">"id"</span><span class="p">:</span> <span class="mi">543791</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"萧芳"</span><span class="p">,</span> <span class="s2">"sex"</span><span class="p">:</span> <span class="s2">"女"</span><span class="p">,</span> <span class="s2">"age"</span><span class="p">:</span> <span class="mi">26</span><span class="p">,</span> <span class="s2">"city"</span><span class="p">:</span> <span class="s2">"甘肃省 兰州市"</span><span class="p">,</span> <span class="s2">"phone"</span><span class="p">:</span> <span class="s2">"15856789023"</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">"id"</span><span class="p">:</span> <span class="mi">654802</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"董伟"</span><span class="p">,</span> <span class="s2">"sex"</span><span class="p">:</span> <span class="s2">"男"</span><span class="p">,</span> <span class="s2">"age"</span><span class="p">:</span> <span class="mi">33</span><span class="p">,</span> <span class="s2">"city"</span><span class="p">:</span> <span class="s2">"青海省 西宁市"</span><span class="p">,</span> <span class="s2">"phone"</span><span class="p">:</span> <span class="s2">"13567890124"</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">"id"</span><span class="p">:</span> <span class="mi">765913</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"程娜"</span><span class="p">,</span> <span class="s2">"sex"</span><span class="p">:</span> <span class="s2">"女"</span><span class="p">,</span> <span class="s2">"age"</span><span class="p">:</span> <span class="mi">29</span><span class="p">,</span> <span class="s2">"city"</span><span class="p">:</span> <span class="s2">"海南省 海口市"</span><span class="p">,</span> <span class="s2">"phone"</span><span class="p">:</span> <span class="s2">"18678901235"</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">"id"</span><span class="p">:</span> <span class="mi">876024</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"宋磊"</span><span class="p">,</span> <span class="s2">"sex"</span><span class="p">:</span> <span class="s2">"男"</span><span class="p">,</span> <span class="s2">"age"</span><span class="p">:</span> <span class="mi">36</span><span class="p">,</span> <span class="s2">"city"</span><span class="p">:</span> <span class="s2">"内蒙古自治区 呼和浩特市"</span><span class="p">,</span> <span class="s2">"phone"</span><span class="p">:</span> <span class="s2">"17890123456"</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">"id"</span><span class="p">:</span> <span class="mi">987135</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"石秀珍"</span><span class="p">,</span> <span class="s2">"sex"</span><span class="p">:</span> <span class="s2">"女"</span><span class="p">,</span> <span class="s2">"age"</span><span class="p">:</span> <span class="mi">41</span><span class="p">,</span> <span class="s2">"city"</span><span class="p">:</span> <span class="s2">"新疆维吾尔自治区 乌鲁木齐市"</span><span class="p">,</span> <span class="s2">"phone"</span><span class="p">:</span> <span class="s2">"13690123457"</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">"id"</span><span class="p">:</span> <span class="mi">108246</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"姚刚"</span><span class="p">,</span> <span class="s2">"sex"</span><span class="p">:</span> <span class="s2">"男"</span><span class="p">,</span> <span class="s2">"age"</span><span class="p">:</span> <span class="mi">27</span><span class="p">,</span> <span class="s2">"city"</span><span class="p">:</span> <span class="s2">"宁夏回族自治区 银川市"</span><span class="p">,</span> <span class="s2">"phone"</span><span class="p">:</span> <span class="s2">"18901234563"</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">"id"</span><span class="p">:</span> <span class="mi">219357</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"潘淑华"</span><span class="p">,</span> <span class="s2">"sex"</span><span class="p">:</span> <span class="s2">"女"</span><span class="p">,</span> <span class="s2">"age"</span><span class="p">:</span> <span class="mi">34</span><span class="p">,</span> <span class="s2">"city"</span><span class="p">:</span> <span class="s2">"西藏自治区 拉萨市"</span><span class="p">,</span> <span class="s2">"phone"</span><span class="p">:</span> <span class="s2">"15112345670"</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">"id"</span><span class="p">:</span> <span class="mi">320468</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"江海"</span><span class="p">,</span> <span class="s2">"sex"</span><span class="p">:</span> <span class="s2">"男"</span><span class="p">,</span> <span class="s2">"age"</span><span class="p">:</span> <span class="mi">39</span><span class="p">,</span> <span class="s2">"city"</span><span class="p">:</span> <span class="s2">"天津市 天津市"</span><span class="p">,</span> <span class="s2">"phone"</span><span class="p">:</span> <span class="s2">"13623456788"</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">"id"</span><span class="p">:</span> <span class="mi">431579</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"段鹏"</span><span class="p">,</span> <span class="s2">"sex"</span><span class="p">:</span> <span class="s2">"男"</span><span class="p">,</span> <span class="s2">"age"</span><span class="p">:</span> <span class="mi">32</span><span class="p">,</span> <span class="s2">"city"</span><span class="p">:</span> <span class="s2">"北京市 北京市"</span><span class="p">,</span> <span class="s2">"phone"</span><span class="p">:</span> <span class="s2">"15834567891"</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">"id"</span><span class="p">:</span> <span class="mi">542680</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"贺晓燕"</span><span class="p">,</span> <span class="s2">"sex"</span><span class="p">:</span> <span class="s2">"女"</span><span class="p">,</span> <span class="s2">"age"</span><span class="p">:</span> <span class="mi">23</span><span class="p">,</span> <span class="s2">"city"</span><span class="p">:</span> <span class="s2">"上海市 上海市"</span><span class="p">,</span> <span class="s2">"phone"</span><span class="p">:</span> <span class="s2">"18745678902"</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">"id"</span><span class="p">:</span> <span class="mi">653791</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"侯亮"</span><span class="p">,</span> <span class="s2">"sex"</span><span class="p">:</span> <span class="s2">"男"</span><span class="p">,</span> <span class="s2">"age"</span><span class="p">:</span> <span class="mi">36</span><span class="p">,</span> <span class="s2">"city"</span><span class="p">:</span> <span class="s2">"四川省 泸州市"</span><span class="p">,</span> <span class="s2">"phone"</span><span class="p">:</span> <span class="s2">"13556789023"</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">"id"</span><span class="p">:</span> <span class="mi">764802</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"白春梅"</span><span class="p">,</span> <span class="s2">"sex"</span><span class="p">:</span> <span class="s2">"女"</span><span class="p">,</span> <span class="s2">"age"</span><span class="p">:</span> <span class="mi">38</span><span class="p">,</span> <span class="s2">"city"</span><span class="p">:</span> <span class="s2">"广东省 佛山市"</span><span class="p">,</span> <span class="s2">"phone"</span><span class="p">:</span> <span class="s2">"15667890134"</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">"id"</span><span class="p">:</span> <span class="mi">875913</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"邹成"</span><span class="p">,</span> <span class="s2">"sex"</span><span class="p">:</span> <span class="s2">"男"</span><span class="p">,</span> <span class="s2">"age"</span><span class="p">:</span> <span class="mi">44</span><span class="p">,</span> <span class="s2">"city"</span><span class="p">:</span> <span class="s2">"湖北省 宜昌市"</span><span class="p">,</span> <span class="s2">"phone"</span><span class="p">:</span> <span class="s2">"17878901245"</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">"id"</span><span class="p">:</span> <span class="mi">986024</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"龙婷"</span><span class="p">,</span> <span class="s2">"sex"</span><span class="p">:</span> <span class="s2">"女"</span><span class="p">,</span> <span class="s2">"age"</span><span class="p">:</span> <span class="mi">25</span><span class="p">,</span> <span class="s2">"city"</span><span class="p">:</span> <span class="s2">"浙江省 宁波市"</span><span class="p">,</span> <span class="s2">"phone"</span><span class="p">:</span> <span class="s2">"13689012356"</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">"id"</span><span class="p">:</span> <span class="mi">109135</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"范志伟"</span><span class="p">,</span> <span class="s2">"sex"</span><span class="p">:</span> <span class="s2">"男"</span><span class="p">,</span> <span class="s2">"age"</span><span class="p">:</span> <span class="mi">31</span><span class="p">,</span> <span class="s2">"city"</span><span class="p">:</span> <span class="s2">"江苏省 苏州市"</span><span class="p">,</span> <span class="s2">"phone"</span><span class="p">:</span> <span class="s2">"15990123467"</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">"id"</span><span class="p">:</span> <span class="mi">210246</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"雷小雨"</span><span class="p">,</span> <span class="s2">"sex"</span><span class="p">:</span> <span class="s2">"女"</span><span class="p">,</span> <span class="s2">"age"</span><span class="p">:</span> <span class="mi">29</span><span class="p">,</span> <span class="s2">"city"</span><span class="p">:</span> <span class="s2">"福建省 厦门市"</span><span class="p">,</span> <span class="s2">"phone"</span><span class="p">:</span> <span class="s2">"18701234578"</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">"id"</span><span class="p">:</span> <span class="mi">321357</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"钟华"</span><span class="p">,</span> <span class="s2">"sex"</span><span class="p">:</span> <span class="s2">"男"</span><span class="p">,</span> <span class="s2">"age"</span><span class="p">:</span> <span class="mi">37</span><span class="p">,</span> <span class="s2">"city"</span><span class="p">:</span> <span class="s2">"山东省 青岛市"</span><span class="p">,</span> <span class="s2">"phone"</span><span class="p">:</span> <span class="s2">"13612345689"</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">"id"</span><span class="p">:</span> <span class="mi">432468</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"汪桂芳"</span><span class="p">,</span> <span class="s2">"sex"</span><span class="p">:</span> <span class="s2">"女"</span><span class="p">,</span> <span class="s2">"age"</span><span class="p">:</span> <span class="mi">42</span><span class="p">,</span> <span class="s2">"city"</span><span class="p">:</span> <span class="s2">"河南省 洛阳市"</span><span class="p">,</span> <span class="s2">"phone"</span><span class="p">:</span> <span class="s2">"15823456790"</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">"id"</span><span class="p">:</span> <span class="mi">543579</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"丁一鸣"</span><span class="p">,</span> <span class="s2">"sex"</span><span class="p">:</span> <span class="s2">"男"</span><span class="p">,</span> <span class="s2">"age"</span><span class="p">:</span> <span class="mi">26</span><span class="p">,</span> <span class="s2">"city"</span><span class="p">:</span> <span class="s2">"湖南省 株洲市"</span><span class="p">,</span> <span class="s2">"phone"</span><span class="p">:</span> <span class="s2">"18934567801"</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">"id"</span><span class="p">:</span> <span class="mi">654680</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"阳丽"</span><span class="p">,</span> <span class="s2">"sex"</span><span class="p">:</span> <span class="s2">"女"</span><span class="p">,</span> <span class="s2">"age"</span><span class="p">:</span> <span class="mi">33</span><span class="p">,</span> <span class="s2">"city"</span><span class="p">:</span> <span class="s2">"安徽省 芜湖市"</span><span class="p">,</span> <span class="s2">"phone"</span><span class="p">:</span> <span class="s2">"15745678912"</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">"id"</span><span class="p">:</span> <span class="mi">765791</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"傅国强"</span><span class="p">,</span> <span class="s2">"sex"</span><span class="p">:</span> <span class="s2">"男"</span><span class="p">,</span> <span class="s2">"age"</span><span class="p">:</span> <span class="mi">44</span><span class="p">,</span> <span class="s2">"city"</span><span class="p">:</span> <span class="s2">"江西省 九江市"</span><span class="p">,</span> <span class="s2">"phone"</span><span class="p">:</span> <span class="s2">"13156789023"</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">"id"</span><span class="p">:</span> <span class="mi">876802</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"周艳"</span><span class="p">,</span> <span class="s2">"sex"</span><span class="p">:</span> <span class="s2">"女"</span><span class="p">,</span> <span class="s2">"age"</span><span class="p">:</span> <span class="mi">27</span><span class="p">,</span> <span class="s2">"city"</span><span class="p">:</span> <span class="s2">"辽宁省 大连市"</span><span class="p">,</span> <span class="s2">"phone"</span><span class="p">:</span> <span class="s2">"18567890134"</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">"id"</span><span class="p">:</span> <span class="mi">987913</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"覃敏"</span><span class="p">,</span> <span class="s2">"sex"</span><span class="p">:</span> <span class="s2">"女"</span><span class="p">,</span> <span class="s2">"age"</span><span class="p">:</span> <span class="mi">36</span><span class="p">,</span> <span class="s2">"city"</span><span class="p">:</span> <span class="s2">"陕西省 宝鸡市"</span><span class="p">,</span> <span class="s2">"phone"</span><span class="p">:</span> <span class="s2">"15378901245"</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">"id"</span><span class="p">:</span> <span class="mi">108024</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"龚浩"</span><span class="p">,</span> <span class="s2">"sex"</span><span class="p">:</span> <span class="s2">"男"</span><span class="p">,</span> <span class="s2">"age"</span><span class="p">:</span> <span class="mi">23</span><span class="p">,</span> <span class="s2">"city"</span><span class="p">:</span> <span class="s2">"贵州省 遵义市"</span><span class="p">,</span> <span class="s2">"phone"</span><span class="p">:</span> <span class="s2">"18689012356"</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">"id"</span><span class="p">:</span> <span class="mi">219135</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"汤圆圆"</span><span class="p">,</span> <span class="s2">"sex"</span><span class="p">:</span> <span class="s2">"女"</span><span class="p">,</span> <span class="s2">"age"</span><span class="p">:</span> <span class="mi">30</span><span class="p">,</span> <span class="s2">"city"</span><span class="p">:</span> <span class="s2">"云南省 大理州"</span><span class="p">,</span> <span class="s2">"phone"</span><span class="p">:</span> <span class="s2">"13590123467"</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">"id"</span><span class="p">:</span> <span class="mi">320246</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"邵伟杰"</span><span class="p">,</span> <span class="s2">"sex"</span><span class="p">:</span> <span class="s2">"男"</span><span class="p">,</span> <span class="s2">"age"</span><span class="p">:</span> <span class="mi">35</span><span class="p">,</span> <span class="s2">"city"</span><span class="p">:</span> <span class="s2">"广西壮族自治区 桂林市"</span><span class="p">,</span> <span class="s2">"phone"</span><span class="p">:</span> <span class="s2">"15801234578"</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">"id"</span><span class="p">:</span> <span class="mi">431357</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"秦淑珍"</span><span class="p">,</span> <span class="s2">"sex"</span><span class="p">:</span> <span class="s2">"女"</span><span class="p">,</span> <span class="s2">"age"</span><span class="p">:</span> <span class="mi">41</span><span class="p">,</span> <span class="s2">"city"</span><span class="p">:</span> <span class="s2">"甘肃省 天水市"</span><span class="p">,</span> <span class="s2">"phone"</span><span class="p">:</span> <span class="s2">"13612345689"</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">"id"</span><span class="p">:</span> <span class="mi">542468</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"曾超"</span><span class="p">,</span> <span class="s2">"sex"</span><span class="p">:</span> <span class="s2">"男"</span><span class="p">,</span> <span class="s2">"age"</span><span class="p">:</span> <span class="mi">28</span><span class="p">,</span> <span class="s2">"city"</span><span class="p">:</span> <span class="s2">"青海省 海东市"</span><span class="p">,</span> <span class="s2">"phone"</span><span class="p">:</span> <span class="s2">"18723456790"</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">"id"</span><span class="p">:</span> <span class="mi">653579</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"兰海燕"</span><span class="p">,</span> <span class="s2">"sex"</span><span class="p">:</span> <span class="s2">"女"</span><span class="p">,</span> <span class="s2">"age"</span><span class="p">:</span> <span class="mi">26</span><span class="p">,</span> <span class="s2">"city"</span><span class="p">:</span> <span class="s2">"海南省 三亚市"</span><span class="p">,</span> <span class="s2">"phone"</span><span class="p">:</span> <span class="s2">"15534567801"</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">"id"</span><span class="p">:</span> <span class="mi">764680</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"白俊峰"</span><span class="p">,</span> <span class="s2">"sex"</span><span class="p">:</span> <span class="s2">"男"</span><span class="p">,</span> <span class="s2">"age"</span><span class="p">:</span> <span class="mi">39</span><span class="p">,</span> <span class="s2">"city"</span><span class="p">:</span> <span class="s2">"内蒙古自治区 包头市"</span><span class="p">,</span> <span class="s2">"phone"</span><span class="p">:</span> <span class="s2">"13145678912"</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">"id"</span><span class="p">:</span> <span class="mi">875791</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"温丽娟"</span><span class="p">,</span> <span class="s2">"sex"</span><span class="p">:</span> <span class="s2">"女"</span><span class="p">,</span> <span class="s2">"age"</span><span class="p">:</span> <span class="mi">35</span><span class="p">,</span> <span class="s2">"city"</span><span class="p">:</span> <span class="s2">"新疆维吾尔自治区 喀什地区"</span><span class="p">,</span> <span class="s2">"phone"</span><span class="p">:</span> <span class="s2">"15656789023"</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">"id"</span><span class="p">:</span> <span class="mi">986802</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"岑龙"</span><span class="p">,</span> <span class="s2">"sex"</span><span class="p">:</span> <span class="s2">"男"</span><span class="p">,</span> <span class="s2">"age"</span><span class="p">:</span> <span class="mi">24</span><span class="p">,</span> <span class="s2">"city"</span><span class="p">:</span> <span class="s2">"宁夏回族自治区 石嘴山市"</span><span class="p">,</span> <span class="s2">"phone"</span><span class="p">:</span> <span class="s2">"18867890134"</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">"id"</span><span class="p">:</span> <span class="mi">107913</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"全红梅"</span><span class="p">,</span> <span class="s2">"sex"</span><span class="p">:</span> <span class="s2">"女"</span><span class="p">,</span> <span class="s2">"age"</span><span class="p">:</span> <span class="mi">32</span><span class="p">,</span> <span class="s2">"city"</span><span class="p">:</span> <span class="s2">"西藏自治区 日喀则市"</span><span class="p">,</span> <span class="s2">"phone"</span><span class="p">:</span> <span class="s2">"13478901245"</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">"id"</span><span class="p">:</span> <span class="mi">218024</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"骆天宇"</span><span class="p">,</span> <span class="s2">"sex"</span><span class="p">:</span> <span class="s2">"男"</span><span class="p">,</span> <span class="s2">"age"</span><span class="p">:</span> <span class="mi">30</span><span class="p">,</span> <span class="s2">"city"</span><span class="p">:</span> <span class="s2">"北京市 北京市"</span><span class="p">,</span> <span class="s2">"phone"</span><span class="p">:</span> <span class="s2">"15689012356"</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">"id"</span><span class="p">:</span> <span class="mi">329135</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"阮诗涵"</span><span class="p">,</span> <span class="s2">"sex"</span><span class="p">:</span> <span class="s2">"女"</span><span class="p">,</span> <span class="s2">"age"</span><span class="p">:</span> <span class="mi">22</span><span class="p">,</span> <span class="s2">"city"</span><span class="p">:</span> <span class="s2">"上海市 上海市"</span><span class="p">,</span> <span class="s2">"phone"</span><span class="p">:</span> <span class="s2">"18790123467"</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">"id"</span><span class="p">:</span> <span class="mi">430246</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"凌志远"</span><span class="p">,</span> <span class="s2">"sex"</span><span class="p">:</span> <span class="s2">"男"</span><span class="p">,</span> <span class="s2">"age"</span><span class="p">:</span> <span class="mi">45</span><span class="p">,</span> <span class="s2">"city"</span><span class="p">:</span> <span class="s2">"江苏省 无锡市"</span><span class="p">,</span> <span class="s2">"phone"</span><span class="p">:</span> <span class="s2">"13301234578"</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">"id"</span><span class="p">:</span> <span class="mi">541357</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"覃玉婷"</span><span class="p">,</span> <span class="s2">"sex"</span><span class="p">:</span> <span class="s2">"女"</span><span class="p">,</span> <span class="s2">"age"</span><span class="p">:</span> <span class="mi">28</span><span class="p">,</span> <span class="s2">"city"</span><span class="p">:</span> <span class="s2">"浙江省 温州市"</span><span class="p">,</span> <span class="s2">"phone"</span><span class="p">:</span> <span class="s2">"15512345689"</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">"id"</span><span class="p">:</span> <span class="mi">652468</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"蒲剑锋"</span><span class="p">,</span> <span class="s2">"sex"</span><span class="p">:</span> <span class="s2">"男"</span><span class="p">,</span> <span class="s2">"age"</span><span class="p">:</span> <span class="mi">33</span><span class="p">,</span> <span class="s2">"city"</span><span class="p">:</span> <span class="s2">"湖北省 襄阳市"</span><span class="p">,</span> <span class="s2">"phone"</span><span class="p">:</span> <span class="s2">"18623456790"</span><span class="p">},</span>
+<span class="p">]</span>
+</code></pre></div>
+<p><strong>任务清单：</strong></p>
+<ol>
+<li>
+<p>遍历 <code>staff</code> 列表，用 f-string 输出每位员工的姓名和年龄，格式为 <code>姓名: xxx, 年龄: xx</code></p>
+</li>
+<li>
+<p>创建一个新列表 <code>female_staff</code>，装下所有性别为"女"的员工（即 <code>sex</code> 键的值为 <code>"女"</code>）</p>
+</li>
+<li>
+<p>创建一个新列表 <code>young_female</code>，装下所有年龄小于 30 岁的女员工</p>
+</li>
+<li>
+<p>创建一个新列表 <code>zhou_staff</code>，装下所有姓"周"的员工（提示：<code>name[0]</code> 可以取出姓名的第一个字）</p>
+</li>
+<li>
+<p>创建一个新列表 <code>phone_tail_3</code>，装下所有手机号尾号是 "3" 的员工（提示：字符串支持负索引，<code>phone[-1]</code> 取最后一个字符）</p>
+</li>
+<li>
+<p>创建一个新列表 <code>all_names</code>，装下所有员工的姓名</p>
+</li>
+<li>
+<p>创建一个新列表 <code>female_names</code>，装下所有女员工的姓名</p>
+</li>
+<li>
+<p>创建一个新列表 <code>female_contacts</code>，其中每个元素是一个字典，只保留 <code>name</code> 和 <code>phone</code> 两个键，且只收录女员工</p>
+</li>
+<li>
+<p>计算并打印全体员工的年龄总和</p>
+</li>
+<li>
+<p>计算并打印全体员工的平均年龄（保留两位小数，用 f-string 格式化）</p>
+</li>
+<li>
+<p>创建一个字典 <code>result</code>，包含两个键：<code>"names"</code> 对应所有员工姓名组成的列表，<code>"ages"</code> 对应所有员工年龄组成的列表</p>
+</li>
+<li>
+<p>找到 <code>id</code> 为 <code>520318</code> 的员工，打印其姓名和手机号。如果找不到，打印 <code>"查无此人"</code></p>
+</li>
+<li>
+<p>判断员工中是否存在年龄大于 40 岁的男员工。如果存在，打印 <code>True</code> 并输出该员工的姓名；否则打印 <code>False</code></p>
+</li>
+<li>
+<p>判断是否所有女员工的年龄都在 40 岁以内（即没有超过 40 岁的女员工）。如果是，打印 <code>True</code>；否则打印 <code>False</code></p>
+</li>
+</ol>
+<hr />
+<p><strong>下一章</strong>：<a href="../python/04-han-shu-she-ji-yu-lambda.html">04 · 函数设计与 lambda</a></p></div>
+
+      </article>
+<nav class="pager"><a class="pg-card pg-prev" href="../python/02-bian-liang-biao-da-shi-yu-liu-cheng-kong-zhi.html"><span class="pg-label">← 上一篇</span><span class="pg-title">变量、表达式与流程控制</span><span class="pg-mod">Python 与数据实践</span></a><a class="pg-card pg-next" href="../python/04-han-shu-she-ji-yu-lambda.html"><span class="pg-label">下一篇 →</span><span class="pg-title">函数设计与 lambda</span><span class="pg-mod">Python 与数据实践</span></a></nav>
+    </div>
+    <footer class="foot">
+      <span>深栈 DeepStack · AI Agent 工程师转型训练营配套文档</span>
+    </footer>
+  </main>
+<nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#一个变量装下一组数据">一个变量，装下一组数据</a><a class="toc-link toc-h2" href="#列表随改随用的活页本">列表：随改随用的活页本</a><a class="toc-link toc-h3" href="#怎么造一个列表">怎么造一个列表</a><a class="toc-link toc-h3" href="#按位置取值索引与切片">按位置取值：索引与切片</a><a class="toc-link toc-h3" href="#增删改查一把抓">增删改查一把抓</a><a class="toc-link toc-h2" href="#元组一次定稿终身只读">元组：一次定稿、终身只读</a><a class="toc-link toc-h3" href="#怎么造一个元组">怎么造一个元组</a><a class="toc-link toc-h3" href="#能做什么不能做什么">能做什么、不能做什么</a><a class="toc-link toc-h3" href="#解包一口气把值分给多个变量">解包：一口气把值分给多个变量</a><a class="toc-link toc-h2" href="#字典拿名字去查数据的登记簿">字典：拿&quot;名字&quot;去查数据的登记簿</a><a class="toc-link toc-h3" href="#怎么造一个字典">怎么造一个字典</a><a class="toc-link toc-h3" href="#读与写">读与写</a><a class="toc-link toc-h3" href="#两条铁律">两条铁律</a><a class="toc-link toc-h2" href="#集合自动去重的百宝袋">集合：自动去重的百宝袋</a><a class="toc-link toc-h3" href="#怎么造一个集合">怎么造一个集合</a><a class="toc-link toc-h3" href="#集合的日常操作">集合的日常操作</a><a class="toc-link toc-h2" href="#五类容器通吃的工具函数">五类容器通吃的工具函数</a><a class="toc-link toc-h2" href="#容器身边的运算符">容器身边的运算符</a><a class="toc-link toc-h3" href="#判断在不在in-not-in">判断&quot;在不在&quot;：in / not in</a><a class="toc-link toc-h3" href="#拼接与复制-与">拼接与复制：+ 与 *</a><a class="toc-link toc-h3" href="#比内容">比内容：== / !=</a><a class="toc-link toc-h3" href="#比身份is-is-not">比身份：is / is not</a><a class="toc-link toc-h3" href="#集合专属-">集合专属：&amp;amp;、|、-、^</a><a class="toc-link toc-h2" href="#遍历容器的几种姿势">遍历容器的几种姿势</a><a class="toc-link toc-h3" href="#最朴素的-for">最朴素的 for</a><a class="toc-link toc-h3" href="#字典的三种遍历角度">字典的三种遍历角度</a><a class="toc-link toc-h3" href="#集合也能遍历但别指望顺序">集合也能遍历，但别指望顺序</a><a class="toc-link toc-h3" href="#enumerate序号和数据一起发">enumerate()：序号和数据一起发</a><a class="toc-link toc-h3" href="#zip多条队伍并排走">zip()：多条队伍并排走</a><a class="toc-link toc-h2" href="#练习">练习</a><a class="toc-link toc-h3" href="#练习一副本与本尊列表-身份运算符">练习一：副本与本尊（列表 + 身份运算符）</a><a class="toc-link toc-h3" href="#练习二元组集合与成员判断">练习二：元组、集合与成员判断</a><a class="toc-link toc-h3" href="#练习三字典的增删与遍历">练习三：字典的增删与遍历</a><a class="toc-link toc-h3" href="#练习四字符串与循环">练习四：字符串与循环</a><a class="toc-link toc-h3" href="#练习五zip-与-enumerate-联合作业">练习五：zip 与 enumerate 联合作业</a><a class="toc-link toc-h3" href="#练习六员工档案综合实战">练习六：员工档案综合实战</a></nav>
+</div>
+<div class="sb-mask" id="sbMask"></div>
+<script src="../assets/app.js"></script>
+</body>
+</html>

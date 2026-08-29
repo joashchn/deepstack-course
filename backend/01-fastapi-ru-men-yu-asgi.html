@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>01 · FastAPI 入门与 ASGI · 深栈 DeepStack 课程文档</title>
+<meta name="description" content="本系列是一本「轻量用法手册」：每章只认识 FastAPI 生态里的一个零件，讲清楚它是什么、怎么装、怎么跑、文档去哪看，不搭建贯穿全课程的大工程。示例数据统一来自虚构的内容平台「墨集 inkhub」——栏目、文章、作者…">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%23d9c39a' text-anchor='middle'%3EDS%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+<div class="progress" id="progress"></div>
+
+<div class="layout">
+<aside class="sidebar" id="sidebar">
+  <div class="sb-head">
+    <a class="brand" href="../index.html">
+      <span class="brand-mark">DS</span>
+      <span class="brand-text"><b>深栈 DeepStack</b><i>AI Agent 工程师转型训练营</i></span>
+    </a>
+    <button class="sb-close" id="sbClose" aria-label="关闭目录">✕</button>
+  </div>
+  <div class="sb-search"><input type="search" id="searchInput" placeholder="搜索 123 篇文档… ( / )" autocomplete="off">
+    <div class="sb-results" id="searchResults"></div></div>
+  <nav class="sb-nav">
+    <section class="sb-group" data-mod="python">
+      <a class="sb-group-title" href="../modules/python.html" data-toggle="python">
+        <span class="sb-num">01</span>
+        <span class="sb-group-text"><b>Python 与数据实践</b><i>31 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../python/01-huan-jing-da-jian-yu-ban-ben-guan-li.html"><span class="sb-item-num">01</span><span class="sb-item-title">环境搭建与版本管理</span></a>
+        <a class="sb-item" href="../python/02-bian-liang-biao-da-shi-yu-liu-cheng-kong-zhi.html"><span class="sb-item-num">02</span><span class="sb-item-title">变量、表达式与流程控制</span></a>
+        <a class="sb-item" href="../python/03-xu-lie-zi-dian-yu-ji-he.html"><span class="sb-item-num">03</span><span class="sb-item-title">序列、字典与集合</span></a>
+        <a class="sb-item" href="../python/04-han-shu-she-ji-yu-lambda.html"><span class="sb-item-num">04</span><span class="sb-item-title">函数设计与 lambda</span></a>
+        <a class="sb-item" href="../python/05-zuo-yong-yu-gui-ze-yu-bi-bao.html"><span class="sb-item-num">05</span><span class="sb-item-title">作用域规则与闭包</span></a>
+        <a class="sb-item" href="../python/06-lei-de-ding-yi-yu-shi-li-hua.html"><span class="sb-item-num">06</span><span class="sb-item-title">类的定义与实例化</span></a>
+        <a class="sb-item" href="../python/07-lei-xing-pan-ding-yu-chou-xiang-ji-lei.html"><span class="sb-item-num">07</span><span class="sb-item-title">类型判定与抽象基类</span></a>
+        <a class="sb-item" href="../python/08-mo-shu-fang-fa-quan-jing.html"><span class="sb-item-num">08</span><span class="sb-item-title">魔术方法全景</span></a>
+        <a class="sb-item" href="../python/09-miao-shu-fu-yu-yuan-lei.html"><span class="sb-item-num">09</span><span class="sb-item-title">描述符与元类</span></a>
+        <a class="sb-item" href="../python/10-zhuang-shi-qi.html"><span class="sb-item-num">10</span><span class="sb-item-title">装饰器</span></a>
+        <a class="sb-item" href="../python/11-die-dai-xie-yi-yu-sheng-cheng-qi.html"><span class="sb-item-num">11</span><span class="sb-item-title">迭代协议与生成器</span></a>
+        <a class="sb-item" href="../python/12-with-yu-shang-xia-wen-xie-yi.html"><span class="sb-item-num">12</span><span class="sb-item-title">with 与上下文协议</span></a>
+        <a class="sb-item" href="../python/13-yi-chang-ti-xi-yu-chu-li.html"><span class="sb-item-num">13</span><span class="sb-item-title">异常体系与处理</span></a>
+        <a class="sb-item" href="../python/14-lei-xing-biao-zhu.html"><span class="sb-item-num">14</span><span class="sb-item-title">类型标注</span></a>
+        <a class="sb-item" href="../python/15-mo-kuai-yu-bao-de-zu-zhi.html"><span class="sb-item-num">15</span><span class="sb-item-title">模块与包的组织</span></a>
+        <a class="sb-item" href="../python/16-biao-zhun-ku-xun-li.html"><span class="sb-item-num">16</span><span class="sb-item-title">标准库巡礼</span></a>
+        <a class="sb-item" href="../python/17-yi-lai-guan-li-yu-di-san-fang-ku.html"><span class="sb-item-num">17</span><span class="sb-item-title">依赖管理与第三方库</span></a>
+        <a class="sb-item" href="../python/18-xian-cheng-yu-jin-cheng.html"><span class="sb-item-num">18</span><span class="sb-item-title">线程与进程</span></a>
+        <a class="sb-item" href="../python/19-shi-jian-xun-huan.html"><span class="sb-item-num">19</span><span class="sb-item-title">事件循环</span></a>
+        <a class="sb-item" href="../python/20-future-yu-xie-cheng.html"><span class="sb-item-num">20</span><span class="sb-item-title">Future 与协程</span></a>
+        <a class="sb-item" href="../python/21-asyncio-shi-zhan.html"><span class="sb-item-num">21</span><span class="sb-item-title">asyncio 实战</span></a>
+        <a class="sb-item" href="../python/22-gou-jian-yu-fa-bu.html"><span class="sb-item-num">22</span><span class="sb-item-title">构建与发布</span></a>
+        <a class="sb-item" href="../python/23-gong-cheng-hua-gong-ju-lian.html"><span class="sb-item-num">23</span><span class="sb-item-title">工程化工具链</span></a>
+        <a class="sb-item" href="../python/24-monorepo-yu-tiao-shi.html"><span class="sb-item-num">24</span><span class="sb-item-title">monorepo 与调试</span></a>
+        <a class="sb-item" href="../python/25-jupyter-jiao-hu-huan-jing.html"><span class="sb-item-num">25</span><span class="sb-item-title">Jupyter 交互环境</span></a>
+        <a class="sb-item" href="../python/26-numpy-shu-zu-yu-xiang-liang-hua.html"><span class="sb-item-num">26</span><span class="sb-item-title">NumPy 数组与向量化</span></a>
+        <a class="sb-item" href="../python/27-pandas-shu-ju-jie-gou.html"><span class="sb-item-num">27</span><span class="sb-item-title">Pandas 数据结构</span></a>
+        <a class="sb-item" href="../python/28-pandas-shu-ju-qing-xi.html"><span class="sb-item-num">28</span><span class="sb-item-title">Pandas 数据清洗</span></a>
+        <a class="sb-item" href="../python/29-matplotlib-hui-tu-ti-xi.html"><span class="sb-item-num">29</span><span class="sb-item-title">Matplotlib 绘图体系</span></a>
+        <a class="sb-item" href="../python/30-matplotlib-dong-hua-yu-jiao-hu.html"><span class="sb-item-num">30</span><span class="sb-item-title">Matplotlib 动画与交互</span></a>
+        <a class="sb-item" href="../python/31-seaborn-tong-ji-ke-shi-hua.html"><span class="sb-item-num">31</span><span class="sb-item-title">Seaborn 统计可视化</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="agent">
+      <a class="sb-group-title" href="../modules/agent.html" data-toggle="agent">
+        <span class="sb-num">02</span>
+        <span class="sb-group-text"><b>Agent 核心</b><i>15 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../agent/01-token-yu-ci-qian-ru.html"><span class="sb-item-num">01</span><span class="sb-item-title">Token 与词嵌入</span></a>
+        <a class="sb-item" href="../agent/02-qian-xiang-chuan-bo-yu-fan-xiang-chuan-bo.html"><span class="sb-item-num">02</span><span class="sb-item-title">前向传播与反向传播</span></a>
+        <a class="sb-item" href="../agent/03-zhu-yi-li-ji-zhi-yu-transformer-jia-gou.html"><span class="sb-item-num">03</span><span class="sb-item-title">注意力机制与 Transformer 架构</span></a>
+        <a class="sb-item" href="../agent/04-yu-xun-lian-rlhf-yu-cai-yang-kv-cache.html"><span class="sb-item-num">04</span><span class="sb-item-title">预训练、RLHF 与采样（KV Cache）</span></a>
+        <a class="sb-item" href="../agent/05-ben-di-mo-xing-yu-xiao-xi-jie-gou.html"><span class="sb-item-num">05</span><span class="sb-item-title">本地模型与消息结构</span></a>
+        <a class="sb-item" href="../agent/06-hui-hua-guan-li-yu-json-shu-chu.html"><span class="sb-item-num">06</span><span class="sb-item-title">会话管理与 JSON 输出</span></a>
+        <a class="sb-item" href="../agent/07-tool-calling-xie-yi-yu-feng-zhuang.html"><span class="sb-item-num">07</span><span class="sb-item-title">Tool Calling：协议与封装</span></a>
+        <a class="sb-item" href="../agent/08-react-mo-shi-yu-zhu-xun-huan.html"><span class="sb-item-num">08</span><span class="sb-item-title">ReAct 模式与主循环</span></a>
+        <a class="sb-item" href="../agent/09-shi-zhan-deep-research-agent.html"><span class="sb-item-num">09</span><span class="sb-item-title">实战：Deep Research Agent</span></a>
+        <a class="sb-item" href="../agent/10-skill-yu-jian-jin-shi-pi-lu.html"><span class="sb-item-num">10</span><span class="sb-item-title">Skill 与渐进式披露</span></a>
+        <a class="sb-item" href="../agent/11-mcp-quan-jing.html"><span class="sb-item-num">11</span><span class="sb-item-title">MCP 全景</span></a>
+        <a class="sb-item" href="../agent/12-duo-agent-yu-xuan-xing-ce-lve.html"><span class="sb-item-num">12</span><span class="sb-item-title">多 Agent 与选型策略</span></a>
+        <a class="sb-item" href="../agent/13-ti-shi-ci-gong-cheng-yu-shang-xia-wen-gong.html"><span class="sb-item-num">13</span><span class="sb-item-title">提示词工程与上下文工程</span></a>
+        <a class="sb-item" href="../agent/14-xun-huan-tu-yu-gu-jia-gong-cheng.html"><span class="sb-item-num">14</span><span class="sb-item-title">循环、图与骨架工程</span></a>
+        <a class="sb-item" href="../agent/15-ji-yi-quan-xian-yu-ping-ce.html"><span class="sb-item-num">15</span><span class="sb-item-title">记忆、权限与评测</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="langchain">
+      <a class="sb-group-title" href="../modules/langchain.html" data-toggle="langchain">
+        <span class="sb-num">03</span>
+        <span class="sb-group-text"><b>LangChain 指南</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langchain/01-ren-shi-langchain.html"><span class="sb-item-num">01</span><span class="sb-item-title">认识 LangChain</span></a>
+        <a class="sb-item" href="../langchain/02-ti-shi-ci-mu-ban-yu-xiao-xi.html"><span class="sb-item-num">02</span><span class="sb-item-title">提示词模板与消息</span></a>
+        <a class="sb-item" href="../langchain/03-lcel-yu-runnable.html"><span class="sb-item-num">03</span><span class="sb-item-title">LCEL 与 Runnable</span></a>
+        <a class="sb-item" href="../langchain/04-liu-shi-yu-bing-fa.html"><span class="sb-item-num">04</span><span class="sb-item-title">流式与并发</span></a>
+        <a class="sb-item" href="../langchain/05-shu-chu-jie-xi-qi.html"><span class="sb-item-num">05</span><span class="sb-item-title">输出解析器</span></a>
+        <a class="sb-item" href="../langchain/06-wen-dang-jia-zai-yu-qie-ge.html"><span class="sb-item-num">06</span><span class="sb-item-title">文档加载与切割</span></a>
+        <a class="sb-item" href="../langchain/07-qian-ru-yu-xiang-liang-ku.html"><span class="sb-item-num">07</span><span class="sb-item-title">嵌入与向量库</span></a>
+        <a class="sb-item" href="../langchain/08-jian-suo-yu-rag.html"><span class="sb-item-num">08</span><span class="sb-item-title">检索与RAG</span></a>
+        <a class="sb-item" href="../langchain/09-dui-hua-ji-yi.html"><span class="sb-item-num">09</span><span class="sb-item-title">对话记忆</span></a>
+        <a class="sb-item" href="../langchain/10-gong-ju-diao-yong.html"><span class="sb-item-num">10</span><span class="sb-item-title">工具调用</span></a>
+        <a class="sb-item" href="../langchain/11-agent.html"><span class="sb-item-num">11</span><span class="sb-item-title">Agent</span></a>
+        <a class="sb-item" href="../langchain/12-hui-diao-yu-tiao-shi-quan-ke-cheng-shou-guan.html"><span class="sb-item-num">12</span><span class="sb-item-title">回调与调试（全课程收官章）</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="langgraph">
+      <a class="sb-group-title" href="../modules/langgraph.html" data-toggle="langgraph">
+        <span class="sb-num">04</span>
+        <span class="sb-group-text"><b>LangGraph 框架指南</b><i>17 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langgraph/01-di-1-zhang-cong-yi-ge-shi-kong-de-jiao.html"><span class="sb-item-num">01</span><span class="sb-item-title">第 1 章 从一个失控的脚本说起</span></a>
+        <a class="sb-item" href="../langgraph/02-di-2-zhang-zui-xiao-ke-yun-xing-tu.html"><span class="sb-item-num">02</span><span class="sb-item-title">第 2 章 最小可运行图</span></a>
+        <a class="sb-item" href="../langgraph/03-di-3-zhang-zhuang-tai-tu-de-shu-ju-xin.html"><span class="sb-item-num">03</span><span class="sb-item-title">第 3 章 状态：图的数据心脏</span></a>
+        <a class="sb-item" href="../langgraph/04-di-4-zhang-rang-liu-cheng-xue-hui-jue-ce.html"><span class="sb-item-num">04</span><span class="sb-item-title">第 4 章 让流程学会决策</span></a>
+        <a class="sb-item" href="../langgraph/05-di-5-zhang-bing-xing-shi-jie-chao-bu-zhi.html"><span class="sb-item-num">05</span><span class="sb-item-title">第 5 章 并行世界：超步执行模型</span></a>
+        <a class="sb-item" href="../langgraph/06-di-6-zhang-command-ba-kong-zhi-quan-jiao-jin.html"><span class="sb-item-num">06</span><span class="sb-item-title">第 6 章 Command：把控制权交进节点</span></a>
+        <a class="sb-item" href="../langgraph/07-di-7-zhang-dong-tai-bing-xing-send-yu-mapreduce.html"><span class="sb-item-num">07</span><span class="sb-item-title">第 7 章 动态并行：Send 与 MapReduce</span></a>
+        <a class="sb-item" href="../langgraph/08-di-8-zhang-gei-tu-zhuang-shang-shou-jiao-gong.html"><span class="sb-item-num">08</span><span class="sb-item-title">第 8 章 给图装上手脚：工具调用</span></a>
+        <a class="sb-item" href="../langgraph/09-di-9-zhang-fu-yong-yu-feng-zhuang-zi-tu.html"><span class="sb-item-num">09</span><span class="sb-item-title">第 9 章 复用与封装：子图</span></a>
+        <a class="sb-item" href="../langgraph/10-di-10-zhang-cong-dan-tu-dao-tuan-dui-duo.html"><span class="sb-item-num">10</span><span class="sb-item-title">第 10 章 从单图到团队：多 Agent 架构</span></a>
+        <a class="sb-item" href="../langgraph/11-di-11-zhang-liu-shi-shu-chu.html"><span class="sb-item-num">11</span><span class="sb-item-title">第 11 章 流式输出</span></a>
+        <a class="sb-item" href="../langgraph/12-di-12-zhang-chi-jiu-hua-checkpointer-yu-xian-cheng.html"><span class="sb-item-num">12</span><span class="sb-item-title">第 12 章 持久化：Checkpointer 与线程</span></a>
+        <a class="sb-item" href="../langgraph/13-di-13-zhang-shi-jian-lv-xing.html"><span class="sb-item-num">13</span><span class="sb-item-title">第 13 章 时间旅行</span></a>
+        <a class="sb-item" href="../langgraph/14-di-14-zhang-zhong-duan-yu-ren-zai-hui-lu.html"><span class="sb-item-num">14</span><span class="sb-item-title">第 14 章 中断与人在回路</span></a>
+        <a class="sb-item" href="../langgraph/15-di-15-zhang-ji-yi-guan-li.html"><span class="sb-item-num">15</span><span class="sb-item-title">第 15 章 记忆管理</span></a>
+        <a class="sb-item" href="../langgraph/16-di-16-zhang-rong-cuo-zhong-shi-chao-shi-yu.html"><span class="sb-item-num">16</span><span class="sb-item-title">第 16 章 容错：重试、超时与兜底</span></a>
+        <a class="sb-item" href="../langgraph/17-di-17-zhang-quan-jing-hui-gu.html"><span class="sb-item-num">17</span><span class="sb-item-title">第 17 章 全景回顾</span></a>
+      </div>
+    </section>
+    <section class="sb-group open" data-mod="backend">
+      <a class="sb-group-title" href="../modules/backend.html" data-toggle="backend">
+        <span class="sb-num">05</span>
+        <span class="sb-group-text"><b>Python 框架指南</b><i>14 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item current" href="../backend/01-fastapi-ru-men-yu-asgi.html"><span class="sb-item-num">01</span><span class="sb-item-title">FastAPI 入门与 ASGI</span></a>
+        <a class="sb-item" href="../backend/02-lu-you-yu-qing-qiu-xiang-ying.html"><span class="sb-item-num">02</span><span class="sb-item-title">路由与请求响应</span></a>
+        <a class="sb-item" href="../backend/03-pydantic-shu-ju-jiao-yan-yu-pei-zhi.html"><span class="sb-item-num">03</span><span class="sb-item-title">Pydantic 数据校验与配置</span></a>
+        <a class="sb-item" href="../backend/04-sqlalchemy-yi-bu-yin-qing-yu-hui-hua.html"><span class="sb-item-num">04</span><span class="sb-item-title">SQLAlchemy 异步引擎与会话</span></a>
+        <a class="sb-item" href="../backend/05-orm-jian-mo.html"><span class="sb-item-num">05</span><span class="sb-item-title">ORM 建模</span></a>
+        <a class="sb-item" href="../backend/06-sql-biao-da-shi-yu-shu-ju-cao-zuo.html"><span class="sb-item-num">06</span><span class="sb-item-title">SQL 表达式与数据操作</span></a>
+        <a class="sb-item" href="../backend/07-alembic-shu-ju-qian-yi.html"><span class="sb-item-num">07</span><span class="sb-item-title">Alembic 数据迁移</span></a>
+        <a class="sb-item" href="../backend/08-yi-lai-zhu-ru.html"><span class="sb-item-num">08</span><span class="sb-item-title">依赖注入</span></a>
+        <a class="sb-item" href="../backend/09-tong-yi-yi-chang-chu-li.html"><span class="sb-item-num">09</span><span class="sb-item-title">统一异常处理</span></a>
+        <a class="sb-item" href="../backend/10-zhong-jian-jian.html"><span class="sb-item-num">10</span><span class="sb-item-title">中间件</span></a>
+        <a class="sb-item" href="../backend/11-ren-zheng-yu-jwt.html"><span class="sb-item-num">11</span><span class="sb-item-title">认证与 JWT</span></a>
+        <a class="sb-item" href="../backend/12-pytest-ce-shi.html"><span class="sb-item-num">12</span><span class="sb-item-title">pytest 测试</span></a>
+        <a class="sb-item" href="../backend/13-ri-zhi-loguru.html"><span class="sb-item-num">13</span><span class="sb-item-title">日志 loguru</span></a>
+        <a class="sb-item" href="../backend/14-liu-shi-xiang-ying-sse-yu-websocket.html"><span class="sb-item-num">14</span><span class="sb-item-title">流式响应 SSE 与 WebSocket</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="interview">
+      <a class="sb-group-title" href="../modules/interview.html" data-toggle="interview">
+        <span class="sb-num">06</span>
+        <span class="sb-group-text"><b>面试题库</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../interview/01-llm-yuan-li-pian.html"><span class="sb-item-num">01</span><span class="sb-item-title">LLM 原理篇</span></a>
+        <a class="sb-item" href="../interview/02-rag-yu-jian-suo-pian.html"><span class="sb-item-num">02</span><span class="sb-item-title">RAG 与检索篇</span></a>
+        <a class="sb-item" href="../interview/03-agent-he-xin-pian.html"><span class="sb-item-num">03</span><span class="sb-item-title">Agent 核心篇</span></a>
+        <a class="sb-item" href="../interview/04-langgraph-pian.html"><span class="sb-item-num">04</span><span class="sb-item-title">LangGraph 篇</span></a>
+        <a class="sb-item" href="../interview/05-langchain-pian.html"><span class="sb-item-num">05</span><span class="sb-item-title">LangChain 篇</span></a>
+        <a class="sb-item" href="../interview/06-xi-tong-she-ji-pian.html"><span class="sb-item-num">06</span><span class="sb-item-title">系统设计篇</span></a>
+        <a class="sb-item" href="../interview/07-xiang-mu-shen-wa-pian.html"><span class="sb-item-num">07</span><span class="sb-item-title">项目深挖篇</span></a>
+        <a class="sb-item" href="../interview/08-gu-zhang-pai-cha-pian.html"><span class="sb-item-num">08</span><span class="sb-item-title">故障排查篇</span></a>
+        <a class="sb-item" href="../interview/09-python-ji-chu-pian.html"><span class="sb-item-num">09</span><span class="sb-item-title">Python 基础篇</span></a>
+        <a class="sb-item" href="../interview/10-fastapi-yu-hou-duan-pian.html"><span class="sb-item-num">10</span><span class="sb-item-title">FastAPI 与后端篇</span></a>
+        <a class="sb-item" href="../interview/11-ti-shi-ci-gong-cheng-yu-an-quan-pian.html"><span class="sb-item-num">11</span><span class="sb-item-title">提示词工程与安全篇</span></a>
+        <a class="sb-item" href="../interview/12-mo-xing-xuan-xing-yu-jiang-ben-pian.html"><span class="sb-item-num">12</span><span class="sb-item-title">模型选型与降本篇</span></a>
+      </div>
+    </section>
+  </nav>
+</aside>
+  <main class="main">
+    <header class="topbar">
+      <button class="menu-btn" id="menuBtn" aria-label="目录">☰</button>
+      <div class="crumbs"><a href="../index.html">首页</a><span>/</span><a href="../modules/backend.html">Python 框架指南</a><span>/</span><span class="cur">FastAPI 入门与 ASGI</span></div>
+      <div class="topbar-actions">
+        <button class="icon-btn" id="themeBtn" title="切换深浅色" aria-label="切换深浅色">◐</button>
+      </div>
+    </header>
+    <div class="content">
+      <article class="article">
+
+<header class="page-head">
+  <div class="page-kicker">Python 框架指南 · 第 01 章</div>
+  <h1 class="page-title">FastAPI 入门与 ASGI</h1>
+  <p class="page-desc">本系列是一本「轻量用法手册」：每章只认识 FastAPI 生态里的一个零件，讲清楚它是什么、怎么装、怎么跑、文档去哪看，不搭建贯穿全课程的大工程。示例数据统一来自虚构的内容平台「墨集 inkhub」——栏目、文章、作者…</p>
+  <div class="page-meta">
+    <span>约 22 分钟</span><span>8,830 字</span><span>13 个代码示例</span>
+  </div>
+</header>
+<div class="md"><blockquote>
+<p>本系列是一本「轻量用法手册」：每章只认识 FastAPI 生态里的一个零件，讲清楚它<strong>是什么、怎么装、怎么跑、文档去哪看</strong>，不搭建贯穿全课程的大工程。示例数据统一来自虚构的内容平台「墨集 inkhub」——栏目、文章、作者，仅作数据演示。</p>
+<p>读完本章你会：拿到一张框架选型对比表、听懂 WSGI/ASGI 这对名词、装好 Uvicorn、跑起来第一个服务、打开 /docs 玩一圈、给 Pydantic 留个第一印象。</p>
+</blockquote>
+<h2 id="1-先摊开地图djangoflaskfastapi-怎么挑">1. 先摊开地图：Django、Flask、FastAPI 怎么挑</h2>
+<p><strong>是什么</strong></p>
+<p>三者都是用 Python 写 Web 服务的框架，但性格完全不同。用装修打个比方：</p>
+<ul>
+<li><strong>Django（2005 年生）</strong>：整装交付的精装大平层。家具、家电、保安（ORM、后台管理、用户认证）全给你配齐，拎包入住；代价是想砸一面墙，得先弄清整栋楼的水电走向。</li>
+<li><strong>Flask（2010 年生）</strong>：一间毛坯房加基础水电。框架只给最核心的一小坨，瓷砖、灯具自己挑，自由度最高，腿也跑得最勤。</li>
+<li><strong>FastAPI（2018 年生）</strong>：专为「外卖档口」设计的小店。动线全围绕出餐（API）优化——类型标注一写，参数校验、接口文档全都自动跟上。</li>
+</ul>
+<p>一张表横向看：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">对比维度</th>
+<th style="text-align: left;">Django</th>
+<th style="text-align: left;">Flask</th>
+<th style="text-align: left;">FastAPI</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">出场年份</td>
+<td style="text-align: left;">2005</td>
+<td style="text-align: left;">2010</td>
+<td style="text-align: left;">2018</td>
+</tr>
+<tr>
+<td style="text-align: center;">性格</td>
+<td style="text-align: left;">大包大揽，什么都要自己管</td>
+<td style="text-align: left;">极简内核，按需外挂</td>
+<td style="text-align: left;">为 API 而生，类型驱动</td>
+</tr>
+<tr>
+<td style="text-align: center;">速度体感（Hello World）</td>
+<td style="text-align: left;">约 5k req/s</td>
+<td style="text-align: left;">约 9k req/s</td>
+<td style="text-align: left;">约 30k req/s</td>
+</tr>
+<tr>
+<td style="text-align: center;">上手难度</td>
+<td style="text-align: left;">陡峭：概念多、体量大</td>
+<td style="text-align: left;">平缓：核心直观</td>
+<td style="text-align: left;">中等：得先习惯类型标注与异步</td>
+</tr>
+<tr>
+<td style="text-align: center;">顺手的场景</td>
+<td style="text-align: left;">大型站点、CMS、自带后台的项目</td>
+<td style="text-align: left;">小工具、快速原型、高度定制</td>
+<td style="text-align: left;">高性能 API、微服务、给 AI 模型开接口</td>
+</tr>
+<tr>
+<td style="text-align: center;">代表用户</td>
+<td style="text-align: left;">Instagram、Pinterest</td>
+<td style="text-align: left;">Netflix、Airbnb</td>
+<td style="text-align: left;">Uber、Microsoft、Netflix（部分业务）</td>
+</tr>
+</tbody>
+</table>
+<p><strong>怎么选</strong>：一句话——要后台管理选 Django，要轻巧灵活选 Flask，要做 API 选 FastAPI。本课程从这章起全程 FastAPI。</p>
+<p><strong>怎么看文档</strong></p>
+<ul>
+<li>Django 官网：https://www.djangoproject.com/</li>
+<li>Flask 官网：https://flask.palletsprojects.com/</li>
+<li>FastAPI 官网（有中文版）：https://fastapi.tiangolo.com/</li>
+</ul>
+<h2 id="2-wsgi-与-asgi前台和后厨的通话规范">2. WSGI 与 ASGI：前台和后厨的通话规范</h2>
+<p><strong>是什么</strong></p>
+<p>先解决一个困惑：你在浏览器敲下 <code>http://127.0.0.1:8000/columns</code>，这串请求本质是<strong>原始字节流</strong>；而你的 Python 函数拿到的是规整的参数、返回的是 dict。中间的「翻译 + 体力活」由谁干？</p>
+<p>答案是分工：</p>
+<ul>
+<li><strong>Web 服务器</strong>：干体力活——守端口、收字节、拆报文、送响应。好比餐厅的<strong>前台</strong>。</li>
+<li><strong>Web 应用（框架）</strong>：干脑力活——对路由、校验数据、跑业务、拼结果。好比餐厅的<strong>后厨</strong>。</li>
+</ul>
+<p>前台和后厨怎么对话？得先约好一套「通话规范」。Python 社区先后定过两版：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">规范</th>
+<th style="text-align: left;">定位</th>
+<th style="text-align: left;">工作模式</th>
+<th style="text-align: left;">一个比喻</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;"><strong>WSGI</strong></td>
+<td style="text-align: left;">早期标准</td>
+<td style="text-align: left;">同步 + 多线程</td>
+<td style="text-align: left;">传统小馆：一个服务员从头盯到尾一桌，接待量靠多雇人（线程）堆出来</td>
+</tr>
+<tr>
+<td style="text-align: center;"><strong>ASGI</strong></td>
+<td style="text-align: left;">现代标准</td>
+<td style="text-align: left;">异步 + 事件循环</td>
+<td style="text-align: left;">网红店：一个机灵服务员满场穿梭，几十桌同时照看，谁举手先应谁</td>
+</tr>
+</tbody>
+</table>
+<p>一句话记住：WSGI 是「一桌一服务员」的世界，ASGI 是「一人看全场」的世界。高并发、WebSocket、长连接这些新需求，都得靠 ASGI 才好使。</p>
+<h3 id="21-asgi-服务器前台具体在忙什么">2.1 ASGI 服务器（前台）具体在忙什么</h3>
+<ul>
+<li>守着端口，接收客户端连接，读写原始字节流</li>
+<li>把 <code>b'GET /columns/1 HTTP/1.1\r\n...'</code> 这样的字节拆成结构化的 method、path、headers</li>
+<li>处理 HTTP/1.1、HTTP/2、WebSocket 的协议细节（分块传输、Keep-Alive……）</li>
+<li>启动并维护事件循环，管理进程与线程</li>
+</ul>
+<h3 id="22-asgi-应用后厨具体在忙什么">2.2 ASGI 应用（后厨）具体在忙什么</h3>
+<ul>
+<li>路由匹配、数据校验、执行业务逻辑、组装响应</li>
+<li>常见 ASGI 应用框架：FastAPI（底层是 Starlette）、Django（新版本同样支持）、Starlette 本身</li>
+</ul>
+<h3 id="23-双方如何对接接头暗号是-app">2.3 双方如何对接：接头暗号是 <code>app</code></h3>
+<p>规范要求：ASGI 应用必须由 ASGI 服务器启动，且对外暴露一个<strong>可调用对象 <code>app</code></strong>，签名固定：</p>
+<div class="highlight"><pre><span></span><code><span class="n">app</span><span class="p">(</span><span class="n">scope</span><span class="p">,</span> <span class="n">receive</span><span class="p">,</span> <span class="n">send</span><span class="p">)</span>
+<span class="c1"># scope:   dict，本次连接的「订单小票」——type（http / websocket / lifespan）、path、method、headers 等</span>
+<span class="c1"># receive: 异步函数，await receive() 拿到下一段「原料」（请求体 / 客户端消息）</span>
+<span class="c1"># send:    异步函数，await send(message) 把做好的「菜」递出传菜口（响应头 / 响应体）</span>
+</code></pre></div>
+<p>平时写 FastAPI 你几乎碰不到这三个参数——框架已经替你包好了。但排查部署问题、读框架源码时，认得这层接头暗号会轻松很多。</p>
+<h3 id="24-一单请求的完整旅程">2.4 一单请求的完整旅程</h3>
+<ol>
+<li>Uvicorn 在 8000 端口守门</li>
+<li>客人进门：请求字节流到达</li>
+<li>前台拆包：把字节流解析成 scope 小票，备好 receive / send 两个对讲频道</li>
+<li>前台喊单：调用 <code>app(scope, receive, send)</code></li>
+<li>FastAPI 拿小票对路由，找到对应的灶台（你写的处理函数）</li>
+<li>灶台按需取原料（<code>await receive()</code>）、做菜、递菜（<code>await send()</code>）</li>
+<li>前台把菜打包成完整的 HTTP 响应，字节流写回 socket，客人收货</li>
+</ol>
+<h3 id="25-常见-asgi-服务器速查">2.5 常见 ASGI 服务器速查</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">服务器</th>
+<th style="text-align: left;">一句话画像</th>
+<th style="text-align: left;">协议覆盖</th>
+<th style="text-align: left;">什么时候会想到它</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Uvicorn</strong></td>
+<td style="text-align: left;">uvloop + httptools 双引擎</td>
+<td style="text-align: left;">HTTP/1、WebSocket（HTTP/2 实验性）</td>
+<td style="text-align: left;">FastAPI 圈默认款，本课程全程用它</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Hypercorn</strong></td>
+<td style="text-align: left;">协议覆盖最全的全能型</td>
+<td style="text-align: left;">HTTP/1、HTTP/2、HTTP/3、WebSocket</td>
+<td style="text-align: left;">要上 HTTP/2 / HTTP/3 时</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Daphne</strong></td>
+<td style="text-align: left;">Django Channels 官方配套</td>
+<td style="text-align: left;">HTTP/1、HTTP/2、WebSocket</td>
+<td style="text-align: left;">Django 异步项目</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Granian</strong></td>
+<td style="text-align: left;">Rust 实现，性能狂热派</td>
+<td style="text-align: left;">HTTP/1、HTTP/2、WebSocket</td>
+<td style="text-align: left;">追求极限吞吐的生产环境</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Gunicorn</strong></td>
+<td style="text-align: left;">老牌 WSGI 服务器，可挂 ASGI worker</td>
+<td style="text-align: left;">HTTP/1</td>
+<td style="text-align: left;">想要「多进程 + ASGI」混搭部署时</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>NGINX Unit</strong></td>
+<td style="text-align: left;">多语言通吃的应用服务器</td>
+<td style="text-align: left;">HTTP/1、HTTP/2</td>
+<td style="text-align: left;">一个入口管理多语言应用时</td>
+</tr>
+</tbody>
+</table>
+<p><strong>怎么看文档</strong>：ASGI 规范见 https://asgi.readthedocs.io/ ，属于兴趣加餐，不要求一次读完。</p>
+<h2 id="3-uvicorn给应用装上发动机">3. Uvicorn：给应用装上发动机</h2>
+<p><strong>是什么</strong></p>
+<p>Uvicorn 是目前最流行的 ASGI 服务器。打个比方：<strong>FastAPI 是车身，Uvicorn 是发动机</strong>——车身再漂亮，没发动机点不着火。第 2 节里的 <code>app</code>，最终就是被 Uvicorn 拉起来跑的。</p>
+<p><strong>怎么装</strong></p>
+<div class="highlight"><pre><span></span><code>uv<span class="w"> </span>add<span class="w"> </span>fastapi<span class="w"> </span><span class="s2">"uvicorn[standard]"</span>
+</code></pre></div>
+<p>两个细节：</p>
+<ul>
+<li><code>uvicorn[standard]</code> 的 <code>[standard]</code> 叫 <strong>extras（可选依赖组）</strong>，勾选后会额外装上 uvloop、httptools 等加速件，性能明显更好，日常直接带上</li>
+<li>两侧引号别省：zsh 等终端会把方括号当特殊字符解析，加引号最稳妥</li>
+</ul>
+<p><strong>怎么跑</strong>（三种姿势，按需取用）</p>
+<p>姿势一：脚本内嵌启动（本章 demo 的做法，最省心）：</p>
+<div class="highlight"><pre><span></span><code><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">uvicorn</span>
+
+    <span class="n">uvicorn</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="s2">"127.0.0.1"</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">8000</span><span class="p">)</span>
+</code></pre></div>
+<p>姿势二：命令行启动（「模块路径:应用变量」定位）：</p>
+<div class="highlight"><pre><span></span><code>uv<span class="w"> </span>run<span class="w"> </span>uvicorn<span class="w"> </span>demo.demo_app:app<span class="w"> </span>--reload
+</code></pre></div>
+<p>姿势三：官方脚手架命令（自带热重载）：</p>
+<div class="highlight"><pre><span></span><code>uv<span class="w"> </span>run<span class="w"> </span>fastapi<span class="w"> </span>dev<span class="w"> </span>demo/demo_app.py
+</code></pre></div>
+<p>生产环境再加码：<code>--host 0.0.0.0</code> 对外开放，<code>--workers 4</code> 多进程吃满多核。注意 <code>--reload</code> 与 <code>--workers</code> 互斥，前者只留给开发期。</p>
+<p>常用参数速查：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">参数</th>
+<th style="text-align: left;">作用</th>
+<th style="text-align: left;">建议值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>--host</code></td>
+<td style="text-align: left;">监听地址</td>
+<td style="text-align: left;">本机调试 <code>127.0.0.1</code>；对外 <code>0.0.0.0</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>--port</code></td>
+<td style="text-align: left;">监听端口</td>
+<td style="text-align: left;">8000</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>--reload</code></td>
+<td style="text-align: left;">代码一改自动重启</td>
+<td style="text-align: left;">仅开发期</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>--workers</code></td>
+<td style="text-align: left;">工作进程数</td>
+<td style="text-align: left;">生产环境 2 ~ CPU 核数</td>
+</tr>
+</tbody>
+</table>
+<p><strong>怎么看文档</strong>：https://www.uvicorn.org/ ，全部配置项在「Settings」一节。</p>
+<h2 id="4-第一个应用墨集开门营业">4. 第一个应用：墨集开门营业</h2>
+<p><strong>怎么装</strong>：命令同上一节；若本章目录还不是 uv 工程，先 <code>uv init</code> 再 <code>uv add</code>。</p>
+<p><strong>怎么跑</strong></p>
+<div class="highlight"><pre><span></span><code>uv<span class="w"> </span>run<span class="w"> </span>demo/demo_app.py
+</code></pre></div>
+<p>终端出现 <code>Uvicorn running on http://127.0.0.1:8000</code> 就是点着火了。</p>
+<p><strong>代码全景</strong>（节选自 <code>demo/demo_app.py</code>，完整文件可直接运行）：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">fastapi</span><span class="w"> </span><span class="kn">import</span> <span class="n">FastAPI</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">Field</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">FastAPI</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">"墨集 inkhub"</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="s2">"0.1.0"</span><span class="p">)</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">ArticleCreate</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""创建文章的请求体"""</span>
+
+    <span class="n">title</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">min_length</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span> <span class="n">examples</span><span class="o">=</span><span class="p">[</span><span class="s2">"夜航船里的旧灯"</span><span class="p">])</span>
+    <span class="n">column_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">ge</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">"文章所属的栏目编号"</span><span class="p">)</span>
+    <span class="n">tags</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">,</span> <span class="n">examples</span><span class="o">=</span><span class="p">[[</span><span class="s2">"散文"</span><span class="p">,</span> <span class="s2">"夜记"</span><span class="p">]])</span>
+
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"/columns/</span><span class="si">{column_id}</span><span class="s2">"</span><span class="p">,</span> <span class="n">summary</span><span class="o">=</span><span class="s2">"栏目详情"</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_column</span><span class="p">(</span><span class="n">column_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">]:</span>
+    <span class="o">...</span>  <span class="c1"># 按编号查找栏目并返回</span>
+
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">"/articles"</span><span class="p">,</span> <span class="n">summary</span><span class="o">=</span><span class="s2">"创建文章"</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">create_article</span><span class="p">(</span><span class="n">article</span><span class="p">:</span> <span class="n">ArticleCreate</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">]:</span>
+    <span class="o">...</span>  <span class="c1"># article 已通过校验，此处用内存列表代替真实落库</span>
+</code></pre></div>
+<p><strong>逐行拆解</strong></p>
+<ul>
+<li><code>app = FastAPI()</code>：造出一个符合 ASGI 规范的可调用对象，变量名习惯叫 <code>app</code>——正好对上第 2 节的接头暗号</li>
+<li><code>@app.get("/columns/{column_id}")</code>：挂招牌，HTTP 方法 + 路径一一对应；<code>{column_id}</code> 是路径里的占位坑</li>
+<li><code>column_id: int</code>：一行类型标注，就是 FastAPI 的「魔法开关」——框架自动把路径字符串转成 int，转不动（比如传 <code>abc</code>）直接回 422</li>
+<li>请求体：参数标成 Pydantic 模型 <code>article: ArticleCreate</code>，框架自动解析 JSON 并校验</li>
+<li>返回值：dict / list 原样返回，框架自动打包成 JSON 响应</li>
+</ul>
+<p><strong>怎么看效果</strong>：浏览器挨个访问</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">地址</th>
+<th style="text-align: left;">看点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">http://127.0.0.1:8000/</td>
+<td style="text-align: left;">首页欢迎语</td>
+</tr>
+<tr>
+<td style="text-align: left;">http://127.0.0.1:8000/columns</td>
+<td style="text-align: left;">栏目列表</td>
+</tr>
+<tr>
+<td style="text-align: left;">http://127.0.0.1:8000/columns/1</td>
+<td style="text-align: left;">栏目详情；把 1 换成 abc 体验 422</td>
+</tr>
+<tr>
+<td style="text-align: left;">http://127.0.0.1:8000/articles?limit=1&amp;keyword=伞</td>
+<td style="text-align: left;">查询参数：limit 截断条数、keyword 按标题模糊匹配</td>
+</tr>
+<tr>
+<td style="text-align: left;">http://127.0.0.1:8000/docs</td>
+<td style="text-align: left;">交互式文档（下一节主角）</td>
+</tr>
+<tr>
+<td style="text-align: left;">http://127.0.0.1:8000/redoc</td>
+<td style="text-align: left;">只读文档</td>
+</tr>
+<tr>
+<td style="text-align: left;">http://127.0.0.1:8000/openapi.json</td>
+<td style="text-align: left;">机器可读的接口总账</td>
+</tr>
+</tbody>
+</table>
+<p><strong>怎么看文档</strong>：https://fastapi.tiangolo.com/zh/ ，中文版教程质量很高，跟着翻一遍胜过十篇二手博客。</p>
+<h2 id="5-docsredocopenapijson自动印好的说明书">5. /docs、/redoc、/openapi.json：自动印好的说明书</h2>
+<p><strong>是什么</strong></p>
+<p>三个地址，三份「自动生成的产品说明书」：</p>
+<ul>
+<li><strong>OpenAPI 规范</strong>：用一份标准 JSON 描述整套 API 的行业规范。FastAPI 启动时扫描全部路由和类型标注，自动生成 openapi.json 并挂在 <code>/openapi.json</code>——这就是接口的「机器可读总账」</li>
+<li><strong>Swagger UI（<code>/docs</code>）</strong>：能试吃的柜台。点「Try it out」填参数、发请求、看真实响应，开发调试期的主力</li>
+<li><strong>ReDoc（<code>/redoc</code>）</strong>：精装印刷的菜谱。三栏排版、滚动到哪渲染到哪，上百个接口的大文档也不卡；适合对外发布接口文档</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">对比点</th>
+<th style="text-align: left;">Swagger UI（/docs）</th>
+<th style="text-align: left;">ReDoc（/redoc）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">定位</td>
+<td style="text-align: left;">交互调试</td>
+<td style="text-align: left;">阅读查阅</td>
+</tr>
+<tr>
+<td style="text-align: left;">Try it out</td>
+<td style="text-align: left;">支持，页面上直接发请求</td>
+<td style="text-align: left;">不支持，纯只读</td>
+</tr>
+<tr>
+<td style="text-align: left;">界面</td>
+<td style="text-align: left;">功能全，配置项多</td>
+<td style="text-align: left;">简洁清爽，长文档加载快</td>
+</tr>
+<tr>
+<td style="text-align: left;">适用阶段</td>
+<td style="text-align: left;">开发自测</td>
+<td style="text-align: left;">对外发布</td>
+</tr>
+</tbody>
+</table>
+<p><strong>怎么让文档更好看</strong>：路由装饰器上直接加文案：</p>
+<div class="highlight"><pre><span></span><code><span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+    <span class="s2">"/columns"</span><span class="p">,</span>
+    <span class="n">summary</span><span class="o">=</span><span class="s2">"栏目列表"</span><span class="p">,</span>
+    <span class="n">description</span><span class="o">=</span><span class="s2">"返回墨集当前全部栏目，含名称与一句话简介"</span><span class="p">,</span>
+    <span class="n">response_description</span><span class="o">=</span><span class="s2">"栏目数组"</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">list_columns</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">]]:</span>
+    <span class="o">...</span>
+</code></pre></div>
+<p><strong>怎么关掉它们</strong>：文档本质也是路由，把地址设成 <code>None</code> 就摘牌：</p>
+<div class="highlight"><pre><span></span><code><span class="n">app</span> <span class="o">=</span> <span class="n">FastAPI</span><span class="p">(</span><span class="n">docs_url</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">redoc_url</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">openapi_url</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</code></pre></div>
+<p>生产环境常见写法是按环境变量动态决定：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<span class="n">is_production</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">"INHUB_ENV"</span><span class="p">)</span> <span class="o">==</span> <span class="s2">"prod"</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">FastAPI</span><span class="p">(</span>
+    <span class="n">docs_url</span><span class="o">=</span><span class="kc">None</span> <span class="k">if</span> <span class="n">is_production</span> <span class="k">else</span> <span class="s2">"/docs"</span><span class="p">,</span>
+    <span class="n">redoc_url</span><span class="o">=</span><span class="kc">None</span> <span class="k">if</span> <span class="n">is_production</span> <span class="k">else</span> <span class="s2">"/redoc"</span><span class="p">,</span>
+    <span class="n">openapi_url</span><span class="o">=</span><span class="kc">None</span> <span class="k">if</span> <span class="n">is_production</span> <span class="k">else</span> <span class="s2">"/openapi.json"</span><span class="p">,</span>
+<span class="p">)</span>
+</code></pre></div>
+<p><strong>怎么看文档</strong>：路由级配置项大全见 https://fastapi.tiangolo.com/zh/tutorial/path-operation-configuration/ ；OpenAPI 规范本身见 https://www.openapis.org/ 。</p>
+<h2 id="6-pydantic-初见给数据过安检">6. Pydantic 初见：给数据过安检</h2>
+<p><strong>是什么</strong></p>
+<p>Pydantic 是一个「数据建模 + 校验 + 转换」三合一的库，FastAPI 的地基之一。把它想象成<strong>海关安检通道</strong>：</p>
+<ul>
+<li>字符串数字 <code>"101"</code> 进来，整数 <code>101</code> 出去（转换）</li>
+<li>缺斤少两、超长越界的字段，当场拦下并开出明细单（校验 + ValidationError）</li>
+<li>出关之后，代码里拿到的一定是干净、类型正确的数据（建模）</li>
+</ul>
+<p><strong>怎么装</strong>：不用单独装——<code>uv add fastapi</code> 时它作为底层依赖已经进包了。</p>
+<p><strong>怎么跑</strong>：<code>uv run demo/demo_pydantic.py</code>，纯脚本、不起服务，直接在终端看结果：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">Field</span><span class="p">,</span> <span class="n">ValidationError</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Author</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">author_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">ge</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">"作者编号，从 1 开始"</span><span class="p">)</span>
+    <span class="n">pen_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">min_length</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">examples</span><span class="o">=</span><span class="p">[</span><span class="s2">"沈墨"</span><span class="p">])</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Article</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">article_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ge</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">title</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">min_length</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
+    <span class="n">published_at</span><span class="p">:</span> <span class="n">datetime</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">author</span><span class="p">:</span> <span class="n">Author</span>
+    <span class="n">tags</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+
+
+<span class="n">raw</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">"article_id"</span><span class="p">:</span> <span class="s2">"101"</span><span class="p">,</span>                 <span class="c1"># 字符串数字</span>
+    <span class="s2">"title"</span><span class="p">:</span> <span class="s2">"夜航船里的旧灯"</span><span class="p">,</span>
+    <span class="s2">"published_at"</span><span class="p">:</span> <span class="s2">"2026-08-27 09:30"</span><span class="p">,</span>  <span class="c1"># 字符串时间</span>
+    <span class="s2">"author"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"author_id"</span><span class="p">:</span> <span class="s2">"7"</span><span class="p">,</span> <span class="s2">"pen_name"</span><span class="p">:</span> <span class="s2">"沈墨"</span><span class="p">},</span>
+    <span class="s2">"tags"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"散文"</span><span class="p">,</span> <span class="s2">"夜记"</span><span class="p">],</span>
+<span class="p">}</span>
+
+<span class="n">article</span> <span class="o">=</span> <span class="n">Article</span><span class="p">(</span><span class="o">**</span><span class="n">raw</span><span class="p">)</span>  <span class="c1"># 安检通过：类型全部转换到位</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">article</span><span class="o">.</span><span class="n">article_id</span><span class="p">,</span> <span class="n">article</span><span class="o">.</span><span class="n">published_at</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">article</span><span class="o">.</span><span class="n">model_dump</span><span class="p">())</span>  <span class="c1"># 导出为普通字典</span>
+</code></pre></div>
+<p>故意塞一份违规数据，看它怎么拦：</p>
+<div class="highlight"><pre><span></span><code><span class="n">bad</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">"article_id"</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>  <span class="c1"># 违反 ge=0</span>
+    <span class="s2">"title"</span><span class="p">:</span> <span class="s2">""</span><span class="p">,</span>       <span class="c1"># 违反 min_length=1</span>
+    <span class="s2">"author"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"author_id"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">"pen_name"</span><span class="p">:</span> <span class="s2">"沈"</span> <span class="o">*</span> <span class="mi">20</span><span class="p">},</span>  <span class="c1"># 违反 ge=1 与 max_length=12</span>
+<span class="p">}</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">Article</span><span class="p">(</span><span class="o">**</span><span class="n">bad</span><span class="p">)</span>
+<span class="k">except</span> <span class="n">ValidationError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">error</span> <span class="ow">in</span> <span class="n">exc</span><span class="o">.</span><span class="n">errors</span><span class="p">():</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">error</span><span class="p">[</span><span class="s2">"loc"</span><span class="p">],</span> <span class="s2">"-&gt;"</span><span class="p">,</span> <span class="n">error</span><span class="p">[</span><span class="s2">"msg"</span><span class="p">])</span>  <span class="c1"># 哪个字段、什么原因，逐条列出</span>
+</code></pre></div>
+<p><strong>Field：给字段做精装修</strong>。裸类型标注只能管「是或不是」，Field 能管「到什么程度」：</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">Column</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">column_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>      <span class="c1"># 默认值</span>
+        <span class="n">title</span><span class="o">=</span><span class="s2">"栏目ID"</span><span class="p">,</span>     <span class="c1"># 文档里的字段标题</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">"栏目的唯一编号，新建时留空由系统分配"</span><span class="p">,</span>
+        <span class="n">ge</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>              <span class="c1"># 必须 ≥ 1</span>
+        <span class="n">examples</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span>   <span class="c1"># 文档里展示的示例值</span>
+    <span class="p">)</span>
+
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="o">...</span><span class="p">,</span>               <span class="c1"># 三个点 = 必填</span>
+        <span class="n">title</span><span class="o">=</span><span class="s2">"栏目名称"</span><span class="p">,</span>
+        <span class="n">min_length</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span>
+        <span class="n">examples</span><span class="o">=</span><span class="p">[</span><span class="s2">"深夜书房"</span><span class="p">],</span>
+    <span class="p">)</span>
+</code></pre></div>
+<p><strong>它和 FastAPI 的三点关系</strong>（后面章节会反复用到）：</p>
+<ol>
+<li>请求体声明成 Pydantic 模型后，校验全自动——字段越线直接回 422，错误明细就是 <code>errors()</code> 那个格式，一行 if 都不用你写</li>
+<li>响应同样可以用模型约束输出结构（第 2 章展开）</li>
+<li>模型的字段、约束、示例全部进 openapi.json，/docs 里的表单就是照着模型渲染出来的</li>
+</ol>
+<p><strong>怎么看文档</strong>：https://docs.pydantic.dev/latest/ ，Field 的全部约束参数在「API → Fields」页。</p>
+<h2 id="7-收摊小结">7. 收摊小结</h2>
+<ul>
+<li>选型口诀：要后台管理找 Django，要轻巧灵活找 Flask，要做 API 用 FastAPI</li>
+<li>WSGI 是同步多线程规范，ASGI 是异步规范；服务器干体力活、应用干脑力活，接头暗号是 <code>app(scope, receive, send)</code></li>
+<li>Uvicorn 是发动机：<code>uv add fastapi "uvicorn[standard]"</code> 一条命令备齐全家</li>
+<li>类型标注是 FastAPI 的魔法开关：参数转换、请求校验、自动文档，全都从这一行标注开始</li>
+<li>/docs 用来试吃，/redoc 用来阅读，/openapi.json 是机器可读的接口总账</li>
+<li>Pydantic 是数据安检机：转换脏数据、拦下违规数据，<code>errors()</code> 会把原因逐条列清楚</li>
+</ul>
+<h2 id="8-自测清单">8. 自测清单</h2>
+<ol>
+<li>用自己的话向同事讲清 WSGI 和 ASGI 的分工差异</li>
+<li>Uvicorn 和 FastAPI 各扮演什么角色？写好的 <code>app</code> 为什么自己跑不起来？</li>
+<li><code>/docs</code> 与 <code>/redoc</code> 分别适合什么阶段使用？openapi.json 是谁、在什么时机生成的？</li>
+<li>浏览器访问 <code>/columns/abc</code> 时发生了什么？谁发现的问题、谁返回的 422？</li>
+<li>Pydantic 在 FastAPI 里承担哪几件事？ValidationError 的 <code>errors()</code> 返回什么结构？</li>
+<li>动手：把 demo 服务的端口改成 9000，用「脚本内嵌」和「命令行」两种姿势分别启动验证</li>
+</ol>
+<hr />
+<p><strong>下一章</strong>：<a href="../backend/02-lu-you-yu-qing-qiu-xiang-ying.html">02 · 路由与请求响应</a></p></div>
+
+      </article>
+<nav class="pager"><a class="pg-card pg-prev" href="../modules/backend.html"><span class="pg-label">← 上一篇</span><span class="pg-title">Python 框架指南 · 使用指南</span><span class="pg-mod">Python 框架指南</span></a><a class="pg-card pg-next" href="../backend/02-lu-you-yu-qing-qiu-xiang-ying.html"><span class="pg-label">下一篇 →</span><span class="pg-title">路由与请求响应</span><span class="pg-mod">Python 框架指南</span></a></nav>
+    </div>
+    <footer class="foot">
+      <span>深栈 DeepStack · AI Agent 工程师转型训练营配套文档</span>
+    </footer>
+  </main>
+<nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#1-先摊开地图djangoflaskfastapi-怎么挑">1. 先摊开地图：Django、Flask、FastAPI 怎么挑</a><a class="toc-link toc-h2" href="#2-wsgi-与-asgi前台和后厨的通话规范">2. WSGI 与 ASGI：前台和后厨的通话规范</a><a class="toc-link toc-h3" href="#21-asgi-服务器前台具体在忙什么">2.1 ASGI 服务器（前台）具体在忙什么</a><a class="toc-link toc-h3" href="#22-asgi-应用后厨具体在忙什么">2.2 ASGI 应用（后厨）具体在忙什么</a><a class="toc-link toc-h3" href="#23-双方如何对接接头暗号是-app">2.3 双方如何对接：接头暗号是 app</a><a class="toc-link toc-h3" href="#24-一单请求的完整旅程">2.4 一单请求的完整旅程</a><a class="toc-link toc-h3" href="#25-常见-asgi-服务器速查">2.5 常见 ASGI 服务器速查</a><a class="toc-link toc-h2" href="#3-uvicorn给应用装上发动机">3. Uvicorn：给应用装上发动机</a><a class="toc-link toc-h2" href="#4-第一个应用墨集开门营业">4. 第一个应用：墨集开门营业</a><a class="toc-link toc-h2" href="#5-docsredocopenapijson自动印好的说明书">5. /docs、/redoc、/openapi.json：自动印好的说明书</a><a class="toc-link toc-h2" href="#6-pydantic-初见给数据过安检">6. Pydantic 初见：给数据过安检</a><a class="toc-link toc-h2" href="#7-收摊小结">7. 收摊小结</a><a class="toc-link toc-h2" href="#8-自测清单">8. 自测清单</a></nav>
+</div>
+<div class="sb-mask" id="sbMask"></div>
+<script src="../assets/app.js"></script>
+</body>
+</html>

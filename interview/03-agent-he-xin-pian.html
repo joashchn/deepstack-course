@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>03 · Agent 核心篇 · 深栈 DeepStack 课程文档</title>
+<meta name="description" content="对应课件：agent核心/07-15。Agent 是当前 AI 应用岗的核心差异化考点——面试官想确认你不是&quot;跑通了 Demo&quot;，而是理解它为什么这样运转、在哪里会失控、怎么让它值得托付。本篇 11 题覆盖从协议到多 A…">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%23d9c39a' text-anchor='middle'%3EDS%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+<div class="progress" id="progress"></div>
+
+<div class="layout">
+<aside class="sidebar" id="sidebar">
+  <div class="sb-head">
+    <a class="brand" href="../index.html">
+      <span class="brand-mark">DS</span>
+      <span class="brand-text"><b>深栈 DeepStack</b><i>AI Agent 工程师转型训练营</i></span>
+    </a>
+    <button class="sb-close" id="sbClose" aria-label="关闭目录">✕</button>
+  </div>
+  <div class="sb-search"><input type="search" id="searchInput" placeholder="搜索 123 篇文档… ( / )" autocomplete="off">
+    <div class="sb-results" id="searchResults"></div></div>
+  <nav class="sb-nav">
+    <section class="sb-group" data-mod="python">
+      <a class="sb-group-title" href="../modules/python.html" data-toggle="python">
+        <span class="sb-num">01</span>
+        <span class="sb-group-text"><b>Python 与数据实践</b><i>31 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../python/01-huan-jing-da-jian-yu-ban-ben-guan-li.html"><span class="sb-item-num">01</span><span class="sb-item-title">环境搭建与版本管理</span></a>
+        <a class="sb-item" href="../python/02-bian-liang-biao-da-shi-yu-liu-cheng-kong-zhi.html"><span class="sb-item-num">02</span><span class="sb-item-title">变量、表达式与流程控制</span></a>
+        <a class="sb-item" href="../python/03-xu-lie-zi-dian-yu-ji-he.html"><span class="sb-item-num">03</span><span class="sb-item-title">序列、字典与集合</span></a>
+        <a class="sb-item" href="../python/04-han-shu-she-ji-yu-lambda.html"><span class="sb-item-num">04</span><span class="sb-item-title">函数设计与 lambda</span></a>
+        <a class="sb-item" href="../python/05-zuo-yong-yu-gui-ze-yu-bi-bao.html"><span class="sb-item-num">05</span><span class="sb-item-title">作用域规则与闭包</span></a>
+        <a class="sb-item" href="../python/06-lei-de-ding-yi-yu-shi-li-hua.html"><span class="sb-item-num">06</span><span class="sb-item-title">类的定义与实例化</span></a>
+        <a class="sb-item" href="../python/07-lei-xing-pan-ding-yu-chou-xiang-ji-lei.html"><span class="sb-item-num">07</span><span class="sb-item-title">类型判定与抽象基类</span></a>
+        <a class="sb-item" href="../python/08-mo-shu-fang-fa-quan-jing.html"><span class="sb-item-num">08</span><span class="sb-item-title">魔术方法全景</span></a>
+        <a class="sb-item" href="../python/09-miao-shu-fu-yu-yuan-lei.html"><span class="sb-item-num">09</span><span class="sb-item-title">描述符与元类</span></a>
+        <a class="sb-item" href="../python/10-zhuang-shi-qi.html"><span class="sb-item-num">10</span><span class="sb-item-title">装饰器</span></a>
+        <a class="sb-item" href="../python/11-die-dai-xie-yi-yu-sheng-cheng-qi.html"><span class="sb-item-num">11</span><span class="sb-item-title">迭代协议与生成器</span></a>
+        <a class="sb-item" href="../python/12-with-yu-shang-xia-wen-xie-yi.html"><span class="sb-item-num">12</span><span class="sb-item-title">with 与上下文协议</span></a>
+        <a class="sb-item" href="../python/13-yi-chang-ti-xi-yu-chu-li.html"><span class="sb-item-num">13</span><span class="sb-item-title">异常体系与处理</span></a>
+        <a class="sb-item" href="../python/14-lei-xing-biao-zhu.html"><span class="sb-item-num">14</span><span class="sb-item-title">类型标注</span></a>
+        <a class="sb-item" href="../python/15-mo-kuai-yu-bao-de-zu-zhi.html"><span class="sb-item-num">15</span><span class="sb-item-title">模块与包的组织</span></a>
+        <a class="sb-item" href="../python/16-biao-zhun-ku-xun-li.html"><span class="sb-item-num">16</span><span class="sb-item-title">标准库巡礼</span></a>
+        <a class="sb-item" href="../python/17-yi-lai-guan-li-yu-di-san-fang-ku.html"><span class="sb-item-num">17</span><span class="sb-item-title">依赖管理与第三方库</span></a>
+        <a class="sb-item" href="../python/18-xian-cheng-yu-jin-cheng.html"><span class="sb-item-num">18</span><span class="sb-item-title">线程与进程</span></a>
+        <a class="sb-item" href="../python/19-shi-jian-xun-huan.html"><span class="sb-item-num">19</span><span class="sb-item-title">事件循环</span></a>
+        <a class="sb-item" href="../python/20-future-yu-xie-cheng.html"><span class="sb-item-num">20</span><span class="sb-item-title">Future 与协程</span></a>
+        <a class="sb-item" href="../python/21-asyncio-shi-zhan.html"><span class="sb-item-num">21</span><span class="sb-item-title">asyncio 实战</span></a>
+        <a class="sb-item" href="../python/22-gou-jian-yu-fa-bu.html"><span class="sb-item-num">22</span><span class="sb-item-title">构建与发布</span></a>
+        <a class="sb-item" href="../python/23-gong-cheng-hua-gong-ju-lian.html"><span class="sb-item-num">23</span><span class="sb-item-title">工程化工具链</span></a>
+        <a class="sb-item" href="../python/24-monorepo-yu-tiao-shi.html"><span class="sb-item-num">24</span><span class="sb-item-title">monorepo 与调试</span></a>
+        <a class="sb-item" href="../python/25-jupyter-jiao-hu-huan-jing.html"><span class="sb-item-num">25</span><span class="sb-item-title">Jupyter 交互环境</span></a>
+        <a class="sb-item" href="../python/26-numpy-shu-zu-yu-xiang-liang-hua.html"><span class="sb-item-num">26</span><span class="sb-item-title">NumPy 数组与向量化</span></a>
+        <a class="sb-item" href="../python/27-pandas-shu-ju-jie-gou.html"><span class="sb-item-num">27</span><span class="sb-item-title">Pandas 数据结构</span></a>
+        <a class="sb-item" href="../python/28-pandas-shu-ju-qing-xi.html"><span class="sb-item-num">28</span><span class="sb-item-title">Pandas 数据清洗</span></a>
+        <a class="sb-item" href="../python/29-matplotlib-hui-tu-ti-xi.html"><span class="sb-item-num">29</span><span class="sb-item-title">Matplotlib 绘图体系</span></a>
+        <a class="sb-item" href="../python/30-matplotlib-dong-hua-yu-jiao-hu.html"><span class="sb-item-num">30</span><span class="sb-item-title">Matplotlib 动画与交互</span></a>
+        <a class="sb-item" href="../python/31-seaborn-tong-ji-ke-shi-hua.html"><span class="sb-item-num">31</span><span class="sb-item-title">Seaborn 统计可视化</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="agent">
+      <a class="sb-group-title" href="../modules/agent.html" data-toggle="agent">
+        <span class="sb-num">02</span>
+        <span class="sb-group-text"><b>Agent 核心</b><i>15 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../agent/01-token-yu-ci-qian-ru.html"><span class="sb-item-num">01</span><span class="sb-item-title">Token 与词嵌入</span></a>
+        <a class="sb-item" href="../agent/02-qian-xiang-chuan-bo-yu-fan-xiang-chuan-bo.html"><span class="sb-item-num">02</span><span class="sb-item-title">前向传播与反向传播</span></a>
+        <a class="sb-item" href="../agent/03-zhu-yi-li-ji-zhi-yu-transformer-jia-gou.html"><span class="sb-item-num">03</span><span class="sb-item-title">注意力机制与 Transformer 架构</span></a>
+        <a class="sb-item" href="../agent/04-yu-xun-lian-rlhf-yu-cai-yang-kv-cache.html"><span class="sb-item-num">04</span><span class="sb-item-title">预训练、RLHF 与采样（KV Cache）</span></a>
+        <a class="sb-item" href="../agent/05-ben-di-mo-xing-yu-xiao-xi-jie-gou.html"><span class="sb-item-num">05</span><span class="sb-item-title">本地模型与消息结构</span></a>
+        <a class="sb-item" href="../agent/06-hui-hua-guan-li-yu-json-shu-chu.html"><span class="sb-item-num">06</span><span class="sb-item-title">会话管理与 JSON 输出</span></a>
+        <a class="sb-item" href="../agent/07-tool-calling-xie-yi-yu-feng-zhuang.html"><span class="sb-item-num">07</span><span class="sb-item-title">Tool Calling：协议与封装</span></a>
+        <a class="sb-item" href="../agent/08-react-mo-shi-yu-zhu-xun-huan.html"><span class="sb-item-num">08</span><span class="sb-item-title">ReAct 模式与主循环</span></a>
+        <a class="sb-item" href="../agent/09-shi-zhan-deep-research-agent.html"><span class="sb-item-num">09</span><span class="sb-item-title">实战：Deep Research Agent</span></a>
+        <a class="sb-item" href="../agent/10-skill-yu-jian-jin-shi-pi-lu.html"><span class="sb-item-num">10</span><span class="sb-item-title">Skill 与渐进式披露</span></a>
+        <a class="sb-item" href="../agent/11-mcp-quan-jing.html"><span class="sb-item-num">11</span><span class="sb-item-title">MCP 全景</span></a>
+        <a class="sb-item" href="../agent/12-duo-agent-yu-xuan-xing-ce-lve.html"><span class="sb-item-num">12</span><span class="sb-item-title">多 Agent 与选型策略</span></a>
+        <a class="sb-item" href="../agent/13-ti-shi-ci-gong-cheng-yu-shang-xia-wen-gong.html"><span class="sb-item-num">13</span><span class="sb-item-title">提示词工程与上下文工程</span></a>
+        <a class="sb-item" href="../agent/14-xun-huan-tu-yu-gu-jia-gong-cheng.html"><span class="sb-item-num">14</span><span class="sb-item-title">循环、图与骨架工程</span></a>
+        <a class="sb-item" href="../agent/15-ji-yi-quan-xian-yu-ping-ce.html"><span class="sb-item-num">15</span><span class="sb-item-title">记忆、权限与评测</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="langchain">
+      <a class="sb-group-title" href="../modules/langchain.html" data-toggle="langchain">
+        <span class="sb-num">03</span>
+        <span class="sb-group-text"><b>LangChain 指南</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langchain/01-ren-shi-langchain.html"><span class="sb-item-num">01</span><span class="sb-item-title">认识 LangChain</span></a>
+        <a class="sb-item" href="../langchain/02-ti-shi-ci-mu-ban-yu-xiao-xi.html"><span class="sb-item-num">02</span><span class="sb-item-title">提示词模板与消息</span></a>
+        <a class="sb-item" href="../langchain/03-lcel-yu-runnable.html"><span class="sb-item-num">03</span><span class="sb-item-title">LCEL 与 Runnable</span></a>
+        <a class="sb-item" href="../langchain/04-liu-shi-yu-bing-fa.html"><span class="sb-item-num">04</span><span class="sb-item-title">流式与并发</span></a>
+        <a class="sb-item" href="../langchain/05-shu-chu-jie-xi-qi.html"><span class="sb-item-num">05</span><span class="sb-item-title">输出解析器</span></a>
+        <a class="sb-item" href="../langchain/06-wen-dang-jia-zai-yu-qie-ge.html"><span class="sb-item-num">06</span><span class="sb-item-title">文档加载与切割</span></a>
+        <a class="sb-item" href="../langchain/07-qian-ru-yu-xiang-liang-ku.html"><span class="sb-item-num">07</span><span class="sb-item-title">嵌入与向量库</span></a>
+        <a class="sb-item" href="../langchain/08-jian-suo-yu-rag.html"><span class="sb-item-num">08</span><span class="sb-item-title">检索与RAG</span></a>
+        <a class="sb-item" href="../langchain/09-dui-hua-ji-yi.html"><span class="sb-item-num">09</span><span class="sb-item-title">对话记忆</span></a>
+        <a class="sb-item" href="../langchain/10-gong-ju-diao-yong.html"><span class="sb-item-num">10</span><span class="sb-item-title">工具调用</span></a>
+        <a class="sb-item" href="../langchain/11-agent.html"><span class="sb-item-num">11</span><span class="sb-item-title">Agent</span></a>
+        <a class="sb-item" href="../langchain/12-hui-diao-yu-tiao-shi-quan-ke-cheng-shou-guan.html"><span class="sb-item-num">12</span><span class="sb-item-title">回调与调试（全课程收官章）</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="langgraph">
+      <a class="sb-group-title" href="../modules/langgraph.html" data-toggle="langgraph">
+        <span class="sb-num">04</span>
+        <span class="sb-group-text"><b>LangGraph 框架指南</b><i>17 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langgraph/01-di-1-zhang-cong-yi-ge-shi-kong-de-jiao.html"><span class="sb-item-num">01</span><span class="sb-item-title">第 1 章 从一个失控的脚本说起</span></a>
+        <a class="sb-item" href="../langgraph/02-di-2-zhang-zui-xiao-ke-yun-xing-tu.html"><span class="sb-item-num">02</span><span class="sb-item-title">第 2 章 最小可运行图</span></a>
+        <a class="sb-item" href="../langgraph/03-di-3-zhang-zhuang-tai-tu-de-shu-ju-xin.html"><span class="sb-item-num">03</span><span class="sb-item-title">第 3 章 状态：图的数据心脏</span></a>
+        <a class="sb-item" href="../langgraph/04-di-4-zhang-rang-liu-cheng-xue-hui-jue-ce.html"><span class="sb-item-num">04</span><span class="sb-item-title">第 4 章 让流程学会决策</span></a>
+        <a class="sb-item" href="../langgraph/05-di-5-zhang-bing-xing-shi-jie-chao-bu-zhi.html"><span class="sb-item-num">05</span><span class="sb-item-title">第 5 章 并行世界：超步执行模型</span></a>
+        <a class="sb-item" href="../langgraph/06-di-6-zhang-command-ba-kong-zhi-quan-jiao-jin.html"><span class="sb-item-num">06</span><span class="sb-item-title">第 6 章 Command：把控制权交进节点</span></a>
+        <a class="sb-item" href="../langgraph/07-di-7-zhang-dong-tai-bing-xing-send-yu-mapreduce.html"><span class="sb-item-num">07</span><span class="sb-item-title">第 7 章 动态并行：Send 与 MapReduce</span></a>
+        <a class="sb-item" href="../langgraph/08-di-8-zhang-gei-tu-zhuang-shang-shou-jiao-gong.html"><span class="sb-item-num">08</span><span class="sb-item-title">第 8 章 给图装上手脚：工具调用</span></a>
+        <a class="sb-item" href="../langgraph/09-di-9-zhang-fu-yong-yu-feng-zhuang-zi-tu.html"><span class="sb-item-num">09</span><span class="sb-item-title">第 9 章 复用与封装：子图</span></a>
+        <a class="sb-item" href="../langgraph/10-di-10-zhang-cong-dan-tu-dao-tuan-dui-duo.html"><span class="sb-item-num">10</span><span class="sb-item-title">第 10 章 从单图到团队：多 Agent 架构</span></a>
+        <a class="sb-item" href="../langgraph/11-di-11-zhang-liu-shi-shu-chu.html"><span class="sb-item-num">11</span><span class="sb-item-title">第 11 章 流式输出</span></a>
+        <a class="sb-item" href="../langgraph/12-di-12-zhang-chi-jiu-hua-checkpointer-yu-xian-cheng.html"><span class="sb-item-num">12</span><span class="sb-item-title">第 12 章 持久化：Checkpointer 与线程</span></a>
+        <a class="sb-item" href="../langgraph/13-di-13-zhang-shi-jian-lv-xing.html"><span class="sb-item-num">13</span><span class="sb-item-title">第 13 章 时间旅行</span></a>
+        <a class="sb-item" href="../langgraph/14-di-14-zhang-zhong-duan-yu-ren-zai-hui-lu.html"><span class="sb-item-num">14</span><span class="sb-item-title">第 14 章 中断与人在回路</span></a>
+        <a class="sb-item" href="../langgraph/15-di-15-zhang-ji-yi-guan-li.html"><span class="sb-item-num">15</span><span class="sb-item-title">第 15 章 记忆管理</span></a>
+        <a class="sb-item" href="../langgraph/16-di-16-zhang-rong-cuo-zhong-shi-chao-shi-yu.html"><span class="sb-item-num">16</span><span class="sb-item-title">第 16 章 容错：重试、超时与兜底</span></a>
+        <a class="sb-item" href="../langgraph/17-di-17-zhang-quan-jing-hui-gu.html"><span class="sb-item-num">17</span><span class="sb-item-title">第 17 章 全景回顾</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="backend">
+      <a class="sb-group-title" href="../modules/backend.html" data-toggle="backend">
+        <span class="sb-num">05</span>
+        <span class="sb-group-text"><b>Python 框架指南</b><i>14 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../backend/01-fastapi-ru-men-yu-asgi.html"><span class="sb-item-num">01</span><span class="sb-item-title">FastAPI 入门与 ASGI</span></a>
+        <a class="sb-item" href="../backend/02-lu-you-yu-qing-qiu-xiang-ying.html"><span class="sb-item-num">02</span><span class="sb-item-title">路由与请求响应</span></a>
+        <a class="sb-item" href="../backend/03-pydantic-shu-ju-jiao-yan-yu-pei-zhi.html"><span class="sb-item-num">03</span><span class="sb-item-title">Pydantic 数据校验与配置</span></a>
+        <a class="sb-item" href="../backend/04-sqlalchemy-yi-bu-yin-qing-yu-hui-hua.html"><span class="sb-item-num">04</span><span class="sb-item-title">SQLAlchemy 异步引擎与会话</span></a>
+        <a class="sb-item" href="../backend/05-orm-jian-mo.html"><span class="sb-item-num">05</span><span class="sb-item-title">ORM 建模</span></a>
+        <a class="sb-item" href="../backend/06-sql-biao-da-shi-yu-shu-ju-cao-zuo.html"><span class="sb-item-num">06</span><span class="sb-item-title">SQL 表达式与数据操作</span></a>
+        <a class="sb-item" href="../backend/07-alembic-shu-ju-qian-yi.html"><span class="sb-item-num">07</span><span class="sb-item-title">Alembic 数据迁移</span></a>
+        <a class="sb-item" href="../backend/08-yi-lai-zhu-ru.html"><span class="sb-item-num">08</span><span class="sb-item-title">依赖注入</span></a>
+        <a class="sb-item" href="../backend/09-tong-yi-yi-chang-chu-li.html"><span class="sb-item-num">09</span><span class="sb-item-title">统一异常处理</span></a>
+        <a class="sb-item" href="../backend/10-zhong-jian-jian.html"><span class="sb-item-num">10</span><span class="sb-item-title">中间件</span></a>
+        <a class="sb-item" href="../backend/11-ren-zheng-yu-jwt.html"><span class="sb-item-num">11</span><span class="sb-item-title">认证与 JWT</span></a>
+        <a class="sb-item" href="../backend/12-pytest-ce-shi.html"><span class="sb-item-num">12</span><span class="sb-item-title">pytest 测试</span></a>
+        <a class="sb-item" href="../backend/13-ri-zhi-loguru.html"><span class="sb-item-num">13</span><span class="sb-item-title">日志 loguru</span></a>
+        <a class="sb-item" href="../backend/14-liu-shi-xiang-ying-sse-yu-websocket.html"><span class="sb-item-num">14</span><span class="sb-item-title">流式响应 SSE 与 WebSocket</span></a>
+      </div>
+    </section>
+    <section class="sb-group open" data-mod="interview">
+      <a class="sb-group-title" href="../modules/interview.html" data-toggle="interview">
+        <span class="sb-num">06</span>
+        <span class="sb-group-text"><b>面试题库</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../interview/01-llm-yuan-li-pian.html"><span class="sb-item-num">01</span><span class="sb-item-title">LLM 原理篇</span></a>
+        <a class="sb-item" href="../interview/02-rag-yu-jian-suo-pian.html"><span class="sb-item-num">02</span><span class="sb-item-title">RAG 与检索篇</span></a>
+        <a class="sb-item current" href="../interview/03-agent-he-xin-pian.html"><span class="sb-item-num">03</span><span class="sb-item-title">Agent 核心篇</span></a>
+        <a class="sb-item" href="../interview/04-langgraph-pian.html"><span class="sb-item-num">04</span><span class="sb-item-title">LangGraph 篇</span></a>
+        <a class="sb-item" href="../interview/05-langchain-pian.html"><span class="sb-item-num">05</span><span class="sb-item-title">LangChain 篇</span></a>
+        <a class="sb-item" href="../interview/06-xi-tong-she-ji-pian.html"><span class="sb-item-num">06</span><span class="sb-item-title">系统设计篇</span></a>
+        <a class="sb-item" href="../interview/07-xiang-mu-shen-wa-pian.html"><span class="sb-item-num">07</span><span class="sb-item-title">项目深挖篇</span></a>
+        <a class="sb-item" href="../interview/08-gu-zhang-pai-cha-pian.html"><span class="sb-item-num">08</span><span class="sb-item-title">故障排查篇</span></a>
+        <a class="sb-item" href="../interview/09-python-ji-chu-pian.html"><span class="sb-item-num">09</span><span class="sb-item-title">Python 基础篇</span></a>
+        <a class="sb-item" href="../interview/10-fastapi-yu-hou-duan-pian.html"><span class="sb-item-num">10</span><span class="sb-item-title">FastAPI 与后端篇</span></a>
+        <a class="sb-item" href="../interview/11-ti-shi-ci-gong-cheng-yu-an-quan-pian.html"><span class="sb-item-num">11</span><span class="sb-item-title">提示词工程与安全篇</span></a>
+        <a class="sb-item" href="../interview/12-mo-xing-xuan-xing-yu-jiang-ben-pian.html"><span class="sb-item-num">12</span><span class="sb-item-title">模型选型与降本篇</span></a>
+      </div>
+    </section>
+  </nav>
+</aside>
+  <main class="main">
+    <header class="topbar">
+      <button class="menu-btn" id="menuBtn" aria-label="目录">☰</button>
+      <div class="crumbs"><a href="../index.html">首页</a><span>/</span><a href="../modules/interview.html">面试题库</a><span>/</span><span class="cur">Agent 核心篇</span></div>
+      <div class="topbar-actions">
+        <button class="icon-btn" id="themeBtn" title="切换深浅色" aria-label="切换深浅色">◐</button>
+      </div>
+    </header>
+    <div class="content">
+      <article class="article">
+
+<header class="page-head">
+  <div class="page-kicker">面试题库 · 第 03 章</div>
+  <h1 class="page-title">Agent 核心篇</h1>
+  <p class="page-desc">对应课件：agent核心/07-15。Agent 是当前 AI 应用岗的核心差异化考点——面试官想确认你不是&quot;跑通了 Demo&quot;，而是理解它为什么这样运转、在哪里会失控、怎么让它值得托付。本篇 11 题覆盖从协议到多 A…</p>
+  <div class="page-meta">
+    <span>约 38 分钟</span><span>15,047 字</span><span>0 个代码示例</span>
+  </div>
+</header>
+<div class="md"><blockquote>
+<p>对应课件：agent核心/07-15。Agent 是当前 AI 应用岗的<strong>核心差异化考点</strong>——面试官想确认你不是"跑通了 Demo"，而是理解它为什么这样运转、在哪里会失控、怎么让它值得托付。本篇 11 题覆盖从协议到多 Agent 实现的完整链路。</p>
+</blockquote>
+<hr />
+<h2 id="q01-tool-calling-的原理是什么模型真的执行了函数吗">Q01 · Tool Calling 的原理是什么？模型真的"执行"了函数吗？</h2>
+<blockquote>
+<p>难度：★★★★ ｜ 频率：极高 ｜ 对应课件：agent核心/07</p>
+</blockquote>
+<p><strong>面试官</strong>：你说你做过 Agent，那 Tool Calling 底层是怎么实现的？模型真的会执行你的函数吗？</p>
+<p><strong>第 1 层追问：模型不执行任何东西</strong></p>
+<blockquote>
+<p>先纠正一个最常见的误解。</p>
+</blockquote>
+<p>参考回答：<strong>模型从不执行任何函数</strong>。它做的只是输出一段<strong>结构化的"调用意向"</strong>——函数名 + 参数值的文本；真正的执行发生在<strong>你的代码</strong>里。完整闭环是四步：你的 SDK 把 <code>tools</code> 定义发给模型 → 模型返回 <code>tool_calls</code>（调用意向）→ <strong>你的程序</strong>执行对应函数 → 把结果作为 <code>tool</code> 角色消息回传，模型再基于结果继续。理解这一点的工程意义：<strong>安全边界在你手里</strong>——模型只能"请求"，批不批、怎么执行、结果给不给，全是你的代码说了算。</p>
+<p><strong>第 2 层追问：协议背后的机制</strong></p>
+<blockquote>
+<p>那模型是怎么"学会"发出这种调用意向的？</p>
+</blockquote>
+<p>参考回答：剥开工业包装，tool calling 是三样老朋友拼装，没有任何新魔法。<strong>注入</strong>：SDK 把 <code>tools</code> 定义序列化成文本（类似一段"可用函数列表"的说明）拼进输入——本质上和你在 system prompt 里手写"你有以下工具可用"没有区别。<strong>生成</strong>：模型经过后训练（SFT/RLHF）专门训练过"见到工具列表 + 合适的用户请求时，输出调用格式的文本"。<strong>解析</strong>：推理服务把这段特殊文本解析成结构化的 <code>tool_calls</code> 对象返回。所以它可靠性不错，但<strong>仍是概率行为</strong>——可能不调该调的工具、编造不存在的参数值、给格式错误的参数，应用层必须校验 + 兜底。</p>
+<p><strong>第 3 层追问：tool_choice 能干什么？</strong></p>
+<blockquote>
+<p>有什么手段控制模型的调用行为？</p>
+</blockquote>
+<p>参考回答：<code>tool_choice</code> 控制调用倾向，四档：<strong><code>"auto"</code></strong>（默认）模型自行决定调不调、调哪个；<strong><code>"none"</code></strong> 禁止调用，纯对话；<strong><code>"required"</code></strong> 强制至少调一个；<strong>指定具体函数</strong>——强制模型把自然语言填进某个 schema。最后这档特别实用：<strong>强制调用一个"信息提取器"函数，等于一个"自然语言 → 结构化数据"的转换器</strong>，比如从用户的话里抽 {城市, 日期}，这是结构化输出的另一条实现路径。</p>
+<p><strong>第 4 层追问：并行调用怎么回事？</strong></p>
+<blockquote>
+<p>用户问"北京和上海今天哪个适合跑步"，模型会怎么调天气工具？</p>
+</blockquote>
+<p>参考回答：现代模型支持<strong>一次返回多个 tool_calls</strong>——两个 <code>get_weather</code>（北京、上海）在同一条回复里。协议要求<strong>每个 tool_call 都要有对应的一条 tool 消息回传</strong>，靠 <code>tool_call_id</code> 配对；执行侧可以并发（两个天气查询同时发）。工程要点：并发执行时结果必须<strong>按 id 对号入座</strong>回填，顺序可以乱、配对不能错；且回传时一条都不能少——缺一条 tool 消息，下一次请求直接报协议错误。</p>
+<h3 id="考察意图与踩坑点">考察意图与踩坑点</h3>
+<ul>
+<li>考察意图：这题是 Agent 面试的"试金石"。第 1 层答不出"模型不执行"这半句，后面所有 Agent 问题都会被面试官在心里降档。</li>
+<li>踩坑点：说"模型执行了函数，把结果返回给我"——方向反了；不知道 tool_calls 可能是多个、tool 消息要按 id 一一对应。</li>
+<li>一句话总结：模型只发"调用意向"，执行永远在你的代码里——注入、生成、解析三步拼装，概率行为必须校验兜底。</li>
+</ul>
+<hr />
+<h2 id="q02-讲讲-react它和普通的链式调用差在哪">Q02 · 讲讲 ReAct。它和普通的"链式调用"差在哪？</h2>
+<blockquote>
+<p>难度：★★★ ｜ 频率：高 ｜ 对应课件：agent核心/08</p>
+</blockquote>
+<p><strong>面试官</strong>：Agent 的经典模式是 ReAct。说说它是什么，为什么需要它？</p>
+<p><strong>第 1 层追问：思想本身</strong></p>
+<blockquote>
+<p>用一句话说清 ReAct 的洞察。</p>
+</blockquote>
+<p>参考回答：ReAct = <strong>Reasoning + Acting</strong>，核心洞察是：<strong>把"行动"插入"思考"之间</strong>。传统一次性回答里，模型必须在不掌握任何新信息的情况下直接推理出答案；ReAct 让模型先想"我需要什么信息"→ 调工具拿 → 看结果再想下一步 → 循环，直到信息足够才给最终答案。<strong>边收集信息边推理</strong>，而不是"闭卷猜完再交卷"。这个词也是 Agent 行为自主性的思想源头。</p>
+<p><strong>第 2 层追问：和链式调用（Chain）的本质区别</strong></p>
+<blockquote>
+<p>我用 LangChain 拼一条链不也能调工具吗？</p>
+</blockquote>
+<p>参考回答：区别在<strong>控制流由谁决定</strong>。链是<strong>你写死的流程</strong>：先 A 后 B 再 C，编译期固定，不管输入是什么都走同一条路。ReAct Agent 是<strong>模型在运行时决定</strong>下一步调什么、调几次、什么时候停——控制流是模型根据中间结果动态选的。所以选型标准很清晰：<strong>步骤能预先确定的用链</strong>（便宜、可预测、好调试），<strong>步骤取决于中间结果的开放式任务才用 Agent</strong>（"帮我调研 X"——要搜几次、读几页，事先不知道）。</p>
+<p><strong>第 3 层追问：代价是什么？</strong></p>
+<blockquote>
+<p>动态控制流的代价呢？</p>
+</blockquote>
+<p>参考回答：三个代价，答不出这个说明没实战过。<strong>延迟和成本</strong>：每一轮"思考 + 调用"都是一次完整 LLM 请求，一个任务跑十几轮很正常，token 烧得飞快。<strong>不可预测性</strong>：模型可能选错工具、绕远路、陷入循环——所以必须有终止闸门（下一题的主题）。<strong>难测试</strong>：链可以单元测试每个环节，Agent 的执行路径是动态的，只能靠端到端评测 + 轨迹分析。这也是"能用链解决就别上 Agent"的行业共识来源：<strong>Agent 的灵活性是用可控性换的</strong>。</p>
+<h3 id="考察意图与踩坑点_1">考察意图与踩坑点</h3>
+<ul>
+<li>考察意图：考"链 vs Agent"的选型判断——这是课程反复强调的主线（能用固定链解决的别上 Agent），也是团队里真实的设计争论。</li>
+<li>踩坑点：把 ReAct 背成"推理和行动结合"的名词解释，说不出和链的控制流差异；什么都想上 Agent，暴露没被成本毒打过。</li>
+<li>一句话总结：行动插入思考之间，边收集边推理；链是写死的流程，Agent 是运行时的决策——灵活性拿可控性换的。</li>
+</ul>
+<hr />
+<h2 id="q03-你的-agent-陷入死循环怎么办">Q03 · 你的 Agent 陷入死循环怎么办？</h2>
+<blockquote>
+<p>难度：★★★★ ｜ 频率：极高 ｜ 对应课件：agent核心/08</p>
+</blockquote>
+<p><strong>面试官</strong>：Agent 的 while 循环里模型反复调同一个工具停不下来，你见过吗？怎么防？</p>
+<p><strong>第 1 层追问：先描述现象</strong></p>
+<blockquote>
+<p>死循环长什么样？</p>
+</blockquote>
+<p>参考回答：两种典型形态，见一次就认识。<strong>形态一"鬼打墙"</strong>：<code>search["qwen3 发布时间"]</code> → 结果不满意 → <code>search["qwen3 发布时间"]</code> → ……同参数反复调同一工具，模型"卡带"了。<strong>形态二"打乒乓"</strong>：<code>read_file[a]</code> → <code>read_file[b]</code> → <code>read_file[a]</code> → <code>read_file[b]</code>……在两个状态间横跳。共同点：<code>while True</code> 没有出口，程序永久卡死并<strong>持续烧 token</strong>——最小可用的 Agent 主循环（"反复调用模型，直到不再请求工具"）有个致命缺陷：唯一的正常出口是模型自己不再要工具，模型失控时没有任何保险。</p>
+<p><strong>第 2 层追问：防护机制</strong></p>
+<blockquote>
+<p>生产级 Agent 怎么设计出口？</p>
+</blockquote>
+<p>参考回答：<strong>四道独立的终止闸门</strong>，缺一不可：<strong>自然终止</strong>——模型不再发起 tool_calls（唯一正常出口）；<strong>轮次上限</strong>——循环次数 ≥ max_rounds 直接停，防死循环和反复横跳；<strong>token 预算</strong>——累计消耗 ≥ budget 停，防成本失控；<strong>重复检测</strong>——连续 N 次调用完全相同（函数名 + 参数哈希）判定卡带，强制中断。四道闸门防的是不同故障：轮次防"次数多"，预算防"单轮贵"，重复检测专治"卡带"。</p>
+<p><strong>第 3 层追问：触发闸门之后呢？</strong></p>
+<blockquote>
+<p>闸门拦住了，然后呢？直接给用户报错吗？</p>
+</blockquote>
+<p>参考回答：拦截只是止损，还得<strong>优雅降级</strong>。方案按场景选：<strong>一，带上已收集的信息总结</strong>——"我查了 N 轮，目前了解到……但未能完全确认"，比裸报错体验好得多；<strong>二，注入"纠偏提示"再给一次机会</strong>——把"你已连续 3 次用相同参数调用同一工具，请换一个查询词或改变策略"写进上下文，很多循环一次纠偏就解开；<strong>三，换路径</strong>——降级为不用 Agent 的固定流程兜底。同时把触发事件记进日志和指标——<strong>闸门触发率本身就是重要的可观测信号</strong>，突然升高说明行为层在退化。</p>
+<p><strong>第 4 层追问：能不能从根上减少死循环？</strong></p>
+<blockquote>
+<p>与其事后拦，怎么事前防？</p>
+</blockquote>
+<p>参考回答：三个源头手段。<strong>一，提示词层面</strong>：系统提示词里写明"如果连续两次搜索结果不理想，请更换关键词或放弃该方向"——给模型"承认失败"的合法出口，很多死循环是模型不知道"可以放弃"。<strong>二，工具返回值层面</strong>：工具结果里带引导信息（"没有找到结果，建议尝试 XXX"），返回空字符串是诱发循环的最佳方式。<strong>三，工具设计层面</strong>：参数 schema 清晰、工具粒度小，模型选错工具的概率自然低——工具设计是行为质量的上游。</p>
+<h3 id="考察意图与踩坑点_2">考察意图与踩坑点</h3>
+<ul>
+<li>考察意图：这是 Agent 工程化的<strong>必答题</strong>——课程把"四道闸门"作为生产级 Agent 的分界线，面试官同样把它当"Demo 与生产"的分界线。</li>
+<li>踩坑点：只答"加个 max 轮次"（四道闸门只答出一道）；说"把 temperature 调低就行"——采样参数解决不了行为层失控；不知道触发后的降级处理，只会拦不会收尾。</li>
+<li>一句话总结：四道闸门——自然终止、轮次、预算、重复检测；拦截后要总结降级 + 纠偏重试，触发率要进指标。</li>
+</ul>
+<hr />
+<h2 id="q04-什么任务该用-agent什么任务不该">Q04 · 什么任务该用 Agent？什么任务不该？</h2>
+<blockquote>
+<p>难度：★★★ ｜ 频率：高 ｜ 对应课件：agent核心/08、LangChain指南/11</p>
+</blockquote>
+<p><strong>面试官</strong>：团队里有人什么任务都想套 Agent。你怎么判断一个任务该不该用 Agent？</p>
+<p><strong>第 1 层追问：判断标准</strong></p>
+<blockquote>
+<p>给一个你能守住的标准。</p>
+</blockquote>
+<p>参考回答：一句话标准：<strong>步骤能不能事先写死</strong>。任务流程固定、输入输出明确（翻译、摘要、固定格式抽取）——用链/工作流，便宜、稳定、可测试。任务<strong>步骤取决于中间结果</strong>、路径无法预知（开放调研、多源数据核实、需要"看情况"的决策）——用 Agent，让模型在运行时决定控制流。中间地带的默认倾向：<strong>先用链，链解决不了再升 Agent</strong>——成本和可控性的差价摆在那里。</p>
+<p><strong>第 2 层追问：判断的量化依据</strong></p>
+<blockquote>
+<p>"步骤写不死"太主观，有没有更硬的信号？</p>
+</blockquote>
+<p>参考回答：四个硬信号，命中越多越该用 Agent。<strong>一，分支不可枚举</strong>：if-else 写不全合法路径（用户问题的下一条动作取决于上一轮工具返回了什么）。<strong>二，需要多轮工具</strong>：答案依赖 ≥ 2 次有依赖关系的调用（先查 ID 再查详情）。<strong>三，失败要重试换路</strong>：A 方案不行要自动换 B 方案，重试逻辑本身就是决策。<strong>四，任务目标明确但路径开放</strong>："给我 Y 的可信结论"目标清晰，"怎么查"开放。反过来，凡是<strong>单次调用能解决、路径唯一、不需要看中间结果</strong>的，Agent 是纯开销。</p>
+<p><strong>第 3 层追问：混合形态呢？</strong></p>
+<blockquote>
+<p>真实系统一般是纯链或纯 Agent 吗？</p>
+</blockquote>
+<p>参考回答：不是，生产系统几乎都是<strong>混合体</strong>。典型形态：<strong>外层链 + 局部 Agent</strong>——主流程用固定图编排（LangGraph），其中某个节点放一个 Agent 处理开放子任务，做完回到主流程。例如客服系统：意图分类（链）→ 查订单（固定工具调用）→ 复杂投诉处理（Agent 子图）→ 汇总回复（链）。另一种是<strong>Agent 内嵌链</strong>：Agent 的某个工具本身就是一条预处理链。判断粒度从"整个系统"细化到"每个环节"，这才是课程说的"循环、图与骨架工程"（Loop/Graph/Harness）的实际用法。</p>
+<h3 id="考察意图与踩坑点_3">考察意图与踩坑点</h3>
+<ul>
+<li>考察意图：考工程判断力。这题没有标准答案，但"什么都能上 Agent"和"Agent 没用"两个极端都是减分项。</li>
+<li>踩坑点：说不出"步骤能否预先确定"这个核心判据；不知道混合形态，只会"全链或全 Agent"的二选一。</li>
+<li>一句话总结：步骤能写死用链、写不死才上 Agent；四个硬信号（分支、多轮依赖、换路重试、目标明路径开）；生产系统是图里嵌 Agent。</li>
+</ul>
+<hr />
+<h2 id="q05-怎么设计一个好用的工具工具越多越好吗">Q05 · 怎么设计一个好用的工具？工具越多越好吗？</h2>
+<blockquote>
+<p>难度：★★★ ｜ 频率：高 ｜ 对应课件：agent核心/07、09</p>
+</blockquote>
+<p><strong>面试官</strong>：Agent 好不好用，工具设计占一半。你会怎么设计工具？是不是工具给得越多越强？</p>
+<p><strong>第 1 层追问：好工具的特征</strong></p>
+<blockquote>
+<p>一个"好工具"长什么样？</p>
+</blockquote>
+<p>参考回答：四个特征。<strong>一，单一职责、粒度小</strong>：一个工具做一件事——<code>web_search(query)</code> 和 <code>read_webpage(url)</code> 分开，比一个"搜索并总结网页"的大杂烩强。<strong>二，参数 schema 清晰</strong>：参数名自解释、类型明确、枚举值封闭，description 写清"什么时候用我、参数怎么填"——这段说明就是模型的"工具说明书"。<strong>三，返回结构化、带引导</strong>：返回 JSON 带状态和摘要，失败时给出"建议尝试 XXX"，绝不返回空字符串。<strong>四，幂等且安全</strong>：查询类天然幂等；写操作要可校验、可回滚。</p>
+<p><strong>第 2 层追问：小工具组合为什么优于大而全？</strong></p>
+<blockquote>
+<p>为什么拆小？给模型少一点的工具不是更简单吗？</p>
+</blockquote>
+<p>参考回答：因为<strong>模型是按"说明书"选工具的概率系统</strong>。大而全的工具参数多、行为分支多，模型填错参数的概率随参数数上升；小工具各自描述精准，选择空间小、命中率高。组合性还带来<strong>行为涌现</strong>：DeepResearch Agent 只有 <code>web_search</code> 和 <code>read_webpage</code> 两个小工具，模型自己发展出"并行发起多个搜索 → 筛选 URL 精读 → 对比多方信息"的策略——<strong>策略是模型在运行时组合出来的，不是你写死的</strong>。工具越正交，组合空间越大。</p>
+<p><strong>第 3 层追问：那工具数量呢？</strong></p>
+<blockquote>
+<p>到底挂多少个工具合适？</p>
+</blockquote>
+<p>参考回答：<strong>少而精，并且按需加载</strong>。工具的 schema 每轮都注入上下文：token 成本随工具数线性涨，且<strong>工具越多模型选错的概率越高</strong>（注意力稀释在几十份说明书上）。实践上限：核心循环里挂 <strong>5-10 个</strong>以内；更多工具时分而治之——按任务域拆成多个 Agent/子图，各挂各的工具；或者用<strong>渐进式披露</strong>：主上下文只放工具目录（一行一个），模型用到时再展开完整说明。这就是课程里 Skill 机制解决的问题：<strong>让工具/能力的"说明书"也变成按需检索的资源</strong>。</p>
+<h3 id="考察意图与踩坑点_4">考察意图与踩坑点</h3>
+<ul>
+<li>考察意图：工具设计是"用 Agent 的人"和"做 Agent 的人"的分水岭——做过的人都有"改一行工具描述，行为质量立变"的体感。</li>
+<li>踩坑点：说"工具越多能力越强"；工具返回纯字符串且失败时返回空；参数设计成一个大 dict 什么都能塞。</li>
+<li>一句话总结：单一职责、schema 清晰、返回带引导；小工具正交组合出涌现策略；核心循环 5-10 个，多了上渐进式披露。</li>
+</ul>
+<hr />
+<h2 id="q06-mcp-是什么和直接写函数有什么区别什么时候用-skill-多-agent">Q06 · MCP 是什么？和直接写函数有什么区别？什么时候用 Skill / 多 Agent？</h2>
+<blockquote>
+<p>难度：★★★★ ｜ 频率：高（区分度极高）｜ 对应课件：agent核心/10-12</p>
+</blockquote>
+<p><strong>面试官</strong>：现在都在聊 MCP。它解决什么问题？你自己的工具函数直接写不就完了，为什么要套一层协议？</p>
+<p><strong>第 1 层追问：MCP 解决什么</strong></p>
+<blockquote>
+<p>先说 MCP 的定位。</p>
+</blockquote>
+<p>参考回答：MCP（Model Context Protocol）是<strong>把"能力供给"和"Agent 本体"解耦的开放协议</strong>。没有它，每个工具都和你的 Agent 代码锁死：工具要用特定 SDK 注册、换框架全重写、别人的工具拿过来不能直接用。MCP 定义了 <strong>Server（能力提供方）↔ Client（Agent 侧连接器）</strong> 的标准协议：文件系统、数据库、GitHub 都有现成 MCP Server，你的 Agent 作为 Client 接上就能用——<strong>工具从"我写的函数"变成"即插即用的生态组件"</strong>。类比 USB：定义一个通用接口，设备和主机自由组合。</p>
+<p><strong>第 2 层追问：和自己写函数的真实差别</strong></p>
+<blockquote>
+<p>那我自己注册工具和接 MCP Server，实际差在哪？</p>
+</blockquote>
+<p>参考回答：三个实际差别。<strong>一，复用边界</strong>：自写函数只在你的进程里；MCP Server 是独立进程/服务，<strong>一次实现、任何支持 MCP 的客户端都能用</strong>（Claude、Cursor、你的自研 Agent 共享同一个工具服务）。<strong>二，维护解耦</strong>：工具升级由 Server 方独立发布，Agent 侧不动代码。<strong>三，成本</strong>：多一层协议交互（进程间/网络通信），<strong>简单场景纯属开销</strong>——所以选型不是"越标准越好"：自己项目里两三个私有工具，直接写函数最简；要接入生态或对外提供能力，MCP 才是正解。</p>
+<p><strong>第 3 层追问：Skill 和多 Agent 又怎么选？</strong></p>
+<blockquote>
+<p>需要扩展能力时，Skill、MCP、多 Agent 怎么选？</p>
+</blockquote>
+<p>参考回答：三者的扩展维度不同，按"扩展什么"选。<strong>扩展"知识/操作手册"</strong> → <strong>Skill</strong>：SKILL.md 文档 + 按需加载（渐进式披露），把"怎么做某类任务"的说明书做成可检索资源，主上下文只留目录——解决提示词膨胀。<strong>扩展"执行能力"</strong> → <strong>MCP</strong>：接外部系统（数据库、浏览器、第三方服务）。<strong>扩展"并行与隔离"</strong> → <strong>多 Agent/子代理</strong>：任务分解成子任务，各子代理有独立上下文和工具集，干完汇总——解决单 Agent 上下文过载和"一人干所有事"的职责混乱。真实系统三者叠加：主 Agent 按任务调 Skill 手册、连 MCP 工具、把大子任务派给子代理。</p>
+<p><strong>第 4 层追问：多 Agent 的代价？</strong></p>
+<blockquote>
+<p>子代理听起来很美，代价呢？</p>
+</blockquote>
+<p>参考回答：三个代价，答不出说明只在纸面上见过多 Agent。<strong>一，成本放大</strong>：每个子代理独立带上下文跑完整循环，N 个子代理 ≈ N 倍 token。<strong>二，协调误差</strong>：任务分解错了、子结果合并错了，错误在代理间传递放大——"编辑部"模式（一个 agent 负责分派和汇总）能收敛但多一跳延迟。<strong>三，调试复杂度跳级</strong>：单 Agent 看一条轨迹，多 Agent 要看 N 条轨迹 + 交互记录。所以课程的选型策略是：<strong>先单 Agent + 好工具；上下文塞不下或需要真并行（如多路调研）才上多 Agent</strong>。</p>
+<h3 id="考察意图与踩坑点_5">考察意图与踩坑点</h3>
+<ul>
+<li>考察意图：这题是 2025-2026 年面试的<strong>热门区分题</strong>——MCP 人人在谈，能讲清"何时不用"的候选人极少。第 3 层的三维选型框架是本课程的招牌框架，答出即差异化。</li>
+<li>踩坑点：把 MCP 说成"工具商店"或"模型"——它是协议；"全上 MCP"或"全不用 MCP"两个极端；把多 Agent 当默认架构炫技。</li>
+<li>一句话总结：知识扩展用 Skill、能力扩展用 MCP、并行隔离用多 Agent——先问"扩展什么"，再问"用什么"。</li>
+</ul>
+<hr />
+<h2 id="q07-上下文工程是什么和提示词工程什么关系">Q07 · 上下文工程是什么？和提示词工程什么关系？</h2>
+<blockquote>
+<p>难度：★★★★ ｜ 频率：高 ｜ 对应课件：agent核心/13</p>
+</blockquote>
+<p><strong>面试官</strong>：常听说"上下文工程是新的提示词工程"。你怎么理解这两者的关系？</p>
+<p><strong>第 1 层追问：概念升级的原因</strong></p>
+<blockquote>
+<p>为什么会有这个说法？</p>
+</blockquote>
+<p>参考回答：因为 <strong>Agent 时代的上下文是动态的</strong>。提示词工程的经典场景是单轮静态：一条提示词调到最优就完事。Agent 的上下文是<strong>每个运行轮次都在变化的复合体</strong>：系统提示词 + 工具定义 + 历史消息 + 工具返回结果 + 检索材料——每一项都动态进进出出。上下文工程处理的是<strong>这个动态预算的分配问题</strong>：有限的窗口里，每轮放什么、挤掉什么、怎么压缩。一句话：<strong>提示词工程优化"怎么说一句话"，上下文工程管理"整个会话里都装着什么"</strong>。</p>
+<p><strong>第 2 层追问：具体做什么？</strong></p>
+<blockquote>
+<p>上下文工程在实操上有哪些手段？</p>
+</blockquote>
+<p>参考回答：四个方向的工具箱。<strong>一，预算分配</strong>：给各组成部分设额度（工具定义 X token、历史 Y token、材料 Z token），超了先砍谁要有预设优先级——<strong>系统提示词和关键约束最后砍，工具返回的原始大文本最先压</strong>。<strong>二，压缩</strong>：工具返回值截断/摘要（网页全文 → 关键段）、历史消息定期摘要。<strong>三，结构化布局</strong>：稳定内容放前缀（吃 KV Cache）、关键指令放首尾（对抗 lost in the middle）、用分隔符把材料围起来。<strong>四，按需加载</strong>：Skill 的渐进式披露、RAG 的检索——<strong>上下文里只放当下需要的，能检索到的不常驻</strong>。</p>
+<p><strong>第 3 层追问：一个综合例子</strong></p>
+<blockquote>
+<p>拿你的 DeepResearch Agent 举例，上下文工程体现在哪？</p>
+</blockquote>
+<p>参考回答：三个具体设计。<strong>一，工具返回截断</strong>：<code>read_webpage</code> 只回传清洗后的正文关键部分，不把原始 HTML 塞进上下文——网页全文几万 token，塞三页就爆窗。<strong>二，系统提示词定预算规则</strong>：明确"搜索结果不足时换关键词，最多 N 轮"——把终止策略写进上下文的稳定前缀。<strong>三，历史裁剪</strong>：长调研任务里，已处理完的中间轮次（搜索结果原文）压缩成结论性短句，保留"查过什么、结论是什么"，丢掉原文细节。整个 Agent 能跑多深的任务，<strong>上下文管理比模型能力更早成为瓶颈</strong>。</p>
+<h3 id="考察意图与踩坑点_6">考察意图与踩坑点</h3>
+<ul>
+<li>考察意图：这是从"会用 Agent"到"懂 Agent 工程学"的分界概念，也是课程的核心主张之一。能讲出"预算 + 压缩 + 按需加载"三板斧即过关。</li>
+<li>踩坑点：把上下文工程说成"提示词写长一点"；只谈概念给不出一个具体例子（说明没实操过）。</li>
+<li>一句话总结：提示词工程管一句话怎么说，上下文工程管整个窗口里装什么——预算分配、压缩、按需加载三件套。</li>
+</ul>
+<hr />
+<h2 id="q08-agent-上线前怎么评测上线后怎么知道它健康">Q08 · Agent 上线前怎么评测？上线后怎么知道它健康？</h2>
+<blockquote>
+<p>难度：★★★★ ｜ 频率：中（答好极加分）｜ 对应课件：agent核心/15</p>
+</blockquote>
+<p><strong>面试官</strong>：Agent 的行为是概率性的，你怎么评测它？上线后又盯什么指标？</p>
+<p><strong>第 1 层追问：上线前的评测</strong></p>
+<blockquote>
+<p>评测怎么做？</p>
+</blockquote>
+<p>参考回答：三层评测金字塔。<strong>一，端到端任务评测</strong>：构造任务集（含目标 + 必要的环境/工具桩），跑完看<strong>任务成功率</strong>——最核心但最贵的指标，要人工或 LLM 裁判判分。<strong>二，轨迹评测</strong>：不只看结果，看<strong>路径</strong>——工具选择对不对、轮次合理吗、有没有死循环/无效调用。结果对但绕了 15 轮，是"运气好"不是"可靠"。<strong>三，行为边界测试</strong>：越权测试（诱导它调不该调的写操作）、拒答测试、闸门触发测试。因为行为是概率性的，<strong>每题要跑多次看稳定性</strong>（同任务 5 次成功 4 次 = 80% 成功率，不是"能跑通"）。</p>
+<p><strong>第 2 层追问：上线后盯什么？</strong></p>
+<blockquote>
+<p>线上监控看哪些数？</p>
+</blockquote>
+<p>参考回答：四组信号。<strong>一，成本与延迟</strong>：每任务平均 token 消耗、轮次数、端到端时延、P99——token 成本是 Agent 的"心跳监测"。<strong>二，闸门触发率</strong>：轮次上限触发率、重复检测触发率——<strong>突然升高 = 行为退化最灵敏的信号</strong>。<strong>三，结果质量代理指标</strong>：用户采纳率（点了引用/复制了结果）、人工抽查评分、失败案例自动聚类。<strong>四，安全事件</strong>：写操作频率、权限校验拦截数。配套动作：<strong>全量轨迹落日志</strong>（课程里的"事件轨迹"调试法：从轨迹定位是工具层、行为层还是引擎层的问题）+ 每周抽失败轨迹复盘。</p>
+<p><strong>第 3 层追问：评测和线上的差距怎么处理？</strong></p>
+<blockquote>
+<p>评测集上 90 分，线上用户还是骂，为什么？</p>
+</blockquote>
+<p>参考回答：三个真实的 gap。<strong>一，分布偏移</strong>：评测题是合成的，用户的真实问题更刁钻、更口语、更多歧义——所以要用<strong>线上真实失败案例回流评测集</strong>，持续换血。<strong>二，环境差异</strong>：评测时工具桩是理想返回，线上 API 会超时、返回脏数据、格式漂移——评测要注入故障（工具超时、返回空）看 Agent 的鲁棒性。<strong>三，单点 vs 长会话</strong>：单任务成功率 90%，十步流程的端到端成功率可能只剩 35%——<strong>概率连乘的残酷</strong>，这也是为什么多步任务要设计"步间校验"而不是指望每步都稳。评测的结论永远是<strong>下限</strong>，不是上线后的真实表现。</p>
+<h3 id="考察意图与踩坑点_7">考察意图与踩坑点</h3>
+<ul>
+<li>考察意图：评测与可观测是把 Agent 从 Demo 推向生产的能力证明——团队招人时"能不能独立守一个 Agent 服务"就看这题。</li>
+<li>踩坑点：只答"让 GPT 打个分"；不知道轨迹评测和闸门指标；没意识到概率系统的成功率要多次运行才成立。</li>
+<li>一句话总结：评测三层（任务成功率、轨迹质量、行为边界）+ 线上四组信号（成本、闸门触发率、质量代理、安全）——轨迹日志是调试的眼睛。</li>
+</ul>
+<hr />
+<h2 id="q09-agent-的记忆怎么设计把历史全塞进上下文为什么不行">Q09 · Agent 的记忆怎么设计？"把历史全塞进上下文"为什么不行？</h2>
+<blockquote>
+<p>难度：★★★★ ｜ 频率：高 ｜ 对应课件：agent核心/13、LangChain指南（记忆章节）</p>
+</blockquote>
+<p><strong>面试官</strong>：用户和 Agent 聊了五十轮，下个月回来接着聊。你的记忆方案是什么？直接把历史全塞进上下文不行吗？</p>
+<p><strong>第 1 层追问：全量塞历史为什么不行</strong></p>
+<blockquote>
+<p>先说最朴素方案的死穴。</p>
+</blockquote>
+<p>参考回答：三个硬伤。<strong>成本</strong>：多轮 Agent 每次请求都携带全量历史，token 消耗随轮数线性涨——五十轮长会话的账单是灾难级的。<strong>注意力稀释</strong>：老对话挤占窗口，相关内容被冲淡，存在 lost in the middle 现象——塞得越多，模型对关键信息的利用率反而下降。<strong>上限</strong>：再大的窗口也有边界，长任务（几十轮 + 每轮工具返回大块内容）必然撞墙。所以记忆系统的目标不是"存得多"，而是<strong>在有限的上下文预算里，放当下最有用的信息</strong>。</p>
+<p><strong>第 2 层追问：那记忆怎么分层？</strong></p>
+<blockquote>
+<p>具体方案是什么？</p>
+</blockquote>
+<p>参考回答：经典三层结构。<strong>工作记忆</strong>：当前上下文窗口内的内容——近期消息 + 当前任务状态，是最直接的"思考现场"。<strong>短期记忆（会话级）</strong>：本会话的完整历史，超出窗口的部分做<strong>滑动窗口 + 摘要压缩</strong>——老对话压成一段摘要，近期对话保留原文（LangChain 里就是 summary buffer 的思路：预算内保原文，超了就摘要）。<strong>长期记忆（跨会话）</strong>：外部存储，又分两类——<strong>情景记忆</strong>（历史对话和事件，向量化后按需检索）与<strong>画像/事实记忆</strong>（用户偏好、关键事实，结构化存储、可编辑）。核心思想一句话：<strong>上下文窗口只是缓存，真正的记忆在外部存储，按需加载</strong>——这和上下文工程的"预算分配、按需加载"是同一套哲学。</p>
+<p><strong>第 3 层追问：长期记忆怎么写、怎么读？</strong></p>
+<blockquote>
+<p>具体的读写机制？</p>
+</blockquote>
+<p>参考回答：<strong>写入</strong>：不是每轮都写——在对话结束或任务里程碑时，用 LLM 抽取"值得记住的事实"（偏好、约束、结论），去重合并后落库。<strong>读取</strong>：当前问题先检索相关记忆（语义检索），命中才注入，且控制注入条数预算——记忆是"检索来的上下文"，和 RAG 同构。<strong>更新与遗忘</strong>：新事实和旧事实冲突时以新为准并保留时间戳；过期信息设 TTL；被证伪的记忆要能删除。</p>
+<p><strong>第 4 层追问：记忆系统的坑？</strong></p>
+<blockquote>
+<p>这套方案会出什么问题？</p>
+</blockquote>
+<p>参考回答：三个真坑。<strong>记忆污染</strong>：一句错误信息（用户口误、模型幻觉）被固化进长期记忆，之后永远影响输出——所以记忆必须<strong>可查看、可编辑、可清空</strong>，用户对自己的记忆有控制权（这也是隐私合规要求）。<strong>检索噪声</strong>：记忆库大了以后，注入不相关的旧记忆比不注入更糟——它会误导当前判断。<strong>评估难</strong>：记忆系统的好坏标准是"该想起的想得起、该忘的别捣乱"——要专门构造"需要跨会话回忆"的测试用例来验证。</p>
+<h3 id="考察意图与踩坑点_8">考察意图与踩坑点</h3>
+<ul>
+<li>考察意图：记忆是"上下文工程"的延伸考题，考察能否把 RAG 的检索思维迁移到记忆设计上——这是知识迁移能力的直接证明。</li>
+<li>踩坑点：只会说"存数据库里"；分不清"存了"和"检索得到且用得上"；不知道记忆污染和合规问题。</li>
+<li>一句话总结：窗口是缓存、外部存储是记忆、检索是读取——该想起的想得起，该忘的别捣乱。</li>
+</ul>
+<hr />
+<h2 id="q10-为什么用-langchainlanggraph自己裸写不行吗">Q10 · 为什么用 LangChain/LangGraph？自己裸写不行吗？</h2>
+<blockquote>
+<p>难度：★★★ ｜ 频率：高（转行者几乎必被问）｜ 对应课件：全套框架课程</p>
+</blockquote>
+<p><strong>面试官</strong>：我看你项目全是用 LangChain 做的。这些框架不就是包了一层 API 吗？自己裸写不行吗？</p>
+<p><strong>第 1 层追问：先表态</strong></p>
+<blockquote>
+<p>直接回答：要不要用框架？</p>
+</blockquote>
+<p>参考回答：<strong>用，但有明确边界</strong>。框架的价值不在"能调模型"——调 API 谁都会。价值在<strong>工程化配套</strong>：统一的抽象层（模型/工具/记忆/检索可替换）、流式输出、结构化输出校验、LangGraph 的状态管理与持久化。这些能力裸写不是不行，是<strong>重复造轮子</strong>——每个都是周级工作量，而且是容易写出 bug 的那种。</p>
+<p><strong>第 2 层追问：框架具体帮你省了什么？</strong></p>
+<blockquote>
+<p>说得具体点。</p>
+</blockquote>
+<p>参考回答：四类。<strong>抽象层</strong>：换模型、换嵌入模型不用改业务代码——供应商锁定风险直接对冲掉。<strong>运行时能力</strong>：LCEL 的流式、重试、并发批处理，都是管道级别的一行接入。<strong>编排与状态</strong>：LangGraph 的图编排 + Checkpointer（断点恢复、人在回路、时间旅行调试）——这是裸写最容易翻车的地方，Agent 跑到第 8 轮崩了，没有 checkpoint 就只能从头再来。<strong>生态集成</strong>：几百个 loader、向量库、工具的现成适配，接 Milvus 还是接 Pinecone 是配置问题不是开发问题。</p>
+<p><strong>第 3 层追问：框架的代价呢？</strong></p>
+<blockquote>
+<p>世上没有免费午餐。</p>
+</blockquote>
+<p>参考回答：三个代价要诚实说。<strong>抽象税</strong>：简单场景被套上复杂抽象，调试时抽象泄漏——报错栈穿过框架层，定位问题的成本变高。<strong>版本动荡</strong>：LangChain 迭代快，API 变动频繁，升级是真实的维护成本。<strong>文档碎片化</strong>：集成度高意味着文档覆盖不均，很多坑要读源码才能解决。对应的纪律是：<strong>把框架当"库"用，别当"架构"服从</strong>——业务核心逻辑保持独立、可测试，别让流程的可读性散在链的隐式拼接里。</p>
+<p><strong>第 4 层追问：什么场景你不会用框架？</strong></p>
+<blockquote>
+<p>举反例证明你不是框架的俘虏。</p>
+</blockquote>
+<p>参考回答：<strong>单次调用、无状态、不需要流式的脚本</strong>——一个 httpx 直接调 OpenAI SDK 更快、更透明、零抽象税。判断标准我总结成一条：<strong>需要"编排、状态、流式、集成"中的两项以上，框架收益才为正；只占一项，裸写</strong>。另外面试时能讲出框架的源码级机制（LCEL 的 Runnable 协议、LangGraph 的 superstep 调度），本身就是"不是黑盒使用者"的证明——这是这道题的隐藏得分点。</p>
+<h3 id="考察意图与踩坑点_9">考察意图与踩坑点</h3>
+<ul>
+<li>考察意图：面试官在筛"框架的俘虏"——只会用不懂为什么用的人，换个框架就废了。答出"价值在工程化配套而非模型调用"这条主线就赢了大半。</li>
+<li>踩坑点：无脑吹框架（"不用框架写不了"）或无脑贬（"就是套壳"）都是减分项；说不出自己裸写时要付出什么，等于没用过裸写方式。</li>
+<li>一句话总结：框架的价值是编排、状态、流式、集成这四件工程苦役——占两项以上才值得用，且永远当库用、别当架构服从。</li>
+</ul>
+<hr />
+<h2 id="q11-多-agent-系统怎么设计子代理和普通工具有什么本质区别">Q11 · 多 Agent 系统怎么设计？子代理和普通工具有什么本质区别？</h2>
+<blockquote>
+<p>难度：★★★★ ｜ 频率：高（2026 热点）｜ 对应课件：agent核心/12、langgraph框架指南/10</p>
+</blockquote>
+<p><strong>面试官</strong>：任务太大单 Agent 吃不消，你会拆成多 Agent。怎么拆？子代理和你注册的普通工具函数，本质区别在哪？</p>
+<p><strong>第 1 层追问：什么时候才值得拆</strong></p>
+<blockquote>
+<p>先说：什么信号说明该拆了？</p>
+</blockquote>
+<p>参考回答：三堵墙，撞上至少一面才值得拆。<strong>墙一，上下文污染</strong>：长任务的 messages 里堆满已无用的中间工具结果，注意力被稀释、质量肉眼可见下降——裁剪只能缓解，因为"哪些还有用"很难判断。<strong>墙二，串行低速</strong>：主循环一步接一步，两个毫无依赖的子任务也只能排队。<strong>墙三，职责混杂</strong>：一个 Agent 又写代码又查资料又排版，系统提示词塞满互相打架的指令。子代理对三堵墙各有一剂药：<strong>干净上下文（治墙一）、可并行（治墙二）、提示词专一（治墙三）</strong>。判断口诀：<strong>上下文脏了、可并行了、职责真多了——三者至少占一才拆</strong>。短会话硬拆只会让任务描述变复杂，分而治之的成本就藏在"任务描述必须自包含"里。</p>
+<p><strong>第 2 层追问：子代理和工具的本质关系</strong></p>
+<blockquote>
+<p>你说拆成子代理——它和我注册一个普通函数工具，差在哪？</p>
+</blockquote>
+<p>参考回答：心智模型一句话：<strong>子代理就是"返回字符串的高级工具"</strong>——输入是任务描述，输出是执行结果，接口和普通工具完全同构（<code>calculate("...") → "60"</code> 和 <code>run_sub_agent("调研XX") → "要点+来源"</code> 没有本质差异）。所以实现上可以把子代理包装成 Tool 注册进工具表，<strong>主代理不需要知道这个工具背后是函数还是一整个 Agent</strong>——分而治之不需要发明新机制，复用现有的一切。和普通工具的差异只有两点，都源于它是"活的"：<strong>执行时长</strong>（内部要跑若干轮循环，秒到分钟级）、<strong>内部状态</strong>（有自己的 messages、工具集、系统提示词）。这个同构视角是架构保持干净的关键。</p>
+<p><strong>第 3 层追问：怎么实现？</strong></p>
+<blockquote>
+<p>说下具体结构。</p>
+</blockquote>
+<p>参考回答：三层结构。<strong>一，岗位说明书（SubAgentSpec）</strong>：每个子代理一份配置——专一职责的系统提示词、只装配职责内的工具（工具是负债）、更小的轮次预算（小任务不需要大预算）。<strong>二，工具包装</strong>：把子代理包成 <code>run_sub_agent(task)</code> 工具，关键设计是<strong>每次调用都创建全新实例</strong>——不复用，保证上下文绝对干净（脏上下文是墙一的病根，复用等于带病上岗）。<strong>三，主代理组装</strong>：主代理是"项目经理"——拆解任务、委派、汇总；<strong>委派的任务描述必须自包含</strong>（子代理看不到主代理的任何历史，缺背景就会瞎做——这是子代理系统的第一大翻车点，要在工具 description 里反复强调）。并行收益直观：主代理一次 tool_calls 发出多个子代理调用，执行层并发跑；且主代理上下文里<strong>只有子代理的最终结果</strong>（几百 token），不是内部完整轮转（可能上万 token）——上下文隔离的直接收益。</p>
+<p><strong>第 4 层追问：工程上有哪些坑？</strong></p>
+<blockquote>
+<p>多 Agent 上生产，要注意什么？</p>
+</blockquote>
+<p>参考回答：五个要点，全是真坑。<strong>① 结果契约</strong>：子代理返回自由文本，主代理要再消费——子代理的系统提示词里要规定输出结构（如"结论/要点/来源"三段式），<strong>代理间通信也该有 schema</strong>。<strong>② 预算乘法</strong>：子代理是 token 黑洞，主代理轮次 × 子代理轮次是最坏情况的乘法关系——必须给子代理更小的预算并计入总账（token 闸门要扩展成"含子代理的总账"）。<strong>③ 观测级联</strong>：子代理的事件要向上转发，否则调试时主代理只显示"调用了子代理，10 分钟后返回"，中间一片漆黑——<strong>trace 必须跨代理层级连续</strong>。<strong>④ 失败传播</strong>：子代理达到轮次上限返回"（未完成）"时，把失败设计成<strong>可被主代理理解的结果</strong>而不是异常——失败处理就成了模型的自然决策（重试/换方案/如实上报）而非代码崩溃路径。<strong>⑤ 深度限制</strong>：子代理可以再生子代理（无限套娃），工程上常见限 2 层——不限制会导致预算指数爆炸 + 定位问题如地狱。</p>
+<h3 id="考察意图与踩坑点_10">考察意图与踩坑点</h3>
+<ul>
+<li>考察意图：考多 Agent 是"真搭过"还是"只看过架构图"——第 3 层的三层结构和第 4 层的五个工程坑，只有动手实现过的人才答得出。与 Q06 的分工：Q06 管"何时用"（选型），本题管"怎么实现"（结构与坑）。</li>
+<li>踩坑点：只会说"多个 Agent 协作完成任务"；不知道子代理 = 高级工具的同构关系；漏掉预算乘法和观测级联——这两个是多 Agent 系统最常见的生产事故源。</li>
+<li>一句话总结：三堵墙至少撞一面才拆；子代理是返回字符串的高级工具——Spec 定岗位、每次 spawn 新实例、任务必须自包含；五个工程坑里预算乘法和观测级联最致命。</li>
+</ul>
+<hr />
+<h2 id="本篇速记卡">本篇速记卡</h2>
+<table>
+<thead>
+<tr>
+<th>题</th>
+<th>一句话核心</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Q01 Tool Calling</td>
+<td>模型只发调用意向，执行在你代码里；注入-生成-解析，概率行为要校验</td>
+</tr>
+<tr>
+<td>Q02 ReAct</td>
+<td>行动插入思考之间；链是写死的流程，Agent 是运行时决策</td>
+</tr>
+<tr>
+<td>Q03 死循环</td>
+<td>四道闸门：自然终止/轮次/预算/重复检测；拦后降级 + 纠偏重试</td>
+</tr>
+<tr>
+<td>Q04 选型</td>
+<td>步骤能写死用链；写不死才 Agent；生产是图里嵌 Agent</td>
+</tr>
+<tr>
+<td>Q05 工具设计</td>
+<td>单一职责 + schema 清晰 + 返回带引导；小工具组合出涌现策略</td>
+</tr>
+<tr>
+<td>Q06 扩展选型</td>
+<td>知识用 Skill、能力用 MCP、并行用多 Agent；先问扩展什么</td>
+</tr>
+<tr>
+<td>Q07 上下文工程</td>
+<td>预算分配、压缩、按需加载——Agent 的瓶颈先出现在窗口不在模型</td>
+</tr>
+<tr>
+<td>Q08 评测</td>
+<td>任务成功率 + 轨迹质量 + 边界测试；线上盯闸门触发率</td>
+</tr>
+<tr>
+<td>Q09 记忆分层</td>
+<td>窗口是缓存、外部存储是记忆、检索是读取；防记忆污染</td>
+</tr>
+<tr>
+<td>Q10 框架选型</td>
+<td>编排/状态/流式/集成占两项以上才用框架；当库用，别当架构服从</td>
+</tr>
+<tr>
+<td>Q11 多Agent设计</td>
+<td>三墙至少撞一面才拆；子代理=高级工具，任务自包含；预算乘法+观测级联是命门</td>
+</tr>
+</tbody>
+</table></div>
+
+      </article>
+<nav class="pager"><a class="pg-card pg-prev" href="../interview/02-rag-yu-jian-suo-pian.html"><span class="pg-label">← 上一篇</span><span class="pg-title">RAG 与检索篇</span><span class="pg-mod">面试题库</span></a><a class="pg-card pg-next" href="../interview/04-langgraph-pian.html"><span class="pg-label">下一篇 →</span><span class="pg-title">LangGraph 篇</span><span class="pg-mod">面试题库</span></a></nav>
+    </div>
+    <footer class="foot">
+      <span>深栈 DeepStack · AI Agent 工程师转型训练营配套文档</span>
+    </footer>
+  </main>
+<nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#q01-tool-calling-的原理是什么模型真的执行了函数吗">Q01 · Tool Calling 的原理是什么？模型真的&quot;执行&quot;了函数吗？</a><a class="toc-link toc-h3" href="#考察意图与踩坑点">考察意图与踩坑点</a><a class="toc-link toc-h2" href="#q02-讲讲-react它和普通的链式调用差在哪">Q02 · 讲讲 ReAct。它和普通的&quot;链式调用&quot;差在哪？</a><a class="toc-link toc-h3" href="#考察意图与踩坑点_1">考察意图与踩坑点</a><a class="toc-link toc-h2" href="#q03-你的-agent-陷入死循环怎么办">Q03 · 你的 Agent 陷入死循环怎么办？</a><a class="toc-link toc-h3" href="#考察意图与踩坑点_2">考察意图与踩坑点</a><a class="toc-link toc-h2" href="#q04-什么任务该用-agent什么任务不该">Q04 · 什么任务该用 Agent？什么任务不该？</a><a class="toc-link toc-h3" href="#考察意图与踩坑点_3">考察意图与踩坑点</a><a class="toc-link toc-h2" href="#q05-怎么设计一个好用的工具工具越多越好吗">Q05 · 怎么设计一个好用的工具？工具越多越好吗？</a><a class="toc-link toc-h3" href="#考察意图与踩坑点_4">考察意图与踩坑点</a><a class="toc-link toc-h2" href="#q06-mcp-是什么和直接写函数有什么区别什么时候用-skill-多-agent">Q06 · MCP 是什么？和直接写函数有什么区别？什么时候用 Skill / 多 Agent？</a><a class="toc-link toc-h3" href="#考察意图与踩坑点_5">考察意图与踩坑点</a><a class="toc-link toc-h2" href="#q07-上下文工程是什么和提示词工程什么关系">Q07 · 上下文工程是什么？和提示词工程什么关系？</a><a class="toc-link toc-h3" href="#考察意图与踩坑点_6">考察意图与踩坑点</a><a class="toc-link toc-h2" href="#q08-agent-上线前怎么评测上线后怎么知道它健康">Q08 · Agent 上线前怎么评测？上线后怎么知道它健康？</a><a class="toc-link toc-h3" href="#考察意图与踩坑点_7">考察意图与踩坑点</a><a class="toc-link toc-h2" href="#q09-agent-的记忆怎么设计把历史全塞进上下文为什么不行">Q09 · Agent 的记忆怎么设计？&quot;把历史全塞进上下文&quot;为什么不行？</a><a class="toc-link toc-h3" href="#考察意图与踩坑点_8">考察意图与踩坑点</a><a class="toc-link toc-h2" href="#q10-为什么用-langchainlanggraph自己裸写不行吗">Q10 · 为什么用 LangChain/LangGraph？自己裸写不行吗？</a><a class="toc-link toc-h3" href="#考察意图与踩坑点_9">考察意图与踩坑点</a><a class="toc-link toc-h2" href="#q11-多-agent-系统怎么设计子代理和普通工具有什么本质区别">Q11 · 多 Agent 系统怎么设计？子代理和普通工具有什么本质区别？</a><a class="toc-link toc-h3" href="#考察意图与踩坑点_10">考察意图与踩坑点</a><a class="toc-link toc-h2" href="#本篇速记卡">本篇速记卡</a></nav>
+</div>
+<div class="sb-mask" id="sbMask"></div>
+<script src="../assets/app.js"></script>
+</body>
+</html>

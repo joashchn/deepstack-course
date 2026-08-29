@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>04 · 流式与并发 · 深栈 DeepStack 课程文档</title>
+<meta name="description" content="本章你将学会
+
+ - asyncio 前置速览：写过 JS 的话，一张表完成 Promise → 协程的迁移；gather、waitfor、任务取消各配一个最小示例
+ - .stream() / astream()：让拾…">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%23d9c39a' text-anchor='middle'%3EDS%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+<div class="progress" id="progress"></div>
+
+<div class="layout">
+<aside class="sidebar" id="sidebar">
+  <div class="sb-head">
+    <a class="brand" href="../index.html">
+      <span class="brand-mark">DS</span>
+      <span class="brand-text"><b>深栈 DeepStack</b><i>AI Agent 工程师转型训练营</i></span>
+    </a>
+    <button class="sb-close" id="sbClose" aria-label="关闭目录">✕</button>
+  </div>
+  <div class="sb-search"><input type="search" id="searchInput" placeholder="搜索 123 篇文档… ( / )" autocomplete="off">
+    <div class="sb-results" id="searchResults"></div></div>
+  <nav class="sb-nav">
+    <section class="sb-group" data-mod="python">
+      <a class="sb-group-title" href="../modules/python.html" data-toggle="python">
+        <span class="sb-num">01</span>
+        <span class="sb-group-text"><b>Python 与数据实践</b><i>31 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../python/01-huan-jing-da-jian-yu-ban-ben-guan-li.html"><span class="sb-item-num">01</span><span class="sb-item-title">环境搭建与版本管理</span></a>
+        <a class="sb-item" href="../python/02-bian-liang-biao-da-shi-yu-liu-cheng-kong-zhi.html"><span class="sb-item-num">02</span><span class="sb-item-title">变量、表达式与流程控制</span></a>
+        <a class="sb-item" href="../python/03-xu-lie-zi-dian-yu-ji-he.html"><span class="sb-item-num">03</span><span class="sb-item-title">序列、字典与集合</span></a>
+        <a class="sb-item" href="../python/04-han-shu-she-ji-yu-lambda.html"><span class="sb-item-num">04</span><span class="sb-item-title">函数设计与 lambda</span></a>
+        <a class="sb-item" href="../python/05-zuo-yong-yu-gui-ze-yu-bi-bao.html"><span class="sb-item-num">05</span><span class="sb-item-title">作用域规则与闭包</span></a>
+        <a class="sb-item" href="../python/06-lei-de-ding-yi-yu-shi-li-hua.html"><span class="sb-item-num">06</span><span class="sb-item-title">类的定义与实例化</span></a>
+        <a class="sb-item" href="../python/07-lei-xing-pan-ding-yu-chou-xiang-ji-lei.html"><span class="sb-item-num">07</span><span class="sb-item-title">类型判定与抽象基类</span></a>
+        <a class="sb-item" href="../python/08-mo-shu-fang-fa-quan-jing.html"><span class="sb-item-num">08</span><span class="sb-item-title">魔术方法全景</span></a>
+        <a class="sb-item" href="../python/09-miao-shu-fu-yu-yuan-lei.html"><span class="sb-item-num">09</span><span class="sb-item-title">描述符与元类</span></a>
+        <a class="sb-item" href="../python/10-zhuang-shi-qi.html"><span class="sb-item-num">10</span><span class="sb-item-title">装饰器</span></a>
+        <a class="sb-item" href="../python/11-die-dai-xie-yi-yu-sheng-cheng-qi.html"><span class="sb-item-num">11</span><span class="sb-item-title">迭代协议与生成器</span></a>
+        <a class="sb-item" href="../python/12-with-yu-shang-xia-wen-xie-yi.html"><span class="sb-item-num">12</span><span class="sb-item-title">with 与上下文协议</span></a>
+        <a class="sb-item" href="../python/13-yi-chang-ti-xi-yu-chu-li.html"><span class="sb-item-num">13</span><span class="sb-item-title">异常体系与处理</span></a>
+        <a class="sb-item" href="../python/14-lei-xing-biao-zhu.html"><span class="sb-item-num">14</span><span class="sb-item-title">类型标注</span></a>
+        <a class="sb-item" href="../python/15-mo-kuai-yu-bao-de-zu-zhi.html"><span class="sb-item-num">15</span><span class="sb-item-title">模块与包的组织</span></a>
+        <a class="sb-item" href="../python/16-biao-zhun-ku-xun-li.html"><span class="sb-item-num">16</span><span class="sb-item-title">标准库巡礼</span></a>
+        <a class="sb-item" href="../python/17-yi-lai-guan-li-yu-di-san-fang-ku.html"><span class="sb-item-num">17</span><span class="sb-item-title">依赖管理与第三方库</span></a>
+        <a class="sb-item" href="../python/18-xian-cheng-yu-jin-cheng.html"><span class="sb-item-num">18</span><span class="sb-item-title">线程与进程</span></a>
+        <a class="sb-item" href="../python/19-shi-jian-xun-huan.html"><span class="sb-item-num">19</span><span class="sb-item-title">事件循环</span></a>
+        <a class="sb-item" href="../python/20-future-yu-xie-cheng.html"><span class="sb-item-num">20</span><span class="sb-item-title">Future 与协程</span></a>
+        <a class="sb-item" href="../python/21-asyncio-shi-zhan.html"><span class="sb-item-num">21</span><span class="sb-item-title">asyncio 实战</span></a>
+        <a class="sb-item" href="../python/22-gou-jian-yu-fa-bu.html"><span class="sb-item-num">22</span><span class="sb-item-title">构建与发布</span></a>
+        <a class="sb-item" href="../python/23-gong-cheng-hua-gong-ju-lian.html"><span class="sb-item-num">23</span><span class="sb-item-title">工程化工具链</span></a>
+        <a class="sb-item" href="../python/24-monorepo-yu-tiao-shi.html"><span class="sb-item-num">24</span><span class="sb-item-title">monorepo 与调试</span></a>
+        <a class="sb-item" href="../python/25-jupyter-jiao-hu-huan-jing.html"><span class="sb-item-num">25</span><span class="sb-item-title">Jupyter 交互环境</span></a>
+        <a class="sb-item" href="../python/26-numpy-shu-zu-yu-xiang-liang-hua.html"><span class="sb-item-num">26</span><span class="sb-item-title">NumPy 数组与向量化</span></a>
+        <a class="sb-item" href="../python/27-pandas-shu-ju-jie-gou.html"><span class="sb-item-num">27</span><span class="sb-item-title">Pandas 数据结构</span></a>
+        <a class="sb-item" href="../python/28-pandas-shu-ju-qing-xi.html"><span class="sb-item-num">28</span><span class="sb-item-title">Pandas 数据清洗</span></a>
+        <a class="sb-item" href="../python/29-matplotlib-hui-tu-ti-xi.html"><span class="sb-item-num">29</span><span class="sb-item-title">Matplotlib 绘图体系</span></a>
+        <a class="sb-item" href="../python/30-matplotlib-dong-hua-yu-jiao-hu.html"><span class="sb-item-num">30</span><span class="sb-item-title">Matplotlib 动画与交互</span></a>
+        <a class="sb-item" href="../python/31-seaborn-tong-ji-ke-shi-hua.html"><span class="sb-item-num">31</span><span class="sb-item-title">Seaborn 统计可视化</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="agent">
+      <a class="sb-group-title" href="../modules/agent.html" data-toggle="agent">
+        <span class="sb-num">02</span>
+        <span class="sb-group-text"><b>Agent 核心</b><i>15 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../agent/01-token-yu-ci-qian-ru.html"><span class="sb-item-num">01</span><span class="sb-item-title">Token 与词嵌入</span></a>
+        <a class="sb-item" href="../agent/02-qian-xiang-chuan-bo-yu-fan-xiang-chuan-bo.html"><span class="sb-item-num">02</span><span class="sb-item-title">前向传播与反向传播</span></a>
+        <a class="sb-item" href="../agent/03-zhu-yi-li-ji-zhi-yu-transformer-jia-gou.html"><span class="sb-item-num">03</span><span class="sb-item-title">注意力机制与 Transformer 架构</span></a>
+        <a class="sb-item" href="../agent/04-yu-xun-lian-rlhf-yu-cai-yang-kv-cache.html"><span class="sb-item-num">04</span><span class="sb-item-title">预训练、RLHF 与采样（KV Cache）</span></a>
+        <a class="sb-item" href="../agent/05-ben-di-mo-xing-yu-xiao-xi-jie-gou.html"><span class="sb-item-num">05</span><span class="sb-item-title">本地模型与消息结构</span></a>
+        <a class="sb-item" href="../agent/06-hui-hua-guan-li-yu-json-shu-chu.html"><span class="sb-item-num">06</span><span class="sb-item-title">会话管理与 JSON 输出</span></a>
+        <a class="sb-item" href="../agent/07-tool-calling-xie-yi-yu-feng-zhuang.html"><span class="sb-item-num">07</span><span class="sb-item-title">Tool Calling：协议与封装</span></a>
+        <a class="sb-item" href="../agent/08-react-mo-shi-yu-zhu-xun-huan.html"><span class="sb-item-num">08</span><span class="sb-item-title">ReAct 模式与主循环</span></a>
+        <a class="sb-item" href="../agent/09-shi-zhan-deep-research-agent.html"><span class="sb-item-num">09</span><span class="sb-item-title">实战：Deep Research Agent</span></a>
+        <a class="sb-item" href="../agent/10-skill-yu-jian-jin-shi-pi-lu.html"><span class="sb-item-num">10</span><span class="sb-item-title">Skill 与渐进式披露</span></a>
+        <a class="sb-item" href="../agent/11-mcp-quan-jing.html"><span class="sb-item-num">11</span><span class="sb-item-title">MCP 全景</span></a>
+        <a class="sb-item" href="../agent/12-duo-agent-yu-xuan-xing-ce-lve.html"><span class="sb-item-num">12</span><span class="sb-item-title">多 Agent 与选型策略</span></a>
+        <a class="sb-item" href="../agent/13-ti-shi-ci-gong-cheng-yu-shang-xia-wen-gong.html"><span class="sb-item-num">13</span><span class="sb-item-title">提示词工程与上下文工程</span></a>
+        <a class="sb-item" href="../agent/14-xun-huan-tu-yu-gu-jia-gong-cheng.html"><span class="sb-item-num">14</span><span class="sb-item-title">循环、图与骨架工程</span></a>
+        <a class="sb-item" href="../agent/15-ji-yi-quan-xian-yu-ping-ce.html"><span class="sb-item-num">15</span><span class="sb-item-title">记忆、权限与评测</span></a>
+      </div>
+    </section>
+    <section class="sb-group open" data-mod="langchain">
+      <a class="sb-group-title" href="../modules/langchain.html" data-toggle="langchain">
+        <span class="sb-num">03</span>
+        <span class="sb-group-text"><b>LangChain 指南</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langchain/01-ren-shi-langchain.html"><span class="sb-item-num">01</span><span class="sb-item-title">认识 LangChain</span></a>
+        <a class="sb-item" href="../langchain/02-ti-shi-ci-mu-ban-yu-xiao-xi.html"><span class="sb-item-num">02</span><span class="sb-item-title">提示词模板与消息</span></a>
+        <a class="sb-item" href="../langchain/03-lcel-yu-runnable.html"><span class="sb-item-num">03</span><span class="sb-item-title">LCEL 与 Runnable</span></a>
+        <a class="sb-item current" href="../langchain/04-liu-shi-yu-bing-fa.html"><span class="sb-item-num">04</span><span class="sb-item-title">流式与并发</span></a>
+        <a class="sb-item" href="../langchain/05-shu-chu-jie-xi-qi.html"><span class="sb-item-num">05</span><span class="sb-item-title">输出解析器</span></a>
+        <a class="sb-item" href="../langchain/06-wen-dang-jia-zai-yu-qie-ge.html"><span class="sb-item-num">06</span><span class="sb-item-title">文档加载与切割</span></a>
+        <a class="sb-item" href="../langchain/07-qian-ru-yu-xiang-liang-ku.html"><span class="sb-item-num">07</span><span class="sb-item-title">嵌入与向量库</span></a>
+        <a class="sb-item" href="../langchain/08-jian-suo-yu-rag.html"><span class="sb-item-num">08</span><span class="sb-item-title">检索与RAG</span></a>
+        <a class="sb-item" href="../langchain/09-dui-hua-ji-yi.html"><span class="sb-item-num">09</span><span class="sb-item-title">对话记忆</span></a>
+        <a class="sb-item" href="../langchain/10-gong-ju-diao-yong.html"><span class="sb-item-num">10</span><span class="sb-item-title">工具调用</span></a>
+        <a class="sb-item" href="../langchain/11-agent.html"><span class="sb-item-num">11</span><span class="sb-item-title">Agent</span></a>
+        <a class="sb-item" href="../langchain/12-hui-diao-yu-tiao-shi-quan-ke-cheng-shou-guan.html"><span class="sb-item-num">12</span><span class="sb-item-title">回调与调试（全课程收官章）</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="langgraph">
+      <a class="sb-group-title" href="../modules/langgraph.html" data-toggle="langgraph">
+        <span class="sb-num">04</span>
+        <span class="sb-group-text"><b>LangGraph 框架指南</b><i>17 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langgraph/01-di-1-zhang-cong-yi-ge-shi-kong-de-jiao.html"><span class="sb-item-num">01</span><span class="sb-item-title">第 1 章 从一个失控的脚本说起</span></a>
+        <a class="sb-item" href="../langgraph/02-di-2-zhang-zui-xiao-ke-yun-xing-tu.html"><span class="sb-item-num">02</span><span class="sb-item-title">第 2 章 最小可运行图</span></a>
+        <a class="sb-item" href="../langgraph/03-di-3-zhang-zhuang-tai-tu-de-shu-ju-xin.html"><span class="sb-item-num">03</span><span class="sb-item-title">第 3 章 状态：图的数据心脏</span></a>
+        <a class="sb-item" href="../langgraph/04-di-4-zhang-rang-liu-cheng-xue-hui-jue-ce.html"><span class="sb-item-num">04</span><span class="sb-item-title">第 4 章 让流程学会决策</span></a>
+        <a class="sb-item" href="../langgraph/05-di-5-zhang-bing-xing-shi-jie-chao-bu-zhi.html"><span class="sb-item-num">05</span><span class="sb-item-title">第 5 章 并行世界：超步执行模型</span></a>
+        <a class="sb-item" href="../langgraph/06-di-6-zhang-command-ba-kong-zhi-quan-jiao-jin.html"><span class="sb-item-num">06</span><span class="sb-item-title">第 6 章 Command：把控制权交进节点</span></a>
+        <a class="sb-item" href="../langgraph/07-di-7-zhang-dong-tai-bing-xing-send-yu-mapreduce.html"><span class="sb-item-num">07</span><span class="sb-item-title">第 7 章 动态并行：Send 与 MapReduce</span></a>
+        <a class="sb-item" href="../langgraph/08-di-8-zhang-gei-tu-zhuang-shang-shou-jiao-gong.html"><span class="sb-item-num">08</span><span class="sb-item-title">第 8 章 给图装上手脚：工具调用</span></a>
+        <a class="sb-item" href="../langgraph/09-di-9-zhang-fu-yong-yu-feng-zhuang-zi-tu.html"><span class="sb-item-num">09</span><span class="sb-item-title">第 9 章 复用与封装：子图</span></a>
+        <a class="sb-item" href="../langgraph/10-di-10-zhang-cong-dan-tu-dao-tuan-dui-duo.html"><span class="sb-item-num">10</span><span class="sb-item-title">第 10 章 从单图到团队：多 Agent 架构</span></a>
+        <a class="sb-item" href="../langgraph/11-di-11-zhang-liu-shi-shu-chu.html"><span class="sb-item-num">11</span><span class="sb-item-title">第 11 章 流式输出</span></a>
+        <a class="sb-item" href="../langgraph/12-di-12-zhang-chi-jiu-hua-checkpointer-yu-xian-cheng.html"><span class="sb-item-num">12</span><span class="sb-item-title">第 12 章 持久化：Checkpointer 与线程</span></a>
+        <a class="sb-item" href="../langgraph/13-di-13-zhang-shi-jian-lv-xing.html"><span class="sb-item-num">13</span><span class="sb-item-title">第 13 章 时间旅行</span></a>
+        <a class="sb-item" href="../langgraph/14-di-14-zhang-zhong-duan-yu-ren-zai-hui-lu.html"><span class="sb-item-num">14</span><span class="sb-item-title">第 14 章 中断与人在回路</span></a>
+        <a class="sb-item" href="../langgraph/15-di-15-zhang-ji-yi-guan-li.html"><span class="sb-item-num">15</span><span class="sb-item-title">第 15 章 记忆管理</span></a>
+        <a class="sb-item" href="../langgraph/16-di-16-zhang-rong-cuo-zhong-shi-chao-shi-yu.html"><span class="sb-item-num">16</span><span class="sb-item-title">第 16 章 容错：重试、超时与兜底</span></a>
+        <a class="sb-item" href="../langgraph/17-di-17-zhang-quan-jing-hui-gu.html"><span class="sb-item-num">17</span><span class="sb-item-title">第 17 章 全景回顾</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="backend">
+      <a class="sb-group-title" href="../modules/backend.html" data-toggle="backend">
+        <span class="sb-num">05</span>
+        <span class="sb-group-text"><b>Python 框架指南</b><i>14 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../backend/01-fastapi-ru-men-yu-asgi.html"><span class="sb-item-num">01</span><span class="sb-item-title">FastAPI 入门与 ASGI</span></a>
+        <a class="sb-item" href="../backend/02-lu-you-yu-qing-qiu-xiang-ying.html"><span class="sb-item-num">02</span><span class="sb-item-title">路由与请求响应</span></a>
+        <a class="sb-item" href="../backend/03-pydantic-shu-ju-jiao-yan-yu-pei-zhi.html"><span class="sb-item-num">03</span><span class="sb-item-title">Pydantic 数据校验与配置</span></a>
+        <a class="sb-item" href="../backend/04-sqlalchemy-yi-bu-yin-qing-yu-hui-hua.html"><span class="sb-item-num">04</span><span class="sb-item-title">SQLAlchemy 异步引擎与会话</span></a>
+        <a class="sb-item" href="../backend/05-orm-jian-mo.html"><span class="sb-item-num">05</span><span class="sb-item-title">ORM 建模</span></a>
+        <a class="sb-item" href="../backend/06-sql-biao-da-shi-yu-shu-ju-cao-zuo.html"><span class="sb-item-num">06</span><span class="sb-item-title">SQL 表达式与数据操作</span></a>
+        <a class="sb-item" href="../backend/07-alembic-shu-ju-qian-yi.html"><span class="sb-item-num">07</span><span class="sb-item-title">Alembic 数据迁移</span></a>
+        <a class="sb-item" href="../backend/08-yi-lai-zhu-ru.html"><span class="sb-item-num">08</span><span class="sb-item-title">依赖注入</span></a>
+        <a class="sb-item" href="../backend/09-tong-yi-yi-chang-chu-li.html"><span class="sb-item-num">09</span><span class="sb-item-title">统一异常处理</span></a>
+        <a class="sb-item" href="../backend/10-zhong-jian-jian.html"><span class="sb-item-num">10</span><span class="sb-item-title">中间件</span></a>
+        <a class="sb-item" href="../backend/11-ren-zheng-yu-jwt.html"><span class="sb-item-num">11</span><span class="sb-item-title">认证与 JWT</span></a>
+        <a class="sb-item" href="../backend/12-pytest-ce-shi.html"><span class="sb-item-num">12</span><span class="sb-item-title">pytest 测试</span></a>
+        <a class="sb-item" href="../backend/13-ri-zhi-loguru.html"><span class="sb-item-num">13</span><span class="sb-item-title">日志 loguru</span></a>
+        <a class="sb-item" href="../backend/14-liu-shi-xiang-ying-sse-yu-websocket.html"><span class="sb-item-num">14</span><span class="sb-item-title">流式响应 SSE 与 WebSocket</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="interview">
+      <a class="sb-group-title" href="../modules/interview.html" data-toggle="interview">
+        <span class="sb-num">06</span>
+        <span class="sb-group-text"><b>面试题库</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../interview/01-llm-yuan-li-pian.html"><span class="sb-item-num">01</span><span class="sb-item-title">LLM 原理篇</span></a>
+        <a class="sb-item" href="../interview/02-rag-yu-jian-suo-pian.html"><span class="sb-item-num">02</span><span class="sb-item-title">RAG 与检索篇</span></a>
+        <a class="sb-item" href="../interview/03-agent-he-xin-pian.html"><span class="sb-item-num">03</span><span class="sb-item-title">Agent 核心篇</span></a>
+        <a class="sb-item" href="../interview/04-langgraph-pian.html"><span class="sb-item-num">04</span><span class="sb-item-title">LangGraph 篇</span></a>
+        <a class="sb-item" href="../interview/05-langchain-pian.html"><span class="sb-item-num">05</span><span class="sb-item-title">LangChain 篇</span></a>
+        <a class="sb-item" href="../interview/06-xi-tong-she-ji-pian.html"><span class="sb-item-num">06</span><span class="sb-item-title">系统设计篇</span></a>
+        <a class="sb-item" href="../interview/07-xiang-mu-shen-wa-pian.html"><span class="sb-item-num">07</span><span class="sb-item-title">项目深挖篇</span></a>
+        <a class="sb-item" href="../interview/08-gu-zhang-pai-cha-pian.html"><span class="sb-item-num">08</span><span class="sb-item-title">故障排查篇</span></a>
+        <a class="sb-item" href="../interview/09-python-ji-chu-pian.html"><span class="sb-item-num">09</span><span class="sb-item-title">Python 基础篇</span></a>
+        <a class="sb-item" href="../interview/10-fastapi-yu-hou-duan-pian.html"><span class="sb-item-num">10</span><span class="sb-item-title">FastAPI 与后端篇</span></a>
+        <a class="sb-item" href="../interview/11-ti-shi-ci-gong-cheng-yu-an-quan-pian.html"><span class="sb-item-num">11</span><span class="sb-item-title">提示词工程与安全篇</span></a>
+        <a class="sb-item" href="../interview/12-mo-xing-xuan-xing-yu-jiang-ben-pian.html"><span class="sb-item-num">12</span><span class="sb-item-title">模型选型与降本篇</span></a>
+      </div>
+    </section>
+  </nav>
+</aside>
+  <main class="main">
+    <header class="topbar">
+      <button class="menu-btn" id="menuBtn" aria-label="目录">☰</button>
+      <div class="crumbs"><a href="../index.html">首页</a><span>/</span><a href="../modules/langchain.html">LangChain 指南</a><span>/</span><span class="cur">流式与并发</span></div>
+      <div class="topbar-actions">
+        <button class="icon-btn" id="themeBtn" title="切换深浅色" aria-label="切换深浅色">◐</button>
+      </div>
+    </header>
+    <div class="content">
+      <article class="article">
+
+<header class="page-head">
+  <div class="page-kicker">LangChain 指南 · 第 04 章</div>
+  <h1 class="page-title">流式与并发</h1>
+  <p class="page-desc">本章你将学会
+
+ - asyncio 前置速览：写过 JS 的话，一张表完成 Promise → 协程的迁移；gather、waitfor、任务取消各配一个最小示例
+ - .stream() / astream()：让拾…</p>
+  <div class="page-meta">
+    <span>约 36 分钟</span><span>14,364 字</span><span>25 个代码示例</span>
+  </div>
+</header>
+<div class="md"><blockquote>
+<p><strong>本章你将学会</strong></p>
+<ul>
+<li>asyncio 前置速览：写过 JS 的话，一张表完成 Promise → 协程的迁移；<code>gather</code>、<code>wait_for</code>、任务取消各配一个最小示例</li>
+<li><code>.stream()</code> / <code>astream()</code>：让拾光书屋的「AI 荐书官」像打字机一样边想边说，而不是憋满一整篇才给</li>
+<li>流式在链上的传递：链上哪个环节会把「流」吞成一整块，怎么自查</li>
+<li><code>.batch()</code> / <code>abatch()</code>：一份书单五本书并发跑，<code>max_concurrency</code> 控制「店员数」，<code>return_exceptions</code> 让个别失败不掀桌</li>
+<li>超时与回退：<code>asyncio.wait_for</code> 当沙漏、<code>with_fallbacks</code> 找替补、<code>with_retry</code> 再敲两下门、外加一个「质量软回退」的小心机</li>
+</ul>
+</blockquote>
+<p>上一章（03 · LCEL 与 Runnable）我们用 <code>|</code> 把提示词、模型、解析器串成了链，跑的是 <code>invoke</code>——一问一答，等模型把整段话生成完才返回。这一章要解决拾光书屋 AI 荐书官上线前的两个体验问题：</p>
+<ol>
+<li><strong>等得久</strong>：一句荐语模型要生成十几秒，页面干转圈。用户要的不是更快生成完，而是<strong>更早看到第一个字</strong>——这就是流式。</li>
+<li><strong>一批活儿一起干</strong>：运营丢来一份「夏日书单」，20 本书要 20 条荐语，一本一本排队等到明天。这就是并发批量。</li>
+</ol>
+<p>另外，本地 Ollama 偶尔会卡死（内存被挤爆时尤其常见），所以我们顺手把超时、回退、重试这三张「保险单」也一起配齐。</p>
+<p><strong>技术基线</strong>：Python + LangChain 1.x（<code>langchain</code> + <code>langchain-ollama</code>），本地 Ollama 跑 <code>qwen3:4b</code>。没装的话回 01 章看环境准备。</p>
+<hr />
+<h2 id="1-asyncio-前置速览一张表从-promise-迁到协程">1. asyncio 前置速览：一张表从 Promise 迁到协程</h2>
+<p><strong>作用</strong>：LangChain 的异步能力（<code>astream</code>、<code>abatch</code>）都建立在 <code>asyncio</code> 上。如果你写过 JS，这一节就是给你做的「方言对照」——概念同源，写法换皮。没写过 JS 也不亏，这些就是 asyncio 的核心四件套：怎么定义、怎么并发、怎么限时、怎么取消。</p>
+<h3 id="11-迁移对照表">1.1 迁移对照表</h3>
+<table>
+<thead>
+<tr>
+<th>JS 写法</th>
+<th>Python 对应</th>
+<th>一句话备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>async function fn() {}</code></td>
+<td><code>async def fn():</code></td>
+<td>定义异步函数</td>
+</tr>
+<tr>
+<td><code>await promise</code></td>
+<td><code>await coroutine</code></td>
+<td>等结果，期间让出执行权</td>
+</tr>
+<tr>
+<td><code>Promise.all([a, b])</code></td>
+<td><code>asyncio.gather(a(), b())</code></td>
+<td>一个失败整体抛错，行为一致</td>
+</tr>
+<tr>
+<td><code>Promise.allSettled([...])</code></td>
+<td><code>asyncio.gather(..., return_exceptions=True)</code></td>
+<td>成败都要，异常当结果返回</td>
+</tr>
+<tr>
+<td><code>Promise.race</code> 手搓超时</td>
+<td><code>asyncio.wait_for(coro, timeout)</code></td>
+<td>超时这件事 Python 直接给了成品</td>
+</tr>
+<tr>
+<td><code>AbortController.abort()</code></td>
+<td><code>task.cancel()</code></td>
+<td>一个是发信号，一个是直接拔电源</td>
+</tr>
+<tr>
+<td><code>.then().catch()</code> 链</td>
+<td>顺序写 + <code>try/except</code></td>
+<td>Python 没有 then 链，天然线性</td>
+</tr>
+</tbody>
+</table>
+<p>两个生态的心智模型是同一套：<strong>单线程 + 事件循环</strong>。一个线程在多个任务之间快速切换，营造「同时进行」的效果——这叫<strong>并发</strong>（concurrency）；要真正多核同时算（<strong>并行</strong>，parallelism），Python 得请 <code>multiprocessing</code> 出场，就像杂技演员一个人能让五个盘子都转着（并发），马戏团五个人各转一个（并行）。本章用到的全是并发，I/O 等待型任务（等模型吐字）正是它的主场。</p>
+<h3 id="12-最小示例asyncawait-与-gather">1.2 最小示例：async/await 与 gather</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
+
+
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">gen_summary</span><span class="p">(</span><span class="n">book</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">seconds</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""模拟模型生成荐语：耗时 seconds 秒。"""</span>
+    <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">seconds</span><span class="p">)</span>  <span class="c1"># 真实场景里是等待模型吐字</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">"《</span><span class="si">{</span><span class="n">book</span><span class="si">}</span><span class="s2">》荐语已生成"</span>
+
+
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="c1"># gather ≈ Promise.all：两个任务同时开跑，总耗时取最慢那个</span>
+    <span class="n">r1</span><span class="p">,</span> <span class="n">r2</span> <span class="o">=</span> <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span>
+        <span class="n">gen_summary</span><span class="p">(</span><span class="s2">"夜航船"</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span>
+        <span class="n">gen_summary</span><span class="p">(</span><span class="s2">"山月记"</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">r1</span><span class="p">,</span> <span class="n">r2</span><span class="p">)</span>  <span class="c1"># 整体约 2 秒，而不是 3 秒</span>
+
+
+<span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">main</span><span class="p">())</span>  <span class="c1"># 协程自己不会跑，得有人点火</span>
+</code></pre></div>
+<p>想要 allSettled 风格——某本书失败了，其他结果照样要——加一个参数：</p>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">boom</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"这本书暂时缺货"</span><span class="p">)</span>
+
+
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span>
+        <span class="n">gen_summary</span><span class="p">(</span><span class="s2">"夜航船"</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span>
+        <span class="n">boom</span><span class="p">(),</span>
+        <span class="n">gen_summary</span><span class="p">(</span><span class="s2">"山月记"</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">),</span>
+        <span class="n">return_exceptions</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="c1"># 失败不炸锅，异常实例原样放在结果里</span>
+    <span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+    <span class="c1"># ['《夜航船》荐语已生成', ValueError('这本书暂时缺货'), '《山月记》荐语已生成']</span>
+    <span class="c1"># 顺序永远和传入顺序一致，和完成先后无关</span>
+</code></pre></div>
+<h3 id="13-超时与取消wait_for-和-taskcancel">1.3 超时与取消：wait_for 和 task.cancel()</h3>
+<p><strong>超时</strong>——JS 里要拿 <code>Promise.race</code> 手搓一个 <code>withTimeout</code>，Python 里是一行成品：</p>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">wait_for</span><span class="p">(</span><span class="n">gen_summary</span><span class="p">(</span><span class="s2">"山月记"</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">),</span> <span class="n">timeout</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">TimeoutError</span><span class="p">:</span>  <span class="c1"># 3.11+ 里 asyncio.TimeoutError 就是内置 TimeoutError</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"沙漏漏完了，不等了"</span><span class="p">)</span>
+
+
+<span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">main</span><span class="p">())</span>  <span class="c1"># 输出：沙漏漏完了，不等了</span>
+</code></pre></div>
+<p>Python 3.11+ 还有更顺手写法 <code>async with asyncio.timeout(1.0):</code>，包一段代码而不是一个协程，后面 4.1 节细说。</p>
+<p><strong>取消</strong>——JS 里是 <code>AbortController</code> 发信号、<code>AbortError</code> 冒出来；Python 里是拿到任务句柄直接 <code>cancel()</code>：</p>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">task</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">create_task</span><span class="p">(</span><span class="n">gen_summary</span><span class="p">(</span><span class="s2">"山月记"</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">))</span>
+    <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
+    <span class="n">task</span><span class="o">.</span><span class="n">cancel</span><span class="p">()</span>  <span class="c1"># 拔电源</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">await</span> <span class="n">task</span>
+    <span class="k">except</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">CancelledError</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"任务已被取消"</span><span class="p">)</span>
+
+
+<span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">main</span><span class="p">())</span>  <span class="c1"># 输出：任务已被取消</span>
+</code></pre></div>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li><strong>协程只创建不运行</strong>。<code>gen_summary("山月记", 2.0)</code> 单独写一行什么都不会发生，只会收到一条 RuntimeWarning——必须 <code>await</code> 它或交给 <code>gather</code>/<code>create_task</code>。</li>
+<li><strong><code>async def</code> 里禁用 <code>time.sleep</code></strong>。它会把整个事件循环冻住，同一循环里所有任务集体陪跑。要用 <code>await asyncio.sleep</code>。</li>
+<li><strong><code>gather</code> 默认「一个炸全炸」</strong>。它对应的是 <code>Promise.all</code> 而不是 <code>allSettled</code>；要每份结果都拿到，加 <code>return_exceptions=True</code>。</li>
+<li><strong>别想用 <code>except Exception</code> 接 <code>CancelledError</code></strong>。它继承自 <code>BaseException</code>，要么显式 <code>except asyncio.CancelledError</code>，要么别接。</li>
+</ul>
+<hr />
+<h2 id="2-流式输出边想边说的-ai-荐书官">2. 流式输出：边想边说的 AI 荐书官</h2>
+<h3 id="21-stream同步逐块拿文字">2.1 <code>.stream()</code>：同步逐块拿文字</h3>
+<p><strong>作用</strong>：<code>invoke</code> 是「整封信写完才寄」，<code>stream</code> 是「电报机一边敲你一边收」。模型每生成一小块（大致是 token 级别）就交给你一块，用户 1 秒内就能看到第一个字，而不是盯着空白转圈 15 秒。</p>
+<p><strong>签名</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">stream</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="nb">input</span><span class="p">:</span> <span class="n">Input</span><span class="p">,</span>
+    <span class="n">config</span><span class="p">:</span> <span class="n">RunnableConfig</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">Output</span><span class="p">]:</span> <span class="o">...</span>
+</code></pre></div>
+<p>返回一个普通迭代器，<code>for</code> 循环逐块消费。</p>
+<p><strong>最小示例</strong>（拾光书屋荐书链，第 03 章的老朋友）：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.output_parsers</span><span class="w"> </span><span class="kn">import</span> <span class="n">StrOutputParser</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.prompts</span><span class="w"> </span><span class="kn">import</span> <span class="n">PromptTemplate</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain_ollama</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChatOllama</span>
+
+<span class="n">prompt</span> <span class="o">=</span> <span class="n">PromptTemplate</span><span class="o">.</span><span class="n">from_template</span><span class="p">(</span>
+    <span class="s2">"你是拾光书屋的荐书官，用不超过两句话向读者推荐《</span><span class="si">{book}</span><span class="s2">》"</span>
+<span class="p">)</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">ChatOllama</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="s2">"qwen3:4b"</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="mf">0.7</span><span class="p">)</span>
+<span class="n">chain</span> <span class="o">=</span> <span class="n">prompt</span> <span class="o">|</span> <span class="n">model</span> <span class="o">|</span> <span class="n">StrOutputParser</span><span class="p">()</span>
+
+<span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">chain</span><span class="o">.</span><span class="n">stream</span><span class="p">({</span><span class="s2">"book"</span><span class="p">:</span> <span class="s2">"夜航船"</span><span class="p">}):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">chunk</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">""</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># 打字机效果</span>
+<span class="nb">print</span><span class="p">()</span>
+</code></pre></div>
+<p>链尾没接 <code>StrOutputParser</code> 时，拿到的是 <code>AIMessageChunk</code>，文字在它的 <code>.content</code> 里：</p>
+<div class="highlight"><pre><span></span><code><span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="p">(</span><span class="n">prompt</span> <span class="o">|</span> <span class="n">model</span><span class="p">)</span><span class="o">.</span><span class="n">stream</span><span class="p">({</span><span class="s2">"book"</span><span class="p">:</span> <span class="s2">"夜航船"</span><span class="p">}):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">chunk</span><span class="o">.</span><span class="n">content</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">""</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li><strong>chunk 不是 <code>str</code></strong>。模型直出是 <code>AIMessageChunk</code>；想直接拿文字，链尾接 <code>StrOutputParser</code>，出来的每块就是 <code>str</code>。</li>
+<li><strong>流式省的是「首字等待」和内存，不省总耗时</strong>。15 秒的活还是要 15 秒才吐完，区别只是「憋 15 秒一次性给」变成「边产边收」。</li>
+<li><strong><code>print</code> 加 <code>flush=True</code></strong>。尤其是输出被重定向到日志/管道时，不加的话缓冲区可能攒一大坨才刷出来，打字机效果直接失效。</li>
+<li><strong>同步 <code>.stream()</code> 会占住当前线程</strong>。普通脚本没问题；Web 服务里每个请求都在事件循环上，应该用下一节的 <code>astream</code>。</li>
+</ul>
+<h3 id="22-astream异步逐块-超时保护">2.2 <code>astream</code>：异步逐块 + 超时保护</h3>
+<p><strong>作用</strong>：异步版流式。每 <code>await</code> 一块、拿一块，等待期间事件循环还能去伺候别的任务——这正是「一本书慢慢流式输出、同时另一本书并发生成」的底座。它也和上一节的 <code>wait_for</code> 天然契合：超时一触发，消费任务被取消，流随之关闭（JS 里要 <code>AbortController</code> + 手搓 <code>withTimeout</code> 配合才能做到的事，Python 一个 <code>wait_for</code> 全包了）。</p>
+<p><strong>签名</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">astream</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="nb">input</span><span class="p">:</span> <span class="n">Input</span><span class="p">,</span>
+    <span class="n">config</span><span class="p">:</span> <span class="n">RunnableConfig</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AsyncIterator</span><span class="p">[</span><span class="n">Output</span><span class="p">]:</span> <span class="o">...</span>
+</code></pre></div>
+<p><strong>最小示例</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
+
+
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">recommend</span><span class="p">(</span><span class="n">reader</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">book</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""向某类读者流式推荐一本书。"""</span>
+    <span class="k">async</span> <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">chain</span><span class="o">.</span><span class="n">astream</span><span class="p">({</span><span class="s2">"book"</span><span class="p">:</span> <span class="n">book</span><span class="p">}):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">chunk</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">""</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">()</span>
+
+
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="c1"># 两本书并发流式：屏幕上两段文字交替往外冒</span>
+    <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span>
+        <span class="n">recommend</span><span class="p">(</span><span class="s2">"偏爱冷门历史"</span><span class="p">,</span> <span class="s2">"山月记"</span><span class="p">),</span>
+        <span class="n">recommend</span><span class="p">(</span><span class="s2">"想给孩子挑绘本"</span><span class="p">,</span> <span class="s2">"小王子"</span><span class="p">),</span>
+    <span class="p">)</span>
+
+
+<span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">main</span><span class="p">())</span>
+</code></pre></div>
+<p>给单次生成套上超时（对应本课程 JS 版里的 <code>streamExplain</code> + <code>withTimeout</code> 组合）：</p>
+<div class="highlight"><pre><span></span><code><span class="n">STREAM_TIMEOUT_S</span> <span class="o">=</span> <span class="mf">60.0</span>
+
+
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">consume</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">async</span> <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">chain</span><span class="o">.</span><span class="n">astream</span><span class="p">({</span><span class="s2">"book"</span><span class="p">:</span> <span class="s2">"小王子"</span><span class="p">}):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">chunk</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">""</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">wait_for</span><span class="p">(</span><span class="n">consume</span><span class="p">(),</span> <span class="n">timeout</span><span class="o">=</span><span class="n">STREAM_TIMEOUT_S</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">TimeoutError</span><span class="p">:</span>
+        <span class="c1"># 超时的实现方式是「取消任务」：</span>
+        <span class="c1"># consume 在最近一个 await 点被取消，astream 的异步生成器随之关闭</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="s2">[超时] 超过 </span><span class="si">{</span><span class="n">STREAM_TIMEOUT_S</span><span class="si">}</span><span class="s2"> 秒，不等了"</span><span class="p">)</span>
+
+
+<span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">main</span><span class="p">())</span>
+</code></pre></div>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li><strong><code>astream</code> 返回异步迭代器</strong>。只能 <code>async for</code>，不能 <code>next()</code>，也不能对同一个迭代器跑两轮——要跑第二遍就重新调用 <code>astream</code>。</li>
+<li><strong>超时靠的是取消</strong>。<code>CancelledError</code> 会在 <code>await</code> 点冒出来向上传播，别在中间用空 <code>except</code> 把它吞了。</li>
+<li><strong><code>astream</code> 必须在事件循环里跑</strong>。脚本里记得 <code>asyncio.run(main())</code>，在 Jupyter 里直接 <code>await</code> 即可（Jupyter 自己有循环）。</li>
+</ul>
+<h3 id="23-流式在链上的传递别让一个环节把水堵死">2.3 流式在链上的传递：别让一个环节把水堵死</h3>
+<p><strong>作用</strong>：链是 <code>prompt | model | parser</code> 一节一节接起来的水管，「流」能不能一路流到链尾，取决于每个环节是否支持流式。模型和 <code>StrOutputParser</code> 都支持；你自己写的环节就未必了。</p>
+<p><strong>最小示例</strong>（不需要模型，本地直接跑）：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Iterator</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.messages</span><span class="w"> </span><span class="kn">import</span> <span class="n">AIMessageChunk</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.output_parsers</span><span class="w"> </span><span class="kn">import</span> <span class="n">StrOutputParser</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.prompts</span><span class="w"> </span><span class="kn">import</span> <span class="n">PromptTemplate</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.runnables</span><span class="w"> </span><span class="kn">import</span> <span class="n">RunnableLambda</span>
+
+<span class="n">prompt</span> <span class="o">=</span> <span class="n">PromptTemplate</span><span class="o">.</span><span class="n">from_template</span><span class="p">(</span><span class="s2">"给</span><span class="si">{book}</span><span class="s2">写一句推荐语"</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">fake_model</span><span class="p">(</span><span class="n">pv</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">AIMessageChunk</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""假模型：yield 一块给一块——流式友好。"""</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"《</span><span class="si">{</span><span class="n">pv</span><span class="o">.</span><span class="n">to_string</span><span class="p">()</span><span class="si">}</span><span class="s2">》：夜航人的掌灯。"</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">text</span><span class="p">),</span> <span class="mi">4</span><span class="p">):</span>
+        <span class="k">yield</span> <span class="n">AIMessageChunk</span><span class="p">(</span><span class="n">content</span><span class="o">=</span><span class="n">text</span><span class="p">[</span><span class="n">i</span> <span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">4</span><span class="p">])</span>
+
+
+<span class="n">chain</span> <span class="o">=</span> <span class="n">prompt</span> <span class="o">|</span> <span class="n">RunnableLambda</span><span class="p">(</span><span class="n">fake_model</span><span class="p">)</span> <span class="o">|</span> <span class="n">StrOutputParser</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">chain</span><span class="o">.</span><span class="n">stream</span><span class="p">({</span><span class="s2">"book"</span><span class="p">:</span> <span class="s2">"夜航船"</span><span class="p">})))</span>
+<span class="c1"># ['《给夜航', '船写一句', '推荐语》', '：夜航人', '的掌灯。'] —— 一块块给</span>
+</code></pre></div>
+<p>而同样一个环节，写成普通函数（一次性 <code>return</code> 完整结果），流到这里就被「堵死」，下游只能拿到一整块：</p>
+<div class="highlight"><pre><span></span><code><span class="n">whole</span> <span class="o">=</span> <span class="n">prompt</span> <span class="o">|</span> <span class="n">RunnableLambda</span><span class="p">(</span><span class="k">lambda</span> <span class="n">pv</span><span class="p">:</span> <span class="s2">"一整段文字"</span><span class="p">)</span> <span class="o">|</span> <span class="n">StrOutputParser</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">whole</span><span class="o">.</span><span class="n">stream</span><span class="p">({</span><span class="s2">"book"</span><span class="p">:</span> <span class="s2">"夜航船"</span><span class="p">})))</span>  <span class="c1"># ['一整段文字'] —— 只有一块</span>
+</code></pre></div>
+<p><code>StrOutputParser</code> 本身是流式友好的：它逐块转换，不会把上游的流攒成一坨。</p>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li><strong>「必须拿到全文才能干活」的步骤天生断流</strong>。比如把整段荐语送去做评分、做全文翻译的中间环节——这是业务性质决定的，不是 bug；要么挪到链外，要么接受它退化成单块。</li>
+<li><strong>自定义环节想要流式</strong>，写成生成器函数（<code>def</code> + <code>yield</code>）或异步生成器（<code>async def</code> + <code>yield</code>）。普通 <code>return</code> 函数在流式调用里只会产出一个大块。</li>
+<li><strong>token 级体验的上限在模型端</strong>。本地 Ollama 按它自己的生成节奏吐块，块的大小由模型分词决定，链上没法把块切得更细。</li>
+</ul>
+<hr />
+<h2 id="3-批量执行batch-让书单一起跑">3. 批量执行：<code>.batch()</code> 让书单一起跑</h2>
+<h3 id="31-batch-与-max_concurrency">3.1 <code>.batch()</code> 与 <code>max_concurrency</code></h3>
+<p><strong>作用</strong>：运营丢来一份 5 本书的书单，要 5 条荐语。串行 <code>for</code> 循环是一本一本排队；<code>batch</code> 是五个店员同时开工，总耗时取决于最慢的那本，而不是五本之和。</p>
+<p><strong>签名</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">batch</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">inputs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Input</span><span class="p">],</span>
+    <span class="n">config</span><span class="p">:</span> <span class="n">RunnableConfig</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="n">RunnableConfig</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">return_exceptions</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Output</span><span class="p">]:</span> <span class="o">...</span>
+</code></pre></div>
+<p><strong>最小示例</strong>（不需要模型，肉眼可见的耗时对比）：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.runnables</span><span class="w"> </span><span class="kn">import</span> <span class="n">RunnableLambda</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">stamp</span><span class="p">(</span><span class="n">book</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""模拟盖章：耗时 0.3 秒的慢任务。"""</span>
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.3</span><span class="p">)</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">"已盖章：</span><span class="si">{</span><span class="n">book</span><span class="p">[</span><span class="s1">'title'</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span>
+
+
+<span class="n">stamper</span> <span class="o">=</span> <span class="n">RunnableLambda</span><span class="p">(</span><span class="n">stamp</span><span class="p">)</span>
+<span class="n">books</span> <span class="o">=</span> <span class="p">[{</span><span class="s2">"title"</span><span class="p">:</span> <span class="n">t</span><span class="p">}</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"夜航船"</span><span class="p">,</span> <span class="s2">"山月记"</span><span class="p">,</span> <span class="s2">"小王子"</span><span class="p">)]</span>
+
+<span class="n">t0</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+<span class="n">stamper</span><span class="o">.</span><span class="n">batch</span><span class="p">(</span><span class="n">books</span><span class="p">)</span>                                 <span class="c1"># 3 个任务并发</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"batch 默认并发：</span><span class="si">{</span><span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">t0</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">s"</span><span class="p">)</span>  <span class="c1"># ≈ 0.3s</span>
+
+<span class="n">t0</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+<span class="n">stamper</span><span class="o">.</span><span class="n">batch</span><span class="p">(</span><span class="n">books</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="p">{</span><span class="s2">"max_concurrency"</span><span class="p">:</span> <span class="mi">1</span><span class="p">})</span>  <span class="c1"># 一次只准跑 1 个</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"max_concurrency=1：</span><span class="si">{</span><span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">t0</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">s"</span><span class="p">)</span>  <span class="c1"># ≈ 0.9s</span>
+</code></pre></div>
+<p><code>max_concurrency</code> 就是「同时在岗的店员数」。不给它时由内部线程池自定（一般跟 CPU 核数相关，日常批量够用）；要保护本地 Ollama 或者上游接口时，显式设小一点。</p>
+<p>对真实的荐书链，用法一模一样：</p>
+<div class="highlight"><pre><span></span><code><span class="n">summaries</span> <span class="o">=</span> <span class="n">chain</span><span class="o">.</span><span class="n">batch</span><span class="p">(</span>
+    <span class="p">[{</span><span class="s2">"book"</span><span class="p">:</span> <span class="n">t</span><span class="p">}</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"夜航船"</span><span class="p">,</span> <span class="s2">"山月记"</span><span class="p">,</span> <span class="s2">"小王子"</span><span class="p">)],</span>
+    <span class="n">config</span><span class="o">=</span><span class="p">{</span><span class="s2">"max_concurrency"</span><span class="p">:</span> <span class="mi">2</span><span class="p">},</span>
+<span class="p">)</span>
+</code></pre></div>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li><strong>同步 <code>batch</code> 里只能放同步函数</strong>。给 <code>RunnableLambda</code> 传了 <code>async def</code> 函数再去 <code>.batch()</code>，会直接报错 <code>Cannot invoke a coroutine function synchronously</code>——异步链用下一节的 <code>abatch</code>。</li>
+<li><strong>结果是按输入顺序排好的</strong>。不管哪本书先跑完，<code>results[i]</code> 永远对应 <code>inputs[i]</code>，别按完成时间对号。</li>
+<li><strong>并发上限不只看你的代码</strong>。20 路并发打本地 Ollama，模型推理是串着排队的，内存小的机器还容易被挤爆——<code>max_concurrency</code> 帮你稳住。</li>
+</ul>
+<h3 id="32-abatch异步版批量">3.2 <code>abatch</code>：异步版批量</h3>
+<p><strong>作用</strong>：链的环节是异步的（或者你就是想在事件循环里统一调度），用 <code>abatch</code>。行为和 <code>batch</code> 一致，只是全程 <code>await</code>。</p>
+<p><strong>签名</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">abatch</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">inputs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Input</span><span class="p">],</span>
+    <span class="n">config</span><span class="p">:</span> <span class="n">RunnableConfig</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="n">RunnableConfig</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">return_exceptions</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Output</span><span class="p">]:</span> <span class="o">...</span>
+</code></pre></div>
+<p><strong>最小示例</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.runnables</span><span class="w"> </span><span class="kn">import</span> <span class="n">RunnableLambda</span>
+
+
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">astamp</span><span class="p">(</span><span class="n">book</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.3</span><span class="p">)</span>  <span class="c1"># 异步慢任务</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">"已盖章：</span><span class="si">{</span><span class="n">book</span><span class="p">[</span><span class="s1">'title'</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span>
+
+
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">astamper</span> <span class="o">=</span> <span class="n">RunnableLambda</span><span class="p">(</span><span class="n">astamp</span><span class="p">)</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="k">await</span> <span class="n">astamper</span><span class="o">.</span><span class="n">abatch</span><span class="p">(</span>
+        <span class="p">[{</span><span class="s2">"title"</span><span class="p">:</span> <span class="s2">"夜航船"</span><span class="p">},</span> <span class="p">{</span><span class="s2">"title"</span><span class="p">:</span> <span class="s2">"山月记"</span><span class="p">},</span> <span class="p">{</span><span class="s2">"title"</span><span class="p">:</span> <span class="s2">"小王子"</span><span class="p">}],</span>
+        <span class="n">config</span><span class="o">=</span><span class="p">{</span><span class="s2">"max_concurrency"</span><span class="p">:</span> <span class="mi">3</span><span class="p">},</span>
+    <span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>  <span class="c1"># 约 0.3 秒跑完，而不是 0.9 秒</span>
+
+
+<span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">main</span><span class="p">())</span>
+</code></pre></div>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li><strong><code>abatch</code> 是协程，忘了 <code>await</code> 等于没跑</strong>——和 1.2 节那个「协程只创建不运行」是同一个坑的批量版。</li>
+<li><strong>同步函数也能喂给 <code>abatch</code></strong>（框架会把它丢进线程池），但混搭时想清楚哪个环节真正阻塞：<code>time.sleep</code> 占线程、<code>asyncio.sleep</code> 占循环，语义不一样。</li>
+</ul>
+<h3 id="33-return_exceptions个别翻车别掀桌">3.3 <code>return_exceptions</code>：个别翻车别掀桌</h3>
+<p><strong>作用</strong>：默认情况下 5 本书里有 1 本生成失败，整个 <code>batch</code> 直接抛异常——另外 4 本已经跑完的结果也跟着陪葬。加 <code>return_exceptions=True</code>，失败的那个位置放一个异常实例，其余结果照常返回。</p>
+<p><strong>最小示例</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">stamp_or_die</span><span class="p">(</span><span class="n">book</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">book</span><span class="p">[</span><span class="s2">"title"</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"绝版书"</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"绝版书盖不了章"</span><span class="p">)</span>
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">"已盖章：</span><span class="si">{</span><span class="n">book</span><span class="p">[</span><span class="s1">'title'</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span>
+
+
+<span class="n">results</span> <span class="o">=</span> <span class="n">RunnableLambda</span><span class="p">(</span><span class="n">stamp_or_die</span><span class="p">)</span><span class="o">.</span><span class="n">batch</span><span class="p">(</span>
+    <span class="p">[{</span><span class="s2">"title"</span><span class="p">:</span> <span class="s2">"夜航船"</span><span class="p">},</span> <span class="p">{</span><span class="s2">"title"</span><span class="p">:</span> <span class="s2">"绝版书"</span><span class="p">},</span> <span class="p">{</span><span class="s2">"title"</span><span class="p">:</span> <span class="s2">"小王子"</span><span class="p">}],</span>
+    <span class="n">return_exceptions</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="c1"># ['已盖章：夜航船', ValueError('绝版书盖不了章'), '已盖章：小王子']</span>
+
+<span class="k">for</span> <span class="n">book</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">books</span><span class="p">,</span> <span class="n">results</span><span class="p">):</span>
+    <span class="n">status</span> <span class="o">=</span> <span class="s2">"失败"</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="ne">Exception</span><span class="p">)</span> <span class="k">else</span> <span class="s2">"成功"</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">book</span><span class="p">[</span><span class="s1">'title'</span><span class="p">]</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">status</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li><strong>拿到结果先做 <code>isinstance(r, Exception)</code> 体检</strong>，别把异常对象当文案打给用户。</li>
+<li>它只接住「任务执行中」抛的异常；输入本身不合法（比如根本不是 list）这类错误还是当场报。</li>
+</ul>
+<hr />
+<h2 id="4-超时与回退给链装上三张保险">4. 超时与回退：给链装上三张保险</h2>
+<h3 id="41-超时asynciowait_for-asynciotimeout">4.1 超时：<code>asyncio.wait_for</code> / <code>asyncio.timeout</code></h3>
+<p><strong>作用</strong>：本地 Ollama 卡死时不陪它等天荒地老。Python 的超时就是 1.3 节那两招，作用在「协程」上，和 LangChain 的链天然兼容——因为 <code>ainvoke</code>/<code>astream</code> 本来就是协程/异步迭代器。</p>
+<p><strong>最小示例</strong>——两种写法：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 写法一：wait_for 包一个协程（ainvoke 的超时）</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">wait_for</span><span class="p">(</span><span class="n">chain</span><span class="o">.</span><span class="n">ainvoke</span><span class="p">({</span><span class="s2">"book"</span><span class="p">:</span> <span class="s2">"夜航船"</span><span class="p">}),</span> <span class="n">timeout</span><span class="o">=</span><span class="mf">60.0</span><span class="p">)</span>
+<span class="k">except</span> <span class="ne">TimeoutError</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"生成超时，走兜底文案"</span><span class="p">)</span>
+
+<span class="c1"># 写法二：asyncio.timeout 包一段代码（Python 3.11+，astream 的超时首选）</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="k">async</span> <span class="k">with</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">timeout</span><span class="p">(</span><span class="mf">60.0</span><span class="p">):</span>
+        <span class="k">async</span> <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">chain</span><span class="o">.</span><span class="n">astream</span><span class="p">({</span><span class="s2">"book"</span><span class="p">:</span> <span class="s2">"夜航船"</span><span class="p">}):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">chunk</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">""</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">except</span> <span class="ne">TimeoutError</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">流式生成超时"</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li><strong><code>RunnableConfig</code> 里没有 <code>timeout</code> 这个键</strong>。当前 langchain-core 1.x 它只有 <code>tags</code> / <code>metadata</code> / <code>callbacks</code> / <code>run_name</code> / <code>max_concurrency</code> / <code>recursion_limit</code> / <code>configurable</code> / <code>run_id</code>——往 config 里塞 <code>timeout</code> 不会报错但也不生效，别被旧资料带偏。</li>
+<li><strong><code>ChatOllama</code> 构造参数里同样没有统一的 <code>timeout</code></strong>。请求级超时就自己用 <code>wait_for</code> / <code>asyncio.timeout</code> 包，这是 Python 侧的标准姿势。</li>
+<li><strong><code>asyncio.TimeoutError</code> 与内置 <code>TimeoutError</code></strong>：3.11+ 两者是同一个类，<code>except TimeoutError</code> 通吃；要兼容老版本就写 <code>except (TimeoutError, asyncio.TimeoutError)</code>。</li>
+<li>超时是「取消」实现的，被超时的链不会继续在后台白跑——但已经发出的底层 HTTP 请求要等生成器关闭时才释放。</li>
+</ul>
+<h3 id="42-with_fallbacks主演忘词替补顶上">4.2 <code>with_fallbacks</code>：主演忘词，替补顶上</h3>
+<p><strong>作用</strong>：主链挂了自动切备用链，调用方基本无感。像剧场里的替补演员——主演在台上忘词（主链抛错），替补直接接上台词（备用链接手），观众看出的顶多是换了个嗓音。</p>
+<p><strong>签名</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">with_fallbacks</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">fallbacks</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Runnable</span><span class="p">[</span><span class="n">Input</span><span class="p">,</span> <span class="n">Output</span><span class="p">]],</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">exceptions_to_handle</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">type</span><span class="p">[</span><span class="ne">BaseException</span><span class="p">],</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="ne">Exception</span><span class="p">,),</span>
+    <span class="n">exception_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RunnableWithFallbacksT</span><span class="p">[</span><span class="n">Input</span><span class="p">,</span> <span class="n">Output</span><span class="p">]:</span> <span class="o">...</span>
+</code></pre></div>
+<p><strong>最小示例</strong>——大模型配小模型当备胎：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.output_parsers</span><span class="w"> </span><span class="kn">import</span> <span class="n">StrOutputParser</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.prompts</span><span class="w"> </span><span class="kn">import</span> <span class="n">PromptTemplate</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain_ollama</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChatOllama</span>
+
+<span class="n">prompt</span> <span class="o">=</span> <span class="n">PromptTemplate</span><span class="o">.</span><span class="n">from_template</span><span class="p">(</span><span class="s2">"用一句话推荐《</span><span class="si">{book}</span><span class="s2">》"</span><span class="p">)</span>
+<span class="n">big</span> <span class="o">=</span> <span class="n">ChatOllama</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="s2">"qwen3:4b"</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="mf">0.7</span><span class="p">)</span>      <span class="c1"># 主演：主力模型</span>
+<span class="n">small</span> <span class="o">=</span> <span class="n">ChatOllama</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="s2">"qwen3:1.7b"</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="mf">0.7</span><span class="p">)</span>   <span class="c1"># 替补：更小的模型</span>
+
+<span class="n">primary</span> <span class="o">=</span> <span class="n">prompt</span> <span class="o">|</span> <span class="n">big</span> <span class="o">|</span> <span class="n">StrOutputParser</span><span class="p">()</span>
+<span class="n">backup</span> <span class="o">=</span> <span class="n">prompt</span> <span class="o">|</span> <span class="n">small</span> <span class="o">|</span> <span class="n">StrOutputParser</span><span class="p">()</span>
+
+<span class="n">safe_chain</span> <span class="o">=</span> <span class="n">primary</span><span class="o">.</span><span class="n">with_fallbacks</span><span class="p">([</span><span class="n">backup</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">safe_chain</span><span class="o">.</span><span class="n">invoke</span><span class="p">({</span><span class="s2">"book"</span><span class="p">:</span> <span class="s2">"夜航船"</span><span class="p">}))</span>
+</code></pre></div>
+<p>没有第二个模型也行，<code>RunnableLambda</code> 返回静态兜底文案，一样是合法的替补：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.runnables</span><span class="w"> </span><span class="kn">import</span> <span class="n">RunnableLambda</span>
+
+<span class="n">static_backup</span> <span class="o">=</span> <span class="n">RunnableLambda</span><span class="p">(</span>
+    <span class="k">lambda</span> <span class="n">book</span><span class="p">:</span> <span class="sa">f</span><span class="s2">"《</span><span class="si">{</span><span class="n">book</span><span class="p">[</span><span class="s1">'book'</span><span class="p">]</span><span class="si">}</span><span class="s2">》：今晚，让拾光书屋替你留一盏灯。"</span>
+<span class="p">)</span>
+<span class="n">safe_chain</span> <span class="o">=</span> <span class="n">primary</span><span class="o">.</span><span class="n">with_fallbacks</span><span class="p">([</span><span class="n">static_backup</span><span class="p">])</span>
+</code></pre></div>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li><strong>回退只在「抛异常」时触发</strong>。模型慢、输出质量差这类「软失败」不抛错，不会触发——想要质量不达标也换人，看 4.4 节。</li>
+<li><strong><code>fallbacks</code> 是有序的</strong>，主链失败后按列表顺序依次试，全失败才把最后的异常抛出来。</li>
+<li><strong>主链和备链的输入输出类型要对齐</strong>。同一个 <code>Input</code> 喂进去、同一种 <code>Output</code> 拿出来（上面两个例子里都是「书名字典进、荐语字符串出」），不然链式替换会对不上号。</li>
+<li><strong>默认捕获 <code>Exception</code></strong>。只想在特定错误时换备胎（比如只对超时换人），用 <code>exceptions_to_handle=(TimeoutError,)</code> 收紧。</li>
+</ul>
+<h3 id="43-with_retry没人应门就再敲两下">4.3 <code>with_retry</code>：没人应门就再敲两下</h3>
+<p><strong>作用</strong>：网络抖一下、模型偶发 500，这种「歇一下就好」的错，直接报给用户太亏。<code>with_retry</code> 让链自动重试——像敲门：没人应门，等几秒再敲，敲三次还没人就走人（去触发你后面的 fallback）。</p>
+<p><strong>签名</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">with_retry</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">retry_if_exception_type</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">type</span><span class="p">[</span><span class="ne">BaseException</span><span class="p">],</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="ne">Exception</span><span class="p">,),</span>
+    <span class="n">wait_exponential_jitter</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">exponential_jitter_params</span><span class="p">:</span> <span class="n">ExponentialJitterParams</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">stop_after_attempt</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Runnable</span><span class="p">[</span><span class="n">Input</span><span class="p">,</span> <span class="n">Output</span><span class="p">]:</span> <span class="o">...</span>
+</code></pre></div>
+<p><strong>最小示例</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 默认：最多试 3 次，带指数退避（第 2 次等 ~1 秒，第 3 次等 ~2 秒，再加随机抖动）</span>
+<span class="n">robust</span> <span class="o">=</span> <span class="n">chain</span><span class="o">.</span><span class="n">with_retry</span><span class="p">(</span><span class="n">stop_after_attempt</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+
+<span class="c1"># 和 fallback 串起来：先重试 2 次，还不行就换备胎</span>
+<span class="n">safe_robust</span> <span class="o">=</span> <span class="n">chain</span><span class="o">.</span><span class="n">with_retry</span><span class="p">(</span><span class="n">stop_after_attempt</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">with_fallbacks</span><span class="p">([</span><span class="n">backup</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">safe_robust</span><span class="o">.</span><span class="n">invoke</span><span class="p">({</span><span class="s2">"book"</span><span class="p">:</span> <span class="s2">"夜航船"</span><span class="p">}))</span>
+</code></pre></div>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li><strong>重试只对「偶发错误」有意义</strong>。提示词写错、模型名拼错这种「必现错误」，重试三次等于白等三倍时间。</li>
+<li><strong>等待会越来越长</strong>。默认 <code>wait_exponential_jitter=True</code>（指数退避 + 随机抖动），急性子场景可以关掉换固定间隔。</li>
+<li><strong>重试会重新执行整条链</strong>。如果链里混了写库、发消息这类带副作用的环节，小心同一动作被执行多次。</li>
+</ul>
+<h3 id="44-质量软回退结果太差也算失败">4.4 质量软回退：结果太差也算失败</h3>
+<p><strong>作用</strong>：模型说「抱歉，我无法推荐这本书」时并不抛异常——但对荐书官来说这已经是演砸了。做法：在主链尾部挂一个「校验器」，不达标就主动抛错，把「软失败」翻译成「硬失败」，让 4.2 的回退机制接管。</p>
+<p><strong>最小示例</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.runnables</span><span class="w"> </span><span class="kn">import</span> <span class="n">RunnableLambda</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.output_parsers</span><span class="w"> </span><span class="kn">import</span> <span class="n">StrOutputParser</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">reject_if_lazy</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""输出里出现敷衍话术，就视为质量不达标。"""</span>
+    <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s2">"抱歉|无法|我不能"</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"荐语质量不达标"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">text</span>
+
+
+<span class="n">primary_checked</span> <span class="o">=</span> <span class="n">prompt</span> <span class="o">|</span> <span class="n">big</span> <span class="o">|</span> <span class="n">StrOutputParser</span><span class="p">()</span> <span class="o">|</span> <span class="n">RunnableLambda</span><span class="p">(</span><span class="n">reject_if_lazy</span><span class="p">)</span>
+<span class="n">resilient</span> <span class="o">=</span> <span class="n">primary_checked</span><span class="o">.</span><span class="n">with_fallbacks</span><span class="p">([</span><span class="n">backup</span><span class="p">])</span>  <span class="c1"># 备链不需要挂校验器</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">resilient</span><span class="o">.</span><span class="n">invoke</span><span class="p">({</span><span class="s2">"book"</span><span class="p">:</span> <span class="s2">"夜航船"</span><span class="p">}))</span>
+</code></pre></div>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li><strong>校验器抛的异常类型要能被 <code>exceptions_to_handle</code> 接住</strong>。默认 <code>(Exception,)</code> 就覆盖了 <code>ValueError</code>，够用；如果你收紧了捕获范围，记得把校验器的异常也加进去。</li>
+<li>校验器是主链的一部分，<strong>每次重试、每次流式分块之后的最终输出都会过它</strong>——校验逻辑要轻，别再塞一个模型调用进去。</li>
+</ul>
+<hr />
+<h2 id="5-本章小结">5. 本章小结</h2>
+<p>一张表带走本章所有开关：</p>
+<table>
+<thead>
+<tr>
+<th>你的需求</th>
+<th>用什么</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>打字机效果，早点看到第一个字</td>
+<td><code>.stream()</code> / <code>.astream()</code></td>
+</tr>
+<tr>
+<td>一批输入并发跑</td>
+<td><code>.batch()</code> / <code>abatch()</code></td>
+</tr>
+<tr>
+<td>控制同时在岗的「店员数」</td>
+<td><code>config={"max_concurrency": n}</code></td>
+</tr>
+<tr>
+<td>个别失败不掀桌</td>
+<td><code>return_exceptions=True</code></td>
+</tr>
+<tr>
+<td>限时等待</td>
+<td><code>asyncio.wait_for</code> / <code>async with asyncio.timeout(...)</code></td>
+</tr>
+<tr>
+<td>主链挂了换备胎</td>
+<td><code>.with_fallbacks([...])</code></td>
+</tr>
+<tr>
+<td>偶发错误再试几次</td>
+<td><code>.with_retry(stop_after_attempt=3)</code></td>
+</tr>
+<tr>
+<td>质量不达标也算失败</td>
+<td>校验器主动抛错 + <code>with_fallbacks</code></td>
+</tr>
+</tbody>
+</table>
+<p>配套 demo（都在本章 <code>demo/</code> 目录）：</p>
+<ul>
+<li><code>demo_stream.py</code>：荐书官的打字机效果、并发流式、超时保护——<strong>需要本机 Ollama 已启动且拉取了 <code>qwen3:4b</code></strong>，文件头部注释写了全部前提。</li>
+<li><code>demo_batch.py</code>：用 <code>RunnableLambda</code> 模拟慢任务，串行 vs 并发、<code>max_concurrency</code> 限流、<code>abatch</code> 异步版、<code>return_exceptions</code>——<strong>不需要模型，直接跑</strong>。</li>
+</ul>
+<p>下一章我们解决另一个问题：模型输出的本质是字符串，而我们的代码想要结构化数据。<strong>下一章</strong>：<a href="../langchain/05-shu-chu-jie-xi-qi.html">05 · 输出解析器</a></p></div>
+
+      </article>
+<nav class="pager"><a class="pg-card pg-prev" href="../langchain/03-lcel-yu-runnable.html"><span class="pg-label">← 上一篇</span><span class="pg-title">LCEL 与 Runnable</span><span class="pg-mod">LangChain 指南</span></a><a class="pg-card pg-next" href="../langchain/05-shu-chu-jie-xi-qi.html"><span class="pg-label">下一篇 →</span><span class="pg-title">输出解析器</span><span class="pg-mod">LangChain 指南</span></a></nav>
+    </div>
+    <footer class="foot">
+      <span>深栈 DeepStack · AI Agent 工程师转型训练营配套文档</span>
+    </footer>
+  </main>
+<nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#1-asyncio-前置速览一张表从-promise-迁到协程">1. asyncio 前置速览：一张表从 Promise 迁到协程</a><a class="toc-link toc-h3" href="#11-迁移对照表">1.1 迁移对照表</a><a class="toc-link toc-h3" href="#12-最小示例asyncawait-与-gather">1.2 最小示例：async/await 与 gather</a><a class="toc-link toc-h3" href="#13-超时与取消wait_for-和-taskcancel">1.3 超时与取消：wait_for 和 task.cancel()</a><a class="toc-link toc-h2" href="#2-流式输出边想边说的-ai-荐书官">2. 流式输出：边想边说的 AI 荐书官</a><a class="toc-link toc-h3" href="#21-stream同步逐块拿文字">2.1 .stream()：同步逐块拿文字</a><a class="toc-link toc-h3" href="#22-astream异步逐块-超时保护">2.2 astream：异步逐块 + 超时保护</a><a class="toc-link toc-h3" href="#23-流式在链上的传递别让一个环节把水堵死">2.3 流式在链上的传递：别让一个环节把水堵死</a><a class="toc-link toc-h2" href="#3-批量执行batch-让书单一起跑">3. 批量执行：.batch() 让书单一起跑</a><a class="toc-link toc-h3" href="#31-batch-与-max_concurrency">3.1 .batch() 与 max_concurrency</a><a class="toc-link toc-h3" href="#32-abatch异步版批量">3.2 abatch：异步版批量</a><a class="toc-link toc-h3" href="#33-return_exceptions个别翻车别掀桌">3.3 return_exceptions：个别翻车别掀桌</a><a class="toc-link toc-h2" href="#4-超时与回退给链装上三张保险">4. 超时与回退：给链装上三张保险</a><a class="toc-link toc-h3" href="#41-超时asynciowait_for-asynciotimeout">4.1 超时：asyncio.wait_for / asyncio.timeout</a><a class="toc-link toc-h3" href="#42-with_fallbacks主演忘词替补顶上">4.2 with_fallbacks：主演忘词，替补顶上</a><a class="toc-link toc-h3" href="#43-with_retry没人应门就再敲两下">4.3 with_retry：没人应门就再敲两下</a><a class="toc-link toc-h3" href="#44-质量软回退结果太差也算失败">4.4 质量软回退：结果太差也算失败</a><a class="toc-link toc-h2" href="#5-本章小结">5. 本章小结</a></nav>
+</div>
+<div class="sb-mask" id="sbMask"></div>
+<script src="../assets/app.js"></script>
+</body>
+</html>

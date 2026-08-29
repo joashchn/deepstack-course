@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>14 · 循环、图与骨架工程 · 深栈 DeepStack 课程文档</title>
+<meta name="description" content="第 13 章经营的是模型&quot;看到什么&quot;——窗口里装什么、裁掉什么、留下什么。这一章换个视角：模型之外的所有工程结构。同一个模型，装进不同的骨架，表现可以天差地别；循环怎么跑怎么停、复杂流程怎么编排、整套骨架怎么分层搭起来—…">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%23d9c39a' text-anchor='middle'%3EDS%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+<div class="progress" id="progress"></div>
+
+<div class="layout">
+<aside class="sidebar" id="sidebar">
+  <div class="sb-head">
+    <a class="brand" href="../index.html">
+      <span class="brand-mark">DS</span>
+      <span class="brand-text"><b>深栈 DeepStack</b><i>AI Agent 工程师转型训练营</i></span>
+    </a>
+    <button class="sb-close" id="sbClose" aria-label="关闭目录">✕</button>
+  </div>
+  <div class="sb-search"><input type="search" id="searchInput" placeholder="搜索 123 篇文档… ( / )" autocomplete="off">
+    <div class="sb-results" id="searchResults"></div></div>
+  <nav class="sb-nav">
+    <section class="sb-group" data-mod="python">
+      <a class="sb-group-title" href="../modules/python.html" data-toggle="python">
+        <span class="sb-num">01</span>
+        <span class="sb-group-text"><b>Python 与数据实践</b><i>31 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../python/01-huan-jing-da-jian-yu-ban-ben-guan-li.html"><span class="sb-item-num">01</span><span class="sb-item-title">环境搭建与版本管理</span></a>
+        <a class="sb-item" href="../python/02-bian-liang-biao-da-shi-yu-liu-cheng-kong-zhi.html"><span class="sb-item-num">02</span><span class="sb-item-title">变量、表达式与流程控制</span></a>
+        <a class="sb-item" href="../python/03-xu-lie-zi-dian-yu-ji-he.html"><span class="sb-item-num">03</span><span class="sb-item-title">序列、字典与集合</span></a>
+        <a class="sb-item" href="../python/04-han-shu-she-ji-yu-lambda.html"><span class="sb-item-num">04</span><span class="sb-item-title">函数设计与 lambda</span></a>
+        <a class="sb-item" href="../python/05-zuo-yong-yu-gui-ze-yu-bi-bao.html"><span class="sb-item-num">05</span><span class="sb-item-title">作用域规则与闭包</span></a>
+        <a class="sb-item" href="../python/06-lei-de-ding-yi-yu-shi-li-hua.html"><span class="sb-item-num">06</span><span class="sb-item-title">类的定义与实例化</span></a>
+        <a class="sb-item" href="../python/07-lei-xing-pan-ding-yu-chou-xiang-ji-lei.html"><span class="sb-item-num">07</span><span class="sb-item-title">类型判定与抽象基类</span></a>
+        <a class="sb-item" href="../python/08-mo-shu-fang-fa-quan-jing.html"><span class="sb-item-num">08</span><span class="sb-item-title">魔术方法全景</span></a>
+        <a class="sb-item" href="../python/09-miao-shu-fu-yu-yuan-lei.html"><span class="sb-item-num">09</span><span class="sb-item-title">描述符与元类</span></a>
+        <a class="sb-item" href="../python/10-zhuang-shi-qi.html"><span class="sb-item-num">10</span><span class="sb-item-title">装饰器</span></a>
+        <a class="sb-item" href="../python/11-die-dai-xie-yi-yu-sheng-cheng-qi.html"><span class="sb-item-num">11</span><span class="sb-item-title">迭代协议与生成器</span></a>
+        <a class="sb-item" href="../python/12-with-yu-shang-xia-wen-xie-yi.html"><span class="sb-item-num">12</span><span class="sb-item-title">with 与上下文协议</span></a>
+        <a class="sb-item" href="../python/13-yi-chang-ti-xi-yu-chu-li.html"><span class="sb-item-num">13</span><span class="sb-item-title">异常体系与处理</span></a>
+        <a class="sb-item" href="../python/14-lei-xing-biao-zhu.html"><span class="sb-item-num">14</span><span class="sb-item-title">类型标注</span></a>
+        <a class="sb-item" href="../python/15-mo-kuai-yu-bao-de-zu-zhi.html"><span class="sb-item-num">15</span><span class="sb-item-title">模块与包的组织</span></a>
+        <a class="sb-item" href="../python/16-biao-zhun-ku-xun-li.html"><span class="sb-item-num">16</span><span class="sb-item-title">标准库巡礼</span></a>
+        <a class="sb-item" href="../python/17-yi-lai-guan-li-yu-di-san-fang-ku.html"><span class="sb-item-num">17</span><span class="sb-item-title">依赖管理与第三方库</span></a>
+        <a class="sb-item" href="../python/18-xian-cheng-yu-jin-cheng.html"><span class="sb-item-num">18</span><span class="sb-item-title">线程与进程</span></a>
+        <a class="sb-item" href="../python/19-shi-jian-xun-huan.html"><span class="sb-item-num">19</span><span class="sb-item-title">事件循环</span></a>
+        <a class="sb-item" href="../python/20-future-yu-xie-cheng.html"><span class="sb-item-num">20</span><span class="sb-item-title">Future 与协程</span></a>
+        <a class="sb-item" href="../python/21-asyncio-shi-zhan.html"><span class="sb-item-num">21</span><span class="sb-item-title">asyncio 实战</span></a>
+        <a class="sb-item" href="../python/22-gou-jian-yu-fa-bu.html"><span class="sb-item-num">22</span><span class="sb-item-title">构建与发布</span></a>
+        <a class="sb-item" href="../python/23-gong-cheng-hua-gong-ju-lian.html"><span class="sb-item-num">23</span><span class="sb-item-title">工程化工具链</span></a>
+        <a class="sb-item" href="../python/24-monorepo-yu-tiao-shi.html"><span class="sb-item-num">24</span><span class="sb-item-title">monorepo 与调试</span></a>
+        <a class="sb-item" href="../python/25-jupyter-jiao-hu-huan-jing.html"><span class="sb-item-num">25</span><span class="sb-item-title">Jupyter 交互环境</span></a>
+        <a class="sb-item" href="../python/26-numpy-shu-zu-yu-xiang-liang-hua.html"><span class="sb-item-num">26</span><span class="sb-item-title">NumPy 数组与向量化</span></a>
+        <a class="sb-item" href="../python/27-pandas-shu-ju-jie-gou.html"><span class="sb-item-num">27</span><span class="sb-item-title">Pandas 数据结构</span></a>
+        <a class="sb-item" href="../python/28-pandas-shu-ju-qing-xi.html"><span class="sb-item-num">28</span><span class="sb-item-title">Pandas 数据清洗</span></a>
+        <a class="sb-item" href="../python/29-matplotlib-hui-tu-ti-xi.html"><span class="sb-item-num">29</span><span class="sb-item-title">Matplotlib 绘图体系</span></a>
+        <a class="sb-item" href="../python/30-matplotlib-dong-hua-yu-jiao-hu.html"><span class="sb-item-num">30</span><span class="sb-item-title">Matplotlib 动画与交互</span></a>
+        <a class="sb-item" href="../python/31-seaborn-tong-ji-ke-shi-hua.html"><span class="sb-item-num">31</span><span class="sb-item-title">Seaborn 统计可视化</span></a>
+      </div>
+    </section>
+    <section class="sb-group open" data-mod="agent">
+      <a class="sb-group-title" href="../modules/agent.html" data-toggle="agent">
+        <span class="sb-num">02</span>
+        <span class="sb-group-text"><b>Agent 核心</b><i>15 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../agent/01-token-yu-ci-qian-ru.html"><span class="sb-item-num">01</span><span class="sb-item-title">Token 与词嵌入</span></a>
+        <a class="sb-item" href="../agent/02-qian-xiang-chuan-bo-yu-fan-xiang-chuan-bo.html"><span class="sb-item-num">02</span><span class="sb-item-title">前向传播与反向传播</span></a>
+        <a class="sb-item" href="../agent/03-zhu-yi-li-ji-zhi-yu-transformer-jia-gou.html"><span class="sb-item-num">03</span><span class="sb-item-title">注意力机制与 Transformer 架构</span></a>
+        <a class="sb-item" href="../agent/04-yu-xun-lian-rlhf-yu-cai-yang-kv-cache.html"><span class="sb-item-num">04</span><span class="sb-item-title">预训练、RLHF 与采样（KV Cache）</span></a>
+        <a class="sb-item" href="../agent/05-ben-di-mo-xing-yu-xiao-xi-jie-gou.html"><span class="sb-item-num">05</span><span class="sb-item-title">本地模型与消息结构</span></a>
+        <a class="sb-item" href="../agent/06-hui-hua-guan-li-yu-json-shu-chu.html"><span class="sb-item-num">06</span><span class="sb-item-title">会话管理与 JSON 输出</span></a>
+        <a class="sb-item" href="../agent/07-tool-calling-xie-yi-yu-feng-zhuang.html"><span class="sb-item-num">07</span><span class="sb-item-title">Tool Calling：协议与封装</span></a>
+        <a class="sb-item" href="../agent/08-react-mo-shi-yu-zhu-xun-huan.html"><span class="sb-item-num">08</span><span class="sb-item-title">ReAct 模式与主循环</span></a>
+        <a class="sb-item" href="../agent/09-shi-zhan-deep-research-agent.html"><span class="sb-item-num">09</span><span class="sb-item-title">实战：Deep Research Agent</span></a>
+        <a class="sb-item" href="../agent/10-skill-yu-jian-jin-shi-pi-lu.html"><span class="sb-item-num">10</span><span class="sb-item-title">Skill 与渐进式披露</span></a>
+        <a class="sb-item" href="../agent/11-mcp-quan-jing.html"><span class="sb-item-num">11</span><span class="sb-item-title">MCP 全景</span></a>
+        <a class="sb-item" href="../agent/12-duo-agent-yu-xuan-xing-ce-lve.html"><span class="sb-item-num">12</span><span class="sb-item-title">多 Agent 与选型策略</span></a>
+        <a class="sb-item" href="../agent/13-ti-shi-ci-gong-cheng-yu-shang-xia-wen-gong.html"><span class="sb-item-num">13</span><span class="sb-item-title">提示词工程与上下文工程</span></a>
+        <a class="sb-item current" href="../agent/14-xun-huan-tu-yu-gu-jia-gong-cheng.html"><span class="sb-item-num">14</span><span class="sb-item-title">循环、图与骨架工程</span></a>
+        <a class="sb-item" href="../agent/15-ji-yi-quan-xian-yu-ping-ce.html"><span class="sb-item-num">15</span><span class="sb-item-title">记忆、权限与评测</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="langchain">
+      <a class="sb-group-title" href="../modules/langchain.html" data-toggle="langchain">
+        <span class="sb-num">03</span>
+        <span class="sb-group-text"><b>LangChain 指南</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langchain/01-ren-shi-langchain.html"><span class="sb-item-num">01</span><span class="sb-item-title">认识 LangChain</span></a>
+        <a class="sb-item" href="../langchain/02-ti-shi-ci-mu-ban-yu-xiao-xi.html"><span class="sb-item-num">02</span><span class="sb-item-title">提示词模板与消息</span></a>
+        <a class="sb-item" href="../langchain/03-lcel-yu-runnable.html"><span class="sb-item-num">03</span><span class="sb-item-title">LCEL 与 Runnable</span></a>
+        <a class="sb-item" href="../langchain/04-liu-shi-yu-bing-fa.html"><span class="sb-item-num">04</span><span class="sb-item-title">流式与并发</span></a>
+        <a class="sb-item" href="../langchain/05-shu-chu-jie-xi-qi.html"><span class="sb-item-num">05</span><span class="sb-item-title">输出解析器</span></a>
+        <a class="sb-item" href="../langchain/06-wen-dang-jia-zai-yu-qie-ge.html"><span class="sb-item-num">06</span><span class="sb-item-title">文档加载与切割</span></a>
+        <a class="sb-item" href="../langchain/07-qian-ru-yu-xiang-liang-ku.html"><span class="sb-item-num">07</span><span class="sb-item-title">嵌入与向量库</span></a>
+        <a class="sb-item" href="../langchain/08-jian-suo-yu-rag.html"><span class="sb-item-num">08</span><span class="sb-item-title">检索与RAG</span></a>
+        <a class="sb-item" href="../langchain/09-dui-hua-ji-yi.html"><span class="sb-item-num">09</span><span class="sb-item-title">对话记忆</span></a>
+        <a class="sb-item" href="../langchain/10-gong-ju-diao-yong.html"><span class="sb-item-num">10</span><span class="sb-item-title">工具调用</span></a>
+        <a class="sb-item" href="../langchain/11-agent.html"><span class="sb-item-num">11</span><span class="sb-item-title">Agent</span></a>
+        <a class="sb-item" href="../langchain/12-hui-diao-yu-tiao-shi-quan-ke-cheng-shou-guan.html"><span class="sb-item-num">12</span><span class="sb-item-title">回调与调试（全课程收官章）</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="langgraph">
+      <a class="sb-group-title" href="../modules/langgraph.html" data-toggle="langgraph">
+        <span class="sb-num">04</span>
+        <span class="sb-group-text"><b>LangGraph 框架指南</b><i>17 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langgraph/01-di-1-zhang-cong-yi-ge-shi-kong-de-jiao.html"><span class="sb-item-num">01</span><span class="sb-item-title">第 1 章 从一个失控的脚本说起</span></a>
+        <a class="sb-item" href="../langgraph/02-di-2-zhang-zui-xiao-ke-yun-xing-tu.html"><span class="sb-item-num">02</span><span class="sb-item-title">第 2 章 最小可运行图</span></a>
+        <a class="sb-item" href="../langgraph/03-di-3-zhang-zhuang-tai-tu-de-shu-ju-xin.html"><span class="sb-item-num">03</span><span class="sb-item-title">第 3 章 状态：图的数据心脏</span></a>
+        <a class="sb-item" href="../langgraph/04-di-4-zhang-rang-liu-cheng-xue-hui-jue-ce.html"><span class="sb-item-num">04</span><span class="sb-item-title">第 4 章 让流程学会决策</span></a>
+        <a class="sb-item" href="../langgraph/05-di-5-zhang-bing-xing-shi-jie-chao-bu-zhi.html"><span class="sb-item-num">05</span><span class="sb-item-title">第 5 章 并行世界：超步执行模型</span></a>
+        <a class="sb-item" href="../langgraph/06-di-6-zhang-command-ba-kong-zhi-quan-jiao-jin.html"><span class="sb-item-num">06</span><span class="sb-item-title">第 6 章 Command：把控制权交进节点</span></a>
+        <a class="sb-item" href="../langgraph/07-di-7-zhang-dong-tai-bing-xing-send-yu-mapreduce.html"><span class="sb-item-num">07</span><span class="sb-item-title">第 7 章 动态并行：Send 与 MapReduce</span></a>
+        <a class="sb-item" href="../langgraph/08-di-8-zhang-gei-tu-zhuang-shang-shou-jiao-gong.html"><span class="sb-item-num">08</span><span class="sb-item-title">第 8 章 给图装上手脚：工具调用</span></a>
+        <a class="sb-item" href="../langgraph/09-di-9-zhang-fu-yong-yu-feng-zhuang-zi-tu.html"><span class="sb-item-num">09</span><span class="sb-item-title">第 9 章 复用与封装：子图</span></a>
+        <a class="sb-item" href="../langgraph/10-di-10-zhang-cong-dan-tu-dao-tuan-dui-duo.html"><span class="sb-item-num">10</span><span class="sb-item-title">第 10 章 从单图到团队：多 Agent 架构</span></a>
+        <a class="sb-item" href="../langgraph/11-di-11-zhang-liu-shi-shu-chu.html"><span class="sb-item-num">11</span><span class="sb-item-title">第 11 章 流式输出</span></a>
+        <a class="sb-item" href="../langgraph/12-di-12-zhang-chi-jiu-hua-checkpointer-yu-xian-cheng.html"><span class="sb-item-num">12</span><span class="sb-item-title">第 12 章 持久化：Checkpointer 与线程</span></a>
+        <a class="sb-item" href="../langgraph/13-di-13-zhang-shi-jian-lv-xing.html"><span class="sb-item-num">13</span><span class="sb-item-title">第 13 章 时间旅行</span></a>
+        <a class="sb-item" href="../langgraph/14-di-14-zhang-zhong-duan-yu-ren-zai-hui-lu.html"><span class="sb-item-num">14</span><span class="sb-item-title">第 14 章 中断与人在回路</span></a>
+        <a class="sb-item" href="../langgraph/15-di-15-zhang-ji-yi-guan-li.html"><span class="sb-item-num">15</span><span class="sb-item-title">第 15 章 记忆管理</span></a>
+        <a class="sb-item" href="../langgraph/16-di-16-zhang-rong-cuo-zhong-shi-chao-shi-yu.html"><span class="sb-item-num">16</span><span class="sb-item-title">第 16 章 容错：重试、超时与兜底</span></a>
+        <a class="sb-item" href="../langgraph/17-di-17-zhang-quan-jing-hui-gu.html"><span class="sb-item-num">17</span><span class="sb-item-title">第 17 章 全景回顾</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="backend">
+      <a class="sb-group-title" href="../modules/backend.html" data-toggle="backend">
+        <span class="sb-num">05</span>
+        <span class="sb-group-text"><b>Python 框架指南</b><i>14 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../backend/01-fastapi-ru-men-yu-asgi.html"><span class="sb-item-num">01</span><span class="sb-item-title">FastAPI 入门与 ASGI</span></a>
+        <a class="sb-item" href="../backend/02-lu-you-yu-qing-qiu-xiang-ying.html"><span class="sb-item-num">02</span><span class="sb-item-title">路由与请求响应</span></a>
+        <a class="sb-item" href="../backend/03-pydantic-shu-ju-jiao-yan-yu-pei-zhi.html"><span class="sb-item-num">03</span><span class="sb-item-title">Pydantic 数据校验与配置</span></a>
+        <a class="sb-item" href="../backend/04-sqlalchemy-yi-bu-yin-qing-yu-hui-hua.html"><span class="sb-item-num">04</span><span class="sb-item-title">SQLAlchemy 异步引擎与会话</span></a>
+        <a class="sb-item" href="../backend/05-orm-jian-mo.html"><span class="sb-item-num">05</span><span class="sb-item-title">ORM 建模</span></a>
+        <a class="sb-item" href="../backend/06-sql-biao-da-shi-yu-shu-ju-cao-zuo.html"><span class="sb-item-num">06</span><span class="sb-item-title">SQL 表达式与数据操作</span></a>
+        <a class="sb-item" href="../backend/07-alembic-shu-ju-qian-yi.html"><span class="sb-item-num">07</span><span class="sb-item-title">Alembic 数据迁移</span></a>
+        <a class="sb-item" href="../backend/08-yi-lai-zhu-ru.html"><span class="sb-item-num">08</span><span class="sb-item-title">依赖注入</span></a>
+        <a class="sb-item" href="../backend/09-tong-yi-yi-chang-chu-li.html"><span class="sb-item-num">09</span><span class="sb-item-title">统一异常处理</span></a>
+        <a class="sb-item" href="../backend/10-zhong-jian-jian.html"><span class="sb-item-num">10</span><span class="sb-item-title">中间件</span></a>
+        <a class="sb-item" href="../backend/11-ren-zheng-yu-jwt.html"><span class="sb-item-num">11</span><span class="sb-item-title">认证与 JWT</span></a>
+        <a class="sb-item" href="../backend/12-pytest-ce-shi.html"><span class="sb-item-num">12</span><span class="sb-item-title">pytest 测试</span></a>
+        <a class="sb-item" href="../backend/13-ri-zhi-loguru.html"><span class="sb-item-num">13</span><span class="sb-item-title">日志 loguru</span></a>
+        <a class="sb-item" href="../backend/14-liu-shi-xiang-ying-sse-yu-websocket.html"><span class="sb-item-num">14</span><span class="sb-item-title">流式响应 SSE 与 WebSocket</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="interview">
+      <a class="sb-group-title" href="../modules/interview.html" data-toggle="interview">
+        <span class="sb-num">06</span>
+        <span class="sb-group-text"><b>面试题库</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../interview/01-llm-yuan-li-pian.html"><span class="sb-item-num">01</span><span class="sb-item-title">LLM 原理篇</span></a>
+        <a class="sb-item" href="../interview/02-rag-yu-jian-suo-pian.html"><span class="sb-item-num">02</span><span class="sb-item-title">RAG 与检索篇</span></a>
+        <a class="sb-item" href="../interview/03-agent-he-xin-pian.html"><span class="sb-item-num">03</span><span class="sb-item-title">Agent 核心篇</span></a>
+        <a class="sb-item" href="../interview/04-langgraph-pian.html"><span class="sb-item-num">04</span><span class="sb-item-title">LangGraph 篇</span></a>
+        <a class="sb-item" href="../interview/05-langchain-pian.html"><span class="sb-item-num">05</span><span class="sb-item-title">LangChain 篇</span></a>
+        <a class="sb-item" href="../interview/06-xi-tong-she-ji-pian.html"><span class="sb-item-num">06</span><span class="sb-item-title">系统设计篇</span></a>
+        <a class="sb-item" href="../interview/07-xiang-mu-shen-wa-pian.html"><span class="sb-item-num">07</span><span class="sb-item-title">项目深挖篇</span></a>
+        <a class="sb-item" href="../interview/08-gu-zhang-pai-cha-pian.html"><span class="sb-item-num">08</span><span class="sb-item-title">故障排查篇</span></a>
+        <a class="sb-item" href="../interview/09-python-ji-chu-pian.html"><span class="sb-item-num">09</span><span class="sb-item-title">Python 基础篇</span></a>
+        <a class="sb-item" href="../interview/10-fastapi-yu-hou-duan-pian.html"><span class="sb-item-num">10</span><span class="sb-item-title">FastAPI 与后端篇</span></a>
+        <a class="sb-item" href="../interview/11-ti-shi-ci-gong-cheng-yu-an-quan-pian.html"><span class="sb-item-num">11</span><span class="sb-item-title">提示词工程与安全篇</span></a>
+        <a class="sb-item" href="../interview/12-mo-xing-xuan-xing-yu-jiang-ben-pian.html"><span class="sb-item-num">12</span><span class="sb-item-title">模型选型与降本篇</span></a>
+      </div>
+    </section>
+  </nav>
+</aside>
+  <main class="main">
+    <header class="topbar">
+      <button class="menu-btn" id="menuBtn" aria-label="目录">☰</button>
+      <div class="crumbs"><a href="../index.html">首页</a><span>/</span><a href="../modules/agent.html">Agent 核心</a><span>/</span><span class="cur">循环、图与骨架工程</span></div>
+      <div class="topbar-actions">
+        <button class="icon-btn" id="themeBtn" title="切换深浅色" aria-label="切换深浅色">◐</button>
+      </div>
+    </header>
+    <div class="content">
+      <article class="article">
+
+<header class="page-head">
+  <div class="page-kicker">Agent 核心 · 第 14 章</div>
+  <h1 class="page-title">循环、图与骨架工程</h1>
+  <p class="page-desc">第 13 章经营的是模型&quot;看到什么&quot;——窗口里装什么、裁掉什么、留下什么。这一章换个视角：模型之外的所有工程结构。同一个模型，装进不同的骨架，表现可以天差地别；循环怎么跑怎么停、复杂流程怎么编排、整套骨架怎么分层搭起来—…</p>
+  <div class="page-meta">
+    <span>约 32 分钟</span><span>12,863 字</span><span>20 个代码示例</span>
+  </div>
+</header>
+<div class="md"><blockquote>
+<p>第 13 章经营的是模型"看到什么"——窗口里装什么、裁掉什么、留下什么。这一章换个视角：模型之外的所有工程结构。同一个模型，装进不同的骨架，表现可以天差地别；循环怎么跑怎么停、复杂流程怎么编排、整套骨架怎么分层搭起来——这些模型"看不见"的工程决策，才是可靠性的真正来源。本章位于"第五章 怎么做得可靠"的核心位置，分三部分展开：先讲最具体的<strong>循环工程</strong>（让循环该停时停、偏航时正、失控时刹），再讲<strong>图工程</strong>（复杂流程的显式编排），最后用<strong>骨架工程</strong>（Harness）收官——把前两部分所做的一切升华成体系化的总纲。</p>
+</blockquote>
+<h2 id="1-循环工程让循环安全地跑">1. 循环工程：让循环安全地跑</h2>
+<blockquote>
+<p>Agent 的本质是循环（第 8 章），而循环的本质是风险——没有循环，错误止于一次调用；有了循环，一个错误会被放大成整个任务的失败。第 8 章给了四道闸门做应急处理，这一部分把它扩展成系统的循环工程学：怎么让循环<strong>该停时停、偏航时正、失控时刹</strong>。</p>
+</blockquote>
+<h3 id="11-循环的三种死法">1.1 循环的三种死法</h3>
+<p>先病理分析。Agent 循环的失败模式归为三类（第 8 章见过前两类）：</p>
+<div class="highlight"><pre><span></span><code>死法一：打转（oscillation）
+  search[天气] → 结果不满意 → search[天气] → ……   ← 第 8 章的重复检测
+
+死法二：发散（drift）
+  任务：写周报 → 中途开始"优化模板" → 又开始"调研工具" → 忘了初衷
+  每步都"合理"，整体离题万里——目标漂移
+
+死法三：滚雪球（cascade）
+  轮次↑ → 上下文↑ → 注意力稀释 → 判断质量↓ → 更多无效调用 → 轮次↑
+  正反馈循环，越跑越糟
+</code></pre></div>
+<p>死法一有现成解药（重复检测）。死法二和三更隐蔽：<strong>每一步单看都没毛病，是宏观行为坏了</strong>——这就是循环工程要处理的核心难题：微观合理性与宏观失控的矛盾。</p>
+<h3 id="12-终止工程什么时候该停">1.2 终止工程：什么时候该停</h3>
+<p>终止不止"达到上限就砍"（第 8 章的粗暴版本）。完整的终止设计分三层：</p>
+<h4 id="成功终止">成功终止</h4>
+<p>模型不再调用工具、给出最终答案——这是自然出口。但<strong>自然出口 ≠ 正确出口</strong>：模型可能在证据不足时提前"自信作答"（第 9 章见过：搜一次就作答）。对策是在系统提示词里定义<strong>完成标准</strong>（"必须交叉验证两个来源才能回答"），而不是任由模型自己感觉"差不多了"。</p>
+<h4 id="资源终止硬止损">资源终止（硬止损）</h4>
+<p>第 8 章的四道闸门完整版。这里补一个关键的工程细节——<strong>各级闸门的关系应该是嵌套的软硬结合</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 软闸门：先警告，给模型自纠的机会</span>
+<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">tokens_used</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">budget</span> <span class="o">*</span> <span class="mf">0.7</span><span class="p">:</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_warned</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">messages</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">"role"</span><span class="p">:</span> <span class="s2">"user"</span><span class="p">,</span>
+            <span class="s2">"content"</span><span class="p">:</span> <span class="s2">"提示：token 预算已使用 70%。请尽快总结当前成果并收尾。"</span><span class="p">})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_warned</span> <span class="o">=</span> <span class="kc">True</span>
+
+<span class="c1"># 硬闸门：无情切断</span>
+<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">tokens_used</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">budget</span><span class="p">:</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_partial_result</span><span class="p">()</span>   <span class="c1"># 带着部分成果退出，而不是空手</span>
+</code></pre></div>
+<p><code>_partial_result</code> 值得展开：硬闸门触发时，<strong>让模型基于已有信息输出一个"目前最佳答案"</strong>，比直接抛"任务失败"有价值得多——已消耗的成本换点残值回来：</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">_partial_result</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="n">resp</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">chat</span><span class="o">.</span><span class="n">completions</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+        <span class="n">model</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span>
+        <span class="n">messages</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">messages</span> <span class="o">+</span> <span class="p">[{</span>
+            <span class="s2">"role"</span><span class="p">:</span> <span class="s2">"user"</span><span class="p">,</span>
+            <span class="s2">"content"</span><span class="p">:</span> <span class="s2">"预算已用尽。请基于已收集到的信息，"</span>
+                       <span class="s2">"给出当前最佳的不完整答案，并注明局限。"</span><span class="p">,</span>
+        <span class="p">}],</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">resp</span><span class="o">.</span><span class="n">choices</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">message</span><span class="o">.</span><span class="n">content</span>
+</code></pre></div>
+<h4 id="语义终止质量止损">语义终止（质量止损）</h4>
+<p>资源闸门防的是"跑太久"，语义闸门防的是"跑着跑着没意义"：</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">_goal_check</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">original_task</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""每 N 轮做一次目标对齐检查"""</span>
+    <span class="n">resp</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">chat</span><span class="o">.</span><span class="n">completions</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+        <span class="n">model</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="n">messages</span><span class="o">=</span><span class="p">[</span>
+            <span class="p">{</span><span class="s2">"role"</span><span class="p">:</span> <span class="s2">"system"</span><span class="p">,</span>
+             <span class="s2">"content"</span><span class="p">:</span> <span class="s2">"判断当前进度是否仍在服务原始任务。"</span>
+                        <span class="s2">"只输出 ALIGNED 或 DRIFTED。"</span><span class="p">},</span>
+            <span class="p">{</span><span class="s2">"role"</span><span class="p">:</span> <span class="s2">"user"</span><span class="p">,</span>
+             <span class="s2">"content"</span><span class="p">:</span> <span class="sa">f</span><span class="s2">"原始任务：</span><span class="si">{</span><span class="n">original_task</span><span class="si">}</span><span class="se">\n\n</span><span class="s2">"</span>
+                        <span class="sa">f</span><span class="s2">"最近的行动：</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">recent_actions_summary</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span><span class="p">},</span>
+        <span class="p">],</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">resp</span><span class="o">.</span><span class="n">choices</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">message</span><span class="o">.</span><span class="n">content</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s2">"ALIGNED"</span>
+</code></pre></div>
+<p>对准的是死法二（目标漂移）：每 5 轮花一次廉价调用检查"还在正道上吗"。发现 DRIFTED 时的处置不是杀掉重来，而是<strong>注入纠偏消息</strong>（"你正在偏离任务，请回到：{original_task}"）——下一节的纠偏机制。</p>
+<h3 id="13-纠偏工程偏航时怎么正">1.3 纠偏工程：偏航时怎么正</h3>
+<p>终止是最后手段，纠偏是日常操作。核心思想：<strong>循环里要有"负反馈"</strong>——不是让模型一直往前跑，而是持续校准它。</p>
+<p>三类纠偏信号（按介入强度）：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># ① 结果型纠偏：工具返回了错误信息（第 7 章的既有模式）</span>
+<span class="c1">#    模型看到 "参数校验失败：..." 通常下一轮自己修正</span>
+
+<span class="c1"># ② 提示型纠偏：框架检测到模式问题，注入 user 消息</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_inject_correction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">issue</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">guidance</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">messages</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+        <span class="s2">"role"</span><span class="p">:</span> <span class="s2">"user"</span><span class="p">,</span>
+        <span class="s2">"content"</span><span class="p">:</span> <span class="sa">f</span><span class="s2">"[系统提示] 检测到问题：</span><span class="si">{</span><span class="n">issue</span><span class="si">}</span><span class="s2">。</span><span class="si">{</span><span class="n">guidance</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+    <span class="p">})</span>
+<span class="c1"># 用例：重复调用后 → "你已连续3次做相同调用，请更换策略"</span>
+<span class="c1">#      目标漂移后 → "当前行动偏离了原始任务，请回到：{task}"</span>
+
+<span class="c1"># ③ 结构型纠偏：重置部分状态（最重）</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_structural_reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""保留任务和关键结论，丢弃失败过程"""</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">messages</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">messages</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>                      <span class="c1"># system</span>
+        <span class="p">{</span><span class="s2">"role"</span><span class="p">:</span> <span class="s2">"user"</span><span class="p">,</span> <span class="s2">"content"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">original_task</span><span class="p">},</span>
+        <span class="p">{</span><span class="s2">"role"</span><span class="p">:</span> <span class="s2">"assistant"</span><span class="p">,</span>
+         <span class="s2">"content"</span><span class="p">:</span> <span class="sa">f</span><span class="s2">"已完成部分：</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">achieved_summary</span><span class="si">}</span><span class="s2">。"</span>
+                    <span class="sa">f</span><span class="s2">"失败尝试：</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">failed_summary</span><span class="si">}</span><span class="s2">（避免重复）。"</span><span class="p">},</span>
+    <span class="p">]</span>
+</code></pre></div>
+<p>③ 是第 12 章"干净上下文"思想在单 Agent 内的应用：与其在污染的上下文里挣扎，不如带着摘要重开。<strong>"重启"不是失败，是循环工程的正常工具</strong>。</p>
+<h3 id="14-循环形状的设计不是所有循环都该一样">1.4 循环形状的设计：不是所有循环都该一样</h3>
+<p>第 8 章的循环是"自由循环"（模型全权决定下一步）。实际上不同任务适合不同形状：</p>
+<table>
+<thead>
+<tr>
+<th>形状</th>
+<th>结构</th>
+<th>适合</th>
+<th>风险</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>自由循环（ReAct 式）</td>
+<td>模型每轮自选动作</td>
+<td>探索型任务（调研）</td>
+<td>死法一二三</td>
+</tr>
+<tr>
+<td>阶段循环</td>
+<td>固定阶段（分析→执行→验证），阶段内自由</td>
+<td>流程明确的复杂任务</td>
+<td>阶段间信息损耗</td>
+</tr>
+<tr>
+<td>双层循环</td>
+<td>外层规划、内层执行（Plan-Execute）</td>
+<td>长任务</td>
+<td>计划赶不上变化</td>
+</tr>
+</tbody>
+</table>
+<p>阶段循环的实现骨架（第二部分图工程的雏形）：</p>
+<div class="highlight"><pre><span></span><code><span class="n">PHASES</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"analyze"</span><span class="p">,</span> <span class="s2">"execute"</span><span class="p">,</span> <span class="s2">"verify"</span><span class="p">]</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">run_phased</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="n">context</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"task"</span><span class="p">:</span> <span class="n">task</span><span class="p">,</span> <span class="s2">"findings"</span><span class="p">:</span> <span class="p">[]}</span>
+    <span class="k">for</span> <span class="n">phase</span> <span class="ow">in</span> <span class="n">PHASES</span><span class="p">:</span>
+        <span class="n">phase_prompt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">phase_prompts</span><span class="p">[</span><span class="n">phase</span><span class="p">]</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">context</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">messages</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">"role"</span><span class="p">:</span> <span class="s2">"user"</span><span class="p">,</span> <span class="s2">"content"</span><span class="p">:</span> <span class="n">phase_prompt</span><span class="p">})</span>
+        <span class="c1"># 阶段内跑第 8 章的标准循环（限更小轮次）</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bounded_loop</span><span class="p">(</span><span class="n">max_rounds</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+        <span class="n">context</span><span class="p">[</span><span class="s2">"findings"</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+        <span class="c1"># 阶段间质量控制：verify 不过可以折返</span>
+        <span class="k">if</span> <span class="n">phase</span> <span class="o">==</span> <span class="s2">"verify"</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_failed</span><span class="p">(</span><span class="n">result</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_phased</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>   <span class="c1"># 或定向折返 execute</span>
+    <span class="k">return</span> <span class="n">context</span><span class="p">[</span><span class="s2">"findings"</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+</code></pre></div>
+<p>自由度是资源，不是越多越好：<strong>确定性强的部分用结构锁定，探索性的部分留给模型</strong>（第三部分原则四的又一次应用）。verify 阶段的存在本身是重要的循环设计——<strong>Agent 的循环里要有"自我验证"的环节</strong>，让"完成"是验证过的判断而非模型的自我感觉。</p>
+<h3 id="15-失控保险丝最后的防线">1.5 失控保险丝：最后的防线</h3>
+<p>汇总成一张保险丝配置表（生产前自查）：</p>
+<table>
+<thead>
+<tr>
+<th>保险丝</th>
+<th>阈值</th>
+<th>动作</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>轮次上限</td>
+<td>任务复杂度 + 2（如 8~10）</td>
+<td>软警告 → 硬止损+部分结果</td>
+</tr>
+<tr>
+<td>token 预算</td>
+<td>70% 警告 / 100% 止损</td>
+<td>同上</td>
+</tr>
+<tr>
+<td>重复检测</td>
+<td>连续 3 次相同调用</td>
+<td>注入纠偏 → 重置状态</td>
+</tr>
+<tr>
+<td>目标漂移</td>
+<td>每 5 轮检查</td>
+<td>注入纠偏 → 终止</td>
+</tr>
+<tr>
+<td>副作用频率</td>
+<td>单轮写操作 &gt; N 次</td>
+<td>熔断（第 15 章 fail-closed）</td>
+</tr>
+<tr>
+<td>壁钟时间</td>
+<td>任务级超时（如 10 分钟）</td>
+<td>checkpoint + 终止</td>
+</tr>
+</tbody>
+</table>
+<p>最后一条"壁钟时间"单独强调：<strong>它是唯一不属于模型维度的保险丝</strong>。LLM 推理的延迟波动大（第 4 章：prefill 随输入长度变化），没有任务级超时的 Agent，一次 API 卡顿就能挂住你的整条流水线。框架层的 timeout 必须存在，哪怕设得很宽松。</p>
+<h3 id="第一部分小结">第一部分小结</h3>
+<ul>
+<li>三种死法：打转（有解药）、发散（目标漂移）、滚雪球（质量正反馈恶化）——后两个是微观合理宏观失控</li>
+<li>终止三层：成功终止（要定义完成标准）、资源终止（软硬闸门+部分结果）、语义终止（目标对齐检查）</li>
+<li>纠偏三层：结果型（工具错误自纠）→ 提示型（注入系统消息）→ 结构型（带摘要重启）</li>
+<li>循环形状按任务选：自由/阶段/双层——自由度是资源，确定性部分用结构锁定</li>
+<li>保险丝六条：轮次/预算/重复/漂移/副作用/壁钟时间——最后一条与模型无关但必须有</li>
+</ul>
+<p>循环解决了"步骤间的动力"，但当整个任务有复杂的阶段依赖和分支走向时，需要把循环进一步结构化——状态图。</p>
+<h2 id="2-图工程把流程变成代码里的一等公民">2. 图工程：把流程变成代码里的一等公民</h2>
+<blockquote>
+<p>自由循环（第 8 章）像即兴爵士，模型随手发挥；阶段循环（第一部分）像固定曲目单；而当任务有复杂的状态依赖、条件分支、并行汇合——你需要的是一张显式的图。这一部分讲图工程（Graph Engineering）：把工作流从"模型的即兴发挥"变成"代码里的一等公民"，以及什么时候该做（和不该做）这个转变。</p>
+</blockquote>
+<h3 id="21-从代码顺序到图">2.1 从代码顺序到图</h3>
+<p>先看熟悉的代码形态（第一部分的阶段循环）：</p>
+<div class="highlight"><pre><span></span><code><span class="n">result</span> <span class="o">=</span> <span class="n">analyze</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">execute</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+<span class="k">if</span> <span class="ow">not</span> <span class="n">verified</span><span class="p">(</span><span class="n">result</span><span class="p">):</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">execute</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>      <span class="c1"># 折返重试</span>
+<span class="k">return</span> <span class="n">report</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+</code></pre></div>
+<p>它隐含了一张图，但图<strong>埋在控制流里</strong>——想改流程（比如 verify 失败要回到 analyze 而不是 execute），得改代码结构。图工程的主张：把流程本身升为显式数据结构：</p>
+<div class="highlight"><pre><span></span><code>        ┌──────────┐
+        │ analyze  │
+        └────┬─────┘
+             ▼
+        ┌──────────┐
+   ┌───▶│ execute  │
+   │    └────┬─────┘
+   │         ▼
+   │  ┌──────────┐   fail
+   └──│ verify   │────────┐
+      └────┬─────┘        ▼
+           │ pass    ┌────────┐
+           ▼         │ retry  │──┐
+      ┌────────┐    └────────┘  │(计数)
+      │ report │       ……
+      └────────┘
+</code></pre></div>
+<p>显式化的收益：</p>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>代码控制流</th>
+<th>显式图</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>看懂流程</td>
+<td>读代码+脑内模拟</td>
+<td>看图</td>
+</tr>
+<tr>
+<td>改流程</td>
+<td>改代码结构</td>
+<td>改边/节点配置</td>
+</tr>
+<tr>
+<td>并行分支</td>
+<td>手写线程/异步</td>
+<td>声明式</td>
+</tr>
+<tr>
+<td>状态追溯</td>
+<td>散落各处</td>
+<td>图执行引擎统一记录</td>
+</tr>
+<tr>
+<td>人机协作</td>
+<td>难</td>
+<td>图可以直接给产品/客户看</td>
+</tr>
+</tbody>
+</table>
+<p>LangGraph、Dify、n8n 这些"工作流/编排"产品，本质都是在做同一件事：<strong>图结构的 Agent 编排</strong>。</p>
+<h3 id="22-图的三个基本要素">2.2 图的三个基本要素</h3>
+<h4 id="节点node做一件事的单位">节点（Node）：做一件事的单位</h4>
+<p>节点是最小的执行单元，内容可以是任何东西：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
+
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Node</span><span class="p">:</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">execute</span><span class="p">:</span> <span class="nb">callable</span>                    <span class="c1"># 执行函数：state → state</span>
+    <span class="n">kind</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"agent"</span>                  <span class="c1"># agent / tool / human / logic</span>
+</code></pre></div>
+<p>关键认知：<strong>节点不等于 Agent</strong>。一个节点可以是一次 LLM 调用（轻）、一个完整的第 8 章 Agent（重）、一段纯代码（判定逻辑）、甚至一次人工介入（第 15 章的确认门）。图是编排层，节点内容自选粒度——这正是第三部分"复杂度搬家"的应用：<strong>把流程逻辑从模型搬到图结构，把每个节点内的自由留给模型</strong>。</p>
+<h4 id="状态state贯穿全局的记事本">状态（State）：贯穿全局的记事本</h4>
+<p>图执行时，所有节点共享一份状态：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TypedDict</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">WorkflowState</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
+    <span class="n">task</span><span class="p">:</span> <span class="nb">str</span>                    <span class="c1"># 原始任务</span>
+    <span class="n">findings</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>          <span class="c1"># 各节点产出的累积</span>
+    <span class="n">attempt_count</span><span class="p">:</span> <span class="nb">int</span>           <span class="c1"># 重试计数</span>
+    <span class="n">verified</span><span class="p">:</span> <span class="nb">bool</span>               <span class="c1"># 验证结论</span>
+    <span class="n">current_node</span><span class="p">:</span> <span class="nb">str</span>            <span class="c1"># 执行位置</span>
+</code></pre></div>
+<p>状态的收敛性设计很重要：<strong>图里流动的是"结论"而非"过程"</strong>。节点内部（比如一个子 Agent）可以跑得轰轰烈烈，但对外只写关键结论进 state——第 13 章上下文管理的图级版本：每个节点只消费和产出必要信息。</p>
+<h4 id="边edge转移规则">边（Edge）：转移规则</h4>
+<div class="highlight"><pre><span></span><code><span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Edge</span><span class="p">:</span>
+    <span class="n">source</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">target</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">condition</span><span class="p">:</span> <span class="nb">callable</span> <span class="o">=</span> <span class="kc">None</span>    <span class="c1"># 条件边：state → bool</span>
+</code></pre></div>
+<p>边的两种形态：<strong>直边</strong>（无条件转移）和<strong>条件边</strong>（路由函数决定去向）。条件边是图的智慧所在——verify 之后去 report 还是回 execute，由 <code>condition(state)</code> 的代码逻辑决定，<strong>确定性路由留在代码，不确定性留给节点内的模型</strong>。</p>
+<h3 id="23-实现一个最小的图引擎">2.3 实现一个最小的图引擎</h3>
+<p>一个能跑的迷你引擎（麻雀虽小，五脏俱全——节点/边/状态/条件路由/循环）：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Graph</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">edges</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Edge</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_node</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">fn</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_edge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                 <span class="n">condition</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">edges</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Edge</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">condition</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">initial_state</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">start</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+            <span class="n">max_steps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">20</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="n">state</span> <span class="o">=</span> <span class="n">initial_state</span>
+        <span class="n">current</span> <span class="o">=</span> <span class="n">start</span>
+        <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_steps</span><span class="p">):</span>              <span class="c1"># 第一部分的保险丝</span>
+            <span class="n">state</span><span class="p">[</span><span class="s2">"current_node"</span><span class="p">]</span> <span class="o">=</span> <span class="n">current</span>
+            <span class="n">state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">current</span><span class="p">](</span><span class="n">state</span><span class="p">)</span>     <span class="c1"># 执行节点</span>
+
+            <span class="c1"># 找下一个节点：优先匹配条件边</span>
+            <span class="n">next_node</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">edges</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">e</span><span class="o">.</span><span class="n">source</span> <span class="o">!=</span> <span class="n">current</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="k">if</span> <span class="n">e</span><span class="o">.</span><span class="n">condition</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">e</span><span class="o">.</span><span class="n">condition</span><span class="p">(</span><span class="n">state</span><span class="p">):</span>
+                    <span class="n">next_node</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="n">target</span>
+                    <span class="k">break</span>
+            <span class="k">if</span> <span class="n">next_node</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>                  <span class="c1"># 没有出边 = 自然终点</span>
+                <span class="k">return</span> <span class="n">state</span>
+            <span class="n">current</span> <span class="o">=</span> <span class="n">next_node</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">"图执行超过步数上限（疑似环死循环）"</span><span class="p">)</span>
+</code></pre></div>
+<p>用它搭第一部分那个"分析→执行→验证"流程的完整版：</p>
+<div class="highlight"><pre><span></span><code><span class="n">g</span> <span class="o">=</span> <span class="n">Graph</span><span class="p">()</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">analyze</span><span class="p">(</span><span class="n">state</span><span class="p">):</span>
+    <span class="n">state</span><span class="p">[</span><span class="s2">"findings"</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"分析结果: </span><span class="si">{</span><span class="n">state</span><span class="p">[</span><span class="s1">'task'</span><span class="p">][:</span><span class="mi">20</span><span class="p">]</span><span class="si">}</span><span class="s2">..."</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">state</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">execute</span><span class="p">(</span><span class="n">state</span><span class="p">):</span>
+    <span class="n">state</span><span class="p">[</span><span class="s2">"findings"</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"执行结果: ..."</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">state</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">verify</span><span class="p">(</span><span class="n">state</span><span class="p">):</span>
+    <span class="n">state</span><span class="p">[</span><span class="s2">"verified"</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">state</span><span class="p">[</span><span class="s2">"findings"</span><span class="p">])</span> <span class="o">&gt;=</span> <span class="mi">2</span>    <span class="c1"># 演示用判断</span>
+    <span class="k">return</span> <span class="n">state</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">report</span><span class="p">(</span><span class="n">state</span><span class="p">):</span>
+    <span class="n">state</span><span class="p">[</span><span class="s2">"final"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">state</span><span class="p">[</span><span class="s2">"findings"</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">state</span>
+
+<span class="n">g</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="s2">"analyze"</span><span class="p">,</span> <span class="n">analyze</span><span class="p">)</span>
+<span class="n">g</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="s2">"execute"</span><span class="p">,</span> <span class="n">execute</span><span class="p">)</span>
+<span class="n">g</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="s2">"verify"</span><span class="p">,</span> <span class="n">verify</span><span class="p">)</span>
+<span class="n">g</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="s2">"report"</span><span class="p">,</span> <span class="n">report</span><span class="p">)</span>
+
+<span class="n">g</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="s2">"analyze"</span><span class="p">,</span> <span class="s2">"execute"</span><span class="p">)</span>
+<span class="n">g</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="s2">"execute"</span><span class="p">,</span> <span class="s2">"verify"</span><span class="p">)</span>
+<span class="n">g</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="s2">"verify"</span><span class="p">,</span> <span class="s2">"report"</span><span class="p">,</span> <span class="n">condition</span><span class="o">=</span><span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="n">s</span><span class="p">[</span><span class="s2">"verified"</span><span class="p">])</span>
+<span class="n">g</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="s2">"verify"</span><span class="p">,</span> <span class="s2">"execute"</span><span class="p">,</span>
+           <span class="n">condition</span><span class="o">=</span><span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="ow">not</span> <span class="n">s</span><span class="p">[</span><span class="s2">"verified"</span><span class="p">]</span> <span class="ow">and</span> <span class="n">s</span><span class="p">[</span><span class="s2">"attempt_count"</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">)</span>
+
+<span class="n">result</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">run</span><span class="p">({</span><span class="s2">"task"</span><span class="p">:</span> <span class="s2">"写周报"</span><span class="p">,</span> <span class="s2">"findings"</span><span class="p">:</span> <span class="p">[],</span>
+                <span class="s2">"attempt_count"</span><span class="p">:</span> <span class="mi">0</span><span class="p">},</span> <span class="n">start</span><span class="o">=</span><span class="s2">"analyze"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s2">"final"</span><span class="p">])</span>
+</code></pre></div>
+<p>对照第一部分的阶段循环代码：<strong>流程逻辑从 if/for 里浮到了边的声明里</strong>。verify→execute 的折返重试从"递归调用"变成了"一条带条件的边"。改流程 = 改图，不碰节点实现。</p>
+<h3 id="24-图上的高级模式">2.4 图上的高级模式</h3>
+<p>引擎之上，三个常用的图模式：</p>
+<h4 id="并行扇出扇入fan-out-fan-in">并行扇出/扇入（fan-out / fan-in）</h4>
+<div class="highlight"><pre><span></span><code>        ┌→ research_A ─┐
+analyze ┤              ├→ synthesize
+        └→ research_B ─┘
+</code></pre></div>
+<p>research_A 和 B 无依赖可并行跑，synthesize 等齐了再动（第 12 章子代理的图化表达）。实现上扇出节点返回多个后继、扇入节点做 barrier 计数——生产引擎（LangGraph 的 Send API 等）都内置了这个模式。</p>
+<h4 id="人工门human-gate">人工门（human gate）</h4>
+<div class="highlight"><pre><span></span><code>draft → [human_review] → publish
+              │ reject
+              ▼
+          revise → draft
+</code></pre></div>
+<p>把第 15 章的 human-in-the-loop 做成一个节点：执行时暂停图、通知人、等人回复、带着决定继续。<strong>图的持久化状态让"暂停等几天"成为可能</strong>（第三部分 checkpoint 的图级版）——审批流这种天然跨天的工作流，只有图结构能优雅承接。</p>
+<h4 id="动态图边由模型决定">动态图（边由模型决定）</h4>
+<p>固定图之外，还可以让模型在运行时选择下一条边（路由节点：模型看 state 决定去向）——这其实就是把第 8 章的"模型自选下一步"压缩成单个节点的内部逻辑。<strong>固定图和自由循环不是对立的，是同一光谱的两端</strong>：</p>
+<div class="highlight"><pre><span></span><code>纯代码流程 ── 固定图 ── 混合图（部分边动态）── 路由循环 ── 纯自由循环
+（n8n 工作流）  （审批流）      （客服分流+处理）      （第8章ReAct）
+</code></pre></div>
+<h3 id="25-什么时候不该上图">2.5 什么时候不该上图</h3>
+<p>图工程最大的陷阱是<strong>过度工程</strong>。不该上图的信号：</p>
+<ul>
+<li><strong>流程只有三步且不会变</strong>：if-else 写完五分钟的事，上图是自找复杂度</li>
+<li><strong>探索性主导的任务</strong>：调研类任务下一步做什么取决于上一步发现什么，预定义的图反而限制模型发挥——该用自由循环（第 8 章）</li>
+<li><strong>流程还在剧烈变化</strong>：图结构适合"已知的确定性"，摸索期用自由循环收集行为模式，稳定后再固化成图（和第 12 章"Skill 是 MCP 的孵化器"同一思想：<strong>自由循环是图的孵化器</strong>）</li>
+<li><strong>团队没有图运维能力</strong>：图引擎是个新依赖，调试、监控、版本管理都要学——工具链的账要算</li>
+</ul>
+<p>一个可用的决策标准：<strong>当你在自由循环里反复写"如果又发生 X 就……"的补丁时，就到了该上图的时候</strong>——那说明流程的结构已经从实践中浮现出来了，值得显式固化。</p>
+<h3 id="第二部分小结">第二部分小结</h3>
+<ul>
+<li>显式图的收益：流程可视、改流程不改代码、声明式并行、状态统一追溯</li>
+<li>三要素：节点（任意粒度：LLM 调用/完整 Agent/纯代码/人工门）、状态（流动结论不流过程）、边（条件路由，确定性归代码）</li>
+<li>迷你引擎 60 行：节点执行 + 条件边路由 + 步数保险丝</li>
+<li>高级模式：扇出扇入（并行）、人工门（跨天暂停）、动态边（模型路由）——固定与自由是光谱不是对立</li>
+<li>不该上图的四个信号；自由循环是图的孵化器</li>
+</ul>
+<p>循环让系统动起来，图让复杂流程有了形状——但它们都只是骨架的一部分。第三部分收官：把模型之外的一切工程结构收进一个体系，看骨架如何决定同一个模型的表现上限。</p>
+<h2 id="3-骨架工程模型之外的体系收官">3. 骨架工程：模型之外的体系（收官）</h2>
+<blockquote>
+<p>同一个模型，放进不同的工程骨架，表现天差地别——这层骨架就叫 Harness（脚手架/马具）。第 8 章的 Agent 循环就是一个最小 Harness，本章前两部分做的循环控制与图编排，都是骨架的组成部分。这一部分收官升维：把模型之外的一切工程要素系统化——为什么骨架比模型更能决定成败，好的 Harness 长什么样。它是本章前两部分所做之事的理论升华与体系化总纲。</p>
+</blockquote>
+<h3 id="31-模型-骨架-表现">3.1 模型 × 骨架 = 表现</h3>
+<p>先看一个思想实验（综合前面各章的知识就能推出来）：</p>
+<p>同一个 qwen3:4b，装进不同的骨架：</p>
+<table>
+<thead>
+<tr>
+<th>骨架</th>
+<th>表现</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>裸调用（一次问答）</td>
+<td>能聊天，复杂任务必挂</td>
+</tr>
+<tr>
+<td>+ 工具 + 循环（第 8 章）</td>
+<td>能查证、能计算、能多步执行</td>
+</tr>
+<tr>
+<td>+ 工具 + 循环 + 重试 + 校验（第 6/7 章防御）</td>
+<td>可靠度大幅上升</td>
+</tr>
+<tr>
+<td>+ 记忆 + 权限 + 预算（第 13、15 章）</td>
+<td>可以托付真实工作</td>
+</tr>
+</tbody>
+</table>
+<p><strong>模型没变，表现天差地别</strong>。这个加法链条就是骨架工程（Harness Engineering）的内容——它不是新概念，是第 7 章到第 13 章所有工程决策的统称，也是本章前两部分（循环工程、图工程）的理论升华。</p>
+<p>一个流传很广的判断（源自 Claude Code 等产品的实践观察）：<strong>模型能力的下限由模型决定，上限由 Harness 决定</strong>。前沿团队花在骨架上的工程量，远超 prompt 本身。</p>
+<h3 id="32-harness-的解剖图">3.2 Harness 的解剖图</h3>
+<p>把第 8 章的 Agent 类按职责重新分层：</p>
+<div class="highlight"><pre><span></span><code>┌─────────────────────────────────────────┐
+│              Agent Harness                │
+│                                           │
+│  ┌─────────┐  模型接口层                  │
+│  │ 模型调用 │  超时、重试、降级、备用模型    │
+│  └─────────┘                              │
+│  ┌─────────┐  工具执行层                   │
+│  │ 工具系统 │  权限、沙箱、超时、结果截断    │  ← 第 7/11/15 章
+│  └─────────┘                              │
+│  ┌─────────┐  循环控制层                   │
+│  │ 主循环   │  轮次、预算、卡死检测         │  ← 第 8 章
+│  └─────────┘                              │
+│  ┌─────────┐  上下文层                     │
+│  │ 上下文   │  组装、裁剪、预算分配           │  ← 第 13 章
+│  └─────────┘                              │
+│  ┌─────────┐  反馈层                       │
+│  │ 校验重试 │  输出校验、失败重试、自纠错     │  ← 第 6 章
+│  └─────────┘                              │
+│  ┌─────────┐  观测层                       │
+│  │ 事件审计 │  轨迹、日志、熔断              │  ← 第 8/15 章
+│  └─────────┘                              │
+└─────────────────────────────────────────┘
+</code></pre></div>
+<p>六层每层都独立可测、可换。<strong>分层的价值在此刻兑现</strong>：换模型只动接口层（第 5 章的"模型当配置"）、加安全只动执行层、调上下文策略不碰循环。</p>
+<h3 id="33-三层最容易被低估的骨架能力">3.3 三层最容易被低估的骨架能力</h3>
+<p>有些骨架组件的重要性常被低估，单独展开。</p>
+<h4 id="错误恢复失败是常态">错误恢复：失败是常态</h4>
+<p>第 6 章的校验-重试是单次调用的恢复。任务级的恢复更粗粒度：</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">run_with_recovery</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">max_retries</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">attempt</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_retries</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_looks_failed</span><span class="p">(</span><span class="n">result</span><span class="p">):</span>        <span class="c1"># 启发式检查结果质量</span>
+                <span class="k">return</span> <span class="n">result</span>
+            <span class="n">failure_reason</span> <span class="o">=</span> <span class="s2">"结果质量可疑"</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">failure_reason</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">attempt</span> <span class="o">&lt;</span> <span class="n">max_retries</span><span class="p">:</span>
+            <span class="c1"># 带着教训重试：失败原因进入下一轮的系统提示词</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">messages</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+                <span class="s2">"role"</span><span class="p">:</span> <span class="s2">"user"</span><span class="p">,</span>
+                <span class="s2">"content"</span><span class="p">:</span> <span class="sa">f</span><span class="s2">"上次尝试失败（</span><span class="si">{</span><span class="n">failure_reason</span><span class="si">}</span><span class="s2">）。"</span>
+                           <span class="sa">f</span><span class="s2">"请换一种策略重新完成任务。"</span><span class="p">,</span>
+            <span class="p">})</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_cleanup_partial_work</span><span class="p">()</span>              <span class="c1"># 回滚半成品副作用</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fallback_answer</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>                 <span class="c1"># 优雅降级</span>
+</code></pre></div>
+<p>两个关键设计：<strong>失败原因要进入重试的上下文</strong>（不带教训的重试是重复撞墙）；<strong>有副作用要回滚</strong>（写了半个文件的任务重试，先清掉残留——否则下次运行环境已脏）。</p>
+<h4 id="中断与恢复长任务的存档点">中断与恢复：长任务的存档点</h4>
+<p>Agent 跑 20 分钟的任务，中途崩了怎么办？——<strong>checkpoint 机制</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">checkpoint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""把当前状态序列化——messages + 关键中间产物"""</span>
+    <span class="n">state</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"messages"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">messages</span><span class="p">,</span>
+             <span class="s2">"round"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_round</span><span class="p">}</span>
+    <span class="n">Path</span><span class="p">(</span><span class="sa">f</span><span class="s2">".checkpoints/</span><span class="si">{</span><span class="n">task_id</span><span class="si">}</span><span class="s2">.json"</span><span class="p">)</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span>
+        <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">resume</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""从最近的存档点恢复"""</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="sa">f</span><span class="s2">".checkpoints/</span><span class="si">{</span><span class="n">task_id</span><span class="si">}</span><span class="s2">.json"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">p</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="n">state</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">read_text</span><span class="p">(</span><span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">))</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">messages</span> <span class="o">=</span> <span class="n">state</span><span class="p">[</span><span class="s2">"messages"</span><span class="p">]</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">current_round</span> <span class="o">=</span> <span class="n">state</span><span class="p">[</span><span class="s2">"round"</span><span class="p">]</span>
+    <span class="k">return</span> <span class="kc">True</span>
+</code></pre></div>
+<p>每轮循环末尾存一次档。这是长任务生产化的分水岭——<strong>不能断点续跑的 Agent 只能处理玩具任务</strong>。</p>
+<h4 id="流式反馈可感知的进展">流式反馈：可感知的进展</h4>
+<p>第 5 章说过流式不省时间只省焦虑。对 Agent 加倍成立：多轮任务动辄几分钟，黑盒等待会杀死用户的信任。第 8 章的事件系统在这里再兑一次现——<strong>把 TOOL_CALL 事件实时推给用户</strong>（"正在查询天气…""正在读取文件…"）。工程含义：Harness 的观测层同时是 UX 层，一份数据两个消费者。</p>
+<h3 id="34-harness-的设计原则">3.4 Harness 的设计原则</h3>
+<p>收拢成四条（全部来自前文的实践）：</p>
+<p><strong>原则一：模型不可靠，骨架要可靠</strong>。所有"模型应该会做对"的地方都要问：它做错了，谁来兜底？——校验（第 6 章）、闸门（第 8 章）、确认（第 15 章）。骨架的存在意义就是把概率行为约束在安全轨道上。</p>
+<p><strong>原则二：每层可独立替换</strong>。模型会升级（接口层）、工具会增删（执行层）、策略会调整（上下文层）——耦合了任何两层的代码都会在未来某天让你重写整个系统。</p>
+<p><strong>原则三：可观测优先于聪明</strong>。一个平庸但全轨迹可见的 Agent，好过一个聪明但黑盒的 Agent——前者可调试可改进，后者出问题时你只能盯着结果发呆（第 15 章的根基）。</p>
+<p><strong>原则四：复杂度守恒，只是搬家</strong>。把决策从模型搬到代码（确定性增强），或从代码搬到模型（灵活性增强），复杂度没有消失只是换了地方。Harness 设计的艺术在于<strong>把确定性要求高的复杂度搬进代码，把探索性的复杂度留给模型</strong>。</p>
+<h3 id="35-实例从第-8-章的-agent-到完整-harness-的差距">3.5 实例：从第 8 章的 Agent 到完整 Harness 的差距</h3>
+<p>盘点第 8 章的 Agent 类距离生产 Harness 还缺什么（也是自查清单）：</p>
+<table>
+<thead>
+<tr>
+<th>缺口</th>
+<th>解法</th>
+<th>状态</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>模型调用无重试/超时</td>
+<td>接口层加 retry + timeout + 备用模型</td>
+<td>本章 3.3</td>
+</tr>
+<tr>
+<td>无 checkpoint</td>
+<td>每轮存档</td>
+<td>本章 3.3</td>
+</tr>
+<tr>
+<td>无流式反馈</td>
+<td>事件转发到用户界面</td>
+<td>本章 3.3</td>
+</tr>
+<tr>
+<td>无成本核算</td>
+<td>第 8 章有预算闸门，缺<strong>分项记账</strong>（模型/工具/记忆各花多少）</td>
+<td>第 15 章</td>
+</tr>
+<tr>
+<td>无评测基线</td>
+<td>改动无从验证好坏</td>
+<td>第 15 章</td>
+</tr>
+<tr>
+<td>并行能力</td>
+<td>子代理（第 12 章）已在架构上就绪</td>
+<td>✓</td>
+</tr>
+</tbody>
+</table>
+<p>这个表也解释了骨架工程为什么能担纲本章收官：<strong>它是本章前两部分所做之事的理论升华与体系化总纲，也是通往第 15 章的地基</strong>——度量的对象不是模型，是整个 Harness。</p>
+<h3 id="36-收官五个工程层次的全景">3.6 收官：五个工程层次的全景</h3>
+<p>至此五个 Engineering 讲完，用一张全景图收束（也是第 13 章与本章的复习）：</p>
+<div class="highlight"><pre><span></span><code>┌────────────────────────────────────────────────┐
+│                  Agent 系统                      │
+│                                                  │
+│   Prompt Eng.    怎么把一件事说清楚（13 章）     │
+│        ↓ 每条指令进入                             │
+│   Context Eng.   窗口里装什么（13 章）           │
+│        ↓ 每轮组装成                               │
+│   Harness Eng.   系统骨架怎么搭（本章）           │
+│        ↓ 骨架的运行时是                           │
+│   Loop Eng.      循环怎么跑怎么停（本章）          │
+│        ↓ 复杂流程结构化为                         │
+│   Graph Eng.     流程怎么编排（本章）              │
+└────────────────────────────────────────────────┘
+</code></pre></div>
+<p>五个层次从微观（一句话）到宏观（整个系统），每一层解决不同粒度的问题——它们不是竞争关系，是<strong>同一个人在不同抽象高度看同一个系统</strong>。</p>
+<h3 id="第三部分小结">第三部分小结</h3>
+<ul>
+<li>模型能力下限由模型决定，上限由 Harness 决定——骨架工程量远超 prompt 本身</li>
+<li>六层解剖：模型接口 / 工具执行 / 循环控制 / 上下文 / 校验重试 / 观测审计——每层独立可换</li>
+<li>三个易低估的骨架能力：任务级恢复（带教训重试+副作用回滚）、checkpoint 续跑、流式反馈（观测层即 UX 层）</li>
+<li>四原则：模型不可靠骨架可靠、每层可换、可观测优先、复杂度搬家艺术</li>
+<li>第 8 章的 Agent + 本部分缺口清单 = 一个真实可用的 Harness 全貌</li>
+<li>五个 Engineering 全景：说清楚 → 装对东西 → 搭好骨架 → 控制循环 → 编排流程</li>
+</ul>
+<p>至此，三大工程的全貌齐了：循环负责"怎么跑、怎么停"，图负责"复杂流程怎么编排"，Harness 把它们连同上下文、工具、校验一起收进可替换、可观测、可托付的体系。只剩最后一件事：把它送上生产，并用数据证明它做得好。</p>
+<p><strong>下一篇</strong>：<a href="../agent/15-ji-yi-quan-xian-yu-ping-ce.html">15 · 记忆、权限与评测</a></p></div>
+
+      </article>
+<nav class="pager"><a class="pg-card pg-prev" href="../agent/13-ti-shi-ci-gong-cheng-yu-shang-xia-wen-gong.html"><span class="pg-label">← 上一篇</span><span class="pg-title">提示词工程与上下文工程</span><span class="pg-mod">Agent 核心</span></a><a class="pg-card pg-next" href="../agent/15-ji-yi-quan-xian-yu-ping-ce.html"><span class="pg-label">下一篇 →</span><span class="pg-title">记忆、权限与评测</span><span class="pg-mod">Agent 核心</span></a></nav>
+    </div>
+    <footer class="foot">
+      <span>深栈 DeepStack · AI Agent 工程师转型训练营配套文档</span>
+    </footer>
+  </main>
+<nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#1-循环工程让循环安全地跑">1. 循环工程：让循环安全地跑</a><a class="toc-link toc-h3" href="#11-循环的三种死法">1.1 循环的三种死法</a><a class="toc-link toc-h3" href="#12-终止工程什么时候该停">1.2 终止工程：什么时候该停</a><a class="toc-link toc-h3" href="#13-纠偏工程偏航时怎么正">1.3 纠偏工程：偏航时怎么正</a><a class="toc-link toc-h3" href="#14-循环形状的设计不是所有循环都该一样">1.4 循环形状的设计：不是所有循环都该一样</a><a class="toc-link toc-h3" href="#15-失控保险丝最后的防线">1.5 失控保险丝：最后的防线</a><a class="toc-link toc-h3" href="#第一部分小结">第一部分小结</a><a class="toc-link toc-h2" href="#2-图工程把流程变成代码里的一等公民">2. 图工程：把流程变成代码里的一等公民</a><a class="toc-link toc-h3" href="#21-从代码顺序到图">2.1 从代码顺序到图</a><a class="toc-link toc-h3" href="#22-图的三个基本要素">2.2 图的三个基本要素</a><a class="toc-link toc-h3" href="#23-实现一个最小的图引擎">2.3 实现一个最小的图引擎</a><a class="toc-link toc-h3" href="#24-图上的高级模式">2.4 图上的高级模式</a><a class="toc-link toc-h3" href="#25-什么时候不该上图">2.5 什么时候不该上图</a><a class="toc-link toc-h3" href="#第二部分小结">第二部分小结</a><a class="toc-link toc-h2" href="#3-骨架工程模型之外的体系收官">3. 骨架工程：模型之外的体系（收官）</a><a class="toc-link toc-h3" href="#31-模型-骨架-表现">3.1 模型 × 骨架 = 表现</a><a class="toc-link toc-h3" href="#32-harness-的解剖图">3.2 Harness 的解剖图</a><a class="toc-link toc-h3" href="#33-三层最容易被低估的骨架能力">3.3 三层最容易被低估的骨架能力</a><a class="toc-link toc-h3" href="#34-harness-的设计原则">3.4 Harness 的设计原则</a><a class="toc-link toc-h3" href="#35-实例从第-8-章的-agent-到完整-harness-的差距">3.5 实例：从第 8 章的 Agent 到完整 Harness 的差距</a><a class="toc-link toc-h3" href="#36-收官五个工程层次的全景">3.6 收官：五个工程层次的全景</a><a class="toc-link toc-h3" href="#第三部分小结">第三部分小结</a></nav>
+</div>
+<div class="sb-mask" id="sbMask"></div>
+<script src="../assets/app.js"></script>
+</body>
+</html>

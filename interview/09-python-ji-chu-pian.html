@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>09 · Python 基础篇 · 深栈 DeepStack 课程文档</title>
+<meta name="description" content="对应课件：Python与数据实践（02-21 章相关主题）。转行面 AI 应用开发岗，Python 八股 100% 会被考——面试官用它确认你的工程底子配得上&quot;工程师&quot;三个字。本篇 10 题是 Python 面试里最高频…">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%23d9c39a' text-anchor='middle'%3EDS%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+<div class="progress" id="progress"></div>
+
+<div class="layout">
+<aside class="sidebar" id="sidebar">
+  <div class="sb-head">
+    <a class="brand" href="../index.html">
+      <span class="brand-mark">DS</span>
+      <span class="brand-text"><b>深栈 DeepStack</b><i>AI Agent 工程师转型训练营</i></span>
+    </a>
+    <button class="sb-close" id="sbClose" aria-label="关闭目录">✕</button>
+  </div>
+  <div class="sb-search"><input type="search" id="searchInput" placeholder="搜索 123 篇文档… ( / )" autocomplete="off">
+    <div class="sb-results" id="searchResults"></div></div>
+  <nav class="sb-nav">
+    <section class="sb-group" data-mod="python">
+      <a class="sb-group-title" href="../modules/python.html" data-toggle="python">
+        <span class="sb-num">01</span>
+        <span class="sb-group-text"><b>Python 与数据实践</b><i>31 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../python/01-huan-jing-da-jian-yu-ban-ben-guan-li.html"><span class="sb-item-num">01</span><span class="sb-item-title">环境搭建与版本管理</span></a>
+        <a class="sb-item" href="../python/02-bian-liang-biao-da-shi-yu-liu-cheng-kong-zhi.html"><span class="sb-item-num">02</span><span class="sb-item-title">变量、表达式与流程控制</span></a>
+        <a class="sb-item" href="../python/03-xu-lie-zi-dian-yu-ji-he.html"><span class="sb-item-num">03</span><span class="sb-item-title">序列、字典与集合</span></a>
+        <a class="sb-item" href="../python/04-han-shu-she-ji-yu-lambda.html"><span class="sb-item-num">04</span><span class="sb-item-title">函数设计与 lambda</span></a>
+        <a class="sb-item" href="../python/05-zuo-yong-yu-gui-ze-yu-bi-bao.html"><span class="sb-item-num">05</span><span class="sb-item-title">作用域规则与闭包</span></a>
+        <a class="sb-item" href="../python/06-lei-de-ding-yi-yu-shi-li-hua.html"><span class="sb-item-num">06</span><span class="sb-item-title">类的定义与实例化</span></a>
+        <a class="sb-item" href="../python/07-lei-xing-pan-ding-yu-chou-xiang-ji-lei.html"><span class="sb-item-num">07</span><span class="sb-item-title">类型判定与抽象基类</span></a>
+        <a class="sb-item" href="../python/08-mo-shu-fang-fa-quan-jing.html"><span class="sb-item-num">08</span><span class="sb-item-title">魔术方法全景</span></a>
+        <a class="sb-item" href="../python/09-miao-shu-fu-yu-yuan-lei.html"><span class="sb-item-num">09</span><span class="sb-item-title">描述符与元类</span></a>
+        <a class="sb-item" href="../python/10-zhuang-shi-qi.html"><span class="sb-item-num">10</span><span class="sb-item-title">装饰器</span></a>
+        <a class="sb-item" href="../python/11-die-dai-xie-yi-yu-sheng-cheng-qi.html"><span class="sb-item-num">11</span><span class="sb-item-title">迭代协议与生成器</span></a>
+        <a class="sb-item" href="../python/12-with-yu-shang-xia-wen-xie-yi.html"><span class="sb-item-num">12</span><span class="sb-item-title">with 与上下文协议</span></a>
+        <a class="sb-item" href="../python/13-yi-chang-ti-xi-yu-chu-li.html"><span class="sb-item-num">13</span><span class="sb-item-title">异常体系与处理</span></a>
+        <a class="sb-item" href="../python/14-lei-xing-biao-zhu.html"><span class="sb-item-num">14</span><span class="sb-item-title">类型标注</span></a>
+        <a class="sb-item" href="../python/15-mo-kuai-yu-bao-de-zu-zhi.html"><span class="sb-item-num">15</span><span class="sb-item-title">模块与包的组织</span></a>
+        <a class="sb-item" href="../python/16-biao-zhun-ku-xun-li.html"><span class="sb-item-num">16</span><span class="sb-item-title">标准库巡礼</span></a>
+        <a class="sb-item" href="../python/17-yi-lai-guan-li-yu-di-san-fang-ku.html"><span class="sb-item-num">17</span><span class="sb-item-title">依赖管理与第三方库</span></a>
+        <a class="sb-item" href="../python/18-xian-cheng-yu-jin-cheng.html"><span class="sb-item-num">18</span><span class="sb-item-title">线程与进程</span></a>
+        <a class="sb-item" href="../python/19-shi-jian-xun-huan.html"><span class="sb-item-num">19</span><span class="sb-item-title">事件循环</span></a>
+        <a class="sb-item" href="../python/20-future-yu-xie-cheng.html"><span class="sb-item-num">20</span><span class="sb-item-title">Future 与协程</span></a>
+        <a class="sb-item" href="../python/21-asyncio-shi-zhan.html"><span class="sb-item-num">21</span><span class="sb-item-title">asyncio 实战</span></a>
+        <a class="sb-item" href="../python/22-gou-jian-yu-fa-bu.html"><span class="sb-item-num">22</span><span class="sb-item-title">构建与发布</span></a>
+        <a class="sb-item" href="../python/23-gong-cheng-hua-gong-ju-lian.html"><span class="sb-item-num">23</span><span class="sb-item-title">工程化工具链</span></a>
+        <a class="sb-item" href="../python/24-monorepo-yu-tiao-shi.html"><span class="sb-item-num">24</span><span class="sb-item-title">monorepo 与调试</span></a>
+        <a class="sb-item" href="../python/25-jupyter-jiao-hu-huan-jing.html"><span class="sb-item-num">25</span><span class="sb-item-title">Jupyter 交互环境</span></a>
+        <a class="sb-item" href="../python/26-numpy-shu-zu-yu-xiang-liang-hua.html"><span class="sb-item-num">26</span><span class="sb-item-title">NumPy 数组与向量化</span></a>
+        <a class="sb-item" href="../python/27-pandas-shu-ju-jie-gou.html"><span class="sb-item-num">27</span><span class="sb-item-title">Pandas 数据结构</span></a>
+        <a class="sb-item" href="../python/28-pandas-shu-ju-qing-xi.html"><span class="sb-item-num">28</span><span class="sb-item-title">Pandas 数据清洗</span></a>
+        <a class="sb-item" href="../python/29-matplotlib-hui-tu-ti-xi.html"><span class="sb-item-num">29</span><span class="sb-item-title">Matplotlib 绘图体系</span></a>
+        <a class="sb-item" href="../python/30-matplotlib-dong-hua-yu-jiao-hu.html"><span class="sb-item-num">30</span><span class="sb-item-title">Matplotlib 动画与交互</span></a>
+        <a class="sb-item" href="../python/31-seaborn-tong-ji-ke-shi-hua.html"><span class="sb-item-num">31</span><span class="sb-item-title">Seaborn 统计可视化</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="agent">
+      <a class="sb-group-title" href="../modules/agent.html" data-toggle="agent">
+        <span class="sb-num">02</span>
+        <span class="sb-group-text"><b>Agent 核心</b><i>15 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../agent/01-token-yu-ci-qian-ru.html"><span class="sb-item-num">01</span><span class="sb-item-title">Token 与词嵌入</span></a>
+        <a class="sb-item" href="../agent/02-qian-xiang-chuan-bo-yu-fan-xiang-chuan-bo.html"><span class="sb-item-num">02</span><span class="sb-item-title">前向传播与反向传播</span></a>
+        <a class="sb-item" href="../agent/03-zhu-yi-li-ji-zhi-yu-transformer-jia-gou.html"><span class="sb-item-num">03</span><span class="sb-item-title">注意力机制与 Transformer 架构</span></a>
+        <a class="sb-item" href="../agent/04-yu-xun-lian-rlhf-yu-cai-yang-kv-cache.html"><span class="sb-item-num">04</span><span class="sb-item-title">预训练、RLHF 与采样（KV Cache）</span></a>
+        <a class="sb-item" href="../agent/05-ben-di-mo-xing-yu-xiao-xi-jie-gou.html"><span class="sb-item-num">05</span><span class="sb-item-title">本地模型与消息结构</span></a>
+        <a class="sb-item" href="../agent/06-hui-hua-guan-li-yu-json-shu-chu.html"><span class="sb-item-num">06</span><span class="sb-item-title">会话管理与 JSON 输出</span></a>
+        <a class="sb-item" href="../agent/07-tool-calling-xie-yi-yu-feng-zhuang.html"><span class="sb-item-num">07</span><span class="sb-item-title">Tool Calling：协议与封装</span></a>
+        <a class="sb-item" href="../agent/08-react-mo-shi-yu-zhu-xun-huan.html"><span class="sb-item-num">08</span><span class="sb-item-title">ReAct 模式与主循环</span></a>
+        <a class="sb-item" href="../agent/09-shi-zhan-deep-research-agent.html"><span class="sb-item-num">09</span><span class="sb-item-title">实战：Deep Research Agent</span></a>
+        <a class="sb-item" href="../agent/10-skill-yu-jian-jin-shi-pi-lu.html"><span class="sb-item-num">10</span><span class="sb-item-title">Skill 与渐进式披露</span></a>
+        <a class="sb-item" href="../agent/11-mcp-quan-jing.html"><span class="sb-item-num">11</span><span class="sb-item-title">MCP 全景</span></a>
+        <a class="sb-item" href="../agent/12-duo-agent-yu-xuan-xing-ce-lve.html"><span class="sb-item-num">12</span><span class="sb-item-title">多 Agent 与选型策略</span></a>
+        <a class="sb-item" href="../agent/13-ti-shi-ci-gong-cheng-yu-shang-xia-wen-gong.html"><span class="sb-item-num">13</span><span class="sb-item-title">提示词工程与上下文工程</span></a>
+        <a class="sb-item" href="../agent/14-xun-huan-tu-yu-gu-jia-gong-cheng.html"><span class="sb-item-num">14</span><span class="sb-item-title">循环、图与骨架工程</span></a>
+        <a class="sb-item" href="../agent/15-ji-yi-quan-xian-yu-ping-ce.html"><span class="sb-item-num">15</span><span class="sb-item-title">记忆、权限与评测</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="langchain">
+      <a class="sb-group-title" href="../modules/langchain.html" data-toggle="langchain">
+        <span class="sb-num">03</span>
+        <span class="sb-group-text"><b>LangChain 指南</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langchain/01-ren-shi-langchain.html"><span class="sb-item-num">01</span><span class="sb-item-title">认识 LangChain</span></a>
+        <a class="sb-item" href="../langchain/02-ti-shi-ci-mu-ban-yu-xiao-xi.html"><span class="sb-item-num">02</span><span class="sb-item-title">提示词模板与消息</span></a>
+        <a class="sb-item" href="../langchain/03-lcel-yu-runnable.html"><span class="sb-item-num">03</span><span class="sb-item-title">LCEL 与 Runnable</span></a>
+        <a class="sb-item" href="../langchain/04-liu-shi-yu-bing-fa.html"><span class="sb-item-num">04</span><span class="sb-item-title">流式与并发</span></a>
+        <a class="sb-item" href="../langchain/05-shu-chu-jie-xi-qi.html"><span class="sb-item-num">05</span><span class="sb-item-title">输出解析器</span></a>
+        <a class="sb-item" href="../langchain/06-wen-dang-jia-zai-yu-qie-ge.html"><span class="sb-item-num">06</span><span class="sb-item-title">文档加载与切割</span></a>
+        <a class="sb-item" href="../langchain/07-qian-ru-yu-xiang-liang-ku.html"><span class="sb-item-num">07</span><span class="sb-item-title">嵌入与向量库</span></a>
+        <a class="sb-item" href="../langchain/08-jian-suo-yu-rag.html"><span class="sb-item-num">08</span><span class="sb-item-title">检索与RAG</span></a>
+        <a class="sb-item" href="../langchain/09-dui-hua-ji-yi.html"><span class="sb-item-num">09</span><span class="sb-item-title">对话记忆</span></a>
+        <a class="sb-item" href="../langchain/10-gong-ju-diao-yong.html"><span class="sb-item-num">10</span><span class="sb-item-title">工具调用</span></a>
+        <a class="sb-item" href="../langchain/11-agent.html"><span class="sb-item-num">11</span><span class="sb-item-title">Agent</span></a>
+        <a class="sb-item" href="../langchain/12-hui-diao-yu-tiao-shi-quan-ke-cheng-shou-guan.html"><span class="sb-item-num">12</span><span class="sb-item-title">回调与调试（全课程收官章）</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="langgraph">
+      <a class="sb-group-title" href="../modules/langgraph.html" data-toggle="langgraph">
+        <span class="sb-num">04</span>
+        <span class="sb-group-text"><b>LangGraph 框架指南</b><i>17 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langgraph/01-di-1-zhang-cong-yi-ge-shi-kong-de-jiao.html"><span class="sb-item-num">01</span><span class="sb-item-title">第 1 章 从一个失控的脚本说起</span></a>
+        <a class="sb-item" href="../langgraph/02-di-2-zhang-zui-xiao-ke-yun-xing-tu.html"><span class="sb-item-num">02</span><span class="sb-item-title">第 2 章 最小可运行图</span></a>
+        <a class="sb-item" href="../langgraph/03-di-3-zhang-zhuang-tai-tu-de-shu-ju-xin.html"><span class="sb-item-num">03</span><span class="sb-item-title">第 3 章 状态：图的数据心脏</span></a>
+        <a class="sb-item" href="../langgraph/04-di-4-zhang-rang-liu-cheng-xue-hui-jue-ce.html"><span class="sb-item-num">04</span><span class="sb-item-title">第 4 章 让流程学会决策</span></a>
+        <a class="sb-item" href="../langgraph/05-di-5-zhang-bing-xing-shi-jie-chao-bu-zhi.html"><span class="sb-item-num">05</span><span class="sb-item-title">第 5 章 并行世界：超步执行模型</span></a>
+        <a class="sb-item" href="../langgraph/06-di-6-zhang-command-ba-kong-zhi-quan-jiao-jin.html"><span class="sb-item-num">06</span><span class="sb-item-title">第 6 章 Command：把控制权交进节点</span></a>
+        <a class="sb-item" href="../langgraph/07-di-7-zhang-dong-tai-bing-xing-send-yu-mapreduce.html"><span class="sb-item-num">07</span><span class="sb-item-title">第 7 章 动态并行：Send 与 MapReduce</span></a>
+        <a class="sb-item" href="../langgraph/08-di-8-zhang-gei-tu-zhuang-shang-shou-jiao-gong.html"><span class="sb-item-num">08</span><span class="sb-item-title">第 8 章 给图装上手脚：工具调用</span></a>
+        <a class="sb-item" href="../langgraph/09-di-9-zhang-fu-yong-yu-feng-zhuang-zi-tu.html"><span class="sb-item-num">09</span><span class="sb-item-title">第 9 章 复用与封装：子图</span></a>
+        <a class="sb-item" href="../langgraph/10-di-10-zhang-cong-dan-tu-dao-tuan-dui-duo.html"><span class="sb-item-num">10</span><span class="sb-item-title">第 10 章 从单图到团队：多 Agent 架构</span></a>
+        <a class="sb-item" href="../langgraph/11-di-11-zhang-liu-shi-shu-chu.html"><span class="sb-item-num">11</span><span class="sb-item-title">第 11 章 流式输出</span></a>
+        <a class="sb-item" href="../langgraph/12-di-12-zhang-chi-jiu-hua-checkpointer-yu-xian-cheng.html"><span class="sb-item-num">12</span><span class="sb-item-title">第 12 章 持久化：Checkpointer 与线程</span></a>
+        <a class="sb-item" href="../langgraph/13-di-13-zhang-shi-jian-lv-xing.html"><span class="sb-item-num">13</span><span class="sb-item-title">第 13 章 时间旅行</span></a>
+        <a class="sb-item" href="../langgraph/14-di-14-zhang-zhong-duan-yu-ren-zai-hui-lu.html"><span class="sb-item-num">14</span><span class="sb-item-title">第 14 章 中断与人在回路</span></a>
+        <a class="sb-item" href="../langgraph/15-di-15-zhang-ji-yi-guan-li.html"><span class="sb-item-num">15</span><span class="sb-item-title">第 15 章 记忆管理</span></a>
+        <a class="sb-item" href="../langgraph/16-di-16-zhang-rong-cuo-zhong-shi-chao-shi-yu.html"><span class="sb-item-num">16</span><span class="sb-item-title">第 16 章 容错：重试、超时与兜底</span></a>
+        <a class="sb-item" href="../langgraph/17-di-17-zhang-quan-jing-hui-gu.html"><span class="sb-item-num">17</span><span class="sb-item-title">第 17 章 全景回顾</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="backend">
+      <a class="sb-group-title" href="../modules/backend.html" data-toggle="backend">
+        <span class="sb-num">05</span>
+        <span class="sb-group-text"><b>Python 框架指南</b><i>14 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../backend/01-fastapi-ru-men-yu-asgi.html"><span class="sb-item-num">01</span><span class="sb-item-title">FastAPI 入门与 ASGI</span></a>
+        <a class="sb-item" href="../backend/02-lu-you-yu-qing-qiu-xiang-ying.html"><span class="sb-item-num">02</span><span class="sb-item-title">路由与请求响应</span></a>
+        <a class="sb-item" href="../backend/03-pydantic-shu-ju-jiao-yan-yu-pei-zhi.html"><span class="sb-item-num">03</span><span class="sb-item-title">Pydantic 数据校验与配置</span></a>
+        <a class="sb-item" href="../backend/04-sqlalchemy-yi-bu-yin-qing-yu-hui-hua.html"><span class="sb-item-num">04</span><span class="sb-item-title">SQLAlchemy 异步引擎与会话</span></a>
+        <a class="sb-item" href="../backend/05-orm-jian-mo.html"><span class="sb-item-num">05</span><span class="sb-item-title">ORM 建模</span></a>
+        <a class="sb-item" href="../backend/06-sql-biao-da-shi-yu-shu-ju-cao-zuo.html"><span class="sb-item-num">06</span><span class="sb-item-title">SQL 表达式与数据操作</span></a>
+        <a class="sb-item" href="../backend/07-alembic-shu-ju-qian-yi.html"><span class="sb-item-num">07</span><span class="sb-item-title">Alembic 数据迁移</span></a>
+        <a class="sb-item" href="../backend/08-yi-lai-zhu-ru.html"><span class="sb-item-num">08</span><span class="sb-item-title">依赖注入</span></a>
+        <a class="sb-item" href="../backend/09-tong-yi-yi-chang-chu-li.html"><span class="sb-item-num">09</span><span class="sb-item-title">统一异常处理</span></a>
+        <a class="sb-item" href="../backend/10-zhong-jian-jian.html"><span class="sb-item-num">10</span><span class="sb-item-title">中间件</span></a>
+        <a class="sb-item" href="../backend/11-ren-zheng-yu-jwt.html"><span class="sb-item-num">11</span><span class="sb-item-title">认证与 JWT</span></a>
+        <a class="sb-item" href="../backend/12-pytest-ce-shi.html"><span class="sb-item-num">12</span><span class="sb-item-title">pytest 测试</span></a>
+        <a class="sb-item" href="../backend/13-ri-zhi-loguru.html"><span class="sb-item-num">13</span><span class="sb-item-title">日志 loguru</span></a>
+        <a class="sb-item" href="../backend/14-liu-shi-xiang-ying-sse-yu-websocket.html"><span class="sb-item-num">14</span><span class="sb-item-title">流式响应 SSE 与 WebSocket</span></a>
+      </div>
+    </section>
+    <section class="sb-group open" data-mod="interview">
+      <a class="sb-group-title" href="../modules/interview.html" data-toggle="interview">
+        <span class="sb-num">06</span>
+        <span class="sb-group-text"><b>面试题库</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../interview/01-llm-yuan-li-pian.html"><span class="sb-item-num">01</span><span class="sb-item-title">LLM 原理篇</span></a>
+        <a class="sb-item" href="../interview/02-rag-yu-jian-suo-pian.html"><span class="sb-item-num">02</span><span class="sb-item-title">RAG 与检索篇</span></a>
+        <a class="sb-item" href="../interview/03-agent-he-xin-pian.html"><span class="sb-item-num">03</span><span class="sb-item-title">Agent 核心篇</span></a>
+        <a class="sb-item" href="../interview/04-langgraph-pian.html"><span class="sb-item-num">04</span><span class="sb-item-title">LangGraph 篇</span></a>
+        <a class="sb-item" href="../interview/05-langchain-pian.html"><span class="sb-item-num">05</span><span class="sb-item-title">LangChain 篇</span></a>
+        <a class="sb-item" href="../interview/06-xi-tong-she-ji-pian.html"><span class="sb-item-num">06</span><span class="sb-item-title">系统设计篇</span></a>
+        <a class="sb-item" href="../interview/07-xiang-mu-shen-wa-pian.html"><span class="sb-item-num">07</span><span class="sb-item-title">项目深挖篇</span></a>
+        <a class="sb-item" href="../interview/08-gu-zhang-pai-cha-pian.html"><span class="sb-item-num">08</span><span class="sb-item-title">故障排查篇</span></a>
+        <a class="sb-item current" href="../interview/09-python-ji-chu-pian.html"><span class="sb-item-num">09</span><span class="sb-item-title">Python 基础篇</span></a>
+        <a class="sb-item" href="../interview/10-fastapi-yu-hou-duan-pian.html"><span class="sb-item-num">10</span><span class="sb-item-title">FastAPI 与后端篇</span></a>
+        <a class="sb-item" href="../interview/11-ti-shi-ci-gong-cheng-yu-an-quan-pian.html"><span class="sb-item-num">11</span><span class="sb-item-title">提示词工程与安全篇</span></a>
+        <a class="sb-item" href="../interview/12-mo-xing-xuan-xing-yu-jiang-ben-pian.html"><span class="sb-item-num">12</span><span class="sb-item-title">模型选型与降本篇</span></a>
+      </div>
+    </section>
+  </nav>
+</aside>
+  <main class="main">
+    <header class="topbar">
+      <button class="menu-btn" id="menuBtn" aria-label="目录">☰</button>
+      <div class="crumbs"><a href="../index.html">首页</a><span>/</span><a href="../modules/interview.html">面试题库</a><span>/</span><span class="cur">Python 基础篇</span></div>
+      <div class="topbar-actions">
+        <button class="icon-btn" id="themeBtn" title="切换深浅色" aria-label="切换深浅色">◐</button>
+      </div>
+    </header>
+    <div class="content">
+      <article class="article">
+
+<header class="page-head">
+  <div class="page-kicker">面试题库 · 第 09 章</div>
+  <h1 class="page-title">Python 基础篇</h1>
+  <p class="page-desc">对应课件：Python与数据实践（02-21 章相关主题）。转行面 AI 应用开发岗，Python 八股 100% 会被考——面试官用它确认你的工程底子配得上&quot;工程师&quot;三个字。本篇 10 题是 Python 面试里最高频…</p>
+  <div class="page-meta">
+    <span>约 42 分钟</span><span>16,959 字</span><span>7 个代码示例</span>
+  </div>
+</header>
+<div class="md"><blockquote>
+<p>对应课件：Python与数据实践（02-21 章相关主题）。转行面 AI 应用开发岗，<strong>Python 八股 100% 会被考</strong>——面试官用它确认你的工程底子配得上"工程师"三个字。本篇 10 题是 Python 面试里最高频的核心集，深度标准是"讲清原理 + 说出实际踩过的坑"（个别课件未覆盖的高频点已标注）。</p>
+</blockquote>
+<hr />
+<h2 id="q01-装饰器的原理是什么手写一个带功能的装饰器">Q01 · 装饰器的原理是什么？手写一个带功能的装饰器</h2>
+<blockquote>
+<p>难度：★★★ ｜ 频率：极高 ｜ 对应课件：Python与数据实践/10-装饰器</p>
+</blockquote>
+<p><strong>面试官</strong>：Python 项目里到处是 @ 装饰器。说说它的原理，然后手写一个带计时和日志的。</p>
+<p><strong>第 1 层追问：原理</strong></p>
+<blockquote>
+<p>@deco 到底做了什么？</p>
+</blockquote>
+<p>参考回答：装饰器是<strong>"不改原函数代码，给它包一层行为"的语法糖</strong>。<code>@deco</code> 放在函数上等价于 <code>f = deco(f)</code>——把函数传给装饰器，装饰器返回一个新函数，原名指向新函数。它能成立的两个前提是 Python 的底层特性：<strong>函数是一等公民</strong>（可以当参数传、当返回值返）和<strong>闭包</strong>（内层函数记住外层变量）。所以装饰器没有任何魔法：就是一个<strong>接收函数、返回函数的高阶函数</strong>。执行时机要清楚：<strong>包裹发生在 def 那一刻（模块导入时），不是调用时</strong>——这解释了为什么装饰器里的代码在"没调用函数"时也会跑。</p>
+<p><strong>第 2 层追问：手写 + wraps</strong></p>
+<blockquote>
+<p>写一个计时装饰器。<code>functools.wraps</code> 是干什么的，不写会怎样？</p>
+</blockquote>
+<p>参考回答：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">time</span><span class="o">,</span><span class="w"> </span><span class="nn">functools</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">timer</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+    <span class="nd">@functools</span><span class="o">.</span><span class="n">wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>          <span class="c1"># 关键行</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">func</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> 耗时 </span><span class="si">{</span><span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">start</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">s"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span>
+    <span class="k">return</span> <span class="n">wrapper</span>
+</code></pre></div>
+<p><code>@functools.wraps(func)</code> 把原函数的元数据（<code>__name__</code>、<code>__doc__</code>、<code>__module__</code>）拷到 wrapper 上。<strong>不写的坑</strong>：日志和调试器里所有被装饰的函数都叫 "wrapper"；<code>help()</code> 看不到文档；多个装饰器叠用时排错像猜谜。<code>functools.wraps</code> 本身也是个装饰器——用 <code>functools.partial</code> 实现的，这是"装饰器组合"的经典范例。</p>
+<p><strong>第 3 层追问：带参数的装饰器</strong></p>
+<blockquote>
+<p><code>@retry(times=3)</code> 这种带参数的怎么写？</p>
+</blockquote>
+<p>参考回答：<strong>再包一层</strong>——带参装饰器是"返回装饰器的函数"，三层嵌套：</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">retry</span><span class="p">(</span><span class="n">times</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">deco</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+        <span class="nd">@functools</span><span class="o">.</span><span class="n">wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">times</span><span class="p">):</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="n">last</span> <span class="o">=</span> <span class="n">e</span>
+            <span class="k">raise</span> <span class="n">last</span>
+        <span class="k">return</span> <span class="n">wrapper</span>
+    <span class="k">return</span> <span class="n">deco</span>
+</code></pre></div>
+<p>读法：<code>retry(times=3)</code> 先执行返回 <code>deco</code>，<code>deco</code> 再接收函数。判断依据：<strong>装饰器带括号 = 多一层</strong>。这个重试装饰器正是 LLM 应用里最实用的基建之一——API 调用超时/限流时指数退避重试，比在每个调用点手写 try 循环干净一个量级。</p>
+<p><strong>第 4 层追问：实战与细节</strong></p>
+<blockquote>
+<p>多个装饰器叠放的顺序有讲究吗？</p>
+</blockquote>
+<p>参考回答：<strong>就近包裹</strong>。<code>@A</code> 在上 <code>@B</code> 在下时，执行序是 <code>A(B(f))</code>——调用时先进 A 的 wrapper 再进 B 的。实战语义：<code>@cache</code> 要包在 <code>@retry</code> 外面还是里面，取决于你要"缓存失败前的重试结果"还是"缓存最终结果"——顺序写反，缓存的就是异常了。这个细节没有八股答案，<strong>能讲出"顺序影响语义、要按业务想清楚"</strong>，就是用过而不是背过。</p>
+<h3 id="考察意图与踩坑点">考察意图与踩坑点</h3>
+<ul>
+<li>考察意图：装饰器是 Python 工程能力的分水岭——AI 应用岗日常要写重试/日志/缓存装饰器，"手写"环节淘汰纯背题者。</li>
+<li>踩坑点：说不出 <code>@deco</code> 等价 <code>f = deco(f)</code>；不知道 wraps 的坑；以为装饰发生在调用时。</li>
+<li>一句话总结：装饰器 = 高阶函数 + 闭包，<code>@</code> 只是 <code>f = deco(f)</code> 的语法糖；带参装饰器加一层；叠放顺序 = 包裹顺序。</li>
+</ul>
+<hr />
+<h2 id="q02-闭包是什么这段代码为什么输出全是-3">Q02 · 闭包是什么？这段代码为什么输出全是 3？</h2>
+<blockquote>
+<p>难度：★★★ ｜ 频率：极高 ｜ 对应课件：Python与数据实践/05-作用域规则与闭包</p>
+</blockquote>
+<p><strong>面试官</strong>：讲讲闭包。然后解释：<code>funcs = [lambda: i for i in range(3)]</code>，三个函数都调用，为什么结果都是 3？</p>
+<p><strong>第 1 层追问：闭包定义</strong></p>
+<blockquote>
+<p>先说什么是闭包。</p>
+</blockquote>
+<p>参考回答：闭包 = <strong>内层函数 + 它引用的外层作用域变量</strong>，且外层函数已经返回，这些变量依然存活。例如：</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">make_multiplier</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">multiply</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">x</span> <span class="o">*</span> <span class="n">n</span>      <span class="c1"># n 是外层变量</span>
+    <span class="k">return</span> <span class="n">multiply</span>
+
+<span class="n">double</span> <span class="o">=</span> <span class="n">make_multiplier</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>   <span class="c1"># make_multiplier 已返回</span>
+<span class="n">double</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>                     <span class="c1"># 10 —— n=2 还活着</span>
+</code></pre></div>
+<p>关键机制：<strong>内层函数持有对外层变量名的引用（不是值的拷贝）</strong>，Python 靠 <code>__closure__</code>（cell 对象）保持这些变量不被回收。闭包是装饰器的地基——上一个题的 wrapper 记住 <code>func</code>，靠的就是它。</p>
+<p><strong>第 2 层追问：LEGB 与修改</strong></p>
+<blockquote>
+<p>内层函数想改外层变量怎么办？</p>
+</blockquote>
+<p>参考回答：先讲 <strong>LEGB 查找顺序</strong>：Local（函数内）→ Enclosing（外层函数）→ Global（模块级）→ Builtin。内层<strong>读</strong>外层变量自动走 E；但<strong>赋值</strong>语句会在 L 创建新变量——想真正改外层要显式声明 <code>nonlocal n</code>（改模块级用 <code>global</code>）。<code>nonlocal</code> 是"我改的是 E 层那个名字"的声明，和 JS 的作用域链赋值行为对比着记更清楚。</p>
+<p><strong>第 3 层追问：late binding 陷阱</strong></p>
+<blockquote>
+<p>回到开头那道题，为什么全是 3？</p>
+</blockquote>
+<p>参考回答：因为闭包记的是<strong>变量名 i，不是每个时刻的值</strong>——这叫<strong>延迟绑定（late binding）</strong>。列表推导结束时 <code>i</code> 已经走到 2 循环结束值（range(3) 产生 0,1,2，循环结束 i=2；若 range(3) 在 Python3 里 i 最终是 2——但该题经典版本 range(3) 输出 3 的场景是 for 循环后 i 变成退出值。以 Python3 列表推导为准：三个 lambda 调用时才去查 <code>i</code>，此时 i 已是最后一个值 2，所以输出 2, 2, 2——<strong>无论 2 还是 3，要点是三个函数查到的是同一个最终的 i</strong>）。修复：把值"钉死"在默认参数里——默认参数在<strong>函数定义时</strong>求值：</p>
+<div class="highlight"><pre><span></span><code><span class="n">funcs</span> <span class="o">=</span> <span class="p">[</span><span class="k">lambda</span> <span class="n">i</span><span class="o">=</span><span class="n">i</span><span class="p">:</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">)]</span>   <span class="c1"># 输出 0, 1, 2</span>
+</code></pre></div>
+<p>或用 <code>functools.partial(f, i)</code>。<strong>这个坑的本质是"闭包按名字查值，查的时机决定值"</strong>——答这题时先把机制说对，再讨论边界值是 2 还是 3 反而是次要的。</p>
+<p><strong>第 4 层追问：什么时候用闭包 vs 类</strong></p>
+<blockquote>
+<p>闭包和类都能"带状态"，怎么选？</p>
+</blockquote>
+<p>参考回答：看状态的<strong>复杂度和生命周期</strong>。闭包：状态是几个私有变量、不想暴露内部结构、轻量（如 <code>make_multiplier</code>、计数器）——没有 <code>self</code> 的心智负担。类：状态需要多个方法操作、要继承/组合、状态需要自描述（<code>obj.count</code> 可调试可打印）。中间形态 <code>functools.partial</code> 和 <code>dataclass</code> 各占一角。工程习惯：<strong>闭包做"函数工厂"，类做"领域对象"</strong>，混用边界就看"这坨状态需要名字吗"。</p>
+<h3 id="考察意图与踩坑点_1">考察意图与踩坑点</h3>
+<ul>
+<li>考察意图：late binding 那道题是经典笔试题，考"引用 vs 拷贝"的底层理解；LEGB 是顺带必考。</li>
+<li>踩坑点：只背"闭包是内层函数引用外层变量"却不理解<strong>按名引用</strong>；把 <code>nonlocal</code> 说成"全局变量"。</li>
+<li>一句话总结：闭包按名字引用外层变量（LEGB 的 E 层）——延迟绑定是坑的根源，默认参数在定义时求值是解药。</li>
+</ul>
+<hr />
+<h2 id="q03-生成器和迭代器什么关系为什么生成器省内存">Q03 · 生成器和迭代器什么关系？为什么生成器省内存？</h2>
+<blockquote>
+<p>难度：★★★ ｜ 频率：极高 ｜ 对应课件：Python与数据实践/11-迭代协议与生成器</p>
+</blockquote>
+<p><strong>面试官</strong>：迭代器、可迭代对象、生成器——这三个词的关系说清楚。生成器为什么省内存？</p>
+<p><strong>第 1 层追问：协议与关系</strong></p>
+<blockquote>
+<p>先分清三个概念。</p>
+</blockquote>
+<p>参考回答：<strong>可迭代对象（Iterable）</strong>：实现了 <code>__iter__</code>，能被 for 循环（list、str、dict 都是）。<strong>迭代器（Iterator）</strong>：实现了 <code>__iter__</code> 和 <code>__next__</code>，是"取下一个值的状态机"——for 循环的底层就是不断调 <code>next()</code> 直到 StopIteration。<strong>生成器（Generator）</strong>：<strong>是迭代器的一种</strong>——任何函数体里带 <code>yield</code>，调用它就不执行函数体，而是返回一个生成器对象；每次 <code>next()</code> 才执行到下一个 yield 处暂停。关系一句话：<strong>生成器 ⊂ 迭代器 ⊂ 可迭代对象的"来源"之一</strong>；<code>iter()</code> 把可迭代对象转成迭代器。</p>
+<p><strong>第 2 层追问：yield 的暂停机制</strong></p>
+<blockquote>
+<p>yield 和 return 的本质区别？</p>
+</blockquote>
+<p>参考回答：<strong>return 是终止并销毁，yield 是暂停可恢复</strong>。执行到 yield：当前值被送出、函数状态（局部变量、执行位置）被完整冻结；下次 <code>next()</code> 从暂停点继续。这让"生产一个、消费一个"成为可能——<strong>消费者要一个才算一个，生产者不必备货</strong>。两个配套细节：生成器<strong>只能消费一次</strong>（走完即耗尽，再 next 就 StopIteration——拿生成器做"循环两遍"的循环体是经典 bug）；<code>yield from</code> 委托子生成器（<code>yield from gen</code> 等价于逐个 yield）。</p>
+<p><strong>第 3 层追问：省内存的量化</strong></p>
+<blockquote>
+<p>"省内存"到底省在哪？</p>
+</blockquote>
+<p>参考回答：<code>[i*i for i in range(10**8)]</code> 立刻生成一亿个 int 的列表——几个 GB 内存、卡死进程；<code>(i*i for i in range(10**8))</code> 生成器<strong>同一时刻只存一个值</strong>，内存 O(1)。本质是<strong>推式计算（惰性求值）</strong>：数据在生产者和消费者之间以流的方式传递。配套还有生成器表达式（圆括号）vs 列表推导（方括号）的选择纪律：<strong>只迭代一遍、可能提前 break 的场景必须用生成器</strong>（如"在日志流里找第一条匹配"——列表推导会先扫完全量）。</p>
+<p><strong>第 4 层追问：LLM 应用里的生成器</strong></p>
+<blockquote>
+<p>你做 AI 应用时哪里用到了这个机制？</p>
+</blockquote>
+<p>参考回答：<strong>流式输出的本质就是生成器</strong>。LLM API 的 stream 返回的就是一个迭代器/生成器——每个 chunk（token 片段）被 yield 出来，立刻推给 SSE 客户端；如果先攒全量再发，首字延迟就是整个生成时间，流式就失去意义。LangChain 里组件实现 <code>stream()</code> 方法逐块传递，底层协议一致。其他实战：<strong>大语料处理</strong>（几十万行文档逐行清洗入库，生成器管道 <code>line_gen | clean | embed</code> 每一环都是惰性的，内存不随语料规模膨胀）；<strong>分页拉取</strong>（游标翻页包成生成器，调用方一个 for 拿完所有页）。答到这层，就是"懂原理且用在了刀刃上"。</p>
+<h3 id="考察意图与踩坑点_2">考察意图与踩坑点</h3>
+<ul>
+<li>考察意图：三个概念的包含关系是必考基础；第 3、4 层是"背八股"和"写生产代码"的分界——流式输出连接 LLM 篇 Q07（自回归逐 token）形成呼应，AI 岗答这题有天然优势。</li>
+<li>踩坑点：把生成器和迭代器说成并列关系；不知道生成器只能消费一次；说不出一个真实使用场景。</li>
+<li>一句话总结：生成器是"带 yield 的函数返回的迭代器"——yield 暂停可恢复、惰性生产、单次消费；LLM 流式输出就是它。</li>
+</ul>
+<hr />
+<h2 id="q04-gil-是什么多线程多进程协程怎么选">Q04 · GIL 是什么？多线程、多进程、协程怎么选？</h2>
+<blockquote>
+<p>难度：★★★★ ｜ 频率：极高 ｜ 对应课件：Python与数据实践/18-线程与进程、19-事件循环</p>
+</blockquote>
+<p><strong>面试官</strong>：Python 的 GIL 说清楚。CPU 密集和 IO 密集任务，你的并发方案分别是什么？</p>
+<p><strong>第 1 层追问：GIL 本质</strong></p>
+<blockquote>
+<p>GIL 是什么，为什么存在？</p>
+</blockquote>
+<p>参考回答：GIL（Global Interpreter Lock，全局解释器锁）是 CPython 里的<strong>解释器级互斥锁</strong>：同一时刻<strong>只有一个线程能执行 Python 字节码</strong>——多线程在 Python 里不能并行算 CPU。它存在的历史原因：CPython 的内存管理（引用计数）不是线程安全的，一把全局锁是最简单便宜的保护——<strong>用并发性换内存安全</strong>。所以"Python 多线程没用"是错的一半，要看任务类型。</p>
+<p><strong>第 2 层追问：影响的边界</strong></p>
+<blockquote>
+<p>哪些场景多线程仍然有用？</p>
+</blockquote>
+<p>参考回答：<strong>IO 密集场景线程仍然有效</strong>——线程做网络/磁盘 IO 时会<strong>释放 GIL</strong>（阻塞的系统调用前后释放），其他线程可以跑。所以多线程对"等网络"的任务是真并发。真正受害的是 <strong>CPU 密集</strong>：多线程不仅不加速，还因线程切换和锁竞争<strong>比单线程更慢</strong>。还有第三种情况：<strong>C 扩展代码可以手动释放 GIL</strong>（numpy 的矩阵运算、hashlib 的摘要计算都这么干）——"numpy 多线程跑得飞快"不是 GIL 被绕过的bug，是扩展主动释放了锁。</p>
+<p><strong>第 3 层追问：三件套选型</strong></p>
+<blockquote>
+<p>给出你的选型决策。</p>
+</blockquote>
+<p>参考回答：一张决策表：<strong>IO 密集 + 高并发（数百以上连接）→ asyncio 协程</strong>——单线程协作调度，万级并发、切换成本纳秒级，LLM 应用（每请求等模型几十秒）是它的主场。<strong>IO 密集 + 低并发或库是同步的 → 线程池</strong>——几十个线程够用，不用改写代码（同步库直接丢线程池）。<strong>CPU 密集 → multiprocessing 进程池</strong>——每个进程独立解释器独立 GIL，真并行；代价是<strong>进程启动重 + 参数必须可序列化（pickle）+ 结果回传要 IPC</strong>——传大对象时序列化开销能吃掉并行收益。<strong>混合型（先算再等）</strong>：进程池套协程，各自处理擅长的段。</p>
+<p><strong>第 4 层追问：前沿与实战</strong></p>
+<blockquote>
+<p>GIL 会被移除吗？你的项目里怎么用到这些的？</p>
+</blockquote>
+<p>参考回答：<strong>知道动向但不当卖点</strong>：Python 3.13 引入 free-threading 实验性构建（no-GIL 方向），过渡期内生产依赖它不明智——正确姿势是"关注、评估、不抢跑"。实战对齐课程项目：LLM 调用是 IO 密集 → <strong>asyncio + Semaphore 限流</strong>（并发调研系统）；批量嵌入入库也是 IO 密集 → 分批 + gather；真正 CPU 密集的环节（本地模型的 tokenizer、大量正则清洗）才考虑进程池。<strong>选型结论永远从"瓶颈是 IO 还是 CPU"出发，不从"哪个更新潮"出发</strong>。</p>
+<h3 id="考察意图与踩坑点_3">考察意图与踩坑点</h3>
+<ul>
+<li>考察意图：这是 Python 八股的<strong>头号题</strong>，同时是 AI 应用岗的天然送分题（LLM 应用全是 IO 密集）——能把"LLM 场景→asyncio"的因果讲顺，直接加分。</li>
+<li>踩坑点："Python 多线程没用"（半对半错的口号）；不知道 IO 时释放 GIL；选型说不出序列化代价；把协程说成"轻量线程"（调度机制完全不同：协作式 vs 抢占式）。</li>
+<li>一句话总结：GIL 锁的是字节码执行不是 IO——IO 密集 asyncio、低并发线程池、CPU 密集进程池；numpy 快是因为 C 扩展释放了 GIL。</li>
+</ul>
+<hr />
+<h2 id="q05-is-和-的区别深拷贝浅拷贝什么场景踩过坑">Q05 · is 和 == 的区别？深拷贝浅拷贝什么场景踩过坑？</h2>
+<blockquote>
+<p>难度：★★★ ｜ 频率：高 ｜ 对应课件：Python与数据实践/03-序列字典与集合</p>
+</blockquote>
+<p><strong>面试官</strong>：<code>a is b</code> 和 <code>a == b</code> 什么时候结果不一样？copy.copy 和 copy.deepcopy 的区别，用一个你踩过的坑讲。</p>
+<p><strong>第 1 层追问：is vs ==</strong></p>
+<blockquote>
+<p>先讲最基础的。</p>
+</blockquote>
+<p>参考回答：<strong><code>==</code> 比值</strong>（调 <code>__eq__</code>，两个内容相同的独立对象返回 True）；<strong><code>is</code> 比身份</strong>（是不是同一个对象，内存地址是否相同）。<code>[1,2] == [1,2]</code> 是 True（值相等），<code>[1,2] is [1,2]</code> 是 False（两个对象）。<strong>工程纪律：is 只用于和 None/True/False 比较</strong>（<code>if x is None</code>）——因为单例语义必须用身份判断；<strong>永远不要用 is 比较数字和字符串</strong>：小整数缓存（-5 到 256）和字符串驻留（interning）会让 <code>a is b</code> 偶尔为 True——"在我机器上能跑"的坑源。</p>
+<p><strong>第 2 层追问：赋值、浅拷贝、深拷贝三级</strong></p>
+<blockquote>
+<p>传个 list 给函数，函数里改了，外面也变了——为什么？</p>
+</blockquote>
+<p>参考回答：三级语义要分清。<strong>赋值</strong> <code>b = a</code>：只复制引用，零拷贝——改 <code>b</code> 的元素 <code>a</code> 立刻可见（<strong>Python 传参是"传对象引用"</strong>，不是值拷贝）。<strong>浅拷贝</strong> <code>copy.copy(a)</code> / <code>a[:]</code> / <code>list(a)</code>：新建最外层容器，<strong>但嵌套元素还是共享引用</strong>——<code>a = [[1],[2]]</code>，<code>b = copy.copy(a)</code> 后 <code>b[0].append(9)</code>，<code>a[0]</code> 也变（内外层是两个容器，但 <code>a[0]</code> 和 <code>b[0]</code> 指向同一个内层 list）。<strong>深拷贝</strong> <code>copy.deepcopy(a)</code>：<strong>递归复制所有层级</strong>，完全独立。函数改参那个问题就是第一级：传进去的是引用，原地修改（append、<code>d[k]=v</code>）外部可见；想不污染就传入副本或函数内拷贝。</p>
+<p><strong>第 3 层追问：踩过的真实坑</strong></p>
+<blockquote>
+<p>说一个实际场景。</p>
+</blockquote>
+<p>参考回答：两个真实的。<strong>坑一（LLM 应用）</strong>：多个会话复用一个"默认 messages 模板"——某处代码 <code>messages.append(user_msg)</code> 原地改了模板，<strong>所有后续会话的上下文被污染</strong>（第一条就带上了别人的对话）。修复：模板用 <code>deepcopy</code> 或构造函数每次新建。<strong>坑二（缓存返回值）</strong>：函数返回缓存的 dict，调用方顺手改了两个字段——缓存里的数据从此损坏，且是"偶尔串数据"级别的静默 bug。修复：返回 <code>deepcopy</code> 或不可变结构。<strong>共性教训：可变共享是 Python 事故的第一大来源</strong>，怀疑共享时 <code>id()</code> 一查便知。</p>
+<p><strong>第 4 层追问：deepcopy 的代价</strong></p>
+<blockquote>
+<p>全用 deepcopy 不就安全了？</p>
+</blockquote>
+<p>参考回答：不行，三笔账。<strong>性能</strong>：递归复制大嵌套结构（MB 级配置、长消息列表）耗时毫秒到秒级，热路径上会疼。<strong>循环引用</strong>：deepcopy 用备忘录字典处理环，但环+<code>__del__</code> 的组合是历史雷区。<strong>语义</strong>：有些对象不该被拷贝——文件句柄、锁、连接池，deepcopy 会失败或产生双份资源。正确策略分层：<strong>默认共享（Python 文化），边界处防御</strong>（函数对外返回、跨会话传递时拷贝），<strong>热路径传不可变</strong>（tuple、frozen dataclass——不可变对象让"共享是否安全"这个问题消失）。</p>
+<h3 id="考察意图与踩坑点_4">考察意图与踩坑点</h3>
+<ul>
+<li>考察意图：可变性 + 引用语义是 Python 工程师事故率的头号预测指标，面试官拿这题筛"背题的"和"被咬过的"。</li>
+<li>踩坑点：is 比数字（撞小整数缓存）；说不清浅拷贝"外层独立内层共享"；没有真实踩坑案例。</li>
+<li>一句话总结：== 比值 is 比身份（is 只配 None）；赋值=共享、浅拷=外新内旧、深拷=全独立；可变共享是事故之源。</li>
+</ul>
+<hr />
+<h2 id="q06-可变默认参数这个坑原理是什么">Q06 · 可变默认参数这个坑，原理是什么？</h2>
+<blockquote>
+<p>难度：★★★ ｜ 频率：高 ｜ 对应课件：Python与数据实践/04-函数设计与lambda</p>
+</blockquote>
+<p><strong>面试官</strong>：<code>def add(item, box=[])</code> 连续调用两次，box 里有什么？为什么会这样？</p>
+<p><strong>第 1 层追问：现象与原理</strong></p>
+<blockquote>
+<p>先说结果，再说机制。</p>
+</blockquote>
+<p>参考回答：两次调用的 item <strong>都</strong>在 box 里——不是每次一个新空列表。原理：<strong>默认参数值在 def 执行时求值一次</strong>（函数定义那一刻，不是每次调用），求值结果存在函数对象的 <code>__defaults__</code> 属性里；之后每次调用不传 box，用的都是<strong>同一个 list 对象</strong>——原地 append 自然累积。可用 <code>add.__defaults__</code> 直接观察这个共享对象。这个坑只出现在<strong>可变默认值</strong>（list/dict/set）；不可变默认值（int/str/None）"共享"无害，因为每次"修改"都产生新对象。</p>
+<p><strong>第 2 层追问：正确写法</strong></p>
+<blockquote>
+<p>怎么写才对？</p>
+</blockquote>
+<p>参考回答：<strong>None 哨兵模式</strong>——约定俗成的标准解法：</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">add</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">box</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">box</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">box</span> <span class="o">=</span> <span class="p">[]</span>          <span class="c1"># 每次调用新建</span>
+    <span class="n">box</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">box</span>
+</code></pre></div>
+<p>为什么用 None 而不是 <code>box=[]</code> 在函数体内判断？因为没法判断——传进来的合法 list 可能本身就是空的。None 表达"调用方没传"这个语义，<strong>不可变的哨兵值承担"缺省"标记</strong>是 Python 的通用惯用法（fastapi、pydantic 的可选参数全是这个模式）。</p>
+<p><strong>第 3 层追问：同一家族的坑</strong></p>
+<blockquote>
+<p>这个坑还有什么亲戚？</p>
+</blockquote>
+<p>参考回答：三个近亲，一起防。<strong>坑一（类属性共享）</strong>：<code>class C: items = []</code>——items 是<strong>类属性</strong>，所有实例共享同一个 list，<code>inst1.items.append(x)</code> 后 inst2 也能看到（类属性在实例查找不到时沿 MRO 向上找到同一个对象）。该放进 <code>__init__</code> 的 <code>self.items = []</code>（实例属性，每个对象独立）。<strong>坑二（闭包变量捕获）</strong>：上一题的 late binding，同为"引用共享、值延迟确定"家族。<strong>坑三（函数属性/全局缓存）</strong>：拿 dict 当跨调用缓存却不做隔离。<strong>家族共性：Python 的"默认值/属性"存的是引用，创建一次永久共享</strong>——见到可变对象出现在"定义时求值"的位置，就要条件反射地问"会不会被共享修改"。</p>
+<h3 id="考察意图与踩坑点_5">考察意图与踩坑点</h3>
+<ul>
+<li>考察意图：经典笔试题 + 真实高发 bug，考察对"求值时机"的理解深度——能讲到 <code>__defaults__</code> 是函数对象属性这一层，就是文档级的扎实。</li>
+<li>踩坑点：只知道现象说不出"def 时求值一次"；不知道 None 哨兵这个标准解法；类属性共享这个亲戚没听说过。</li>
+<li>一句话总结：默认值在 def 时求值一次存进 <code>__defaults__</code>——可变默认值被永久共享；None 哨兵是标准解法；类属性共享是它的近亲。</li>
+</ul>
+<hr />
+<h2 id="q07-with-语句的原理异常发生了资源会释放吗">Q07 · with 语句的原理？异常发生了资源会释放吗？</h2>
+<blockquote>
+<p>难度：★★★ ｜ 频率：高 ｜ 对应课件：Python与数据实践/12-with与上下文协议</p>
+</blockquote>
+<p><strong>面试官</strong>：with 语句底层靠什么？函数在 with 块里抛了异常，文件关了吗？<strong>exit</strong> 返回 True 是什么效果？</p>
+<p><strong>第 1 层追问：协议</strong></p>
+<blockquote>
+<p>with 的机制讲清楚。</p>
+</blockquote>
+<p>参考回答：with 靠<strong>上下文管理器协议</strong>：<code>__enter__</code>（进块前调用，返回值绑定到 as 变量）和 <code>__exit__(exc_type, exc_val, exc_tb)</code>（<strong>离开块时无论正常还是异常都调用</strong>——这是它存在的全部意义）。<code>with open(f) as fp:</code> 的语义：open 返回文件对象，<code>__enter__</code> 返回自身绑定给 fp，块结束时 <code>__exit__</code> 里调 <code>close()</code>。<strong>手动等价形态</strong>就是 try/finally：</p>
+<div class="highlight"><pre><span></span><code><span class="n">fp</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="o">...</span>                    <span class="c1"># with 块</span>
+<span class="k">finally</span><span class="p">:</span>
+    <span class="n">fp</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>             <span class="c1"># __exit__</span>
+</code></pre></div>
+<p>with 只是把这段样板收进协议——<strong>异常安全是它的核心卖点</strong>。</p>
+<p><strong>第 2 层追问：异常路径</strong></p>
+<blockquote>
+<p>抛异常时发生什么？<strong>exit</strong> 返回 True 呢？</p>
+</blockquote>
+<p>参考回答：异常发生时，<code>__exit__</code> 收到完整的异常三元组（类型、值、traceback），<strong>资源照常释放</strong>；随后 <strong>exit</strong> 的返回值决定异常的命运：<strong>返回 False/None（默认）→ 异常继续向外抛</strong>；<strong>返回 True → 异常被吞掉</strong>，with 语句正常结束，外面毫无感知。所以"异常了资源会释放吗"——<strong>会</strong>；"程序会崩吗"——取决于 <strong>exit</strong> 返回什么。自定义上下文管理器时<strong>几乎永远返回 False</strong>（只做清理不吞异常），吞异常是危险特权：连 Ctrl+C（KeyboardInterrupt）都能吞掉。</p>
+<p><strong>第 3 层追问：contextmanager 与异步</strong></p>
+<blockquote>
+<p>每次都写一个类太重，有轻量写法吗？异步场景呢？</p>
+</blockquote>
+<p>参考回答：<strong><code>@contextlib.contextmanager</code></strong> 用生成器实现协议——yield 之前是 <code>__enter__</code>，之后是 <code>__exit__</code>，异常会从 yield 处被重新抛进生成器（所以 except 分支就是 <strong>exit</strong> 的异常处理）：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">contextlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">contextmanager</span>
+
+<span class="nd">@contextmanager</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">timer</span><span class="p">(</span><span class="n">label</span><span class="p">):</span>
+    <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">yield</span>                       <span class="c1"># with 块在这里执行</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span><span class="o">-</span><span class="n">start</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">s"</span><span class="p">)</span>
+</code></pre></div>
+<p>这题连接 Q03：<strong>生成器的暂停恢复正好实现"进块/出块"两个时机</strong>——yield 就是块边界。异步对应物是 <strong><code>async with</code> + <code>__aenter__/__aexit__</code></strong>：管理异步资源（httpx.AsyncClient、asyncio.Lock、数据库异步会话）——课程 FastAPI 篇的数据库会话就是它。同步 with 块里出现 await 是语法错误，两类不可混。</p>
+<p><strong>第 4 层追问：LLM 应用里怎么用</strong></p>
+<blockquote>
+<p>你的项目里 with 管什么资源？</p>
+</blockquote>
+<p>参考回答：三类。<strong>网络客户端生命周期</strong>：<code>async with httpx.AsyncClient() as client:</code>——连接池的正确打开方式（复用连接而不是每个请求新建 TCP）。<strong>数据库会话</strong>：FastAPI 的 yield 依赖（<code>def get_db(): session = ...; yield session; finally: session.close()</code>）——框架把"一个请求一个会话"的资源管理变成了声明式依赖。<strong>锁与临界区</strong>：<code>async with lock:</code> 保护共享计数器。<strong>共同模式：资源的"必须释放"语义全交给协议，代码里不留 finally 样板</strong>——这也是面试里"工程素养"的可视化证据。</p>
+<h3 id="考察意图与踩坑点_6">考察意图与踩坑点</h3>
+<ul>
+<li>考察意图：考察"知道 with 不只是文件"、异常路径的精确理解——<code>__exit__</code> 返回值那问能答对的人不多。</li>
+<li>踩坑点：以为异常时资源不释放；不知道返回 True 吞异常；分不清 with 和 async with。</li>
+<li>一句话总结：with = <strong>enter</strong>/<strong>exit</strong> 协议 = 自动化的 try/finally；异常时照常清理，<strong>exit</strong> 返回 True 吞异常；contextmanager 用生成器造、async with 管异步资源。</li>
+</ul>
+<hr />
+<h2 id="q08-asyncio-的事件循环怎么工作coroutine-was-never-awaited-是什么错">Q08 · asyncio 的事件循环怎么工作？"coroutine was never awaited" 是什么错？</h2>
+<blockquote>
+<p>难度：★★★★ ｜ 频率：高 ｜ 对应课件：Python与数据实践/19-事件循环、20-Future与协程、21-asyncio实战</p>
+</blockquote>
+<p><strong>面试官</strong>：写 asyncio 的代码，调用一个 async 函数却忘了 await，报 "coroutine was never awaited"——怎么回事？事件循环的调度机制讲一下。</p>
+<p><strong>第 1 层追问：coroutine 对象 vs 执行</strong></p>
+<blockquote>
+<p>先解释这个新手报错。</p>
+</blockquote>
+<p>参考回答：<strong>调用 async 函数不执行它</strong>——<code>async def f(): ...</code> 之后 <code>f()</code> 只是<strong>创建一个 coroutine 对象</strong>（一个"未执行的任务说明书"），函数体一行都没跑；只有 <code>await f()</code> 或把 coroutine 交给事件循环（<code>asyncio.run</code>、<code>asyncio.create_task</code>）才会执行。忘了 await 就是造了说明书没执行——Python 检测到 coroutine 对象被丢弃才发那句 RuntimeWarning。所以口诀：<strong>调用 async 函数永远配 await</strong>；这也解释了为什么 async 函数的返回值必须 await 才拿得到。</p>
+<p><strong>第 2 层追问：事件循环与让出</strong></p>
+<blockquote>
+<p>协程是怎么"并发"的？单线程不是串行吗？</p>
+</blockquote>
+<p>参考回答：<strong>事件循环 + 协作式调度</strong>。事件循环是单线程的调度器，维护一个就绪队列：每个协程跑到 <code>await</code>（等 IO 完成、等 sleep、等锁），就<strong>主动让出控制权</strong>回到循环；循环看谁的 IO 就绪了（selector 通知），就把谁排回去继续。并发的本质是<strong>"等待的时间被让给别人用"</strong>——单核单线程，但谁都不闲着空等。这和线程的抢占式调度（操作系统随时打断）根本不同：<strong>协程切换发生在代码里显式的 await 点</strong>——好处是切换点可见（不容易有竞态）、切换成本极低；代价是<strong>一个协程不 yield，全体都卡死</strong>（引出第 3 层）。</p>
+<p><strong>第 3 层追问：两大经典坑</strong></p>
+<blockquote>
+<p>你踩过 asyncio 什么坑？</p>
+</blockquote>
+<p>参考回答：两个必须"亲历"过才算会的坑。<strong>坑一（阻塞调用冻结整个 loop）</strong>：协程里调了同步阻塞的东西——<code>requests.get</code>（同步 HTTP）、<code>time.sleep</code>、重 CPU 计算——事件循环没有机会切出去，<strong>整个服务所有协程集体冻结</strong>。症状极具迷惑性："并发怎么变成串行了、还都慢"。修复：换异步库（<code>httpx.AsyncClient</code>）、<code>asyncio.sleep</code>、CPU 活丢 <code>run_in_executor</code>。<strong>坑二（gather 吞/炸语义）</strong>：<code>gather</code> 默认 <code>return_exceptions=False</code>——一个协程抛异常，整个 gather 立刻抛出（<strong>其余协程可能还在跑没人收</strong>）；设 <code>return_exceptions=True</code> 则异常作为结果返回，逐个检查。课程项目里调研分支一个网络抖动带崩全组就是它——修复后失败分支进降级路径而不是整体报废。</p>
+<p><strong>第 4 层追问：编排工具箱</strong></p>
+<blockquote>
+<p>并发控制你常用什么？</p>
+</blockquote>
+<p>参考回答：三件套 + 一个纪律。<strong><code>gather</code></strong>：并发跑一批、按序返回（保序对应关系不乱）；<strong><code>asyncio.Semaphore(n)</code></strong>：全局限流——LLM 服务有速率限制，不加闸就是 429 风暴（<strong>先在自己的边界排队，好过把压力打给上游</strong>）；<strong><code>wait_for / timeout</code></strong>：单路超时不拖垮整体。纪律：<strong>async 生态要全链路一致</strong>——从 DB 驱动到 HTTP 客户端全异步，中间混一个同步库就局部冻结；这就是课程里 FastAPI 路由必须配异步 LLM 客户端的原因（FastAPI 篇 Q01 呼应）。什么时候 asyncio 没收益：CPU 密集（单线程没第二个核可用）——回到 GIL 题的选型表。</p>
+<h3 id="考察意图与踩坑点_7">考察意图与踩坑点</h3>
+<ul>
+<li>考察意图：这是 AI 应用岗的<strong>核心 Python 能力题</strong>——LLM 应用天生 IO 密集，asyncio 是每天写的东西；两个坑答得出细节就是实战过的人。</li>
+<li>踩坑点："协程是轻量线程"；不知道调用 async 函数不执行；阻塞 loop 和 gather 异常语义这两个坑一个都说不出来。</li>
+<li>一句话总结：调用 async 函数只是造对象，await 才执行；事件循环 = 协作式调度"等待让给别人"；阻塞调用冻结全局、gather 默认一损俱损；gather+Semaphore+timeout 三件套。</li>
+</ul>
+<hr />
+<h2 id="q09-实例方法类方法静态方法什么时候用init-和-new-呢">Q09 · 实例方法、类方法、静态方法什么时候用？<strong>init</strong> 和 <strong>new</strong> 呢？</h2>
+<blockquote>
+<p>难度：★★★ ｜ 频率：高 ｜ 对应课件：Python与数据实践/06-类的定义与实例化、08-魔术方法全景</p>
+</blockquote>
+<p><strong>面试官</strong>：一个类里三种方法怎么区分、各自什么场景？<strong>new</strong> 和 <strong>init</strong> 谁先执行？</p>
+<p><strong>第 1 层追问：三方法区分</strong></p>
+<blockquote>
+<p>先给判别标准。</p>
+</blockquote>
+<p>参考回答：看<strong>第一个参数</strong>。<strong>实例方法</strong>（默认）：第一个参数 self，<strong>能访问实例状态和类状态</strong>——绝大多数业务方法。<strong>类方法</strong> <code>@classmethod</code>：第一个参数 cls（类本身），<strong>访问类状态、不依赖实例</strong>——典型用途是<strong>工厂方法</strong>：<code>User.from_dict(d)</code>、<code>Config.from_env()</code>——用类名调用、返回类的新实例，继承时 cls 自动是子类（工厂的正确性免费获得）。<strong>静态方法</strong> <code>@staticmethod</code>：没有隐式第一参数，<strong>和类只差"命名空间"关系</strong>——纯工具函数（<code>MathUtils.clamp(x, min, max)</code>），放类里只是为了组织代码。选型直觉：<strong>碰实例用实例方法，造实例用类方法，不碰类只借名字用静态方法</strong>。</p>
+<p><strong>第 2 层追问：<strong>new</strong> vs <strong>init</strong></strong></p>
+<blockquote>
+<p>对象创建分几步？</p>
+</blockquote>
+<p>参考回答：两步。<strong><code>__new__</code> 先执行</strong>：负责<strong>创建</strong>对象本身（分配内存、返回实例），是静态方法，返回的实例传给下一步；<strong><code>__init__</code> 后执行</strong>：负责<strong>初始化</strong>这个已存在的实例（设属性），不能有返回值。日常只写 <strong>init</strong>（<strong>new</strong> 用默认的 object.<strong>new</strong>）。<strong>new</strong> 的两个正当场景：<strong>单例模式</strong>（拦截创建、每次返回同一个实例）；<strong>不可变类型的定制</strong>（int/str/tuple 实例化时必须走 <strong>new</strong>，因为初始化后不能改）。面试口诀：<strong><strong>new</strong> 造壳、<strong>init</strong> 装修</strong>——顺序答反是硬伤。</p>
+<p><strong>第 3 层追问：property 与魔术方法</strong></p>
+<blockquote>
+<p>只读属性怎么实现？<strong>repr</strong> 和 <strong>str</strong> 的区别？</p>
+</blockquote>
+<p>参考回答：<strong><code>@property</code></strong> 把方法伪装成属性——<code>obj.score</code> 背后跑 getter，还能带 setter 做校验（赋值越界就抛）、<strong>只定义 getter 就是只读</strong>（尝试赋值抛 AttributeError）。相比裸属性：计算属性（fullname 由 first+last 合成）和带校验的写入都有了着陆点。<strong><code>__repr__</code> vs <code>__str__</code></strong>：repr 给<strong>开发者</strong>（调试器、日志、容器里的显示——<code>[obj]</code> 打印走 repr），目标是"无歧义"，能 eval 最好；str 给<strong>终端用户</strong>（print），目标是"可读"。<strong>只实现一个时永远选 <strong>repr</strong></strong>（str 缺省会回退到 repr）。这两个属于"协议全景"：Python 的 duck typing 靠的就是 <code>__len__</code>、<code>__iter__</code>、<code>__eq__</code> 这些<strong>协议方法</strong>——对象响应协议，函数就能通用（len() 对任何有 <strong>len</strong> 的对象工作）。</p>
+<p><strong>第 4 层追问：dataclass 的取舍</strong></p>
+<blockquote>
+<p>现代代码还手写这些吗？</p>
+</blockquote>
+<p>参考回答：<strong>纯数据容器用 <code>@dataclass</code></strong>——自动生成 <code>__init__</code>、<code>__repr__</code>、<code>__eq__</code>，还送 field 默认值、<code>frozen=True</code>（不可变，配合上一题的"热路径传不可变"策略）。LLM 应用里它特别重要：<strong>结构化输出的 schema 类</strong>（Pydantic 更完整，但内部数据类用 dataclass 轻量）、消息/配置的数据模型。<strong>不用 dataclass 的场景</strong>：有复杂不变量要维护的业务对象（<strong>init</strong> 里要跨字段校验、方法多）——dataclass 生成的是"无脑初始化"，复杂约束还是手写构造。判别：<strong>数据形状优先 dataclass，行为逻辑优先手写类</strong>。</p>
+<h3 id="考察意图与踩坑点_8">考察意图与踩坑点</h3>
+<ul>
+<li>考察意图：类体系是面向对象功底的地基；工厂方法（classmethod）是 FastAPI/Pydantic 源码里的高频模式，读懂框架必备。</li>
+<li>踩坑点：classmethod 和 staticmethod 区别只剩"装饰器名不同"；<strong>new</strong>/<strong>init</strong> 顺序答反；不知道 repr 的回退关系。</li>
+<li>一句话总结：self 用实例方法、cls 造工厂、无参纯工具用静态；<strong>new</strong> 造壳 <strong>init</strong> 装修；repr 优先于 str；数据形状给 dataclass。</li>
+</ul>
+<hr />
+<h2 id="q10-python-的垃圾回收机制什么情况会内存泄漏">Q10 · Python 的垃圾回收机制？什么情况会内存泄漏？</h2>
+<blockquote>
+<p>难度：★★★ ｜ 频率：高 ｜ 对应课件：Python与数据实践/06（对象与引用）；GC 细节为课件外高频补充</p>
+</blockquote>
+<p><strong>面试官</strong>：Python 的内存怎么回收？del 一个对象它马上被释放吗？什么情况会内存泄漏？</p>
+<p><strong>第 1 层追问：主机制</strong></p>
+<blockquote>
+<p>先说 GC 靠什么。</p>
+</blockquote>
+<p>参考回答：<strong>引用计数为主</strong>：每个对象记着"被多少个名字引用着"（<code>sys.getrefcount</code> 可查），<strong>计数归零立即回收</strong>——这是主要路径，实时、确定性高。所以 <code>del obj</code> 的语义要精确：<strong>只是删除一个名字绑定（引用减一），不是销毁对象</strong>——还有别的引用（比如在某个 list 里）对象就活着；所有引用都删光才立刻释放。<strong>引用计数无解的场景是循环引用</strong>：<code>a.b = b; b.a = a</code>，互指的计数永不归零——这引出辅助机制。</p>
+<p><strong>第 2 层追问：分代回收</strong></p>
+<blockquote>
+<p>循环引用怎么处理？</p>
+</blockquote>
+<p>参考回答：<strong>分代标记清除</strong>作为补充：gc 模块定期遍历对象图，从"疑似垃圾"里找出不可达的循环引用整体回收。<strong>分代假设</strong>：大多数对象朝生夕死，活得越久越不可能是垃圾——所以对象按存活时间分三代，<strong>越老的代扫描越少</strong>（新对象频繁查，老对象偶尔查），摊薄遍历成本。两个实用知识：gc 是<strong>可调节甚至可关的</strong>（<code>gc.disable()</code>——某些性能敏感场景+CPython 的引用计数兜底，纯引用计数泄漏不了非环对象）；<code>gc.collect()</code> 可手动触发全量回收。</p>
+<p><strong>第 3 层追问：泄漏场景</strong></p>
+<blockquote>
+<p>有 GC 还会泄漏？</p>
+</blockquote>
+<p>参考回答：会——GC 回收的是"不可达对象"，<strong>泄漏的真身是"不该活着却可达"</strong>。经典清单：<strong>全局缓存/模块级 list 只进不出</strong>（最常见）；<strong>闭包和回调持有大对象</strong>（事件监听器忘了注销，回调持有整个 session）；<strong>异常对象链</strong>（exception 的 traceback 帧引用整个调用栈的局部变量——except 块里把 e 存进全局会拖住一串对象，Python 3 会自动清但存储 traceback 仍会）；<strong>LLM 应用专属</strong>：<strong>messages 历史无限增长</strong>（模型无状态但你的内存有状态——长会话的历史列表只增不减，这是 AI 服务内存泄漏的头号形态，解药是上下文裁剪/外置记忆，呼应 LLM 原理篇 Q06）。</p>
+<p><strong>第 4 层追问：排查手段</strong></p>
+<blockquote>
+<p>怎么定位泄漏？</p>
+</blockquote>
+<p>参考回答：三步法。<strong>一，确认是泄漏不是抖动</strong>：监控 RSS 曲线（只涨不跌 + gc.collect() 后不降 = 泄漏；官方容器注意镜像基础内存）。<strong>二，定位谁在涨</strong>：<code>tracemalloc</code>（标准库）对比两个时间点的 top 增长点——按文件/行号直接指出哪段代码在堆积；<code>objgraph</code>（第三方）按类型计数，<code>objgraph.growth()</code> 一眼看出是哪个类在爆炸（dict？某 dataclass？）。<strong>三，顺引用链找根</strong>：<code>objgraph.find_backref_chain</code> 从可疑对象反查到 GC root（全局变量/栈帧），<strong>找到那个"不该持有它的人"修掉</strong>。预防层：长生命对象持引用要谨慎设计（weakref 弱引用不计入计数，缓存场景用它可让对象"没人强引用就死"）；对 AI 服务，<strong>把"会话历史有上限"当成架构约束</strong>而不是运维补丁。</p>
+<h3 id="考察意图与踩坑点_9">考察意图与踩坑点</h3>
+<ul>
+<li>考察意图：GC 是 Python 八股的收官题；"有 GC 为什么还泄漏"那一层是真正区分理解深度的分水岭——把 messages 无限增长这个 AI 专属泄漏源讲出来，面试官立刻知道你做过 LLM 服务。</li>
+<li>踩坑点：del 说成"销毁对象"；不知道循环引用和分代；说不出任何真实泄漏场景和排查工具。</li>
+<li>一句话总结：引用计数为主（归零即回收，del 只删引用）+ 分代标记清除抓循环引用；泄漏=不该活的仍可达，tracemalloc 定位增长点，messages 无限增长是 AI 服务头号泄漏。</li>
+</ul>
+<hr />
+<h2 id="本篇速记卡">本篇速记卡</h2>
+<table>
+<thead>
+<tr>
+<th>题</th>
+<th>一句话核心</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Q01 装饰器</td>
+<td><code>@deco</code> = <code>f = deco(f)</code>，高阶函数+闭包；wraps 保元数据；带参加一层</td>
+</tr>
+<tr>
+<td>Q02 闭包</td>
+<td>按名引用外层变量（LEGB 的 E）；late binding 是坑、默认参数是解药</td>
+</tr>
+<tr>
+<td>Q03 生成器</td>
+<td>yield 暂停可恢复、惰性 O(1) 内存、单次消费；LLM 流式输出就是它</td>
+</tr>
+<tr>
+<td>Q04 GIL</td>
+<td>锁字节码不锁 IO；IO 密集 asyncio、CPU 密集进程池；C 扩展释放 GIL</td>
+</tr>
+<tr>
+<td>Q05 拷贝</td>
+<td>== 值 is 身份；赋值共享、浅拷外新内旧、深拷全独立；可变共享是事故源</td>
+</tr>
+<tr>
+<td>Q06 可变默认参数</td>
+<td>def 时求值一次存 <strong>defaults</strong> 永久共享；None 哨兵是标准解法</td>
+</tr>
+<tr>
+<td>Q07 with</td>
+<td><strong>enter</strong>/<strong>exit</strong> = 自动 try/finally；异常照常清理、True 吞异常</td>
+</tr>
+<tr>
+<td>Q08 asyncio</td>
+<td>调 async 函数只造对象；协作式调度"等待让给别人"；阻塞冻结全局</td>
+</tr>
+<tr>
+<td>Q09 类三方法</td>
+<td>self 用业务、cls 造工厂、static 纯工具；<strong>new</strong> 造壳 <strong>init</strong> 装修</td>
+</tr>
+<tr>
+<td>Q10 GC</td>
+<td>引用计数为主+分代抓环；del 只删引用；泄漏=不该活的仍可达</td>
+</tr>
+</tbody>
+</table></div>
+
+      </article>
+<nav class="pager"><a class="pg-card pg-prev" href="../interview/08-gu-zhang-pai-cha-pian.html"><span class="pg-label">← 上一篇</span><span class="pg-title">故障排查篇</span><span class="pg-mod">面试题库</span></a><a class="pg-card pg-next" href="../interview/10-fastapi-yu-hou-duan-pian.html"><span class="pg-label">下一篇 →</span><span class="pg-title">FastAPI 与后端篇</span><span class="pg-mod">面试题库</span></a></nav>
+    </div>
+    <footer class="foot">
+      <span>深栈 DeepStack · AI Agent 工程师转型训练营配套文档</span>
+    </footer>
+  </main>
+<nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#q01-装饰器的原理是什么手写一个带功能的装饰器">Q01 · 装饰器的原理是什么？手写一个带功能的装饰器</a><a class="toc-link toc-h3" href="#考察意图与踩坑点">考察意图与踩坑点</a><a class="toc-link toc-h2" href="#q02-闭包是什么这段代码为什么输出全是-3">Q02 · 闭包是什么？这段代码为什么输出全是 3？</a><a class="toc-link toc-h3" href="#考察意图与踩坑点_1">考察意图与踩坑点</a><a class="toc-link toc-h2" href="#q03-生成器和迭代器什么关系为什么生成器省内存">Q03 · 生成器和迭代器什么关系？为什么生成器省内存？</a><a class="toc-link toc-h3" href="#考察意图与踩坑点_2">考察意图与踩坑点</a><a class="toc-link toc-h2" href="#q04-gil-是什么多线程多进程协程怎么选">Q04 · GIL 是什么？多线程、多进程、协程怎么选？</a><a class="toc-link toc-h3" href="#考察意图与踩坑点_3">考察意图与踩坑点</a><a class="toc-link toc-h2" href="#q05-is-和-的区别深拷贝浅拷贝什么场景踩过坑">Q05 · is 和 == 的区别？深拷贝浅拷贝什么场景踩过坑？</a><a class="toc-link toc-h3" href="#考察意图与踩坑点_4">考察意图与踩坑点</a><a class="toc-link toc-h2" href="#q06-可变默认参数这个坑原理是什么">Q06 · 可变默认参数这个坑，原理是什么？</a><a class="toc-link toc-h3" href="#考察意图与踩坑点_5">考察意图与踩坑点</a><a class="toc-link toc-h2" href="#q07-with-语句的原理异常发生了资源会释放吗">Q07 · with 语句的原理？异常发生了资源会释放吗？</a><a class="toc-link toc-h3" href="#考察意图与踩坑点_6">考察意图与踩坑点</a><a class="toc-link toc-h2" href="#q08-asyncio-的事件循环怎么工作coroutine-was-never-awaited-是什么错">Q08 · asyncio 的事件循环怎么工作？&quot;coroutine was never awaited&quot; 是什么错？</a><a class="toc-link toc-h3" href="#考察意图与踩坑点_7">考察意图与踩坑点</a><a class="toc-link toc-h2" href="#q09-实例方法类方法静态方法什么时候用init-和-new-呢">Q09 · 实例方法、类方法、静态方法什么时候用？init 和 new 呢？</a><a class="toc-link toc-h3" href="#考察意图与踩坑点_8">考察意图与踩坑点</a><a class="toc-link toc-h2" href="#q10-python-的垃圾回收机制什么情况会内存泄漏">Q10 · Python 的垃圾回收机制？什么情况会内存泄漏？</a><a class="toc-link toc-h3" href="#考察意图与踩坑点_9">考察意图与踩坑点</a><a class="toc-link toc-h2" href="#本篇速记卡">本篇速记卡</a></nav>
+</div>
+<div class="sb-mask" id="sbMask"></div>
+<script src="../assets/app.js"></script>
+</body>
+</html>

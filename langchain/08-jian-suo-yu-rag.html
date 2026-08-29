@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>08 · 检索与RAG · 深栈 DeepStack 课程文档</title>
+<meta name="description" content="本章配套可运行示例：demo/demorag.py。demo 把书屋读书笔记硬编码在文件里，从切割、入库、检索一路跑到组装问答链；本机没启动 Ollama 时会自动降级，只演示检索部分并打印提示。
+
+ 本章你将学会
+
+ …">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%23d9c39a' text-anchor='middle'%3EDS%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+<div class="progress" id="progress"></div>
+
+<div class="layout">
+<aside class="sidebar" id="sidebar">
+  <div class="sb-head">
+    <a class="brand" href="../index.html">
+      <span class="brand-mark">DS</span>
+      <span class="brand-text"><b>深栈 DeepStack</b><i>AI Agent 工程师转型训练营</i></span>
+    </a>
+    <button class="sb-close" id="sbClose" aria-label="关闭目录">✕</button>
+  </div>
+  <div class="sb-search"><input type="search" id="searchInput" placeholder="搜索 123 篇文档… ( / )" autocomplete="off">
+    <div class="sb-results" id="searchResults"></div></div>
+  <nav class="sb-nav">
+    <section class="sb-group" data-mod="python">
+      <a class="sb-group-title" href="../modules/python.html" data-toggle="python">
+        <span class="sb-num">01</span>
+        <span class="sb-group-text"><b>Python 与数据实践</b><i>31 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../python/01-huan-jing-da-jian-yu-ban-ben-guan-li.html"><span class="sb-item-num">01</span><span class="sb-item-title">环境搭建与版本管理</span></a>
+        <a class="sb-item" href="../python/02-bian-liang-biao-da-shi-yu-liu-cheng-kong-zhi.html"><span class="sb-item-num">02</span><span class="sb-item-title">变量、表达式与流程控制</span></a>
+        <a class="sb-item" href="../python/03-xu-lie-zi-dian-yu-ji-he.html"><span class="sb-item-num">03</span><span class="sb-item-title">序列、字典与集合</span></a>
+        <a class="sb-item" href="../python/04-han-shu-she-ji-yu-lambda.html"><span class="sb-item-num">04</span><span class="sb-item-title">函数设计与 lambda</span></a>
+        <a class="sb-item" href="../python/05-zuo-yong-yu-gui-ze-yu-bi-bao.html"><span class="sb-item-num">05</span><span class="sb-item-title">作用域规则与闭包</span></a>
+        <a class="sb-item" href="../python/06-lei-de-ding-yi-yu-shi-li-hua.html"><span class="sb-item-num">06</span><span class="sb-item-title">类的定义与实例化</span></a>
+        <a class="sb-item" href="../python/07-lei-xing-pan-ding-yu-chou-xiang-ji-lei.html"><span class="sb-item-num">07</span><span class="sb-item-title">类型判定与抽象基类</span></a>
+        <a class="sb-item" href="../python/08-mo-shu-fang-fa-quan-jing.html"><span class="sb-item-num">08</span><span class="sb-item-title">魔术方法全景</span></a>
+        <a class="sb-item" href="../python/09-miao-shu-fu-yu-yuan-lei.html"><span class="sb-item-num">09</span><span class="sb-item-title">描述符与元类</span></a>
+        <a class="sb-item" href="../python/10-zhuang-shi-qi.html"><span class="sb-item-num">10</span><span class="sb-item-title">装饰器</span></a>
+        <a class="sb-item" href="../python/11-die-dai-xie-yi-yu-sheng-cheng-qi.html"><span class="sb-item-num">11</span><span class="sb-item-title">迭代协议与生成器</span></a>
+        <a class="sb-item" href="../python/12-with-yu-shang-xia-wen-xie-yi.html"><span class="sb-item-num">12</span><span class="sb-item-title">with 与上下文协议</span></a>
+        <a class="sb-item" href="../python/13-yi-chang-ti-xi-yu-chu-li.html"><span class="sb-item-num">13</span><span class="sb-item-title">异常体系与处理</span></a>
+        <a class="sb-item" href="../python/14-lei-xing-biao-zhu.html"><span class="sb-item-num">14</span><span class="sb-item-title">类型标注</span></a>
+        <a class="sb-item" href="../python/15-mo-kuai-yu-bao-de-zu-zhi.html"><span class="sb-item-num">15</span><span class="sb-item-title">模块与包的组织</span></a>
+        <a class="sb-item" href="../python/16-biao-zhun-ku-xun-li.html"><span class="sb-item-num">16</span><span class="sb-item-title">标准库巡礼</span></a>
+        <a class="sb-item" href="../python/17-yi-lai-guan-li-yu-di-san-fang-ku.html"><span class="sb-item-num">17</span><span class="sb-item-title">依赖管理与第三方库</span></a>
+        <a class="sb-item" href="../python/18-xian-cheng-yu-jin-cheng.html"><span class="sb-item-num">18</span><span class="sb-item-title">线程与进程</span></a>
+        <a class="sb-item" href="../python/19-shi-jian-xun-huan.html"><span class="sb-item-num">19</span><span class="sb-item-title">事件循环</span></a>
+        <a class="sb-item" href="../python/20-future-yu-xie-cheng.html"><span class="sb-item-num">20</span><span class="sb-item-title">Future 与协程</span></a>
+        <a class="sb-item" href="../python/21-asyncio-shi-zhan.html"><span class="sb-item-num">21</span><span class="sb-item-title">asyncio 实战</span></a>
+        <a class="sb-item" href="../python/22-gou-jian-yu-fa-bu.html"><span class="sb-item-num">22</span><span class="sb-item-title">构建与发布</span></a>
+        <a class="sb-item" href="../python/23-gong-cheng-hua-gong-ju-lian.html"><span class="sb-item-num">23</span><span class="sb-item-title">工程化工具链</span></a>
+        <a class="sb-item" href="../python/24-monorepo-yu-tiao-shi.html"><span class="sb-item-num">24</span><span class="sb-item-title">monorepo 与调试</span></a>
+        <a class="sb-item" href="../python/25-jupyter-jiao-hu-huan-jing.html"><span class="sb-item-num">25</span><span class="sb-item-title">Jupyter 交互环境</span></a>
+        <a class="sb-item" href="../python/26-numpy-shu-zu-yu-xiang-liang-hua.html"><span class="sb-item-num">26</span><span class="sb-item-title">NumPy 数组与向量化</span></a>
+        <a class="sb-item" href="../python/27-pandas-shu-ju-jie-gou.html"><span class="sb-item-num">27</span><span class="sb-item-title">Pandas 数据结构</span></a>
+        <a class="sb-item" href="../python/28-pandas-shu-ju-qing-xi.html"><span class="sb-item-num">28</span><span class="sb-item-title">Pandas 数据清洗</span></a>
+        <a class="sb-item" href="../python/29-matplotlib-hui-tu-ti-xi.html"><span class="sb-item-num">29</span><span class="sb-item-title">Matplotlib 绘图体系</span></a>
+        <a class="sb-item" href="../python/30-matplotlib-dong-hua-yu-jiao-hu.html"><span class="sb-item-num">30</span><span class="sb-item-title">Matplotlib 动画与交互</span></a>
+        <a class="sb-item" href="../python/31-seaborn-tong-ji-ke-shi-hua.html"><span class="sb-item-num">31</span><span class="sb-item-title">Seaborn 统计可视化</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="agent">
+      <a class="sb-group-title" href="../modules/agent.html" data-toggle="agent">
+        <span class="sb-num">02</span>
+        <span class="sb-group-text"><b>Agent 核心</b><i>15 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../agent/01-token-yu-ci-qian-ru.html"><span class="sb-item-num">01</span><span class="sb-item-title">Token 与词嵌入</span></a>
+        <a class="sb-item" href="../agent/02-qian-xiang-chuan-bo-yu-fan-xiang-chuan-bo.html"><span class="sb-item-num">02</span><span class="sb-item-title">前向传播与反向传播</span></a>
+        <a class="sb-item" href="../agent/03-zhu-yi-li-ji-zhi-yu-transformer-jia-gou.html"><span class="sb-item-num">03</span><span class="sb-item-title">注意力机制与 Transformer 架构</span></a>
+        <a class="sb-item" href="../agent/04-yu-xun-lian-rlhf-yu-cai-yang-kv-cache.html"><span class="sb-item-num">04</span><span class="sb-item-title">预训练、RLHF 与采样（KV Cache）</span></a>
+        <a class="sb-item" href="../agent/05-ben-di-mo-xing-yu-xiao-xi-jie-gou.html"><span class="sb-item-num">05</span><span class="sb-item-title">本地模型与消息结构</span></a>
+        <a class="sb-item" href="../agent/06-hui-hua-guan-li-yu-json-shu-chu.html"><span class="sb-item-num">06</span><span class="sb-item-title">会话管理与 JSON 输出</span></a>
+        <a class="sb-item" href="../agent/07-tool-calling-xie-yi-yu-feng-zhuang.html"><span class="sb-item-num">07</span><span class="sb-item-title">Tool Calling：协议与封装</span></a>
+        <a class="sb-item" href="../agent/08-react-mo-shi-yu-zhu-xun-huan.html"><span class="sb-item-num">08</span><span class="sb-item-title">ReAct 模式与主循环</span></a>
+        <a class="sb-item" href="../agent/09-shi-zhan-deep-research-agent.html"><span class="sb-item-num">09</span><span class="sb-item-title">实战：Deep Research Agent</span></a>
+        <a class="sb-item" href="../agent/10-skill-yu-jian-jin-shi-pi-lu.html"><span class="sb-item-num">10</span><span class="sb-item-title">Skill 与渐进式披露</span></a>
+        <a class="sb-item" href="../agent/11-mcp-quan-jing.html"><span class="sb-item-num">11</span><span class="sb-item-title">MCP 全景</span></a>
+        <a class="sb-item" href="../agent/12-duo-agent-yu-xuan-xing-ce-lve.html"><span class="sb-item-num">12</span><span class="sb-item-title">多 Agent 与选型策略</span></a>
+        <a class="sb-item" href="../agent/13-ti-shi-ci-gong-cheng-yu-shang-xia-wen-gong.html"><span class="sb-item-num">13</span><span class="sb-item-title">提示词工程与上下文工程</span></a>
+        <a class="sb-item" href="../agent/14-xun-huan-tu-yu-gu-jia-gong-cheng.html"><span class="sb-item-num">14</span><span class="sb-item-title">循环、图与骨架工程</span></a>
+        <a class="sb-item" href="../agent/15-ji-yi-quan-xian-yu-ping-ce.html"><span class="sb-item-num">15</span><span class="sb-item-title">记忆、权限与评测</span></a>
+      </div>
+    </section>
+    <section class="sb-group open" data-mod="langchain">
+      <a class="sb-group-title" href="../modules/langchain.html" data-toggle="langchain">
+        <span class="sb-num">03</span>
+        <span class="sb-group-text"><b>LangChain 指南</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langchain/01-ren-shi-langchain.html"><span class="sb-item-num">01</span><span class="sb-item-title">认识 LangChain</span></a>
+        <a class="sb-item" href="../langchain/02-ti-shi-ci-mu-ban-yu-xiao-xi.html"><span class="sb-item-num">02</span><span class="sb-item-title">提示词模板与消息</span></a>
+        <a class="sb-item" href="../langchain/03-lcel-yu-runnable.html"><span class="sb-item-num">03</span><span class="sb-item-title">LCEL 与 Runnable</span></a>
+        <a class="sb-item" href="../langchain/04-liu-shi-yu-bing-fa.html"><span class="sb-item-num">04</span><span class="sb-item-title">流式与并发</span></a>
+        <a class="sb-item" href="../langchain/05-shu-chu-jie-xi-qi.html"><span class="sb-item-num">05</span><span class="sb-item-title">输出解析器</span></a>
+        <a class="sb-item" href="../langchain/06-wen-dang-jia-zai-yu-qie-ge.html"><span class="sb-item-num">06</span><span class="sb-item-title">文档加载与切割</span></a>
+        <a class="sb-item" href="../langchain/07-qian-ru-yu-xiang-liang-ku.html"><span class="sb-item-num">07</span><span class="sb-item-title">嵌入与向量库</span></a>
+        <a class="sb-item current" href="../langchain/08-jian-suo-yu-rag.html"><span class="sb-item-num">08</span><span class="sb-item-title">检索与RAG</span></a>
+        <a class="sb-item" href="../langchain/09-dui-hua-ji-yi.html"><span class="sb-item-num">09</span><span class="sb-item-title">对话记忆</span></a>
+        <a class="sb-item" href="../langchain/10-gong-ju-diao-yong.html"><span class="sb-item-num">10</span><span class="sb-item-title">工具调用</span></a>
+        <a class="sb-item" href="../langchain/11-agent.html"><span class="sb-item-num">11</span><span class="sb-item-title">Agent</span></a>
+        <a class="sb-item" href="../langchain/12-hui-diao-yu-tiao-shi-quan-ke-cheng-shou-guan.html"><span class="sb-item-num">12</span><span class="sb-item-title">回调与调试（全课程收官章）</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="langgraph">
+      <a class="sb-group-title" href="../modules/langgraph.html" data-toggle="langgraph">
+        <span class="sb-num">04</span>
+        <span class="sb-group-text"><b>LangGraph 框架指南</b><i>17 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langgraph/01-di-1-zhang-cong-yi-ge-shi-kong-de-jiao.html"><span class="sb-item-num">01</span><span class="sb-item-title">第 1 章 从一个失控的脚本说起</span></a>
+        <a class="sb-item" href="../langgraph/02-di-2-zhang-zui-xiao-ke-yun-xing-tu.html"><span class="sb-item-num">02</span><span class="sb-item-title">第 2 章 最小可运行图</span></a>
+        <a class="sb-item" href="../langgraph/03-di-3-zhang-zhuang-tai-tu-de-shu-ju-xin.html"><span class="sb-item-num">03</span><span class="sb-item-title">第 3 章 状态：图的数据心脏</span></a>
+        <a class="sb-item" href="../langgraph/04-di-4-zhang-rang-liu-cheng-xue-hui-jue-ce.html"><span class="sb-item-num">04</span><span class="sb-item-title">第 4 章 让流程学会决策</span></a>
+        <a class="sb-item" href="../langgraph/05-di-5-zhang-bing-xing-shi-jie-chao-bu-zhi.html"><span class="sb-item-num">05</span><span class="sb-item-title">第 5 章 并行世界：超步执行模型</span></a>
+        <a class="sb-item" href="../langgraph/06-di-6-zhang-command-ba-kong-zhi-quan-jiao-jin.html"><span class="sb-item-num">06</span><span class="sb-item-title">第 6 章 Command：把控制权交进节点</span></a>
+        <a class="sb-item" href="../langgraph/07-di-7-zhang-dong-tai-bing-xing-send-yu-mapreduce.html"><span class="sb-item-num">07</span><span class="sb-item-title">第 7 章 动态并行：Send 与 MapReduce</span></a>
+        <a class="sb-item" href="../langgraph/08-di-8-zhang-gei-tu-zhuang-shang-shou-jiao-gong.html"><span class="sb-item-num">08</span><span class="sb-item-title">第 8 章 给图装上手脚：工具调用</span></a>
+        <a class="sb-item" href="../langgraph/09-di-9-zhang-fu-yong-yu-feng-zhuang-zi-tu.html"><span class="sb-item-num">09</span><span class="sb-item-title">第 9 章 复用与封装：子图</span></a>
+        <a class="sb-item" href="../langgraph/10-di-10-zhang-cong-dan-tu-dao-tuan-dui-duo.html"><span class="sb-item-num">10</span><span class="sb-item-title">第 10 章 从单图到团队：多 Agent 架构</span></a>
+        <a class="sb-item" href="../langgraph/11-di-11-zhang-liu-shi-shu-chu.html"><span class="sb-item-num">11</span><span class="sb-item-title">第 11 章 流式输出</span></a>
+        <a class="sb-item" href="../langgraph/12-di-12-zhang-chi-jiu-hua-checkpointer-yu-xian-cheng.html"><span class="sb-item-num">12</span><span class="sb-item-title">第 12 章 持久化：Checkpointer 与线程</span></a>
+        <a class="sb-item" href="../langgraph/13-di-13-zhang-shi-jian-lv-xing.html"><span class="sb-item-num">13</span><span class="sb-item-title">第 13 章 时间旅行</span></a>
+        <a class="sb-item" href="../langgraph/14-di-14-zhang-zhong-duan-yu-ren-zai-hui-lu.html"><span class="sb-item-num">14</span><span class="sb-item-title">第 14 章 中断与人在回路</span></a>
+        <a class="sb-item" href="../langgraph/15-di-15-zhang-ji-yi-guan-li.html"><span class="sb-item-num">15</span><span class="sb-item-title">第 15 章 记忆管理</span></a>
+        <a class="sb-item" href="../langgraph/16-di-16-zhang-rong-cuo-zhong-shi-chao-shi-yu.html"><span class="sb-item-num">16</span><span class="sb-item-title">第 16 章 容错：重试、超时与兜底</span></a>
+        <a class="sb-item" href="../langgraph/17-di-17-zhang-quan-jing-hui-gu.html"><span class="sb-item-num">17</span><span class="sb-item-title">第 17 章 全景回顾</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="backend">
+      <a class="sb-group-title" href="../modules/backend.html" data-toggle="backend">
+        <span class="sb-num">05</span>
+        <span class="sb-group-text"><b>Python 框架指南</b><i>14 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../backend/01-fastapi-ru-men-yu-asgi.html"><span class="sb-item-num">01</span><span class="sb-item-title">FastAPI 入门与 ASGI</span></a>
+        <a class="sb-item" href="../backend/02-lu-you-yu-qing-qiu-xiang-ying.html"><span class="sb-item-num">02</span><span class="sb-item-title">路由与请求响应</span></a>
+        <a class="sb-item" href="../backend/03-pydantic-shu-ju-jiao-yan-yu-pei-zhi.html"><span class="sb-item-num">03</span><span class="sb-item-title">Pydantic 数据校验与配置</span></a>
+        <a class="sb-item" href="../backend/04-sqlalchemy-yi-bu-yin-qing-yu-hui-hua.html"><span class="sb-item-num">04</span><span class="sb-item-title">SQLAlchemy 异步引擎与会话</span></a>
+        <a class="sb-item" href="../backend/05-orm-jian-mo.html"><span class="sb-item-num">05</span><span class="sb-item-title">ORM 建模</span></a>
+        <a class="sb-item" href="../backend/06-sql-biao-da-shi-yu-shu-ju-cao-zuo.html"><span class="sb-item-num">06</span><span class="sb-item-title">SQL 表达式与数据操作</span></a>
+        <a class="sb-item" href="../backend/07-alembic-shu-ju-qian-yi.html"><span class="sb-item-num">07</span><span class="sb-item-title">Alembic 数据迁移</span></a>
+        <a class="sb-item" href="../backend/08-yi-lai-zhu-ru.html"><span class="sb-item-num">08</span><span class="sb-item-title">依赖注入</span></a>
+        <a class="sb-item" href="../backend/09-tong-yi-yi-chang-chu-li.html"><span class="sb-item-num">09</span><span class="sb-item-title">统一异常处理</span></a>
+        <a class="sb-item" href="../backend/10-zhong-jian-jian.html"><span class="sb-item-num">10</span><span class="sb-item-title">中间件</span></a>
+        <a class="sb-item" href="../backend/11-ren-zheng-yu-jwt.html"><span class="sb-item-num">11</span><span class="sb-item-title">认证与 JWT</span></a>
+        <a class="sb-item" href="../backend/12-pytest-ce-shi.html"><span class="sb-item-num">12</span><span class="sb-item-title">pytest 测试</span></a>
+        <a class="sb-item" href="../backend/13-ri-zhi-loguru.html"><span class="sb-item-num">13</span><span class="sb-item-title">日志 loguru</span></a>
+        <a class="sb-item" href="../backend/14-liu-shi-xiang-ying-sse-yu-websocket.html"><span class="sb-item-num">14</span><span class="sb-item-title">流式响应 SSE 与 WebSocket</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="interview">
+      <a class="sb-group-title" href="../modules/interview.html" data-toggle="interview">
+        <span class="sb-num">06</span>
+        <span class="sb-group-text"><b>面试题库</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../interview/01-llm-yuan-li-pian.html"><span class="sb-item-num">01</span><span class="sb-item-title">LLM 原理篇</span></a>
+        <a class="sb-item" href="../interview/02-rag-yu-jian-suo-pian.html"><span class="sb-item-num">02</span><span class="sb-item-title">RAG 与检索篇</span></a>
+        <a class="sb-item" href="../interview/03-agent-he-xin-pian.html"><span class="sb-item-num">03</span><span class="sb-item-title">Agent 核心篇</span></a>
+        <a class="sb-item" href="../interview/04-langgraph-pian.html"><span class="sb-item-num">04</span><span class="sb-item-title">LangGraph 篇</span></a>
+        <a class="sb-item" href="../interview/05-langchain-pian.html"><span class="sb-item-num">05</span><span class="sb-item-title">LangChain 篇</span></a>
+        <a class="sb-item" href="../interview/06-xi-tong-she-ji-pian.html"><span class="sb-item-num">06</span><span class="sb-item-title">系统设计篇</span></a>
+        <a class="sb-item" href="../interview/07-xiang-mu-shen-wa-pian.html"><span class="sb-item-num">07</span><span class="sb-item-title">项目深挖篇</span></a>
+        <a class="sb-item" href="../interview/08-gu-zhang-pai-cha-pian.html"><span class="sb-item-num">08</span><span class="sb-item-title">故障排查篇</span></a>
+        <a class="sb-item" href="../interview/09-python-ji-chu-pian.html"><span class="sb-item-num">09</span><span class="sb-item-title">Python 基础篇</span></a>
+        <a class="sb-item" href="../interview/10-fastapi-yu-hou-duan-pian.html"><span class="sb-item-num">10</span><span class="sb-item-title">FastAPI 与后端篇</span></a>
+        <a class="sb-item" href="../interview/11-ti-shi-ci-gong-cheng-yu-an-quan-pian.html"><span class="sb-item-num">11</span><span class="sb-item-title">提示词工程与安全篇</span></a>
+        <a class="sb-item" href="../interview/12-mo-xing-xuan-xing-yu-jiang-ben-pian.html"><span class="sb-item-num">12</span><span class="sb-item-title">模型选型与降本篇</span></a>
+      </div>
+    </section>
+  </nav>
+</aside>
+  <main class="main">
+    <header class="topbar">
+      <button class="menu-btn" id="menuBtn" aria-label="目录">☰</button>
+      <div class="crumbs"><a href="../index.html">首页</a><span>/</span><a href="../modules/langchain.html">LangChain 指南</a><span>/</span><span class="cur">检索与RAG</span></div>
+      <div class="topbar-actions">
+        <button class="icon-btn" id="themeBtn" title="切换深浅色" aria-label="切换深浅色">◐</button>
+      </div>
+    </header>
+    <div class="content">
+      <article class="article">
+
+<header class="page-head">
+  <div class="page-kicker">LangChain 指南 · 第 08 章</div>
+  <h1 class="page-title">检索与RAG</h1>
+  <p class="page-desc">本章配套可运行示例：demo/demorag.py。demo 把书屋读书笔记硬编码在文件里，从切割、入库、检索一路跑到组装问答链；本机没启动 Ollama 时会自动降级，只演示检索部分并打印提示。
+
+ 本章你将学会
+
+ …</p>
+  <div class="page-meta">
+    <span>约 36 分钟</span><span>14,546 字</span><span>23 个代码示例</span>
+  </div>
+</header>
+<div class="md"><blockquote>
+<p>本章配套可运行示例：<a href="../code/langchain/08--jian-suo-yu-RAG/demo/demo_rag.py">demo/demo_rag.py</a>。demo 把书屋读书笔记硬编码在文件里，从切割、入库、检索一路跑到组装问答链；本机没启动 Ollama 时会自动降级，只演示检索部分并打印提示。</p>
+<p><strong>本章你将学会</strong></p>
+<ul>
+<li><code>as_retriever()</code>：把第 07 章建好的向量库包装成标准 Runnable，从此检索也能用 <code>|</code> 接进流水线</li>
+<li>检索参数三件套：<code>k</code> 控制取几条、<code>score_threshold</code> 设相似度及格线、<code>filter</code> 按元数据先筛一遍</li>
+<li>MMR 检索：相关性和多样性一手抓，别让同一本书的五段笔记挤满上下文</li>
+<li>组装经典 RAG 链：<code>RunnableParallel</code> 一手递问题、一手取笔记 → 提示词 → 模型 → 解析器</li>
+<li>来源溯源：答案和「它引用了哪些文档」一起返回，答案自带引用列表</li>
+<li>多查询检索：让模型把一个问题改写成多种说法，分头检索再合并去重</li>
+<li>一张检索优化地图：答案不对时，从切块、查询改写到重排，按阶段排查</li>
+</ul>
+</blockquote>
+<p>前两章我们把弹药备齐了：<a href="../langchain/06-wen-dang-jia-zai-yu-qie-ge.html">第 06 章</a>把书屋的读书笔记切成了小块，<a href="../langchain/07-qian-ru-yu-xiang-liang-ku.html">第 07 章</a>把小块变成了向量、存进了 <code>InMemoryVectorStore</code>。但库躺在那里不会自己干活——本章把「检索」和「生成」这两棒焊在一起，组装完整的 RAG（Retrieval-Augmented Generation，检索增强生成）。</p>
+<p><strong>比喻</strong>：大模型平时答题是闭卷考试——课本是训练时背下来的，拾光书屋的借阅规则上周刚改，它不可能知道。RAG 把考试改成开卷：答题前先把相关笔记从书架上抽出来摊在桌上（检索），再让模型照着笔记答题（生成）。模型不需要重新背书，书屋的笔记改了，重灌一次库就生效。</p>
+<p>一条主线看全貌：</p>
+<div class="highlight"><pre><span></span><code>用户问题（str）
+   │
+   ▼
+检索器 retriever ──► 相关文档片段 list[Document]
+   │                        │
+   ▼                        ▼  format_docs：拼成一段文本
+RunnableParallel ──► {"context": 拼好的笔记, "question": 原问题}
+   │
+   ▼
+提示词模板 ──► 模型 ──► 解析器 ──► 答案（顺带把引用的文档也交出来）
+</code></pre></div>
+<p><strong>技术基线</strong>：Python + LangChain 1.x（<code>langchain</code> + <code>langchain-ollama</code>），本地 Ollama 跑 <code>qwen3:4b</code>（对话）和 <code>nomic-embed-text</code>（嵌入）。没装的话回 01 章看环境准备。</p>
+<p>后面所有示例共用一份起步代码（嵌入与入库的细节在第 07 章，这里直接用）：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.documents</span><span class="w"> </span><span class="kn">import</span> <span class="n">Document</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.vectorstores</span><span class="w"> </span><span class="kn">import</span> <span class="n">InMemoryVectorStore</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain_ollama</span><span class="w"> </span><span class="kn">import</span> <span class="n">OllamaEmbeddings</span>
+
+<span class="n">embeddings</span> <span class="o">=</span> <span class="n">OllamaEmbeddings</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="s2">"nomic-embed-text"</span><span class="p">)</span>
+<span class="n">vectorstore</span> <span class="o">=</span> <span class="n">InMemoryVectorStore</span><span class="p">(</span><span class="n">embedding</span><span class="o">=</span><span class="n">embeddings</span><span class="p">)</span>  <span class="c1"># 07 章的成果</span>
+
+<span class="n">notes</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">Document</span><span class="p">(</span>
+        <span class="n">page_content</span><span class="o">=</span><span class="s2">"《夜航船》是明代张岱编的类书式笔记，条目短小，适合通勤时随手翻几页。"</span><span class="p">,</span>
+        <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">"book"</span><span class="p">:</span> <span class="s2">"夜航船"</span><span class="p">,</span> <span class="s2">"category"</span><span class="p">:</span> <span class="s2">"古籍"</span><span class="p">},</span>
+    <span class="p">),</span>
+    <span class="n">Document</span><span class="p">(</span>
+        <span class="n">page_content</span><span class="o">=</span><span class="s2">"拾光书屋营业时间为每天 10:00 到 22:00。会员一次最多借 5 本书。"</span><span class="p">,</span>
+        <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">"book"</span><span class="p">:</span> <span class="s2">"店内公告"</span><span class="p">,</span> <span class="s2">"category"</span><span class="p">:</span> <span class="s2">"公告"</span><span class="p">},</span>
+    <span class="p">),</span>
+<span class="p">]</span>
+<span class="n">vectorstore</span><span class="o">.</span><span class="n">add_documents</span><span class="p">(</span><span class="n">notes</span><span class="p">)</span>
+</code></pre></div>
+<hr />
+<h2 id="1-as_retriever给向量库发一张-runnable-工牌">1. as_retriever：给向量库发一张 Runnable 工牌</h2>
+<p><strong>比喻</strong>：第 07 章我们直接调 <code>vectorstore.similarity_search(...)</code>，相当于每次都自己冲进书库翻架子上——能用，但书库永远只是个「仓库」。<code>as_retriever()</code> 给它发一张工牌，聘出一位专职「取书员」：你递问题，他还你一沓相关笔记。关键是这位取书员是标准 Runnable——第 03 章学的 <code>|</code> 拼装、invoke/stream/batch 全套驾驶技巧，对他统统有效。</p>
+<p><strong>作用</strong>：把向量库（或任何实现了检索接口的存储）包装成 <code>VectorStoreRetriever</code>——输入一个问题字符串，输出 <code>list[Document]</code>。从此检索环节可以名正言顺地进 LCEL 流水线。</p>
+<p><strong>签名</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">as_retriever</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">VectorStoreRetriever</span><span class="p">:</span> <span class="o">...</span>
+</code></pre></div>
+<p>两个最常用的关键字参数（其余见第 2、3 节）：</p>
+<ul>
+<li><code>search_type</code>：检索策略，<code>"similarity"</code>（默认，纯相似度）、<code>"mmr"</code>、<code>"similarity_score_threshold"</code></li>
+<li><code>search_kwargs</code>：传给底层搜索函数的参数字典，比如 <code>{"k": 3}</code></li>
+</ul>
+<p><strong>最小示例</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="n">retriever</span> <span class="o">=</span> <span class="n">vectorstore</span><span class="o">.</span><span class="n">as_retriever</span><span class="p">(</span><span class="n">search_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">"k"</span><span class="p">:</span> <span class="mi">3</span><span class="p">})</span>
+
+<span class="n">docs</span> <span class="o">=</span> <span class="n">retriever</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span><span class="s2">"哪本书适合通勤时读？"</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">doc</span> <span class="ow">in</span> <span class="n">docs</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"[</span><span class="si">{</span><span class="n">doc</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s1">'book'</span><span class="p">]</span><span class="si">}</span><span class="s2">] </span><span class="si">{</span><span class="n">doc</span><span class="o">.</span><span class="n">page_content</span><span class="p">[:</span><span class="mi">30</span><span class="p">]</span><span class="si">}</span><span class="s2">…"</span><span class="p">)</span>
+</code></pre></div>
+<p>拿到 Runnable 工牌意味着第 04 章的技巧直接复用：<code>retriever.batch(["问题一", "问题二"])</code> 一次查多个问题；<code>retriever | format_docs</code> 把它接进管道（第 4 节）。</p>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li><strong>输入是字符串，不是 dict</strong>。<code>retriever.invoke("问题")</code> 才对；传 <code>{"question": "问题"}</code> 会在嵌入那一步炸掉——<code>BaseRetriever</code> 的输入类型就是 <code>str</code>，想在链里喂 dict 得先拆出问题字段（第 5 节末尾有变体写法）。</li>
+<li><strong>输出是 <code>list[Document]</code>，不是拼好的文本</strong>。直接把 retriever 接在提示词模板前面，模板变量里灌进的是 Document 列表——中间必须有个 <code>format_docs</code> 转成字符串（第 4 节）。</li>
+<li><code>as_retriever()</code> 返回的是向量库的「视图」而不是拷贝：库里后续 <code>add_documents</code> 新增的内容，同一个 retriever 立刻能检到，不需要重新包一次。</li>
+</ul>
+<hr />
+<h2 id="2-检索参数三件套kscore_thresholdfilter">2. 检索参数三件套：k、score_threshold、filter</h2>
+<p><strong>比喻</strong>：给取书员交代任务的三个口头禅——「一次抱几本」（k）、「分数不够的别上桌」（score_threshold）、「只在小说区找」（filter）。三个都写在 <code>search_kwargs</code> 里。</p>
+<h3 id="21-k一次抱几本">2.1 k：一次抱几本</h3>
+<div class="highlight"><pre><span></span><code><span class="n">retriever</span> <span class="o">=</span> <span class="n">vectorstore</span><span class="o">.</span><span class="n">as_retriever</span><span class="p">(</span><span class="n">search_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">"k"</span><span class="p">:</span> <span class="mi">6</span><span class="p">})</span>
+</code></pre></div>
+<p><code>k</code> 决定每次检索返回几条文档，默认 4。它是一根两头都不讨好的撬棍：</p>
+<ul>
+<li>调太小：上下文缺料，答案缺胳膊少腿——该引用的公告没被捞上来；</li>
+<li>调太大：无关内容挤进提示词，把模型带偏（噪声稀释重点），token 开销也跟着涨。</li>
+</ul>
+<p>经验值：从 3~5 起步，打印检索结果肉眼看质量，再决定往哪边调。</p>
+<h3 id="22-score_threshold设一条相似度及格线">2.2 score_threshold：设一条相似度及格线</h3>
+<p>每条候选都有一个相似度分数。<code>score_threshold</code> 的意思是：低于这条及格线的，别进答案。</p>
+<div class="highlight"><pre><span></span><code><span class="n">retriever</span> <span class="o">=</span> <span class="n">vectorstore</span><span class="o">.</span><span class="n">as_retriever</span><span class="p">(</span>
+    <span class="n">search_type</span><span class="o">=</span><span class="s2">"similarity_score_threshold"</span><span class="p">,</span>
+    <span class="n">search_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">"k"</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="s2">"score_threshold"</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">},</span>
+<span class="p">)</span>
+</code></pre></div>
+<p><strong>注意一个大坑（实测）</strong>：这条路的底层调用是「把分数归一化到 0~1 再过滤」，而 <code>InMemoryVectorStore</code> 没有实现归一化函数，直接跑会抛 <code>NotImplementedError</code>。两条出路：</p>
+<ol>
+<li>换支持 relevance score 的向量库（FAISS、Chroma 等）；</li>
+<li>手写阈值过滤——用 <code>similarity_search_with_score</code> 拿到 <code>(文档, 分数)</code> 对，自己筛。书屋的真实工程就是这么干的：</li>
+</ol>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">retrieve_above_threshold</span><span class="p">(</span>
+    <span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">6</span><span class="p">,</span> <span class="n">threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.4</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Document</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""先多抓一些候选，再按分数过滤。"""</span>
+    <span class="n">hits</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="n">Document</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="n">vectorstore</span><span class="o">.</span><span class="n">similarity_search_with_score</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">doc</span> <span class="k">for</span> <span class="n">doc</span><span class="p">,</span> <span class="n">score</span> <span class="ow">in</span> <span class="n">hits</span> <span class="k">if</span> <span class="n">score</span> <span class="o">&gt;=</span> <span class="n">threshold</span><span class="p">]</span>
+</code></pre></div>
+<p>更麻烦的是，<strong>分数刻度没有行业标准</strong>：<code>InMemoryVectorStore</code> 返回的是余弦相似度（越大越相关），有的库返回的是距离（越小越好）；不同嵌入模型的分数分布也各不相同——<code>nomic-embed-text</code> 对相关中文文本的余弦一般在 0.4~0.7 一带。所以阈值别抄别人的数字，先看自己语料的分数分布：</p>
+<div class="highlight"><pre><span></span><code><span class="k">for</span> <span class="n">doc</span><span class="p">,</span> <span class="n">score</span> <span class="ow">in</span> <span class="n">vectorstore</span><span class="o">.</span><span class="n">similarity_search_with_score</span><span class="p">(</span><span class="s2">"营业时间是几点"</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">score</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">  [</span><span class="si">{</span><span class="n">doc</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s1">'book'</span><span class="p">]</span><span class="si">}</span><span class="s2">]"</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="23-filter先锁定书架再往里找">2.3 filter：先锁定书架，再往里找</h3>
+<p>入库时给每条文档打的 <code>metadata</code>，检索时就能用来预先筛掉整片无关区域：</p>
+<div class="highlight"><pre><span></span><code><span class="n">retriever</span> <span class="o">=</span> <span class="n">vectorstore</span><span class="o">.</span><span class="n">as_retriever</span><span class="p">(</span>
+    <span class="n">search_kwargs</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">"k"</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+        <span class="s2">"filter"</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">doc</span><span class="p">:</span> <span class="n">doc</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"category"</span><span class="p">)</span> <span class="o">==</span> <span class="s2">"小说"</span><span class="p">,</span>
+    <span class="p">}</span>
+<span class="p">)</span>
+<span class="n">docs</span> <span class="o">=</span> <span class="n">retriever</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span><span class="s2">"一个晚上能读完的故事"</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>又一个移植大坑（实测）</strong>：<code>InMemoryVectorStore</code> 的 <code>filter</code> 吃的是<strong>函数</strong> <code>Callable[[Document], bool]</code>，不是 dict！传 <code>{"category": "小说"}</code> 会报 <code>TypeError: 'dict' object is not callable</code>。而 FAISS、Chroma 这类库恰恰相反，吃的是 dict。同一份代码换向量库，filter 的写法必须跟着改——这是 RAG 代码迁移时最阴的一脚。</p>
+<p>filter 还有一个高频用途——多文档问答：书屋支持读者上传多份笔记，每份入库时把「原始文件名」写进 metadata，之后 <code>filter</code> 指定文件名，就实现了「只在这一篇里问答」。</p>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li><code>score_threshold</code> 只有搭配 <code>search_type="similarity_score_threshold"</code> 才生效，光在 <code>search_kwargs</code> 里塞一个阈值参数，走默认 similarity 检索时会被无视。</li>
+<li>三个参数都住在 <code>search_kwargs</code> 这个 dict 里，别把它们平铺在 <code>as_retriever()</code> 的参数位上。</li>
+<li>filter 的形态跟着向量库走（函数 or dict），换库必查文档，报错信息不一定能一眼看出是 filter 的锅。</li>
+</ul>
+<hr />
+<h2 id="3-mmr既要最相关也要不重样">3. MMR：既要最相关，也要不重样</h2>
+<p><strong>比喻</strong>：自助餐打菜。普通相似度检索是「哪盘最像我最爱的那口就拿哪盘」，结果端回来五碗几乎一样的汤；《山月记》的笔记被切成五块后，普通检索很可能把最相似的前四块全给了它，翻来覆去都是李征变虎，真正该上桌的《城南旧事》一块都挤不进来。MMR（Maximal Marginal Relevance，最大边际相关性）换了个打法：先拿最对味的那盘，之后每一次伸手前都问自己两个问题——这盘好不好吃（相关性）？跟我已经端的是不是同一道菜（多样性）？</p>
+<p><strong>作用</strong>：在「每条都尽量相关」和「彼此尽量不重复」之间找平衡，让有限的上下文窗口装下更宽的信息面。</p>
+<p><strong>签名</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="n">retriever</span> <span class="o">=</span> <span class="n">vectorstore</span><span class="o">.</span><span class="n">as_retriever</span><span class="p">(</span>
+    <span class="n">search_type</span><span class="o">=</span><span class="s2">"mmr"</span><span class="p">,</span>
+    <span class="n">search_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">"k"</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="s2">"fetch_k"</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span> <span class="s2">"lambda_mult"</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">},</span>
+<span class="p">)</span>
+</code></pre></div>
+<ul>
+<li><code>fetch_k</code>：先海选多少条候选（默认 20），MMR 从这个池子里精挑</li>
+<li><code>lambda_mult</code>：天平上的砝码，<code>1.0</code> 只看相关性（退化成普通检索），<code>0.0</code> 只求多样性，默认 <code>0.5</code> 居中</li>
+</ul>
+<p><strong>最小示例</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="n">plain</span> <span class="o">=</span> <span class="n">vectorstore</span><span class="o">.</span><span class="n">as_retriever</span><span class="p">(</span><span class="n">search_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">"k"</span><span class="p">:</span> <span class="mi">4</span><span class="p">})</span>
+<span class="n">mmr</span> <span class="o">=</span> <span class="n">vectorstore</span><span class="o">.</span><span class="n">as_retriever</span><span class="p">(</span><span class="n">search_type</span><span class="o">=</span><span class="s2">"mmr"</span><span class="p">,</span> <span class="n">search_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">"k"</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="s2">"fetch_k"</span><span class="p">:</span> <span class="mi">20</span><span class="p">})</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">"普通检索："</span><span class="p">,</span> <span class="p">[</span><span class="n">d</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">"book"</span><span class="p">]</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">plain</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span><span class="s2">"变虎的故事和老北京的童年"</span><span class="p">)])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"MMR 检索："</span><span class="p">,</span> <span class="p">[</span><span class="n">d</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">"book"</span><span class="p">]</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">mmr</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span><span class="s2">"变虎的故事和老北京的童年"</span><span class="p">)])</span>
+<span class="c1"># 笔记块主题重复时，MMR 结果里的书名明显更分散</span>
+</code></pre></div>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li><code>fetch_k</code> 必须 ≥ <code>k</code>，候选池比要取的数量还小，MMR 就无从「挑」起。</li>
+<li><code>lambda_mult</code> 一味压向多样性，可能把最相关的那条挤出去——「答案要准」的场景别把砝码全押多样性。</li>
+<li>MMR 是向量库端的能力，要求底层实现 <code>max_marginal_relevance_search</code>（<code>InMemoryVectorStore</code> 支持）；不支持的向量库上设 <code>search_type="mmr"</code> 会直接报错。</li>
+</ul>
+<hr />
+<h2 id="4-rag-链组装retriever-format_docs-prompt-model-parser">4. RAG 链组装：retriever | format_docs → prompt | model | parser</h2>
+<p><strong>比喻</strong>：前面攒齐了灶台、锅和食材，这一节点火炒菜。先看不用 LCEL 的「散装版」，看清它别扭在哪：</p>
+<div class="highlight"><pre><span></span><code><span class="n">question</span> <span class="o">=</span> <span class="s2">"书屋的营业时间是几点？"</span>
+
+<span class="n">docs</span> <span class="o">=</span> <span class="n">retriever</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span><span class="n">question</span><span class="p">)</span>        <span class="c1"># 第 1 步：检索</span>
+<span class="n">context</span> <span class="o">=</span> <span class="n">format_docs</span><span class="p">(</span><span class="n">docs</span><span class="p">)</span>              <span class="c1"># 第 2 步：拼上下文</span>
+
+<span class="n">qa_chain</span> <span class="o">=</span> <span class="n">prompt</span> <span class="o">|</span> <span class="n">model</span> <span class="o">|</span> <span class="n">StrOutputParser</span><span class="p">()</span>
+<span class="n">answer</span> <span class="o">=</span> <span class="n">qa_chain</span><span class="o">.</span><span class="n">invoke</span><span class="p">({</span><span class="s2">"context"</span><span class="p">:</span> <span class="n">context</span><span class="p">,</span> <span class="s2">"question"</span><span class="p">:</span> <span class="n">question</span><span class="p">})</span>  <span class="c1"># 第 3 步：生成</span>
+</code></pre></div>
+<p>散装版能跑，但「检索」游离在链外：整条链没法统一 stream/batch，第 12 章的回调观测也照不见检索这一环。经典 LCEL 结构把它焊成一体：</p>
+<p><strong>作用</strong>：把「检索 → 拼上下文 → 填模板 → 生成 → 解析」装进一条链，一个 <code>invoke</code> 走完全程，并且整体获得流式、批量、回调、可观测能力。</p>
+<p><strong>签名</strong>（结构等式）：</p>
+<div class="highlight"><pre><span></span><code><span class="n">rag_chain</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">RunnableParallel</span><span class="p">(</span>
+        <span class="n">context</span><span class="o">=</span><span class="n">retriever</span> <span class="o">|</span> <span class="n">format_docs</span><span class="p">,</span>   <span class="c1"># 一手取笔记</span>
+        <span class="n">question</span><span class="o">=</span><span class="n">RunnablePassthrough</span><span class="p">(),</span>    <span class="c1"># 一手递问题</span>
+    <span class="p">)</span>
+    <span class="o">|</span> <span class="n">prompt</span>                               <span class="c1"># 填模板</span>
+    <span class="o">|</span> <span class="n">model</span>                                <span class="c1"># 生成</span>
+    <span class="o">|</span> <span class="n">StrOutputParser</span><span class="p">()</span>                    <span class="c1"># 取出纯文本</span>
+<span class="p">)</span>
+</code></pre></div>
+<p><strong>最小示例</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.documents</span><span class="w"> </span><span class="kn">import</span> <span class="n">Document</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.output_parsers</span><span class="w"> </span><span class="kn">import</span> <span class="n">StrOutputParser</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.prompts</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChatPromptTemplate</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.runnables</span><span class="w"> </span><span class="kn">import</span> <span class="n">RunnableParallel</span><span class="p">,</span> <span class="n">RunnablePassthrough</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain_ollama</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChatOllama</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">format_docs</span><span class="p">(</span><span class="n">docs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Document</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""把文档列表拼成一段纯文本，塞进模板变量。"""</span>
+    <span class="k">return</span> <span class="s2">"</span><span class="se">\n\n</span><span class="s2">"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">doc</span><span class="o">.</span><span class="n">page_content</span> <span class="k">for</span> <span class="n">doc</span> <span class="ow">in</span> <span class="n">docs</span><span class="p">)</span>
+
+
+<span class="n">prompt</span> <span class="o">=</span> <span class="n">ChatPromptTemplate</span><span class="o">.</span><span class="n">from_messages</span><span class="p">([</span>
+    <span class="p">(</span><span class="s2">"system"</span><span class="p">,</span>
+     <span class="s2">"你是拾光书屋的店员，只依据【书屋笔记】回答读者的问题；"</span>
+     <span class="s2">"笔记里没有的信息就直说「书屋笔记里没有相关内容」，不要编造。</span><span class="se">\n\n</span><span class="s2">"</span>
+     <span class="s2">"【书屋笔记】</span><span class="se">\n</span><span class="si">{context}</span><span class="s2">"</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"human"</span><span class="p">,</span> <span class="s2">"</span><span class="si">{question}</span><span class="s2">"</span><span class="p">),</span>
+<span class="p">])</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">ChatOllama</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="s2">"qwen3:4b"</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">reasoning</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="n">rag_chain</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">RunnableParallel</span><span class="p">(</span>
+        <span class="n">context</span><span class="o">=</span><span class="n">retriever</span> <span class="o">|</span> <span class="n">format_docs</span><span class="p">,</span>
+        <span class="n">question</span><span class="o">=</span><span class="n">RunnablePassthrough</span><span class="p">(),</span>
+    <span class="p">)</span>
+    <span class="o">|</span> <span class="n">prompt</span>
+    <span class="o">|</span> <span class="n">model</span>
+    <span class="o">|</span> <span class="n">StrOutputParser</span><span class="p">()</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">rag_chain</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span><span class="s2">"书屋的营业时间是几点？"</span><span class="p">))</span>
+</code></pre></div>
+<p>每一环的「接口形状」心里要有数：</p>
+<table>
+<thead>
+<tr>
+<th>环节</th>
+<th>吃什么</th>
+<th>吐什么</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>RunnableParallel</td>
+<td>str（问题）</td>
+<td><code>{"context": str, "question": str}</code></td>
+</tr>
+<tr>
+<td>prompt</td>
+<td>上面的 dict</td>
+<td>ChatPromptValue</td>
+</tr>
+<tr>
+<td>model</td>
+<td>ChatPromptValue</td>
+<td>AIMessage</td>
+</tr>
+<tr>
+<td>StrOutputParser</td>
+<td>AIMessage</td>
+<td>str</td>
+</tr>
+</tbody>
+</table>
+<p>提示词里那句「只依据笔记回答，没有就说不知道」是 RAG 提示词的灵魂——它把「编一个像样的答案」挡在门外，是防幻觉的第一道闸。</p>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li><strong><code>retriever</code> 和 <code>prompt</code> 之间必须站一个 <code>format_docs</code></strong>。retriever 吐 <code>list[Document]</code>，模板要字符串，少了这一环，模板变量里就是一堆 Document 对象的字符串表示。</li>
+<li><strong>qwen3 默认会「思考」</strong>，正文里混着 <code>&lt;think&gt;…&lt;/think&gt;</code> 标签。<code>ChatOllama(reasoning=False)</code> 直接关掉；想保留思考过程就用 <code>reasoning=True</code>，思考内容会被收进 <code>additional_kwargs</code>，不污染正文。</li>
+<li>查营业时间这种事实型问答，<code>temperature</code> 放 0 附近——不需要创造性，需要老实。</li>
+<li>链的输入是<strong>裸字符串</strong>（问题本身），不是 <code>{"question": ...}</code>——因为 RunnableParallel 的两个分支拿到的都是这个原始输入（下一节细说）。</li>
+</ul>
+<hr />
+<h2 id="5-runnableparallel一手递问题一手取笔记">5. RunnableParallel：一手递问题，一手取笔记</h2>
+<p>第 4 节的结构里最费解的就是开头那个 <code>RunnableParallel</code>，值得单独拆开看。</p>
+<p><strong>比喻</strong>：前台收发室。读者的问题递进来，收发室复印两份：一份送去书库（检索、拼文本，产出 <code>context</code>），另一份原样放到桌上（产出 <code>question</code>），最后两样一起打包交给模板。没有这层分身，模板的两个变量就凑不齐。</p>
+<p><strong>作用</strong>：让「检索拼上下文」和「原样传递问题」两条支路拿到同一份输入并行处理，输出合并成一个 dict——键名恰好对齐模板变量。</p>
+<p><strong>签名</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="n">setup</span> <span class="o">=</span> <span class="n">RunnableParallel</span><span class="p">(</span>
+    <span class="n">context</span><span class="o">=</span><span class="n">retriever</span> <span class="o">|</span> <span class="n">format_docs</span><span class="p">,</span>   <span class="c1"># 分身一：检索并拼成文本</span>
+    <span class="n">question</span><span class="o">=</span><span class="n">RunnablePassthrough</span><span class="p">(),</span>    <span class="c1"># 分身二：原样放行</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>偷懒写法：直接把 dict 接进管道，框架自动把它转成 <code>RunnableParallel</code>，效果一字不差（第 03 章讲过的规则）：</p>
+<div class="highlight"><pre><span></span><code><span class="n">rag_chain</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="p">{</span><span class="s2">"context"</span><span class="p">:</span> <span class="n">retriever</span> <span class="o">|</span> <span class="n">format_docs</span><span class="p">,</span> <span class="s2">"question"</span><span class="p">:</span> <span class="n">RunnablePassthrough</span><span class="p">()}</span>
+    <span class="o">|</span> <span class="n">prompt</span>
+    <span class="o">|</span> <span class="n">model</span>
+    <span class="o">|</span> <span class="n">StrOutputParser</span><span class="p">()</span>
+<span class="p">)</span>
+</code></pre></div>
+<p><strong>最小示例</strong>（不需要模型，专看数据形状）：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.runnables</span><span class="w"> </span><span class="kn">import</span> <span class="n">RunnableLambda</span><span class="p">,</span> <span class="n">RunnableParallel</span><span class="p">,</span> <span class="n">RunnablePassthrough</span>
+
+<span class="n">fan_out</span> <span class="o">=</span> <span class="n">RunnableParallel</span><span class="p">(</span>
+    <span class="n">context</span><span class="o">=</span><span class="n">RunnableLambda</span><span class="p">(</span><span class="k">lambda</span> <span class="n">q</span><span class="p">:</span> <span class="sa">f</span><span class="s2">"（假设这是检索到的笔记，来自问题：</span><span class="si">{</span><span class="n">q</span><span class="si">}</span><span class="s2">）"</span><span class="p">),</span>
+    <span class="n">question</span><span class="o">=</span><span class="n">RunnablePassthrough</span><span class="p">(),</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">fan_out</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span><span class="s2">"营业时间是几点？"</span><span class="p">))</span>
+<span class="c1"># {'context': '（假设这是检索到的笔记，来自问题：营业时间是几点？）',</span>
+<span class="c1">#  'question': '营业时间是几点？'}</span>
+</code></pre></div>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li><code>RunnablePassthrough()</code> 就是「原样放行」零件，等价于 <code>lambda q: q</code>，但语义更直白——它存在的意义就是占住 question 这条支路。</li>
+<li><strong>键名必须和模板变量严格对齐</strong>。模板里写 <code>{question}</code>，parallel 里写成 <code>ques</code>，模板校验立刻报错，不会静默通过。</li>
+<li>两个分支拿到的是<strong>同一份完整输入</strong>（这里是问题字符串）。如果上游给的是 dict（比如 <code>{"question": ..., "user_id": ...}</code>），context 分支开头接一个取字段的函数即可：</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">operator</span><span class="w"> </span><span class="kn">import</span> <span class="n">itemgetter</span>
+
+<span class="n">setup</span> <span class="o">=</span> <span class="n">RunnableParallel</span><span class="p">(</span>
+    <span class="n">context</span><span class="o">=</span><span class="n">itemgetter</span><span class="p">(</span><span class="s2">"question"</span><span class="p">)</span> <span class="o">|</span> <span class="n">retriever</span> <span class="o">|</span> <span class="n">format_docs</span><span class="p">,</span>
+    <span class="n">question</span><span class="o">=</span><span class="n">itemgetter</span><span class="p">(</span><span class="s2">"question"</span><span class="p">),</span>
+<span class="p">)</span>
+</code></pre></div>
+<ul>
+<li>分支之间不该有先后依赖。真有依赖（比如「先判断要不要检索」）就别硬并行，串行或用条件路由（第 03 章）。</li>
+</ul>
+<hr />
+<h2 id="6-来源溯源让答案自带引用列表">6. 来源溯源：让答案自带引用列表</h2>
+<p><strong>比喻</strong>：论文末尾的引用文献页。没有它，答案再漂亮也只是一段「来路不明的好话」；有了它，读者（和你自己）能一键核对模型有没有瞎编。对书屋来说，这还是「展示多文档上传价值」的关键——答案旁边列出「引用了哪几篇笔记」，读者才敢信。</p>
+<p><strong>作用</strong>：把「被检索到的原始 Document 列表」和「生成的答案」一起返回。做法：<code>RunnableParallel</code> 的 context 分支<strong>不做</strong> format_docs、保留 Document 列表，再用 <code>.assign()</code> 在旁边并行生成答案——答案子链内部才把 context 拼成文本。</p>
+<p><strong>签名</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="n">rag_with_sources</span> <span class="o">=</span> <span class="n">RunnableParallel</span><span class="p">(</span>
+    <span class="n">context</span><span class="o">=</span><span class="n">retriever</span><span class="p">,</span>               <span class="c1"># 保留原始 Document 列表</span>
+    <span class="n">question</span><span class="o">=</span><span class="n">RunnablePassthrough</span><span class="p">(),</span>
+<span class="p">)</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span><span class="n">answer</span><span class="o">=</span><span class="n">answer_chain</span><span class="p">)</span>        <span class="c1"># 拿着上面的 dict 算答案</span>
+</code></pre></div>
+<p><strong>最小示例</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="n">answer_chain</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">RunnablePassthrough</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span><span class="n">context</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">format_docs</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="s2">"context"</span><span class="p">]))</span>
+    <span class="o">|</span> <span class="n">prompt</span>
+    <span class="o">|</span> <span class="n">model</span>
+    <span class="o">|</span> <span class="n">StrOutputParser</span><span class="p">()</span>
+<span class="p">)</span>
+
+<span class="n">rag_with_sources</span> <span class="o">=</span> <span class="n">RunnableParallel</span><span class="p">(</span>
+    <span class="n">context</span><span class="o">=</span><span class="n">retriever</span><span class="p">,</span>
+    <span class="n">question</span><span class="o">=</span><span class="n">RunnablePassthrough</span><span class="p">(),</span>
+<span class="p">)</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span><span class="n">answer</span><span class="o">=</span><span class="n">answer_chain</span><span class="p">)</span>
+
+<span class="n">result</span> <span class="o">=</span> <span class="n">rag_with_sources</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span><span class="s2">"会员借书有什么限制？"</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s2">"answer"</span><span class="p">])</span>                     <span class="c1"># 答案</span>
+<span class="k">for</span> <span class="n">doc</span> <span class="ow">in</span> <span class="n">result</span><span class="p">[</span><span class="s2">"context"</span><span class="p">]:</span>               <span class="c1"># 引用列表</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"出处：[</span><span class="si">{</span><span class="n">doc</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s1">'book'</span><span class="p">]</span><span class="si">}</span><span class="s2">] </span><span class="si">{</span><span class="n">doc</span><span class="o">.</span><span class="n">page_content</span><span class="p">[:</span><span class="mi">30</span><span class="p">]</span><span class="si">}</span><span class="s2">…"</span><span class="p">)</span>
+</code></pre></div>
+<p><code>result</code> 的形状：</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+    <span class="s2">"context"</span><span class="p">:</span> <span class="p">[</span><span class="n">Document</span><span class="p">(</span><span class="o">...</span><span class="p">),</span> <span class="n">Document</span><span class="p">(</span><span class="o">...</span><span class="p">)],</span>  <span class="c1"># 原始文档，溯源用</span>
+    <span class="s2">"question"</span><span class="p">:</span> <span class="s2">"会员借书有什么限制？"</span><span class="p">,</span>
+    <span class="s2">"answer"</span><span class="p">:</span> <span class="s2">"会员一次最多可借 5 本书，借期 14 天……"</span><span class="p">,</span>  <span class="c1"># 纯文本答案</span>
+<span class="p">}</span>
+</code></pre></div>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li><strong>context 分支千万别接 <code>format_docs</code></strong>——接了，回来的就是字符串，出处信息（metadata、原文）全没了。拼接动作挪进 answer_chain 里做。</li>
+<li><code>.assign()</code> 里那个子链拿到的输入，是 <code>RunnableParallel</code> 输出的完整 dict（含 <code>context</code> 和 <code>question</code> 两个键），<code>RunnablePassthrough.assign(context=...)</code> 在保留原字段的基础上覆写 context。</li>
+<li><strong>检索为空的兜底</strong>：context 是空列表时链照跑，模型只能按提示词回答「笔记里没有」。更讲究的做法是先判 <code>len(docs) == 0</code>，空了就切换到一条不带笔记约束的「自由问答链」——书屋的完整工程里就是这么设计双链路的：有笔记走「依据文档回答」，没笔记走「自由回答」，两条链用的是两套提示词。</li>
+<li>多文档上传场景，入库时把「上传文件名」写进每块的 metadata（<code>{"source": "夜航船笔记.txt", ...}</code>），溯源时把文件名渲染进引用列表——读者一看就知道答案出自自己上传的哪份文件。</li>
+</ul>
+<hr />
+<h2 id="7-多查询检索一个问题换几种问法">7. 多查询检索：一个问题，换几种问法</h2>
+<p><strong>比喻</strong>：图书馆问询台。你说「李征最后怎么了」，馆员不光按字面查一遍，还会顺手用「李征 结局」「变虎 诗人」再查两遍——同一件事的不同说法，命中不同书架上的卡片。这就是多查询检索（multi-query）的全部直觉。</p>
+<p>先补一个度量词：<strong>召回率（recall）= 检索到的相关内容 / 实际存在的相关内容总数</strong>。实际相关 10 条、只捞上来 6 条，召回率 60%。多查询检索治的就是「单一措辞导致召回不足」：读者问「李征最后怎么了」，笔记里写的是「诗人李征最终化作猛虎」，字面重叠太少，一次检索可能漏掉——那就把问题改写成 N 种说法，每种各检一遍，合并去重，网撒开了，漏网之鱼自然少。</p>
+<p><strong>手写版</strong>（思路本身只有十几行，值得亲手写一次）：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.prompts</span><span class="w"> </span><span class="kn">import</span> <span class="n">PromptTemplate</span>
+
+<span class="n">rewrite_prompt</span> <span class="o">=</span> <span class="n">PromptTemplate</span><span class="o">.</span><span class="n">from_template</span><span class="p">(</span>
+    <span class="s2">"你是拾光书屋的检索助手。为了在书屋笔记里找到更多相关内容，"</span>
+    <span class="s2">"把读者的问题改写成 3 种不同的说法：换角度、换用词，但不要改变原意。"</span>
+    <span class="s2">"每行一个，只输出改写后的问题，不要编号、不要解释。</span><span class="se">\n</span><span class="s2">"</span>
+    <span class="s2">"问题：</span><span class="si">{question}</span><span class="s2">"</span>
+<span class="p">)</span>
+<span class="n">rewriter</span> <span class="o">=</span> <span class="n">rewrite_prompt</span> <span class="o">|</span> <span class="n">model</span> <span class="o">|</span> <span class="n">StrOutputParser</span><span class="p">()</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">multi_retrieve</span><span class="p">(</span><span class="n">question</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">per_query_k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Document</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""多路检索 + 去重合并。"""</span>
+    <span class="n">raw</span> <span class="o">=</span> <span class="n">rewriter</span><span class="o">.</span><span class="n">invoke</span><span class="p">({</span><span class="s2">"question"</span><span class="p">:</span> <span class="n">question</span><span class="p">})</span>
+    <span class="n">variants</span> <span class="o">=</span> <span class="p">[</span><span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">raw</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span> <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()]</span>
+
+    <span class="n">seen</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="n">merged</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Document</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">q</span> <span class="ow">in</span> <span class="p">[</span><span class="n">question</span><span class="p">,</span> <span class="o">*</span><span class="n">variants</span><span class="p">]:</span>        <span class="c1"># 原问题也参加检索</span>
+        <span class="k">for</span> <span class="n">doc</span> <span class="ow">in</span> <span class="n">retriever</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span><span class="n">q</span><span class="p">)[:</span><span class="n">per_query_k</span><span class="p">]:</span>
+            <span class="n">key</span> <span class="o">=</span> <span class="n">doc</span><span class="o">.</span><span class="n">id</span> <span class="ow">or</span> <span class="n">doc</span><span class="o">.</span><span class="n">page_content</span>  <span class="c1"># 去重键：优先用文档 id</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">seen</span><span class="p">:</span>
+                <span class="n">seen</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+                <span class="n">merged</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">doc</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">merged</span>
+</code></pre></div>
+<p><strong>官方成品</strong>：<code>MultiQueryRetriever</code>——干的就是上面这些事：调用模型改写、逐条检索、合并去重。注意它在 LangChain 1.x 里搬了家，住进了 <code>langchain-classic</code> 包：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain_classic.retrievers</span><span class="w"> </span><span class="kn">import</span> <span class="n">MultiQueryRetriever</span>
+
+<span class="c1"># 想在控制台看到模型改写出了哪些说法，开这个 logger 的 INFO 级别</span>
+<span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">"langchain_classic.retrievers.multi_query"</span><span class="p">)</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
+
+<span class="n">mq_retriever</span> <span class="o">=</span> <span class="n">MultiQueryRetriever</span><span class="o">.</span><span class="n">from_llm</span><span class="p">(</span>
+    <span class="n">retriever</span><span class="o">=</span><span class="n">retriever</span><span class="p">,</span>   <span class="c1"># 底层的单查询检索器</span>
+    <span class="n">llm</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>             <span class="c1"># 负责改写的模型</span>
+<span class="p">)</span>
+<span class="n">docs</span> <span class="o">=</span> <span class="n">mq_retriever</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span><span class="s2">"李征最后怎么了"</span><span class="p">)</span>
+</code></pre></div>
+<p>几个常用开关：</p>
+<ul>
+<li><strong>看改写日志</strong>：开 INFO 日志（或构造时传 <code>verbose=True</code>），控制台会打印 "Generated queries: ..."——对应其他语言版本里 <code>verbose: true</code> 的效果；</li>
+<li><strong>原问题也参战</strong>：<code>MultiQueryRetriever.from_llm(retriever=..., llm=..., include_original=True)</code>；</li>
+<li><strong>改写条数</strong>：没有现成参数（其他语言版本的 <code>queryCount</code> 在 Python 侧没有对应物），想改成 5 条就传自定义 <code>prompt=</code>，把提示词里的「3 种」改成「5 种」。</li>
+</ul>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li><strong>成本翻倍</strong>：改写是一次模型调用，N 路检索是 N 次向量查询。对延迟敏感的流式问答场景要先掂量。</li>
+<li><strong>改写跑偏就是灾难</strong>：改写悄悄变了原意，检回来的全是歪瓜裂枣。提示词里那句「不要改变原意」必须写死。</li>
+<li><strong>去重键</strong>：<code>InMemoryVectorStore</code> 返回的 Document 自带 <code>id</code>，直接用；换没有 id 的库就用 <code>(doc.metadata, doc.page_content)</code> 当键。</li>
+<li>旧资料里的 <code>from langchain.retrievers import MultiQueryRetriever</code> 在 1.x 会报 <code>ModuleNotFoundError</code>——它现在的家是 <code>langchain_classic.retrievers</code>，装包用 <code>pip install langchain-classic</code>。</li>
+</ul>
+<hr />
+<h2 id="8-检索优化地图从切块调优到重排">8. 检索优化地图：从切块调优到重排</h2>
+<p>RAG 答得不好，别第一时间去改提示词——多数时候是「检索」这一棒掉链子了。按流水线阶段排一张排查地图：</p>
+<table>
+<thead>
+<tr>
+<th>阶段</th>
+<th>手段</th>
+<th>一句话说明</th>
+<th>去哪学</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>建库·索引前</td>
+<td>切块调优</td>
+<td><code>chunk_size</code> / <code>chunk_overlap</code> 取舍；按文体选切割器（Markdown 笔记就别用纯文本切割器）</td>
+<td><a href="../langchain/06-wen-dang-jia-zai-yu-qie-ge.html">第 06 章</a></td>
+</tr>
+<tr>
+<td>建库·索引时</td>
+<td>metadata 设计</td>
+<td>book / category / 上传文件名打全，过滤和溯源都靠它</td>
+<td>本章 2.3、6</td>
+</tr>
+<tr>
+<td>查询·检索前</td>
+<td>查询改写与扩充</td>
+<td>多查询（本章 7）、同义词扩充（「项目合同」→ 合同模板 / 合作协议）</td>
+<td>本章 7</td>
+</tr>
+<tr>
+<td>检索·当下</td>
+<td>参数调校</td>
+<td>k、分数阈值、filter、MMR</td>
+<td>本章 2、3</td>
+</tr>
+<tr>
+<td>检索后</td>
+<td>压缩与重排</td>
+<td>先大 k 抓宽，再精选头部喂给模型</td>
+<td>本节</td>
+</tr>
+<tr>
+<td>生成</td>
+<td>提示词与兜底</td>
+<td>「只依据笔记」+ 检索为空切换自由问答链</td>
+<td>本章 4、6</td>
+</tr>
+</tbody>
+</table>
+<p>两个高频进阶件（都在 <code>langchain-classic</code>，了解思路即可，不必急着上）：</p>
+<ul>
+<li><strong>ContextualCompressionRetriever + LLMChainExtractor</strong>：检索后处理——候选文档先让模型「只抽出与问题相关的句子」，再交给主链。省 token、聚焦，代价是每次检索多一次模型调用。</li>
+<li><strong>重排（rerank）</strong>：两段式选人——召回阶段讲究「快而全」（向量粗筛，大 k），精排阶段讲究「准」（用更贵的打分器对候选重新排序，取头部）。像选秀：海选看简历（向量相似度），面试看真本事（重排模型）。</li>
+</ul>
+<p>排查口诀：<strong>答案不对，先看检索对了没有</strong>——把检索结果打印出来肉眼看；检索结果是对的、答案还不对，再回头查提示词和模型。顺着这张地图，90% 的「RAG 答非所问」都能定位到具体阶段。</p>
+<hr />
+<h2 id="9-本章小结">9. 本章小结</h2>
+<p>一张速查表带走本章：</p>
+<table>
+<thead>
+<tr>
+<th>需求</th>
+<th>用法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>向量库接入 LCEL</td>
+<td><code>vectorstore.as_retriever(...)</code></td>
+</tr>
+<tr>
+<td>取前 N 条</td>
+<td><code>search_kwargs={"k": N}</code></td>
+</tr>
+<tr>
+<td>按分数过滤</td>
+<td><code>similarity_search_with_score</code> + 手写阈值（InMemory）；支持的库可用 <code>search_type="similarity_score_threshold"</code></td>
+</tr>
+<tr>
+<td>按元数据过滤</td>
+<td><code>search_kwargs={"filter": ...}</code>（InMemory 传函数，FAISS/Chroma 传 dict）</td>
+</tr>
+<tr>
+<td>兼顾相关与多样</td>
+<td><code>search_type="mmr"</code> + <code>fetch_k</code> / <code>lambda_mult</code></td>
+</tr>
+<tr>
+<td>经典 RAG 链</td>
+<td><code>RunnableParallel(context=retriever \| format_docs, question=RunnablePassthrough()) \| prompt \| model \| parser</code></td>
+</tr>
+<tr>
+<td>答案带出处</td>
+<td>context 分支保留 Document 列表，<code>.assign(answer=...)</code> 并行生成</td>
+</tr>
+<tr>
+<td>多查询检索</td>
+<td>手写改写链，或 <code>langchain_classic</code> 的 <code>MultiQueryRetriever.from_llm()</code></td>
+</tr>
+</tbody>
+</table>
+<p>配套 demo（本章 <code>demo/</code> 目录）：</p>
+<ul>
+<li><code>demo_rag.py</code>：单文件完整 RAG——书屋读书笔记硬编码在文件里，切割 → 嵌入 → 入库 → 检索参数演示 → 组装问答链 → 来源溯源 → 多查询检索，一条龙跑通。<strong>需要本机 Ollama 已启动并拉取 <code>qwen3:4b</code> 和 <code>nomic-embed-text</code></strong>；连不上时自动降级为「只演示检索部分」，文件头部注释写了全部前提。</li>
+</ul>
+<p>到这里，拾光书屋的「知识库问答」已经完整落地。但还有一个明显的缺口：读者每次提问都是孤立的——「接着刚才说的，那借期呢？」会难倒它，因为链不记得上一轮聊过什么。下一章我们给对话装上记忆。</p>
+<p><strong>下一章</strong>：<a href="../langchain/09-dui-hua-ji-yi.html">09 · 对话记忆</a></p></div>
+
+      </article>
+<nav class="pager"><a class="pg-card pg-prev" href="../langchain/07-qian-ru-yu-xiang-liang-ku.html"><span class="pg-label">← 上一篇</span><span class="pg-title">嵌入与向量库</span><span class="pg-mod">LangChain 指南</span></a><a class="pg-card pg-next" href="../langchain/09-dui-hua-ji-yi.html"><span class="pg-label">下一篇 →</span><span class="pg-title">对话记忆</span><span class="pg-mod">LangChain 指南</span></a></nav>
+    </div>
+    <footer class="foot">
+      <span>深栈 DeepStack · AI Agent 工程师转型训练营配套文档</span>
+    </footer>
+  </main>
+<nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#1-as_retriever给向量库发一张-runnable-工牌">1. as_retriever：给向量库发一张 Runnable 工牌</a><a class="toc-link toc-h2" href="#2-检索参数三件套kscore_thresholdfilter">2. 检索参数三件套：k、score_threshold、filter</a><a class="toc-link toc-h3" href="#21-k一次抱几本">2.1 k：一次抱几本</a><a class="toc-link toc-h3" href="#22-score_threshold设一条相似度及格线">2.2 score_threshold：设一条相似度及格线</a><a class="toc-link toc-h3" href="#23-filter先锁定书架再往里找">2.3 filter：先锁定书架，再往里找</a><a class="toc-link toc-h2" href="#3-mmr既要最相关也要不重样">3. MMR：既要最相关，也要不重样</a><a class="toc-link toc-h2" href="#4-rag-链组装retriever-format_docs-prompt-model-parser">4. RAG 链组装：retriever | format_docs → prompt | model | parser</a><a class="toc-link toc-h2" href="#5-runnableparallel一手递问题一手取笔记">5. RunnableParallel：一手递问题，一手取笔记</a><a class="toc-link toc-h2" href="#6-来源溯源让答案自带引用列表">6. 来源溯源：让答案自带引用列表</a><a class="toc-link toc-h2" href="#7-多查询检索一个问题换几种问法">7. 多查询检索：一个问题，换几种问法</a><a class="toc-link toc-h2" href="#8-检索优化地图从切块调优到重排">8. 检索优化地图：从切块调优到重排</a><a class="toc-link toc-h2" href="#9-本章小结">9. 本章小结</a></nav>
+</div>
+<div class="sb-mask" id="sbMask"></div>
+<script src="../assets/app.js"></script>
+</body>
+</html>

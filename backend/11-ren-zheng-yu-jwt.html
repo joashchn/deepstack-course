@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>11 · 认证与 JWT · 深栈 DeepStack 课程文档</title>
+<meta name="description" content="10 章收尾时留了句话：中间件守住了「请求进门的必经之路」，下一关要在这条路上再设一道关卡——你是谁？你的令牌呢？这一章就把这道关卡立起来。
+
+ 墨集 inkhub 要开放作者投稿了：作者注册账号、登录、领凭证、写文章…">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%23d9c39a' text-anchor='middle'%3EDS%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+<div class="progress" id="progress"></div>
+
+<div class="layout">
+<aside class="sidebar" id="sidebar">
+  <div class="sb-head">
+    <a class="brand" href="../index.html">
+      <span class="brand-mark">DS</span>
+      <span class="brand-text"><b>深栈 DeepStack</b><i>AI Agent 工程师转型训练营</i></span>
+    </a>
+    <button class="sb-close" id="sbClose" aria-label="关闭目录">✕</button>
+  </div>
+  <div class="sb-search"><input type="search" id="searchInput" placeholder="搜索 123 篇文档… ( / )" autocomplete="off">
+    <div class="sb-results" id="searchResults"></div></div>
+  <nav class="sb-nav">
+    <section class="sb-group" data-mod="python">
+      <a class="sb-group-title" href="../modules/python.html" data-toggle="python">
+        <span class="sb-num">01</span>
+        <span class="sb-group-text"><b>Python 与数据实践</b><i>31 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../python/01-huan-jing-da-jian-yu-ban-ben-guan-li.html"><span class="sb-item-num">01</span><span class="sb-item-title">环境搭建与版本管理</span></a>
+        <a class="sb-item" href="../python/02-bian-liang-biao-da-shi-yu-liu-cheng-kong-zhi.html"><span class="sb-item-num">02</span><span class="sb-item-title">变量、表达式与流程控制</span></a>
+        <a class="sb-item" href="../python/03-xu-lie-zi-dian-yu-ji-he.html"><span class="sb-item-num">03</span><span class="sb-item-title">序列、字典与集合</span></a>
+        <a class="sb-item" href="../python/04-han-shu-she-ji-yu-lambda.html"><span class="sb-item-num">04</span><span class="sb-item-title">函数设计与 lambda</span></a>
+        <a class="sb-item" href="../python/05-zuo-yong-yu-gui-ze-yu-bi-bao.html"><span class="sb-item-num">05</span><span class="sb-item-title">作用域规则与闭包</span></a>
+        <a class="sb-item" href="../python/06-lei-de-ding-yi-yu-shi-li-hua.html"><span class="sb-item-num">06</span><span class="sb-item-title">类的定义与实例化</span></a>
+        <a class="sb-item" href="../python/07-lei-xing-pan-ding-yu-chou-xiang-ji-lei.html"><span class="sb-item-num">07</span><span class="sb-item-title">类型判定与抽象基类</span></a>
+        <a class="sb-item" href="../python/08-mo-shu-fang-fa-quan-jing.html"><span class="sb-item-num">08</span><span class="sb-item-title">魔术方法全景</span></a>
+        <a class="sb-item" href="../python/09-miao-shu-fu-yu-yuan-lei.html"><span class="sb-item-num">09</span><span class="sb-item-title">描述符与元类</span></a>
+        <a class="sb-item" href="../python/10-zhuang-shi-qi.html"><span class="sb-item-num">10</span><span class="sb-item-title">装饰器</span></a>
+        <a class="sb-item" href="../python/11-die-dai-xie-yi-yu-sheng-cheng-qi.html"><span class="sb-item-num">11</span><span class="sb-item-title">迭代协议与生成器</span></a>
+        <a class="sb-item" href="../python/12-with-yu-shang-xia-wen-xie-yi.html"><span class="sb-item-num">12</span><span class="sb-item-title">with 与上下文协议</span></a>
+        <a class="sb-item" href="../python/13-yi-chang-ti-xi-yu-chu-li.html"><span class="sb-item-num">13</span><span class="sb-item-title">异常体系与处理</span></a>
+        <a class="sb-item" href="../python/14-lei-xing-biao-zhu.html"><span class="sb-item-num">14</span><span class="sb-item-title">类型标注</span></a>
+        <a class="sb-item" href="../python/15-mo-kuai-yu-bao-de-zu-zhi.html"><span class="sb-item-num">15</span><span class="sb-item-title">模块与包的组织</span></a>
+        <a class="sb-item" href="../python/16-biao-zhun-ku-xun-li.html"><span class="sb-item-num">16</span><span class="sb-item-title">标准库巡礼</span></a>
+        <a class="sb-item" href="../python/17-yi-lai-guan-li-yu-di-san-fang-ku.html"><span class="sb-item-num">17</span><span class="sb-item-title">依赖管理与第三方库</span></a>
+        <a class="sb-item" href="../python/18-xian-cheng-yu-jin-cheng.html"><span class="sb-item-num">18</span><span class="sb-item-title">线程与进程</span></a>
+        <a class="sb-item" href="../python/19-shi-jian-xun-huan.html"><span class="sb-item-num">19</span><span class="sb-item-title">事件循环</span></a>
+        <a class="sb-item" href="../python/20-future-yu-xie-cheng.html"><span class="sb-item-num">20</span><span class="sb-item-title">Future 与协程</span></a>
+        <a class="sb-item" href="../python/21-asyncio-shi-zhan.html"><span class="sb-item-num">21</span><span class="sb-item-title">asyncio 实战</span></a>
+        <a class="sb-item" href="../python/22-gou-jian-yu-fa-bu.html"><span class="sb-item-num">22</span><span class="sb-item-title">构建与发布</span></a>
+        <a class="sb-item" href="../python/23-gong-cheng-hua-gong-ju-lian.html"><span class="sb-item-num">23</span><span class="sb-item-title">工程化工具链</span></a>
+        <a class="sb-item" href="../python/24-monorepo-yu-tiao-shi.html"><span class="sb-item-num">24</span><span class="sb-item-title">monorepo 与调试</span></a>
+        <a class="sb-item" href="../python/25-jupyter-jiao-hu-huan-jing.html"><span class="sb-item-num">25</span><span class="sb-item-title">Jupyter 交互环境</span></a>
+        <a class="sb-item" href="../python/26-numpy-shu-zu-yu-xiang-liang-hua.html"><span class="sb-item-num">26</span><span class="sb-item-title">NumPy 数组与向量化</span></a>
+        <a class="sb-item" href="../python/27-pandas-shu-ju-jie-gou.html"><span class="sb-item-num">27</span><span class="sb-item-title">Pandas 数据结构</span></a>
+        <a class="sb-item" href="../python/28-pandas-shu-ju-qing-xi.html"><span class="sb-item-num">28</span><span class="sb-item-title">Pandas 数据清洗</span></a>
+        <a class="sb-item" href="../python/29-matplotlib-hui-tu-ti-xi.html"><span class="sb-item-num">29</span><span class="sb-item-title">Matplotlib 绘图体系</span></a>
+        <a class="sb-item" href="../python/30-matplotlib-dong-hua-yu-jiao-hu.html"><span class="sb-item-num">30</span><span class="sb-item-title">Matplotlib 动画与交互</span></a>
+        <a class="sb-item" href="../python/31-seaborn-tong-ji-ke-shi-hua.html"><span class="sb-item-num">31</span><span class="sb-item-title">Seaborn 统计可视化</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="agent">
+      <a class="sb-group-title" href="../modules/agent.html" data-toggle="agent">
+        <span class="sb-num">02</span>
+        <span class="sb-group-text"><b>Agent 核心</b><i>15 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../agent/01-token-yu-ci-qian-ru.html"><span class="sb-item-num">01</span><span class="sb-item-title">Token 与词嵌入</span></a>
+        <a class="sb-item" href="../agent/02-qian-xiang-chuan-bo-yu-fan-xiang-chuan-bo.html"><span class="sb-item-num">02</span><span class="sb-item-title">前向传播与反向传播</span></a>
+        <a class="sb-item" href="../agent/03-zhu-yi-li-ji-zhi-yu-transformer-jia-gou.html"><span class="sb-item-num">03</span><span class="sb-item-title">注意力机制与 Transformer 架构</span></a>
+        <a class="sb-item" href="../agent/04-yu-xun-lian-rlhf-yu-cai-yang-kv-cache.html"><span class="sb-item-num">04</span><span class="sb-item-title">预训练、RLHF 与采样（KV Cache）</span></a>
+        <a class="sb-item" href="../agent/05-ben-di-mo-xing-yu-xiao-xi-jie-gou.html"><span class="sb-item-num">05</span><span class="sb-item-title">本地模型与消息结构</span></a>
+        <a class="sb-item" href="../agent/06-hui-hua-guan-li-yu-json-shu-chu.html"><span class="sb-item-num">06</span><span class="sb-item-title">会话管理与 JSON 输出</span></a>
+        <a class="sb-item" href="../agent/07-tool-calling-xie-yi-yu-feng-zhuang.html"><span class="sb-item-num">07</span><span class="sb-item-title">Tool Calling：协议与封装</span></a>
+        <a class="sb-item" href="../agent/08-react-mo-shi-yu-zhu-xun-huan.html"><span class="sb-item-num">08</span><span class="sb-item-title">ReAct 模式与主循环</span></a>
+        <a class="sb-item" href="../agent/09-shi-zhan-deep-research-agent.html"><span class="sb-item-num">09</span><span class="sb-item-title">实战：Deep Research Agent</span></a>
+        <a class="sb-item" href="../agent/10-skill-yu-jian-jin-shi-pi-lu.html"><span class="sb-item-num">10</span><span class="sb-item-title">Skill 与渐进式披露</span></a>
+        <a class="sb-item" href="../agent/11-mcp-quan-jing.html"><span class="sb-item-num">11</span><span class="sb-item-title">MCP 全景</span></a>
+        <a class="sb-item" href="../agent/12-duo-agent-yu-xuan-xing-ce-lve.html"><span class="sb-item-num">12</span><span class="sb-item-title">多 Agent 与选型策略</span></a>
+        <a class="sb-item" href="../agent/13-ti-shi-ci-gong-cheng-yu-shang-xia-wen-gong.html"><span class="sb-item-num">13</span><span class="sb-item-title">提示词工程与上下文工程</span></a>
+        <a class="sb-item" href="../agent/14-xun-huan-tu-yu-gu-jia-gong-cheng.html"><span class="sb-item-num">14</span><span class="sb-item-title">循环、图与骨架工程</span></a>
+        <a class="sb-item" href="../agent/15-ji-yi-quan-xian-yu-ping-ce.html"><span class="sb-item-num">15</span><span class="sb-item-title">记忆、权限与评测</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="langchain">
+      <a class="sb-group-title" href="../modules/langchain.html" data-toggle="langchain">
+        <span class="sb-num">03</span>
+        <span class="sb-group-text"><b>LangChain 指南</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langchain/01-ren-shi-langchain.html"><span class="sb-item-num">01</span><span class="sb-item-title">认识 LangChain</span></a>
+        <a class="sb-item" href="../langchain/02-ti-shi-ci-mu-ban-yu-xiao-xi.html"><span class="sb-item-num">02</span><span class="sb-item-title">提示词模板与消息</span></a>
+        <a class="sb-item" href="../langchain/03-lcel-yu-runnable.html"><span class="sb-item-num">03</span><span class="sb-item-title">LCEL 与 Runnable</span></a>
+        <a class="sb-item" href="../langchain/04-liu-shi-yu-bing-fa.html"><span class="sb-item-num">04</span><span class="sb-item-title">流式与并发</span></a>
+        <a class="sb-item" href="../langchain/05-shu-chu-jie-xi-qi.html"><span class="sb-item-num">05</span><span class="sb-item-title">输出解析器</span></a>
+        <a class="sb-item" href="../langchain/06-wen-dang-jia-zai-yu-qie-ge.html"><span class="sb-item-num">06</span><span class="sb-item-title">文档加载与切割</span></a>
+        <a class="sb-item" href="../langchain/07-qian-ru-yu-xiang-liang-ku.html"><span class="sb-item-num">07</span><span class="sb-item-title">嵌入与向量库</span></a>
+        <a class="sb-item" href="../langchain/08-jian-suo-yu-rag.html"><span class="sb-item-num">08</span><span class="sb-item-title">检索与RAG</span></a>
+        <a class="sb-item" href="../langchain/09-dui-hua-ji-yi.html"><span class="sb-item-num">09</span><span class="sb-item-title">对话记忆</span></a>
+        <a class="sb-item" href="../langchain/10-gong-ju-diao-yong.html"><span class="sb-item-num">10</span><span class="sb-item-title">工具调用</span></a>
+        <a class="sb-item" href="../langchain/11-agent.html"><span class="sb-item-num">11</span><span class="sb-item-title">Agent</span></a>
+        <a class="sb-item" href="../langchain/12-hui-diao-yu-tiao-shi-quan-ke-cheng-shou-guan.html"><span class="sb-item-num">12</span><span class="sb-item-title">回调与调试（全课程收官章）</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="langgraph">
+      <a class="sb-group-title" href="../modules/langgraph.html" data-toggle="langgraph">
+        <span class="sb-num">04</span>
+        <span class="sb-group-text"><b>LangGraph 框架指南</b><i>17 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langgraph/01-di-1-zhang-cong-yi-ge-shi-kong-de-jiao.html"><span class="sb-item-num">01</span><span class="sb-item-title">第 1 章 从一个失控的脚本说起</span></a>
+        <a class="sb-item" href="../langgraph/02-di-2-zhang-zui-xiao-ke-yun-xing-tu.html"><span class="sb-item-num">02</span><span class="sb-item-title">第 2 章 最小可运行图</span></a>
+        <a class="sb-item" href="../langgraph/03-di-3-zhang-zhuang-tai-tu-de-shu-ju-xin.html"><span class="sb-item-num">03</span><span class="sb-item-title">第 3 章 状态：图的数据心脏</span></a>
+        <a class="sb-item" href="../langgraph/04-di-4-zhang-rang-liu-cheng-xue-hui-jue-ce.html"><span class="sb-item-num">04</span><span class="sb-item-title">第 4 章 让流程学会决策</span></a>
+        <a class="sb-item" href="../langgraph/05-di-5-zhang-bing-xing-shi-jie-chao-bu-zhi.html"><span class="sb-item-num">05</span><span class="sb-item-title">第 5 章 并行世界：超步执行模型</span></a>
+        <a class="sb-item" href="../langgraph/06-di-6-zhang-command-ba-kong-zhi-quan-jiao-jin.html"><span class="sb-item-num">06</span><span class="sb-item-title">第 6 章 Command：把控制权交进节点</span></a>
+        <a class="sb-item" href="../langgraph/07-di-7-zhang-dong-tai-bing-xing-send-yu-mapreduce.html"><span class="sb-item-num">07</span><span class="sb-item-title">第 7 章 动态并行：Send 与 MapReduce</span></a>
+        <a class="sb-item" href="../langgraph/08-di-8-zhang-gei-tu-zhuang-shang-shou-jiao-gong.html"><span class="sb-item-num">08</span><span class="sb-item-title">第 8 章 给图装上手脚：工具调用</span></a>
+        <a class="sb-item" href="../langgraph/09-di-9-zhang-fu-yong-yu-feng-zhuang-zi-tu.html"><span class="sb-item-num">09</span><span class="sb-item-title">第 9 章 复用与封装：子图</span></a>
+        <a class="sb-item" href="../langgraph/10-di-10-zhang-cong-dan-tu-dao-tuan-dui-duo.html"><span class="sb-item-num">10</span><span class="sb-item-title">第 10 章 从单图到团队：多 Agent 架构</span></a>
+        <a class="sb-item" href="../langgraph/11-di-11-zhang-liu-shi-shu-chu.html"><span class="sb-item-num">11</span><span class="sb-item-title">第 11 章 流式输出</span></a>
+        <a class="sb-item" href="../langgraph/12-di-12-zhang-chi-jiu-hua-checkpointer-yu-xian-cheng.html"><span class="sb-item-num">12</span><span class="sb-item-title">第 12 章 持久化：Checkpointer 与线程</span></a>
+        <a class="sb-item" href="../langgraph/13-di-13-zhang-shi-jian-lv-xing.html"><span class="sb-item-num">13</span><span class="sb-item-title">第 13 章 时间旅行</span></a>
+        <a class="sb-item" href="../langgraph/14-di-14-zhang-zhong-duan-yu-ren-zai-hui-lu.html"><span class="sb-item-num">14</span><span class="sb-item-title">第 14 章 中断与人在回路</span></a>
+        <a class="sb-item" href="../langgraph/15-di-15-zhang-ji-yi-guan-li.html"><span class="sb-item-num">15</span><span class="sb-item-title">第 15 章 记忆管理</span></a>
+        <a class="sb-item" href="../langgraph/16-di-16-zhang-rong-cuo-zhong-shi-chao-shi-yu.html"><span class="sb-item-num">16</span><span class="sb-item-title">第 16 章 容错：重试、超时与兜底</span></a>
+        <a class="sb-item" href="../langgraph/17-di-17-zhang-quan-jing-hui-gu.html"><span class="sb-item-num">17</span><span class="sb-item-title">第 17 章 全景回顾</span></a>
+      </div>
+    </section>
+    <section class="sb-group open" data-mod="backend">
+      <a class="sb-group-title" href="../modules/backend.html" data-toggle="backend">
+        <span class="sb-num">05</span>
+        <span class="sb-group-text"><b>Python 框架指南</b><i>14 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../backend/01-fastapi-ru-men-yu-asgi.html"><span class="sb-item-num">01</span><span class="sb-item-title">FastAPI 入门与 ASGI</span></a>
+        <a class="sb-item" href="../backend/02-lu-you-yu-qing-qiu-xiang-ying.html"><span class="sb-item-num">02</span><span class="sb-item-title">路由与请求响应</span></a>
+        <a class="sb-item" href="../backend/03-pydantic-shu-ju-jiao-yan-yu-pei-zhi.html"><span class="sb-item-num">03</span><span class="sb-item-title">Pydantic 数据校验与配置</span></a>
+        <a class="sb-item" href="../backend/04-sqlalchemy-yi-bu-yin-qing-yu-hui-hua.html"><span class="sb-item-num">04</span><span class="sb-item-title">SQLAlchemy 异步引擎与会话</span></a>
+        <a class="sb-item" href="../backend/05-orm-jian-mo.html"><span class="sb-item-num">05</span><span class="sb-item-title">ORM 建模</span></a>
+        <a class="sb-item" href="../backend/06-sql-biao-da-shi-yu-shu-ju-cao-zuo.html"><span class="sb-item-num">06</span><span class="sb-item-title">SQL 表达式与数据操作</span></a>
+        <a class="sb-item" href="../backend/07-alembic-shu-ju-qian-yi.html"><span class="sb-item-num">07</span><span class="sb-item-title">Alembic 数据迁移</span></a>
+        <a class="sb-item" href="../backend/08-yi-lai-zhu-ru.html"><span class="sb-item-num">08</span><span class="sb-item-title">依赖注入</span></a>
+        <a class="sb-item" href="../backend/09-tong-yi-yi-chang-chu-li.html"><span class="sb-item-num">09</span><span class="sb-item-title">统一异常处理</span></a>
+        <a class="sb-item" href="../backend/10-zhong-jian-jian.html"><span class="sb-item-num">10</span><span class="sb-item-title">中间件</span></a>
+        <a class="sb-item current" href="../backend/11-ren-zheng-yu-jwt.html"><span class="sb-item-num">11</span><span class="sb-item-title">认证与 JWT</span></a>
+        <a class="sb-item" href="../backend/12-pytest-ce-shi.html"><span class="sb-item-num">12</span><span class="sb-item-title">pytest 测试</span></a>
+        <a class="sb-item" href="../backend/13-ri-zhi-loguru.html"><span class="sb-item-num">13</span><span class="sb-item-title">日志 loguru</span></a>
+        <a class="sb-item" href="../backend/14-liu-shi-xiang-ying-sse-yu-websocket.html"><span class="sb-item-num">14</span><span class="sb-item-title">流式响应 SSE 与 WebSocket</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="interview">
+      <a class="sb-group-title" href="../modules/interview.html" data-toggle="interview">
+        <span class="sb-num">06</span>
+        <span class="sb-group-text"><b>面试题库</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../interview/01-llm-yuan-li-pian.html"><span class="sb-item-num">01</span><span class="sb-item-title">LLM 原理篇</span></a>
+        <a class="sb-item" href="../interview/02-rag-yu-jian-suo-pian.html"><span class="sb-item-num">02</span><span class="sb-item-title">RAG 与检索篇</span></a>
+        <a class="sb-item" href="../interview/03-agent-he-xin-pian.html"><span class="sb-item-num">03</span><span class="sb-item-title">Agent 核心篇</span></a>
+        <a class="sb-item" href="../interview/04-langgraph-pian.html"><span class="sb-item-num">04</span><span class="sb-item-title">LangGraph 篇</span></a>
+        <a class="sb-item" href="../interview/05-langchain-pian.html"><span class="sb-item-num">05</span><span class="sb-item-title">LangChain 篇</span></a>
+        <a class="sb-item" href="../interview/06-xi-tong-she-ji-pian.html"><span class="sb-item-num">06</span><span class="sb-item-title">系统设计篇</span></a>
+        <a class="sb-item" href="../interview/07-xiang-mu-shen-wa-pian.html"><span class="sb-item-num">07</span><span class="sb-item-title">项目深挖篇</span></a>
+        <a class="sb-item" href="../interview/08-gu-zhang-pai-cha-pian.html"><span class="sb-item-num">08</span><span class="sb-item-title">故障排查篇</span></a>
+        <a class="sb-item" href="../interview/09-python-ji-chu-pian.html"><span class="sb-item-num">09</span><span class="sb-item-title">Python 基础篇</span></a>
+        <a class="sb-item" href="../interview/10-fastapi-yu-hou-duan-pian.html"><span class="sb-item-num">10</span><span class="sb-item-title">FastAPI 与后端篇</span></a>
+        <a class="sb-item" href="../interview/11-ti-shi-ci-gong-cheng-yu-an-quan-pian.html"><span class="sb-item-num">11</span><span class="sb-item-title">提示词工程与安全篇</span></a>
+        <a class="sb-item" href="../interview/12-mo-xing-xuan-xing-yu-jiang-ben-pian.html"><span class="sb-item-num">12</span><span class="sb-item-title">模型选型与降本篇</span></a>
+      </div>
+    </section>
+  </nav>
+</aside>
+  <main class="main">
+    <header class="topbar">
+      <button class="menu-btn" id="menuBtn" aria-label="目录">☰</button>
+      <div class="crumbs"><a href="../index.html">首页</a><span>/</span><a href="../modules/backend.html">Python 框架指南</a><span>/</span><span class="cur">认证与 JWT</span></div>
+      <div class="topbar-actions">
+        <button class="icon-btn" id="themeBtn" title="切换深浅色" aria-label="切换深浅色">◐</button>
+      </div>
+    </header>
+    <div class="content">
+      <article class="article">
+
+<header class="page-head">
+  <div class="page-kicker">Python 框架指南 · 第 11 章</div>
+  <h1 class="page-title">认证与 JWT</h1>
+  <p class="page-desc">10 章收尾时留了句话：中间件守住了「请求进门的必经之路」，下一关要在这条路上再设一道关卡——你是谁？你的令牌呢？这一章就把这道关卡立起来。
+
+ 墨集 inkhub 要开放作者投稿了：作者注册账号、登录、领凭证、写文章…</p>
+  <div class="page-meta">
+    <span>约 47 分钟</span><span>18,637 字</span><span>26 个代码示例</span>
+  </div>
+</header>
+<div class="md"><blockquote>
+<p>10 章收尾时留了句话：中间件守住了「请求进门的必经之路」，下一关要在这条路上再设一道关卡——<strong>你是谁？你的令牌呢？</strong>这一章就把这道关卡立起来。</p>
+<p>墨集 inkhub 要开放作者投稿了：作者注册账号、登录、领凭证、写文章、删文章，管理员还能做平台运营。围绕这套「作者账号系统」，认证的每个环节都会走到。</p>
+<p>08 章结尾预告过一棵依赖树——<code>get_current_user</code> 的依赖树，本章正式兑现；09 章统一异常的 401 场景，也会在这里接上。</p>
+</blockquote>
+<p><strong>本章配套 demo</strong>：<code>demo/demo_jwt.py</code>（单文件：注册 → 登录发 token → 受保护接口 → 过期/伪造 token 的 401，内存假数据 + 内嵌 uvicorn，注释里写全 curl 三步流程）</p>
+<hr />
+<h2 id="1-先把问题摆上桌认证是一串连环问">1. 先把问题摆上桌：认证是一串连环问</h2>
+<p>写认证代码之前，先看这一串问题——它们环环相扣，跳过任何一个都会在后面还债：</p>
+<ol>
+<li>作者注册时填的密码，<strong>怎么存</strong>才不怕数据库被拖走？</li>
+<li>作者登录成功后，服务器<strong>发什么凭证</strong>才能证明「这位确实登录过」？</li>
+<li>这张凭证的<strong>有效期</strong>在哪儿设？</li>
+<li>签发凭证的<strong>密钥</strong>放在哪儿？</li>
+<li>认证出错时，<strong>怎么报告</strong>——要不要新定义异常？</li>
+<li>后续每个请求进来，服务器<strong>怎么知道是哪位作者</strong>？</li>
+<li>怎么让某些接口<strong>必须登录才能访问</strong>？作者和管理员的<strong>权限差异</strong>怎么表达？</li>
+<li>怎么让 <code>/docs</code> 一眼看出<strong>哪些接口需要认证</strong>，还能现场试？</li>
+<li>凭证的有效期到了，作者就得重新输密码吗？</li>
+</ol>
+<p>这九问就是本章的目录：§2–3 答密码，§4 答凭证选型，§5–7 答结构与密钥，§8 答当前用户，§9 答接口上锁，§10 答文档标识，§11 答续期。最后一节速查表按问回收，一题对一答。</p>
+<hr />
+<h2 id="2-密码怎么存明文是埋在库里的火药桶">2. 密码怎么存：明文是埋在库里的火药桶</h2>
+<h3 id="为什么明文不行">为什么明文不行</h3>
+<p>把「先存明文，反正数据库有密码」当方案的人，等于在仓库里堆火药桶，赌它永远不炸。而现实是，拖库、误配置、备份外流，年年都有。明文密码一旦泄露，灾难是三倍的：</p>
+<ul>
+<li><strong>撞库</strong>：用户在墨集用的密码，八成和小信箱、支付账号是同一个。攻击者拿一份明文库，能横扫整个人互联网上的账号。</li>
+<li><strong>信任崩塌</strong>：用户无法分辨「泄露的只是墨集还是我的整个人生」。</li>
+<li><strong>不可挽回</strong>：明文一旦出门，没有任何技术手段收回来。</li>
+</ul>
+<h3 id="为什么加密存也不行">为什么「加密存」也不行</h3>
+<p>有人退一步：那我用 AES 把密码加密了存，总安全了吧？不行——</p>
+<ol>
+<li><strong>加密是可逆的</strong>，密钥也得放在服务器上。拖库的人往往连密钥一起拖走。</li>
+<li>服务器<strong>根本不需要知道明文</strong>。登录校验只需要回答一个问题：「用户这次输入的，和注册时输入的，是不是同一个？」——验证一致性，不需要还原内容。</li>
+<li>「忘记密码」功能只需要<strong>重置</strong>，永远不该「找回」。哪个网站能把原密码发给你，它就必然存着明文或可逆密文，扭头注销。</li>
+</ol>
+<h3 id="正解存哈希碎纸机不是保险箱">正解：存哈希——碎纸机，不是保险箱</h3>
+<p>比喻：服务器门口放一台<strong>碎纸机</strong>。作者注册时，密码明文进机器，绞成一堆纸屑（哈希值）存进库；纸屑的纹路无法拼回原文，但纹路由输入唯一决定——登录时把这次输入的密码也绞一遍，<strong>对比两堆纸屑的纹路</strong>，对上了就放行。整条链路上，明文只出现两次：用户键盘上、那一次哈希运算里。</p>
+<p>哈希算法几个性质，正好为密码而生：任意长度进、固定长度出；不可逆；输入变一个字符，输出面目全非。</p>
+<p>但<strong>裸哈希还不够</strong>，因为碎纸机太标准了——全世界所有网站用同一款 SHA-256，就给了攻击者机会：</p>
+<p><strong>彩虹表</strong>：攻击者预先把「常见密码 → 哈希值」算了几亿条，做成一本字典。拖库之后不破解、只查表：拿库里的哈希值对字典，<code>123456</code> 这种密码秒回明文。<strong>快速哈希反而帮了攻击者</strong>——你的服务器一次算 0.001 毫秒，攻击者暴力猜一次也只要 0.001 毫秒，一天能猜上百亿次。</p>
+<p>两道补丁，组合起来就是现代密码存储：</p>
+<table>
+<thead>
+<tr>
+<th>手段</th>
+<th>干什么</th>
+<th>效果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>加盐</strong></td>
+<td>哈希前掺入一段随机数据</td>
+<td>同一个密码每次哈希结果都不同，预制字典（彩虹表）作废，攻击者只能针对<strong>这一条</strong>记录从头猜</td>
+</tr>
+<tr>
+<td><strong>慢哈希</strong></td>
+<td>故意把算法设计得很慢、可调成本</td>
+<td>每猜一次都要花几十上百毫秒，暴力破解从「一天百亿」掉到「一年万」</td>
+</tr>
+</tbody>
+</table>
+<p><strong>bcrypt = 加盐 + 慢哈希的合体</strong>：随机盐由它自动生成、<strong>直接嵌在输出里</strong>（不用单独存一列盐），成本因子（<code>rounds</code>）可调。这就是「为什么用 bcrypt 而不是 SHA-256」的完整答案——不是更玄的算法，是更<strong>对题</strong>的算法。</p>
+<div class="highlight"><pre><span></span><code>$2b$12$N9qo8uLOickgx2ZMRZoMye...（60 个字符）
+ ↑   ↑
+ |   └─ 成本因子：12 → 每次哈希约几十毫秒（每 +1 翻倍）
+ └─ 版本标识 + 22 字符随机盐 + 31 字符哈希，盐嵌在输出里
+</code></pre></div>
+<p><strong>常见坑</strong></p>
+<ul>
+<li>想给哈希值「加密一层」、或者用可逆方式存密码——方向反了，回到火药桶。</li>
+<li>拿 MD5/SHA-1 存密码——2020 年代这属于事故现场。</li>
+<li>bcrypt 有 <strong>72 字节</strong>的密码长度上限（算法决定的），超长部分会被静默忽略；新近版本会直接报错提醒你。想支持长密码，主流做法是先整体做一次 SHA-256 再喂给 bcrypt。</li>
+<li>同一个密码注册两次，库里两行哈希<strong>长得不一样</strong>——这不是 bug，恰恰说明盐在工作。</li>
+</ul>
+<hr />
+<h2 id="3-bcrypt-与-passlib两套写法都过一遍">3. bcrypt 与 passlib：两套写法都过一遍</h2>
+<p>Python 圈写 bcrypt 哈希有两套姿势，都得认识：<code>bcrypt</code> 裸用（轻量、现状最稳）和 <code>passlib</code> 全家桶（经典、老项目遍地）。</p>
+<h3 id="姿势一bcrypt-裸用本章-demo-采用">姿势一：bcrypt 裸用（本章 demo 采用）</h3>
+<p><strong>作用</strong>：三函数搞定存与验——<code>hashpw</code> 绞、<code>gensalt</code> 产盐、<code>checkpw</code> 对纹路。</p>
+<p><strong>签名</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="n">bcrypt</span><span class="o">.</span><span class="n">hashpw</span><span class="p">(</span><span class="n">password</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">salt</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span>
+<span class="n">bcrypt</span><span class="o">.</span><span class="n">gensalt</span><span class="p">(</span><span class="n">rounds</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">12</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span>
+<span class="n">bcrypt</span><span class="o">.</span><span class="n">checkpw</span><span class="p">(</span><span class="n">password</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">hashed_password</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span>
+</code></pre></div>
+<p><strong>最小示例</strong>（项目里就封这两个函数，全局复用）：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">bcrypt</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">hash_password</span><span class="p">(</span><span class="n">password</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""注册/改密码时用：明文绞成带盐哈希，返回可入库的字符串"""</span>
+    <span class="k">return</span> <span class="n">bcrypt</span><span class="o">.</span><span class="n">hashpw</span><span class="p">(</span>
+        <span class="n">password</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">"utf-8"</span><span class="p">),</span> <span class="n">bcrypt</span><span class="o">.</span><span class="n">gensalt</span><span class="p">(</span><span class="n">rounds</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">"ascii"</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">verify_password</span><span class="p">(</span><span class="n">plain</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">hashed</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""登录时用：把输入当场再绞一遍，和库里的对比纹路"""</span>
+    <span class="k">return</span> <span class="n">bcrypt</span><span class="o">.</span><span class="n">checkpw</span><span class="p">(</span>
+        <span class="n">plain</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">"utf-8"</span><span class="p">),</span> <span class="n">hashed</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">"ascii"</span><span class="p">)</span>
+    <span class="p">)</span>
+
+
+<span class="n">h1</span> <span class="o">=</span> <span class="n">hash_password</span><span class="p">(</span><span class="s2">"ink-forest-2026"</span><span class="p">)</span>
+<span class="n">h2</span> <span class="o">=</span> <span class="n">hash_password</span><span class="p">(</span><span class="s2">"ink-forest-2026"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">h1</span> <span class="o">==</span> <span class="n">h2</span><span class="p">)</span>                        <span class="c1"># False：盐不同，纹路不同</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">verify_password</span><span class="p">(</span><span class="s2">"ink-forest-2026"</span><span class="p">,</span> <span class="n">h1</span><span class="p">))</span>   <span class="c1"># True</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">verify_password</span><span class="p">(</span><span class="s2">"wrong"</span><span class="p">,</span> <span class="n">h1</span><span class="p">))</span>    <span class="c1"># False</span>
+</code></pre></div>
+<p><strong>常见坑</strong></p>
+<ul>
+<li>这三个函数吃的是 <strong>bytes</strong>，库里存的是 str——进出各做一次 <code>encode</code>/<code>decode</code>，写错类型就 <code>TypeError</code>。</li>
+<li><code>checkpw</code> 每次调用都要真跑一遍慢哈希（这就是它的本职），别放进高频循环里。</li>
+<li>别自己生成盐再拼接——用 <code>gensalt()</code>，让盐自动嵌进输出，省一列存储还少一个出错点。</li>
+</ul>
+<h3 id="姿势二passlib-的-cryptcontext老项目常见">姿势二：passlib 的 CryptContext（老项目常见）</h3>
+<p><strong>作用</strong>：把多种哈希方案装进一个上下文，自动处理「老算法升级」——注册用新算法，登录时发现旧哈希还能验，验完顺手升级。</p>
+<p><strong>签名</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">passlib.context</span><span class="w"> </span><span class="kn">import</span> <span class="n">CryptContext</span>
+
+<span class="n">pwd_context</span> <span class="o">=</span> <span class="n">CryptContext</span><span class="p">(</span><span class="n">schemes</span><span class="o">=</span><span class="p">[</span><span class="s2">"bcrypt"</span><span class="p">],</span> <span class="n">deprecated</span><span class="o">=</span><span class="s2">"auto"</span><span class="p">)</span>
+<span class="n">pwd_context</span><span class="o">.</span><span class="n">hash</span><span class="p">(</span><span class="n">password</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span>
+<span class="n">pwd_context</span><span class="o">.</span><span class="n">verify</span><span class="p">(</span><span class="n">password</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">hashed</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span>
+</code></pre></div>
+<p><strong>最小示例</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="n">hashed</span> <span class="o">=</span> <span class="n">pwd_context</span><span class="o">.</span><span class="n">hash</span><span class="p">(</span><span class="s2">"ink-forest-2026"</span><span class="p">)</span>     <span class="c1"># '$2b$12$...'</span>
+<span class="n">pwd_context</span><span class="o">.</span><span class="n">verify</span><span class="p">(</span><span class="s2">"ink-forest-2026"</span><span class="p">,</span> <span class="n">hashed</span><span class="p">)</span>    <span class="c1"># True</span>
+</code></pre></div>
+<p><strong>常见坑（当下最响的一个）</strong></p>
+<ul>
+<li><strong>passlib 1.7.4 已停更多年，和 bcrypt 4.1+ 不兼容</strong>。组合到一起会翻出一团迷惑的错：<code>ValueError: password cannot be longer than 72 bytes</code>——报错说的是长度，实际与长度无关，是版本探测坏了；日志里还常伴一句 <code>(trapped) error reading bcrypt version</code>。两条出路：
+  1. 把 bcrypt 钉在 <code>bcrypt==4.0.1</code>（老项目最省事）；
+  2. 抛弃 passlib，直接用 <code>bcrypt</code> 库（新项目推荐，也是本章 demo 的选择）。</li>
+<li>网上老教程几乎全用 passlib——读得懂，新代码不必跟着写。</li>
+</ul>
+<h3 id="存与验的落点">存与验的落点</h3>
+<p>注册和登录两个接口里，这两函数的站位：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 注册：存的是哈希，明文即用即弃</span>
+<span class="n">user</span> <span class="o">=</span> <span class="n">Author</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">username</span><span class="p">,</span> <span class="n">password_hash</span><span class="o">=</span><span class="n">hash_password</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">password</span><span class="p">))</span>
+
+<span class="c1"># 登录：先查人，再对纹路；两步失败给同一句话</span>
+<span class="n">user</span> <span class="o">=</span> <span class="k">await</span> <span class="n">get_user_by_name</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">username</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">user</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">verify_password</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">password</span><span class="p">,</span> <span class="n">user</span><span class="o">.</span><span class="n">password_hash</span><span class="p">):</span>
+    <span class="k">raise</span> <span class="n">UnauthorizedError</span><span class="p">(</span><span class="s2">"用户名或密码错误"</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>常见坑</strong></p>
+<ul>
+<li>登录失败时别说「用户不存在」「密码错误」这种<strong>分头报错</strong>的话——攻击者可以拿报错差异批量探测哪些用户名注册过（账号枚举）。统一一句「用户名或密码错误」。</li>
+<li><code>verify</code> 前先查库、查无此人就短路返回——但<strong>性能洁癖者</strong>的讲究做法是对一个固定假哈希也跑一次 <code>verify</code>，让「用户不存在」和「密码不对」耗时一致，防时序侧信道。教学项目知道即可。</li>
+</ul>
+<hr />
+<h2 id="4-凭证选型寄存柜手环-vs-防伪门票">4. 凭证选型：寄存柜手环 vs 防伪门票</h2>
+<p>密码验过了，接下来发凭证。凭什么是「可信的」？两条主流路线，先打一个游乐园的比方：</p>
+<p><strong>Session（寄存柜手环）</strong>：你进园，服务员在柜子（服务端存储）里放一张你的信息卡，给你一个<strong>手环编号</strong>（cookie 里的 session id）。之后玩每个项目，刷手环 → 服务员跑去柜子查卡。身份的真相在柜子里，手环只是个号码。</p>
+<p><strong>Token / JWT（防伪门票）</strong>：门票上<strong>直接印着</strong>你是谁（VIP、几点前进场），盖上骑缝防伪章。玩任何项目，验票员当场验章读票——<strong>不用回服务台查任何柜子</strong>。身份的真相在票面上，章的可信度由密钥保证。</p>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>Session（有状态）</th>
+<th>JWT（无状态）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>身份存哪</td>
+<td>服务端（内存 / Redis）</td>
+<td>票面自带（payload）</td>
+</tr>
+<tr>
+<td>每次请求要查库/缓存吗</td>
+<td>要</td>
+<td>验签即可，可以不查</td>
+</tr>
+<tr>
+<td>横向扩容</td>
+<td>所有实例共享那个存储（黏人）</td>
+<td>任何实例持密钥即可验（自食其力）</td>
+</tr>
+<tr>
+<td>注销 / 封禁</td>
+<td>删柜子里的卡，立即生效</td>
+<td>难——票发出去就收不回（见 §11）</td>
+</tr>
+<tr>
+<td>移动端 / 小程序 / 跨域</td>
+<td>cookie 那套在跨端场景别扭</td>
+<td>一个字符串放哪儿都行</td>
+</tr>
+<tr>
+<td>网关 / 微服务</td>
+<td>网关还得回源查 session</td>
+<td>网关本地验签直接放行</td>
+</tr>
+</tbody>
+</table>
+<p>选型不是玄学，看架构形态：</p>
+<ul>
+<li><strong>前后端分离 + 多端（网页、App、小程序）+ 可能多服务</strong>——墨集正是这个形态——JWT 是主流答案；</li>
+<li>单体服务端渲染网站、强注销需求（后台管理系统）——Session 依然好用，别为了时髦硬上 JWT。</li>
+</ul>
+<p><strong>定位</strong>：JWT 只是「token 凭证的一种具体纸面格式」——把「你是谁、何时签发、何时作废」印成一串有标准的字符。下一节拆开看这张票。</p>
+<hr />
+<h2 id="5-拆开看-jwtheaderpayloadsignature">5. 拆开看 JWT：header.payload.signature</h2>
+<p>一张真实的 JWT 长这样（三段，两个点隔开）：</p>
+<div class="highlight"><pre><span></span><code>eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJsaW5tbyIsInJvbGUiOiJhdXRob3IiLCJleHAiOjE3NTk5OTk5OTl9.dBw3x6Vq9mQm8e5TqS9aQUnJ8uGj9D9Eh4JmQGn_Vw4
+</code></pre></div>
+<p>两个点把票裁成三联：<strong>header.payload.signature</strong>。</p>
+<h3 id="三联各是什么">三联各是什么</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">base64</span><span class="o">,</span><span class="w"> </span><span class="nn">json</span>
+
+<span class="n">token</span> <span class="o">=</span> <span class="s2">"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJsaW5tbyIsInJvbGUiOiJhdXRob3IiLCJleHAiOjE3NTk5OTk5OTl9.dBw3x..."</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">b64url_decode</span><span class="p">(</span><span class="n">seg</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="c1"># JWT 用 base64url：+→-、/→_、去掉补位 =，所以手工解要补回来</span>
+    <span class="k">return</span> <span class="n">base64</span><span class="o">.</span><span class="n">urlsafe_b64decode</span><span class="p">(</span><span class="n">seg</span> <span class="o">+</span> <span class="s2">"="</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="n">seg</span><span class="p">)</span> <span class="o">%</span> <span class="mi">4</span><span class="p">))</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">b64url_decode</span><span class="p">(</span><span class="n">token</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"."</span><span class="p">)[</span><span class="mi">0</span><span class="p">])))</span>
+<span class="c1"># {"alg": "HS256", "typ": "JWT"}        ← 第一联 header</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">b64url_decode</span><span class="p">(</span><span class="n">token</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"."</span><span class="p">)[</span><span class="mi">1</span><span class="p">])))</span>
+<span class="c1"># {"sub": "linmo", "role": "author", "exp": 1759999999}</span>
+<span class="c1">#                                       ← 第二联 payload（claims）</span>
+</code></pre></div>
+<ul>
+<li><strong>header</strong>：说明书——「这张票用 HS256 算法验章」。定死的小字典。</li>
+<li><strong>payload</strong>：票面信息，官方叫 <strong>claims（声明）</strong>。标准字段常用的有：</li>
+<li><code>sub</code>（subject）：这张票<strong>属于谁</strong>——用户 id 或用户名，<strong>标准要求是字符串</strong>；</li>
+<li><code>iat</code>（issued at）：何时签发；</li>
+<li><code>exp</code>（expired）：<strong>几点作废</strong>——凭证的有效期就设在这里（问题清单第 3 问的答案落点）；</li>
+<li><code>jti</code>（JWT id）：票号，全局唯一，将来拉黑名单全靠它；</li>
+<li>自定义字段：<code>role</code> 这类业务信息也可以印上，但记住下一条铁律。</li>
+<li><strong>signature</strong>：骑缝章。生成方式一句话：</li>
+</ul>
+<div class="highlight"><pre><span></span><code>signature = HMAC-SHA256(base64(header) + "." + base64(payload), 密钥)
+</code></pre></div>
+<p>HMAC 是「<strong>带密钥的哈希</strong>」（消息认证码）：没有密钥，算不出这个章；内容动一个字符，章就对不上。</p>
+<h3 id="三条铁律背下来面试和事故现场都用得上">三条铁律（背下来，面试和事故现场都用得上）</h3>
+<ol>
+<li><strong>JWT 不加密，只防篡改。</strong> base64url 是编码不是加密——payload 就是明信片，<strong>任何人</strong>拿到 token 都能读出 sub/role/手机号。所以：密码、敏感资料<strong>永远不进 payload</strong>。要加密另有 JWE 标准，本课不碰。
+   比喻：payload 是<strong>明信片</strong>，signature 是<strong>骑缝章</strong>——邮路上人人可读明信片，但没人能改一个字而不被验出。</li>
+<li><strong>HS256 是对称密钥</strong>：签章和验章同一把钥匙。谁能签，谁也能验；密钥泄露 = 全线失守。多服务场景下更常用 <strong>RS256</strong>（非对称）：签发方持私钥，各验证方只要公钥——发 token 的认证中心和只验 token 的业务服务，权力天然分离。</li>
+<li><strong>防篡改 ≠ 防转借。</strong> 票是真的，不代表持票人是本人——token 被偷，验票机照样放行。所以：全程 HTTPS、有效期设短（§11 的 refresh token 就是为这两难设计的）。</li>
+</ol>
+<p><strong>常见坑</strong></p>
+<ul>
+<li>「token 里的数据是加密的吧，放个手机号没事」——不，随手 base64 解码就看到了。</li>
+<li>把 payload 塞成权限明细大全（几十个字段）——token 每次请求都随身携带，越胖越浪费；角色放一个 <code>role</code> 够用。</li>
+<li>手工拿 <code>base64.b64decode</code> 去解 JWT 段报错——它是 <strong>urlsafe</strong> 变体且无补位，见上面 <code>b64url_decode</code> 的补齐写法。</li>
+</ul>
+<hr />
+<h2 id="6-pyjwt签发与验票">6. PyJWT：签发与验票</h2>
+<p><strong>安装</strong>：<code>pip install pyjwt</code>（注意不是 <code>jwt</code>、不是 <code>python-jwt</code>——重名包是老坑）。</p>
+<h3 id="jwtencode签一张票">jwt.encode：签一张票</h3>
+<p><strong>作用</strong>：把 claims 字典 + 密钥 → 一段三段式 token 字符串。</p>
+<p><strong>签名</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="n">jwt</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">payload</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">algorithm</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"HS256"</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span>
+</code></pre></div>
+<p><strong>最小示例</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">jwt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span><span class="p">,</span> <span class="n">timezone</span>
+
+<span class="n">now</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span>
+
+<span class="n">token</span> <span class="o">=</span> <span class="n">jwt</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span>
+    <span class="p">{</span>
+        <span class="s2">"sub"</span><span class="p">:</span> <span class="s2">"linmo"</span><span class="p">,</span>                 <span class="c1"># 谁（必须是字符串，见坑 2）</span>
+        <span class="s2">"role"</span><span class="p">:</span> <span class="s2">"author"</span><span class="p">,</span>               <span class="c1"># 自定义声明</span>
+        <span class="s2">"iat"</span><span class="p">:</span> <span class="n">now</span><span class="p">,</span>                     <span class="c1"># PyJWT 接受 datetime，自动转时间戳</span>
+        <span class="s2">"exp"</span><span class="p">:</span> <span class="n">now</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">minutes</span><span class="o">=</span><span class="mi">30</span><span class="p">),</span>   <span class="c1"># ← 过期时间就设在这</span>
+    <span class="p">},</span>
+    <span class="n">key</span><span class="o">=</span><span class="s2">"一串至少 32 字节的密钥"</span><span class="p">,</span>
+    <span class="n">algorithm</span><span class="o">=</span><span class="s2">"HS256"</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">token</span><span class="p">)</span>   <span class="c1"># eyJhbGciOiJIUzI1NiIs...</span>
+</code></pre></div>
+<p><strong>常见坑</strong></p>
+<ul>
+<li><code>exp</code> 填<strong>带时区的 UTC datetime</strong>（<code>datetime.now(timezone.utc)</code>）。填 naive 时间，PyJWT 按本地时区解释，跨国部署直接差出几个小时的过期时间。</li>
+<li>密钥别用几个字符糊弄——HMAC-SHA256 推荐至少 32 字节；新近版本的 PyJWT（2.13+）会对短密钥发 <code>InsecureKeyLengthWarning</code>，看到别无视。</li>
+</ul>
+<h3 id="jwtdecode验一张票">jwt.decode：验一张票</h3>
+<p><strong>作用</strong>：密钥 + 算法验章、自动检查 <code>exp</code>（过期抛异常）→ 返回 claims 字典。</p>
+<p><strong>签名</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="n">jwt</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">jwt</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">algorithms</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span>
+</code></pre></div>
+<p><strong>最小示例</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="n">payload</span> <span class="o">=</span> <span class="n">jwt</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s2">"一串至少 32 字节的密钥"</span><span class="p">,</span> <span class="n">algorithms</span><span class="o">=</span><span class="p">[</span><span class="s2">"HS256"</span><span class="p">])</span>
+<span class="c1"># {'sub': 'linmo', 'role': 'author', 'iat': ..., 'exp': ...}</span>
+
+<span class="c1"># 想强制「必须有 exp 才算合法票」：</span>
+<span class="n">jwt</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">algorithms</span><span class="o">=</span><span class="p">[</span><span class="s2">"HS256"</span><span class="p">],</span> <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">"require"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"exp"</span><span class="p">,</span> <span class="s2">"sub"</span><span class="p">]})</span>
+</code></pre></div>
+<p><strong>异常族</strong>（谁抛什么，一张表收走）：</p>
+<table>
+<thead>
+<tr>
+<th>异常</th>
+<th>什么时候抛</th>
+<th>给用户的话术</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>jwt.ExpiredSignatureError</code></td>
+<td><code>exp</code> 已过</td>
+<td>token 已过期，请重新登录</td>
+</tr>
+<tr>
+<td><code>jwt.InvalidSignatureError</code></td>
+<td>票被改过 / 密钥不对</td>
+<td>token 无效</td>
+</tr>
+<tr>
+<td><code>jwt.InvalidSubjectError</code></td>
+<td><code>sub</code> 不是字符串（PyJWT 2.10+ 起强校验）</td>
+<td>token 无效</td>
+</tr>
+<tr>
+<td><code>jwt.DecodeError</code></td>
+<td>格式根本不是 JWT / 缺 <code>algorithms</code> 参数</td>
+<td>token 无效</td>
+</tr>
+<tr>
+<td><code>jwt.InvalidTokenError</code></td>
+<td><strong>上面全家的父类</strong></td>
+<td>token 无效</td>
+</tr>
+</tbody>
+</table>
+<p><strong>常见坑（按疼痛程度排序）</strong></p>
+<ol>
+<li><strong><code>algorithms</code> 必须显式传</strong>。不传，decode 直接抛 <code>DecodeError</code> 拒绝工作。这不是框架刻薄——当年「算法混淆攻击」（把票上的 alg 换成 <code>none</code> 或把 RS256 票混进 HS256 验签）坑过一票知名库，显式声明「我只接受 HS256」就是疫苗。永远不要 <code>algorithms=[token_header里的alg]</code>（等于没设防），写死白名单。</li>
+<li><strong><code>sub</code> 必须是字符串</strong>。传整数 id 进去，PyJWT 2.10+ 直接抛 <code>InvalidSubjectError</code>。存 user.id 的话，签发前 <code>str(user.id)</code>，用的时候再 <code>int()</code> 回来。</li>
+<li><strong>先捕子类再捕父类</strong>。<code>except jwt.ExpiredSignatureError</code> 写在 <code>except jwt.InvalidTokenError</code> 前面，才能给「过期」和「无效」两种话术；顺序反了，「已过期」永远落到「无效」的兜里。顺带一提，<code>ExpiredSignatureError</code> 是 <code>InvalidTokenError</code> 的子类。</li>
+</ol>
+<h3 id="封装成项目小工具demo-同款思路">封装成项目小工具（demo 同款思路）</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">uuid</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span><span class="p">,</span> <span class="n">timezone</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">jwt</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">create_access_token</span><span class="p">(</span><span class="n">sub</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">secret</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">minutes</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">30</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="n">now</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span>
+    <span class="n">payload</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">"sub"</span><span class="p">:</span> <span class="n">sub</span><span class="p">,</span>                                   <span class="c1"># 谁</span>
+        <span class="s2">"jti"</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()),</span>                     <span class="c1"># 票号（拉黑名单用）</span>
+        <span class="s2">"iat"</span><span class="p">:</span> <span class="n">now</span><span class="p">,</span>                                   <span class="c1"># 签发时间</span>
+        <span class="s2">"exp"</span><span class="p">:</span> <span class="n">now</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">minutes</span><span class="o">=</span><span class="n">minutes</span><span class="p">),</span>      <span class="c1"># 过期时间</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">jwt</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="n">secret</span><span class="p">,</span> <span class="n">algorithm</span><span class="o">=</span><span class="s2">"HS256"</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">decode_access_token</span><span class="p">(</span><span class="n">token</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">secret</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">jwt</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="n">secret</span><span class="p">,</span> <span class="n">algorithms</span><span class="o">=</span><span class="p">[</span><span class="s2">"HS256"</span><span class="p">])</span>
+</code></pre></div>
+<hr />
+<h2 id="7-密钥放哪secret_key-的家规">7. 密钥放哪：SECRET_KEY 的家规</h2>
+<p>签发和验票都靠那把密钥。问题清单第 4 问——它配置在哪？先立家规再给写法。</p>
+<p><strong>为什么绝不能写进代码</strong>：git 会记住<strong>每一次</strong>提交。今天「临时」写死、下周删除，历史里仍躺着那把钥匙——任何人 clone 仓库，<code>git log -p</code> 就能考古出来。比喻：把印章母版<strong>刻在门牌上</strong>，还指望路过的人不拓印。更要命的是：代码会被复制、被截图、被打包进镜像，密钥跟着到处旅行。</p>
+<p><strong>家规三条</strong>：</p>
+<ol>
+<li>密钥<strong>只从环境变量来</strong>，代码里只有读取语句；</li>
+<li><code>.env</code> 文件<strong>必须进 <code>.gitignore</code></strong>，仓库里只留 <code>.env.example</code>（占位符版）；</li>
+<li>开发、测试、生产<strong>各一把不同的钥匙</strong>——测试库泄露不伤生产。</li>
+</ol>
+<p><strong>生成一把像样的密钥</strong>（64 个十六进制字符 = 32 字节，够 HS256 用）：</p>
+<div class="highlight"><pre><span></span><code>openssl<span class="w"> </span>rand<span class="w"> </span>-hex<span class="w"> </span><span class="m">32</span>
+<span class="c1"># 3f9a2c...（64 个字符，别自己手打「123456」当密钥）</span>
+</code></pre></div>
+<p><strong>读取</strong>（呼应 03 章 settings 的玩法，这里给最朴素的版本）：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<span class="n">SECRET_KEY</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">"INKHUB_JWT_SECRET"</span><span class="p">]</span>   <span class="c1"># 缺了直接 KeyError，启动期就炸，好排查</span>
+<span class="n">ACCESS_TOKEN_MINUTES</span> <span class="o">=</span> <span class="mi">30</span>                      <span class="c1"># 过期时长也归配置管，不散落代码</span>
+</code></pre></div>
+<p>工程化一点就用 pydantic-settings 收进 Settings 类（03 章原班用法），和数据库 URL 并排躺好。</p>
+<p><strong>常见坑</strong></p>
+<ul>
+<li>用 <code>"secret"</code>、<code>"123456"</code>、项目名当密钥——攻击者字典里它们排前三。</li>
+<li><code>.env</code> 忘进 <code>.gitignore</code>，密钥随首次 commit 进历史；事后删除文件没用，要轮换密钥并清历史。</li>
+<li>密钥泄露的处置只有一条路：<strong>换钥匙</strong>。代价是全体在线用户的 token 立即失效、集体掉线——这已经是最好的结局了。</li>
+<li>demo 里常见的「环境变量读不到就退回一个写死的默认值」写法，只许出现在教学代码里，注释里一定标明「生产禁止」。</li>
+</ul>
+<hr />
+<h2 id="8-get_current_user从一根请求头到一位作者">8. get_current_user：从一根请求头到一位作者</h2>
+<p>08 章结尾预告的依赖树，本章兑现。先看树长什么样，再逐层搭。</p>
+<div class="highlight"><pre><span></span><code>get_current_user          ← 路由要的「当前作者」，本章主角
+    ├── oauth2_scheme     ← 拦下 Authorization 头，抽出 token（fastapi.security）
+    └── settings          ← 提供密钥、过期时长（§7 的配置）
+</code></pre></div>
+<h3 id="前置知识authorization-头的格式">前置知识：Authorization 头的格式</h3>
+<p>JWT 按惯例放在 <code>Authorization</code> 请求头里，格式是 <strong><code>Bearer &lt;token&gt;</code></strong>（RFC 6750）：</p>
+<div class="highlight"><pre><span></span><code><span class="err">Authorization: Bearer eyJhbGciOiJIUzI1NiIs...</span>
+</code></pre></div>
+<p><code>Bearer</code> 意为「持票人」——这串票给谁谁就能用（再次呼应：防转借靠 HTTPS + 短有效期）。</p>
+<h3 id="完整实现demo-同款骨架">完整实现（demo 同款骨架）</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Annotated</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">jwt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fastapi</span><span class="w"> </span><span class="kn">import</span> <span class="n">Depends</span><span class="p">,</span> <span class="n">HTTPException</span><span class="p">,</span> <span class="n">status</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fastapi.security</span><span class="w"> </span><span class="kn">import</span> <span class="n">OAuth2PasswordBearer</span>
+
+<span class="n">oauth2_scheme</span> <span class="o">=</span> <span class="n">OAuth2PasswordBearer</span><span class="p">(</span><span class="n">tokenUrl</span><span class="o">=</span><span class="s2">"/auth/login"</span><span class="p">)</span>
+
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_current_user</span><span class="p">(</span>
+    <span class="n">token</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Depends</span><span class="p">(</span><span class="n">oauth2_scheme</span><span class="p">)],</span>   <span class="c1"># 子依赖①：抽出 token</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">User</span><span class="p">:</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">payload</span> <span class="o">=</span> <span class="n">decode_access_token</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="n">SECRET_KEY</span><span class="p">)</span>   <span class="c1"># 子依赖②：密钥来自配置</span>
+    <span class="k">except</span> <span class="n">jwt</span><span class="o">.</span><span class="n">ExpiredSignatureError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span>
+            <span class="n">status_code</span><span class="o">=</span><span class="n">status</span><span class="o">.</span><span class="n">HTTP_401_UNAUTHORIZED</span><span class="p">,</span>
+            <span class="n">detail</span><span class="o">=</span><span class="s2">"token 已过期，请重新登录"</span><span class="p">,</span>
+            <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s2">"WWW-Authenticate"</span><span class="p">:</span> <span class="s2">"Bearer"</span><span class="p">},</span>
+        <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
+    <span class="k">except</span> <span class="n">jwt</span><span class="o">.</span><span class="n">InvalidTokenError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>                 <span class="c1"># 改过票 / 错钥匙 / 格式烂 → 全在这</span>
+        <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span>
+            <span class="n">status_code</span><span class="o">=</span><span class="n">status</span><span class="o">.</span><span class="n">HTTP_401_UNAUTHORIZED</span><span class="p">,</span>
+            <span class="n">detail</span><span class="o">=</span><span class="s2">"token 无效"</span><span class="p">,</span>
+            <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s2">"WWW-Authenticate"</span><span class="p">:</span> <span class="s2">"Bearer"</span><span class="p">},</span>
+        <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
+
+    <span class="n">user</span> <span class="o">=</span> <span class="k">await</span> <span class="n">get_user</span><span class="p">(</span><span class="n">payload</span><span class="p">[</span><span class="s2">"sub"</span><span class="p">])</span>             <span class="c1"># 拿着 sub 去库里找人</span>
+    <span class="k">if</span> <span class="n">user</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span>
+            <span class="n">status_code</span><span class="o">=</span><span class="n">status</span><span class="o">.</span><span class="n">HTTP_401_UNAUTHORIZED</span><span class="p">,</span>
+            <span class="n">detail</span><span class="o">=</span><span class="s2">"token 无效"</span><span class="p">,</span>
+            <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s2">"WWW-Authenticate"</span><span class="p">:</span> <span class="s2">"Bearer"</span><span class="p">},</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">user</span>
+
+<span class="n">CurrentUser</span> <span class="o">=</span> <span class="n">Annotated</span><span class="p">[</span><span class="n">User</span><span class="p">,</span> <span class="n">Depends</span><span class="p">(</span><span class="n">get_current_user</span><span class="p">)]</span>   <span class="c1"># 08 章的别名玩法</span>
+</code></pre></div>
+<p>路由侧从此极简：</p>
+<div class="highlight"><pre><span></span><code><span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"/users/me"</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">read_me</span><span class="p">(</span><span class="n">me</span><span class="p">:</span> <span class="n">CurrentUser</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">"id"</span><span class="p">:</span> <span class="n">me</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="s2">"username"</span><span class="p">:</span> <span class="n">me</span><span class="o">.</span><span class="n">username</span><span class="p">,</span> <span class="s2">"role"</span><span class="p">:</span> <span class="n">me</span><span class="o">.</span><span class="n">role</span><span class="p">}</span>
+</code></pre></div>
+<p>逐层解说，对着问题清单对答案：</p>
+<ul>
+<li><strong>「怎么知晓当前登录的用户」</strong>——不靠 magic：每个带锁接口挂上 <code>get_current_user</code>，依赖先于路由执行（08 章 §3 的执行流程），路由函数伸手就拿到现成的 <code>User</code>。</li>
+<li><strong>为什么验完签还要查库</strong>——token 只证明「<strong>曾经</strong>签给过 sub 这个人」，不证明此人现在还在：可能已注销、被封禁、被删除。查一次库，把「过去的票」兑换成「现在的身份」。顺带一提：<code>payload["sub"]</code> 出来是字符串，转 <code>int</code> 再查 id。</li>
+<li><strong>「要不要为认证定义新异常」</strong>——原问题清单里的一问，两种姿势：</li>
+<li><strong>轻量派</strong>（本章 demo）：直接抛 <code>HTTPException(401, detail=...)</code>，注意带上 <code>headers={"WWW-Authenticate": "Bearer"}</code>——这是 HTTP 规范对 401 的配套要求，缺失会让不少客户端库不发凭证重试逻辑。</li>
+<li><strong>工程派</strong>（接 09 章体系）：定义 <code>class UnauthorizedError(BusinessException)</code>，三行——<code>http_status = 401</code>、<code>code = "401001"</code>、<code>default_message = "请先登录"</code>。统一信封、统一注册，前台拿到的是 <code>{"code": "401001", "message": ...}</code> 而不是裸 <code>detail</code>。两种都对，看项目有没有 09 章那套地基。</li>
+</ul>
+<p><strong>常见坑</strong></p>
+<ul>
+<li>在每个路由函数里手抄一遍「解头 → 验票 → 查人」——08 章反对的「写死依赖」在这里原样复刻。一次封装，全站复用，这是依赖注入的主场。</li>
+<li><code>except</code> 顺序写反（父类在前），过期和无效的区分话术永远出不来——§6 坑 3 的现场版。</li>
+<li>忘了 <code>from e</code>——日志里异常因果链断掉，排障时看不到「401 ← 哪个底层异常」。</li>
+<li>401 和 403 用混：401 是「<strong>你是谁我没认出来</strong>」（没票、假票、过期票）；403 是「认出来了，但<strong>你不配</strong>」（座位不对）。下一节展开。</li>
+</ul>
+<hr />
+<h2 id="9-接口上锁与角色分级">9. 接口上锁与角色分级</h2>
+<p>凭证有了、当前用户有了，问题清单第 7 问：怎么让接口<strong>必须登录</strong>才能访问？作者和管理员的权限差异怎么表达？</p>
+<h3 id="上锁的三种粒度">上锁的三种粒度</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># ① 单个接口上锁：挂依赖就完事</span>
+<span class="nd">@app</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">"/articles"</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">create_article</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">ArticleIn</span><span class="p">,</span> <span class="n">me</span><span class="p">:</span> <span class="n">CurrentUser</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span> <span class="o">...</span>
+
+<span class="c1"># ② 一组路由整体上锁：router 级 dependencies（08 章 §3 的老朋友）</span>
+<span class="n">router</span> <span class="o">=</span> <span class="n">APIRouter</span><span class="p">(</span>
+    <span class="n">prefix</span><span class="o">=</span><span class="s2">"/articles"</span><span class="p">,</span>
+    <span class="n">dependencies</span><span class="o">=</span><span class="p">[</span><span class="n">Depends</span><span class="p">(</span><span class="n">get_current_user</span><span class="p">)],</span>   <span class="c1"># 组内所有接口自动验票</span>
+<span class="p">)</span>
+
+<span class="c1"># ③ 整个 app 上锁</span>
+<span class="n">app</span> <span class="o">=</span> <span class="n">FastAPI</span><span class="p">(</span><span class="n">dependencies</span><span class="o">=</span><span class="p">[</span><span class="n">Depends</span><span class="p">(</span><span class="n">get_current_user</span><span class="p">)])</span>
+</code></pre></div>
+<h3 id="多角色依赖工厂再套一层">多角色：依赖工厂再套一层</h3>
+<p>判断权限的逻辑也别散进路由函数体——再包一层依赖。<strong>依赖工厂</strong>：一个返回「依赖函数」的函数，08 章「依赖的依赖」的实战变体：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">require_roles</span><span class="p">(</span><span class="o">*</span><span class="n">roles</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">User</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""按需生产守门依赖：require_roles("admin") 造出一个『只放管理员』的依赖"""</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">checker</span><span class="p">(</span><span class="n">me</span><span class="p">:</span> <span class="n">CurrentUser</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">User</span><span class="p">:</span>      <span class="c1"># 先过 get_current_user，再查角色</span>
+        <span class="k">if</span> <span class="n">me</span><span class="o">.</span><span class="n">role</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">roles</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">403</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="s2">"权限不足"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">me</span>
+    <span class="k">return</span> <span class="n">checker</span>
+
+<span class="n">AdminOnly</span> <span class="o">=</span> <span class="n">Annotated</span><span class="p">[</span><span class="n">User</span><span class="p">,</span> <span class="n">Depends</span><span class="p">(</span><span class="n">require_roles</span><span class="p">(</span><span class="s2">"admin"</span><span class="p">))]</span>
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="s2">"/articles/</span><span class="si">{article_id}</span><span class="s2">"</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">delete_article</span><span class="p">(</span><span class="n">article_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">me</span><span class="p">:</span> <span class="n">AdminOnly</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span> <span class="o">...</span>
+</code></pre></div>
+<p><code>get_current_user</code> → <code>checker</code> → 路由，三层的依赖树。401 在第一层拦「没票的」，403 在第二层拦「票对但座位不对」——两道闸各司其职：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>401 Unauthorized</th>
+<th>403 Forbidden</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>含义</td>
+<td>认证失败：没登录 / 票无效或过期</td>
+<td>认证成功、鉴权失败：认出你了，但不行</td>
+</tr>
+<tr>
+<td>谁能解决</td>
+<td>客户端：去登录、换新 token</td>
+<td>服务端：改权限或用户换账号，重试没用</td>
+</tr>
+<tr>
+<td>对应本节</td>
+<td><code>get_current_user</code> 抛</td>
+<td><code>require_roles</code> 抛</td>
+</tr>
+</tbody>
+</table>
+<p>更细的业务判断（比如「删文章：本人或管理员」）属于<strong>属主校验</strong>，得进路由或服务层（要同时看 <code>me</code> 和 <code>article.author</code>，纯声明式依赖表达不了）——demo 里给了完整写法。</p>
+<p><strong>常见坑</strong></p>
+<ul>
+<li>权限 <code>if</code> 写在路由函数体里满地都是——文档上看不出接口需要什么角色，测试也只能整条业务跑。能进依赖的判断都进依赖。</li>
+<li>依赖里只验角色、忘了先过认证——<code>require_roles</code> 必须依赖 <code>get_current_user</code>（先拿到 <code>me</code> 才谈得上 <code>me.role</code>），树断了 403 会早于 401 出现，客户端懵。</li>
+<li>想改权限时发现要改几百个函数签名——这就是「上锁进依赖/别散业务」在还债。顺带一提原问题清单里那句「修改访问权限后对应的测试脚本需要修改」：测试的解药在 12 章——<code>dependency_overrides</code> 把 <code>get_current_user</code> 换成「永远返回测试作者」的替身（08 章 §11 的手法），权限怎么改，测试都稳。</li>
+</ul>
+<hr />
+<h2 id="10-docs-里的-authorize-按钮security-scheme">10. /docs 里的 Authorize 按钮：security scheme</h2>
+<p>问题清单第 8 问：怎么让 API 文档<strong>直观</strong>反映出哪些接口需要认证？</p>
+<h3 id="是什么">是什么</h3>
+<p>OpenAPI 规范里，每个接口可以标注「我需要哪种安全方案」（security scheme）。FastAPI 里这个标注<strong>不用手写</strong>——你在依赖里用了 <code>OAuth2PasswordBearer</code> 或 <code>HTTPBearer</code>，挂在路由上，框架自动完成三件事：</p>
+<ol>
+<li>在 OpenAPI 文档里注册一个安全方案；</li>
+<li>给受保护接口打上锁图标 🔒；</li>
+<li>在 <code>/docs</code> 顶部渲染出 <strong>Authorize 按钮</strong>——点开、填凭证、之后的「Try it out」自动带上 <code>Authorization</code> 头。</li>
+</ol>
+<h3 id="oauth2passwordbearer让文档替你走完整登录流">OAuth2PasswordBearer：让文档替你走完整登录流</h3>
+<p><strong>作用</strong>：声明「本 API 用 OAuth2 密码模式换 token」；同时它本身是个依赖——从请求头里解出 <code>Bearer &lt;token&gt;</code> 的 token 字符串，没有就 401。</p>
+<p><strong>签名</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">fastapi.security</span><span class="w"> </span><span class="kn">import</span> <span class="n">OAuth2PasswordBearer</span>
+
+<span class="n">oauth2_scheme</span> <span class="o">=</span> <span class="n">OAuth2PasswordBearer</span><span class="p">(</span><span class="n">tokenUrl</span><span class="o">=</span><span class="s2">"/auth/login"</span><span class="p">)</span>
+<span class="c1">#                                    ↑ 告诉文档：想换 token，把表单发到这个地址</span>
+</code></pre></div>
+<p><strong>最小示例</strong>（配合 §8 的 get_current_user）：</p>
+<div class="highlight"><pre><span></span><code><span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"/users/me"</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">read_me</span><span class="p">(</span><span class="n">me</span><span class="p">:</span> <span class="n">CurrentUser</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span> <span class="o">...</span>   <span class="c1"># /docs 里此接口旁出现锁图标</span>
+</code></pre></div>
+<p><strong>Authorize 按钮的完整体验</strong>：打开 <code>/docs</code> → 点 <strong>Authorize</strong> → 填 username / password → 文档把这两个值<strong>以表单形式 POST 到 <code>tokenUrl</code></strong> → 拿到响应里的 <code>access_token</code> 存进浏览器 → 之后每个「Try it out」自动带 <code>Authorization: Bearer ...</code>。整个过程零 curl、零 Postman，产品经理也能自己调试受保护接口——这就是它相对 <code>HTTPBearer</code> 的杀手锏。</p>
+<p><strong>配套的登录接口要用表单</strong>（demo 的写法）：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">fastapi.security</span><span class="w"> </span><span class="kn">import</span> <span class="n">OAuth2PasswordRequestForm</span>
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">"/auth/login"</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">login</span><span class="p">(</span>
+    <span class="n">form</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="n">OAuth2PasswordRequestForm</span><span class="p">,</span> <span class="n">Depends</span><span class="p">()],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TokenOut</span><span class="p">:</span>
+    <span class="n">user</span> <span class="o">=</span> <span class="n">authenticate</span><span class="p">(</span><span class="n">form</span><span class="o">.</span><span class="n">username</span><span class="p">,</span> <span class="n">form</span><span class="o">.</span><span class="n">password</span><span class="p">)</span>   <span class="c1"># 验密（§3）</span>
+    <span class="n">token</span> <span class="o">=</span> <span class="n">create_access_token</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">user</span><span class="o">.</span><span class="n">id</span><span class="p">),</span> <span class="n">SECRET_KEY</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">"access_token"</span><span class="p">:</span> <span class="n">token</span><span class="p">,</span> <span class="s2">"token_type"</span><span class="p">:</span> <span class="s2">"bearer"</span><span class="p">}</span>
+</code></pre></div>
+<p><code>OAuth2PasswordRequestForm</code> 替你声明了 <code>username</code> / <code>password</code> 两个<strong>表单字段</strong>，和 Authorize 按钮发出来的格式严丝合缝。</p>
+<p><strong>常见坑（这一节最大的坑）</strong></p>
+<ul>
+<li><strong><code>tokenUrl</code> 只是说明书，不是代理</strong>。框架不会替你实现登录接口，更不会校验它——它只是写进文档的一句话。你的登录接口不存在或吃 JSON，按钮按下去就是 404 / 422。</li>
+<li><strong>按钮发的是 <code>application/x-www-form-urlencoded</code> 表单，不是 JSON</strong>。登录接口若声明成 <code>data: LoginIn</code>（Pydantic body），Authorize 按钮必然 422——它发的表单你的 JSON 接口读不懂。两条路：登录接口用表单（如上，需安装 <code>python-multipart</code>，FastAPI 处理表单的硬前提，忘装会在请求时报错）；或者放弃按钮自动流，用下面的 <code>HTTPBearer</code> 手动贴 token。</li>
+<li>等价但更轻的选择：<strong><code>HTTPBearer</code></strong>——同样出锁图标和 Authorize 按钮，但按钮里填的是 <strong>token 本身</strong>（适合「先用 curl 登录拿 token、再贴进文档试」的纯 JSON 工作流），不需要表单、不需要 <code>python-multipart</code>。它作为依赖返回 <code>HTTPAuthorizationCredentials</code> 对象（<code>.credentials</code> 即 token）。小坑：老版本 Starlette 的 <code>HTTPBearer</code> 在头缺失时回 <strong>403</strong> 而非 401（历史行为，升级或锁依赖版本时留意，实测新版本已统一为 401）；想自己控制话术，就 <code>HTTPBearer(auto_error=False)</code> 让它安静地返回 <code>None</code>，由你的 <code>get_current_user</code> 统一抛 401。</li>
+<li>响应模型里 token 字段必须叫 <code>access_token</code>、类型标注为 <code>str</code>，<code>token_type</code> 用 <code>"bearer"</code>——Authorize 按钮按这几个名字取值，写错一个，按钮「成功」了却存不进 token。</li>
+</ul>
+<h3 id="选型一句话">选型一句话</h3>
+<p>想给文档使用者<strong>全自动</strong>的登录体验（联调、演示、非技术同事）→ <code>OAuth2PasswordBearer</code> + 表单登录；纯程序化消费的 API（前后端都自己写代码）→ <code>HTTPBearer</code> 也绰绰有余。</p>
+<hr />
+<h2 id="11-refresh-token一票两联">11. refresh token：一票两联</h2>
+<p>问题清单最后一问：凭证设了 30 分钟有效期，作者写到一半 token 过期，就要重新输密码？</p>
+<p><strong>核心矛盾</strong>：有效期<strong>短</strong>，泄露的票很快就废（安全）；但用户老是被踢下线（体验）。有效期<strong>长</strong>，体验顺滑；可票一旦被偷，小偷也爽很久（风险）。</p>
+<p><strong>解法：把一张票拆成一票两联。</strong></p>
+<ul>
+<li><strong>入场联（access token）</strong>：短命（30 分钟～2 小时），随每个请求出示，验票机认它；</li>
+<li><strong>补票联（refresh token）</strong>：长命（7～30 天），<strong>只在补票口出示</strong>（专门的 <code>/auth/refresh</code> 接口），用来换一张新的入场联，自己永远进不了场。</li>
+</ul>
+<div class="highlight"><pre><span></span><code>登录 ──► 发两联：access(30min) + refresh(7d)
+   │
+   ├─ 日常请求带 access ──► 过期 ──► 401
+   │                                    │
+   │                                    ▼
+   │              拿 refresh 调 /auth/refresh ──► 新 access（可能连 refresh 也换新）
+   │
+   └─ refresh 也过期 ──► 只好重新登录
+</code></pre></div>
+<p>价值在哪：access 被偷 → 半小时后自然作废；refresh 被偷 → 它不能直接访问接口，只能去补票口换票，而补票口是<strong>可以加防线的</strong>（限频、绑定设备、轮换时发现旧 refresh 二次使用即全族作废）。安全性没涨多少倍，但「短命凭证满天飞」的风险窗口收窄了一个数量级。</p>
+<p>工程上的几个讲究（概念课，demo 不实现，记住图和原则即可）：</p>
+<ul>
+<li>refresh 同样是 JWT（多了个 <code>type: "refresh"</code> 声明，或干脆用不同密钥签发，杜绝拿入场联去补票）；</li>
+<li>Web 端 refresh 常存 <strong>httpOnly cookie</strong>（JS 读不到，防 XSS 顺手偷走）；App 端存安全存储区；</li>
+<li>轮换（rotation）：每次 refresh 换新时旧 refresh 作废，发现旧的又被用过 = 可能被偷，强制下线。</li>
+</ul>
+<p><strong>顺带把「注销难题」收了</strong>：JWT 是无状态的，票发出去就收不回——这是 §4 表格里「注销难」的根。工程解法是<strong>黑名单</strong>：注销时把 token 的 <code>jti</code>（§5 的票号）记进 Redis 并给个不短于 <code>exp</code> 的 TTL，<code>get_current_user</code> 查库时顺手查黑名单。代价是「无状态」掺了点状态——所以轻量项目常用替代方案：<strong>不搞注销，只把 exp 设短硬扛</strong>。两难如实摆着，选哪个看业务对「登出」的较真程度。</p>
+<hr />
+<h2 id="12-本章速查表按开头清单回收">12. 本章速查表（按开头清单回收）</h2>
+<table>
+<thead>
+<tr>
+<th>问题清单</th>
+<th>答案</th>
+<th>所在节</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>密码怎么存？</td>
+<td>哈希 + 盐 + 慢算法（bcrypt），绝不存明文/可逆密文</td>
+<td>§2–3</td>
+</tr>
+<tr>
+<td>发什么凭证？</td>
+<td>无状态选 JWT token，有状态选 session；多端分离 → JWT</td>
+<td>§4</td>
+</tr>
+<tr>
+<td>凭证怎么构造？</td>
+<td>header.payload.signature；payload 明文只防篡改</td>
+<td>§5</td>
+</tr>
+<tr>
+<td>过期时间在哪设？</td>
+<td>payload 的 <code>exp</code> 声明，<code>jwt.encode</code> 时写入</td>
+<td>§5–6</td>
+</tr>
+<tr>
+<td>密钥在哪配置？</td>
+<td>环境变量 → <code>.env</code>（进 <code>.gitignore</code>），<code>openssl rand -hex 32</code> 生成</td>
+<td>§7</td>
+</tr>
+<tr>
+<td>出错怎么报告？</td>
+<td>轻量 <code>HTTPException(401, headers={"WWW-Authenticate": "Bearer"})</code>；工程接 09 章异常体系</td>
+<td>§8</td>
+</tr>
+<tr>
+<td>怎么知道当前用户？</td>
+<td><code>get_current_user</code> 依赖：解 Bearer 头 → decode → 查库 → 401</td>
+<td>§8</td>
+</tr>
+<tr>
+<td>接口怎么上锁？</td>
+<td>路由/路由组/app 挂 <code>Depends(get_current_user)</code>；角色用依赖工厂 <code>require_roles</code>；401 vs 403</td>
+<td>§9</td>
+</tr>
+<tr>
+<td>文档怎么标识认证？</td>
+<td><code>OAuth2PasswordBearer</code>/<code>HTTPBearer</code> → 锁图标 + Authorize 按钮</td>
+<td>§10</td>
+</tr>
+<tr>
+<td>过期就得重登吗？</td>
+<td>refresh token 一票两联：短 access 换长 refresh</td>
+<td>§11</td>
+</tr>
+</tbody>
+</table>
+<p><strong>配套 demo</strong>：<code>demo/demo_jwt.py</code>——单文件跑完整条链路：注册（bcrypt 哈希入库）→ 表单登录（发 JWT）→ <code>/users/me</code>、发布/删除文章（依赖上锁 + 角色判断）→ 实验接口（领一枚<strong>已过期</strong>或<strong>错误密钥签发</strong>的 token 去撞 401）。内嵌 uvicorn，文件头注释里有 curl 三步流程。</p>
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span>demo
+python<span class="w"> </span>demo_jwt.py<span class="w">        </span><span class="c1"># 或 uvicorn demo_jwt:app --port 8311</span>
+</code></pre></div>
+<h3 id="作业">作业</h3>
+<ol>
+<li>数据库被拖走、库里存的是 bcrypt 哈希——攻击者拿彩虹表为什么基本白干？bcrypt 输出里那 22 字符的盐起了什么作用？</li>
+<li>JWT 的 signature 是怎么算出来的？为什么说「JWT 不加密，只防篡改」——这句话对「payload 里能放什么」立了什么规矩？</li>
+<li><code>jwt.decode</code> 的 <code>algorithms</code> 参数为什么必须显式传 <code>["HS256"]</code> 而不能省、更不能跟着 token 的 header 走？</li>
+<li><code>get_current_user</code> 里验签成功后为什么还要查一次数据库？跳过查库直接信任 payload 里的 sub，会漏掉哪些场景？</li>
+<li>401 和 403 各在 <code>get_current_user</code> / <code>require_roles</code> 的哪一层抛出？客户端收到 401 和 403 之后，各自正确的下一步是什么？</li>
+</ol>
+<hr />
+<p>认证这道关卡立好了：每个受保护的接口，进门先亮票。下一章要给「关卡本身」写测试——怎么在不真的注册登录的情况下测 <code>get_current_user</code> 后面的业务逻辑？08 章 §11 埋的 <code>dependency_overrides</code> 替身手法，正式登场。</p>
+<p><strong>下一章</strong>：<a href="../backend/12-pytest-ce-shi.html">12 · pytest 测试</a></p></div>
+
+      </article>
+<nav class="pager"><a class="pg-card pg-prev" href="../backend/10-zhong-jian-jian.html"><span class="pg-label">← 上一篇</span><span class="pg-title">中间件</span><span class="pg-mod">Python 框架指南</span></a><a class="pg-card pg-next" href="../backend/12-pytest-ce-shi.html"><span class="pg-label">下一篇 →</span><span class="pg-title">pytest 测试</span><span class="pg-mod">Python 框架指南</span></a></nav>
+    </div>
+    <footer class="foot">
+      <span>深栈 DeepStack · AI Agent 工程师转型训练营配套文档</span>
+    </footer>
+  </main>
+<nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#1-先把问题摆上桌认证是一串连环问">1. 先把问题摆上桌：认证是一串连环问</a><a class="toc-link toc-h2" href="#2-密码怎么存明文是埋在库里的火药桶">2. 密码怎么存：明文是埋在库里的火药桶</a><a class="toc-link toc-h3" href="#为什么明文不行">为什么明文不行</a><a class="toc-link toc-h3" href="#为什么加密存也不行">为什么「加密存」也不行</a><a class="toc-link toc-h3" href="#正解存哈希碎纸机不是保险箱">正解：存哈希——碎纸机，不是保险箱</a><a class="toc-link toc-h2" href="#3-bcrypt-与-passlib两套写法都过一遍">3. bcrypt 与 passlib：两套写法都过一遍</a><a class="toc-link toc-h3" href="#姿势一bcrypt-裸用本章-demo-采用">姿势一：bcrypt 裸用（本章 demo 采用）</a><a class="toc-link toc-h3" href="#姿势二passlib-的-cryptcontext老项目常见">姿势二：passlib 的 CryptContext（老项目常见）</a><a class="toc-link toc-h3" href="#存与验的落点">存与验的落点</a><a class="toc-link toc-h2" href="#4-凭证选型寄存柜手环-vs-防伪门票">4. 凭证选型：寄存柜手环 vs 防伪门票</a><a class="toc-link toc-h2" href="#5-拆开看-jwtheaderpayloadsignature">5. 拆开看 JWT：header.payload.signature</a><a class="toc-link toc-h3" href="#三联各是什么">三联各是什么</a><a class="toc-link toc-h3" href="#三条铁律背下来面试和事故现场都用得上">三条铁律（背下来，面试和事故现场都用得上）</a><a class="toc-link toc-h2" href="#6-pyjwt签发与验票">6. PyJWT：签发与验票</a><a class="toc-link toc-h3" href="#jwtencode签一张票">jwt.encode：签一张票</a><a class="toc-link toc-h3" href="#jwtdecode验一张票">jwt.decode：验一张票</a><a class="toc-link toc-h3" href="#封装成项目小工具demo-同款思路">封装成项目小工具（demo 同款思路）</a><a class="toc-link toc-h2" href="#7-密钥放哪secret_key-的家规">7. 密钥放哪：SECRET_KEY 的家规</a><a class="toc-link toc-h2" href="#8-get_current_user从一根请求头到一位作者">8. get_current_user：从一根请求头到一位作者</a><a class="toc-link toc-h3" href="#前置知识authorization-头的格式">前置知识：Authorization 头的格式</a><a class="toc-link toc-h3" href="#完整实现demo-同款骨架">完整实现（demo 同款骨架）</a><a class="toc-link toc-h2" href="#9-接口上锁与角色分级">9. 接口上锁与角色分级</a><a class="toc-link toc-h3" href="#上锁的三种粒度">上锁的三种粒度</a><a class="toc-link toc-h3" href="#多角色依赖工厂再套一层">多角色：依赖工厂再套一层</a><a class="toc-link toc-h2" href="#10-docs-里的-authorize-按钮security-scheme">10. /docs 里的 Authorize 按钮：security scheme</a><a class="toc-link toc-h3" href="#是什么">是什么</a><a class="toc-link toc-h3" href="#oauth2passwordbearer让文档替你走完整登录流">OAuth2PasswordBearer：让文档替你走完整登录流</a><a class="toc-link toc-h3" href="#选型一句话">选型一句话</a><a class="toc-link toc-h2" href="#11-refresh-token一票两联">11. refresh token：一票两联</a><a class="toc-link toc-h2" href="#12-本章速查表按开头清单回收">12. 本章速查表（按开头清单回收）</a><a class="toc-link toc-h3" href="#作业">作业</a></nav>
+</div>
+<div class="sb-mask" id="sbMask"></div>
+<script src="../assets/app.js"></script>
+</body>
+</html>

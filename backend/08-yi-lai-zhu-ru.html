@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>08 · 依赖注入 · 深栈 DeepStack 课程文档</title>
+<meta name="description" content="第 04 章结尾留了个钩子：getdb 里那句 async with ... yield session——「yield 前借、yield 后还」，但当时没解释谁来调用它、谁把 session 塞进路由函数。这一章就把幕…">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%23d9c39a' text-anchor='middle'%3EDS%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+<div class="progress" id="progress"></div>
+
+<div class="layout">
+<aside class="sidebar" id="sidebar">
+  <div class="sb-head">
+    <a class="brand" href="../index.html">
+      <span class="brand-mark">DS</span>
+      <span class="brand-text"><b>深栈 DeepStack</b><i>AI Agent 工程师转型训练营</i></span>
+    </a>
+    <button class="sb-close" id="sbClose" aria-label="关闭目录">✕</button>
+  </div>
+  <div class="sb-search"><input type="search" id="searchInput" placeholder="搜索 123 篇文档… ( / )" autocomplete="off">
+    <div class="sb-results" id="searchResults"></div></div>
+  <nav class="sb-nav">
+    <section class="sb-group" data-mod="python">
+      <a class="sb-group-title" href="../modules/python.html" data-toggle="python">
+        <span class="sb-num">01</span>
+        <span class="sb-group-text"><b>Python 与数据实践</b><i>31 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../python/01-huan-jing-da-jian-yu-ban-ben-guan-li.html"><span class="sb-item-num">01</span><span class="sb-item-title">环境搭建与版本管理</span></a>
+        <a class="sb-item" href="../python/02-bian-liang-biao-da-shi-yu-liu-cheng-kong-zhi.html"><span class="sb-item-num">02</span><span class="sb-item-title">变量、表达式与流程控制</span></a>
+        <a class="sb-item" href="../python/03-xu-lie-zi-dian-yu-ji-he.html"><span class="sb-item-num">03</span><span class="sb-item-title">序列、字典与集合</span></a>
+        <a class="sb-item" href="../python/04-han-shu-she-ji-yu-lambda.html"><span class="sb-item-num">04</span><span class="sb-item-title">函数设计与 lambda</span></a>
+        <a class="sb-item" href="../python/05-zuo-yong-yu-gui-ze-yu-bi-bao.html"><span class="sb-item-num">05</span><span class="sb-item-title">作用域规则与闭包</span></a>
+        <a class="sb-item" href="../python/06-lei-de-ding-yi-yu-shi-li-hua.html"><span class="sb-item-num">06</span><span class="sb-item-title">类的定义与实例化</span></a>
+        <a class="sb-item" href="../python/07-lei-xing-pan-ding-yu-chou-xiang-ji-lei.html"><span class="sb-item-num">07</span><span class="sb-item-title">类型判定与抽象基类</span></a>
+        <a class="sb-item" href="../python/08-mo-shu-fang-fa-quan-jing.html"><span class="sb-item-num">08</span><span class="sb-item-title">魔术方法全景</span></a>
+        <a class="sb-item" href="../python/09-miao-shu-fu-yu-yuan-lei.html"><span class="sb-item-num">09</span><span class="sb-item-title">描述符与元类</span></a>
+        <a class="sb-item" href="../python/10-zhuang-shi-qi.html"><span class="sb-item-num">10</span><span class="sb-item-title">装饰器</span></a>
+        <a class="sb-item" href="../python/11-die-dai-xie-yi-yu-sheng-cheng-qi.html"><span class="sb-item-num">11</span><span class="sb-item-title">迭代协议与生成器</span></a>
+        <a class="sb-item" href="../python/12-with-yu-shang-xia-wen-xie-yi.html"><span class="sb-item-num">12</span><span class="sb-item-title">with 与上下文协议</span></a>
+        <a class="sb-item" href="../python/13-yi-chang-ti-xi-yu-chu-li.html"><span class="sb-item-num">13</span><span class="sb-item-title">异常体系与处理</span></a>
+        <a class="sb-item" href="../python/14-lei-xing-biao-zhu.html"><span class="sb-item-num">14</span><span class="sb-item-title">类型标注</span></a>
+        <a class="sb-item" href="../python/15-mo-kuai-yu-bao-de-zu-zhi.html"><span class="sb-item-num">15</span><span class="sb-item-title">模块与包的组织</span></a>
+        <a class="sb-item" href="../python/16-biao-zhun-ku-xun-li.html"><span class="sb-item-num">16</span><span class="sb-item-title">标准库巡礼</span></a>
+        <a class="sb-item" href="../python/17-yi-lai-guan-li-yu-di-san-fang-ku.html"><span class="sb-item-num">17</span><span class="sb-item-title">依赖管理与第三方库</span></a>
+        <a class="sb-item" href="../python/18-xian-cheng-yu-jin-cheng.html"><span class="sb-item-num">18</span><span class="sb-item-title">线程与进程</span></a>
+        <a class="sb-item" href="../python/19-shi-jian-xun-huan.html"><span class="sb-item-num">19</span><span class="sb-item-title">事件循环</span></a>
+        <a class="sb-item" href="../python/20-future-yu-xie-cheng.html"><span class="sb-item-num">20</span><span class="sb-item-title">Future 与协程</span></a>
+        <a class="sb-item" href="../python/21-asyncio-shi-zhan.html"><span class="sb-item-num">21</span><span class="sb-item-title">asyncio 实战</span></a>
+        <a class="sb-item" href="../python/22-gou-jian-yu-fa-bu.html"><span class="sb-item-num">22</span><span class="sb-item-title">构建与发布</span></a>
+        <a class="sb-item" href="../python/23-gong-cheng-hua-gong-ju-lian.html"><span class="sb-item-num">23</span><span class="sb-item-title">工程化工具链</span></a>
+        <a class="sb-item" href="../python/24-monorepo-yu-tiao-shi.html"><span class="sb-item-num">24</span><span class="sb-item-title">monorepo 与调试</span></a>
+        <a class="sb-item" href="../python/25-jupyter-jiao-hu-huan-jing.html"><span class="sb-item-num">25</span><span class="sb-item-title">Jupyter 交互环境</span></a>
+        <a class="sb-item" href="../python/26-numpy-shu-zu-yu-xiang-liang-hua.html"><span class="sb-item-num">26</span><span class="sb-item-title">NumPy 数组与向量化</span></a>
+        <a class="sb-item" href="../python/27-pandas-shu-ju-jie-gou.html"><span class="sb-item-num">27</span><span class="sb-item-title">Pandas 数据结构</span></a>
+        <a class="sb-item" href="../python/28-pandas-shu-ju-qing-xi.html"><span class="sb-item-num">28</span><span class="sb-item-title">Pandas 数据清洗</span></a>
+        <a class="sb-item" href="../python/29-matplotlib-hui-tu-ti-xi.html"><span class="sb-item-num">29</span><span class="sb-item-title">Matplotlib 绘图体系</span></a>
+        <a class="sb-item" href="../python/30-matplotlib-dong-hua-yu-jiao-hu.html"><span class="sb-item-num">30</span><span class="sb-item-title">Matplotlib 动画与交互</span></a>
+        <a class="sb-item" href="../python/31-seaborn-tong-ji-ke-shi-hua.html"><span class="sb-item-num">31</span><span class="sb-item-title">Seaborn 统计可视化</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="agent">
+      <a class="sb-group-title" href="../modules/agent.html" data-toggle="agent">
+        <span class="sb-num">02</span>
+        <span class="sb-group-text"><b>Agent 核心</b><i>15 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../agent/01-token-yu-ci-qian-ru.html"><span class="sb-item-num">01</span><span class="sb-item-title">Token 与词嵌入</span></a>
+        <a class="sb-item" href="../agent/02-qian-xiang-chuan-bo-yu-fan-xiang-chuan-bo.html"><span class="sb-item-num">02</span><span class="sb-item-title">前向传播与反向传播</span></a>
+        <a class="sb-item" href="../agent/03-zhu-yi-li-ji-zhi-yu-transformer-jia-gou.html"><span class="sb-item-num">03</span><span class="sb-item-title">注意力机制与 Transformer 架构</span></a>
+        <a class="sb-item" href="../agent/04-yu-xun-lian-rlhf-yu-cai-yang-kv-cache.html"><span class="sb-item-num">04</span><span class="sb-item-title">预训练、RLHF 与采样（KV Cache）</span></a>
+        <a class="sb-item" href="../agent/05-ben-di-mo-xing-yu-xiao-xi-jie-gou.html"><span class="sb-item-num">05</span><span class="sb-item-title">本地模型与消息结构</span></a>
+        <a class="sb-item" href="../agent/06-hui-hua-guan-li-yu-json-shu-chu.html"><span class="sb-item-num">06</span><span class="sb-item-title">会话管理与 JSON 输出</span></a>
+        <a class="sb-item" href="../agent/07-tool-calling-xie-yi-yu-feng-zhuang.html"><span class="sb-item-num">07</span><span class="sb-item-title">Tool Calling：协议与封装</span></a>
+        <a class="sb-item" href="../agent/08-react-mo-shi-yu-zhu-xun-huan.html"><span class="sb-item-num">08</span><span class="sb-item-title">ReAct 模式与主循环</span></a>
+        <a class="sb-item" href="../agent/09-shi-zhan-deep-research-agent.html"><span class="sb-item-num">09</span><span class="sb-item-title">实战：Deep Research Agent</span></a>
+        <a class="sb-item" href="../agent/10-skill-yu-jian-jin-shi-pi-lu.html"><span class="sb-item-num">10</span><span class="sb-item-title">Skill 与渐进式披露</span></a>
+        <a class="sb-item" href="../agent/11-mcp-quan-jing.html"><span class="sb-item-num">11</span><span class="sb-item-title">MCP 全景</span></a>
+        <a class="sb-item" href="../agent/12-duo-agent-yu-xuan-xing-ce-lve.html"><span class="sb-item-num">12</span><span class="sb-item-title">多 Agent 与选型策略</span></a>
+        <a class="sb-item" href="../agent/13-ti-shi-ci-gong-cheng-yu-shang-xia-wen-gong.html"><span class="sb-item-num">13</span><span class="sb-item-title">提示词工程与上下文工程</span></a>
+        <a class="sb-item" href="../agent/14-xun-huan-tu-yu-gu-jia-gong-cheng.html"><span class="sb-item-num">14</span><span class="sb-item-title">循环、图与骨架工程</span></a>
+        <a class="sb-item" href="../agent/15-ji-yi-quan-xian-yu-ping-ce.html"><span class="sb-item-num">15</span><span class="sb-item-title">记忆、权限与评测</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="langchain">
+      <a class="sb-group-title" href="../modules/langchain.html" data-toggle="langchain">
+        <span class="sb-num">03</span>
+        <span class="sb-group-text"><b>LangChain 指南</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langchain/01-ren-shi-langchain.html"><span class="sb-item-num">01</span><span class="sb-item-title">认识 LangChain</span></a>
+        <a class="sb-item" href="../langchain/02-ti-shi-ci-mu-ban-yu-xiao-xi.html"><span class="sb-item-num">02</span><span class="sb-item-title">提示词模板与消息</span></a>
+        <a class="sb-item" href="../langchain/03-lcel-yu-runnable.html"><span class="sb-item-num">03</span><span class="sb-item-title">LCEL 与 Runnable</span></a>
+        <a class="sb-item" href="../langchain/04-liu-shi-yu-bing-fa.html"><span class="sb-item-num">04</span><span class="sb-item-title">流式与并发</span></a>
+        <a class="sb-item" href="../langchain/05-shu-chu-jie-xi-qi.html"><span class="sb-item-num">05</span><span class="sb-item-title">输出解析器</span></a>
+        <a class="sb-item" href="../langchain/06-wen-dang-jia-zai-yu-qie-ge.html"><span class="sb-item-num">06</span><span class="sb-item-title">文档加载与切割</span></a>
+        <a class="sb-item" href="../langchain/07-qian-ru-yu-xiang-liang-ku.html"><span class="sb-item-num">07</span><span class="sb-item-title">嵌入与向量库</span></a>
+        <a class="sb-item" href="../langchain/08-jian-suo-yu-rag.html"><span class="sb-item-num">08</span><span class="sb-item-title">检索与RAG</span></a>
+        <a class="sb-item" href="../langchain/09-dui-hua-ji-yi.html"><span class="sb-item-num">09</span><span class="sb-item-title">对话记忆</span></a>
+        <a class="sb-item" href="../langchain/10-gong-ju-diao-yong.html"><span class="sb-item-num">10</span><span class="sb-item-title">工具调用</span></a>
+        <a class="sb-item" href="../langchain/11-agent.html"><span class="sb-item-num">11</span><span class="sb-item-title">Agent</span></a>
+        <a class="sb-item" href="../langchain/12-hui-diao-yu-tiao-shi-quan-ke-cheng-shou-guan.html"><span class="sb-item-num">12</span><span class="sb-item-title">回调与调试（全课程收官章）</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="langgraph">
+      <a class="sb-group-title" href="../modules/langgraph.html" data-toggle="langgraph">
+        <span class="sb-num">04</span>
+        <span class="sb-group-text"><b>LangGraph 框架指南</b><i>17 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langgraph/01-di-1-zhang-cong-yi-ge-shi-kong-de-jiao.html"><span class="sb-item-num">01</span><span class="sb-item-title">第 1 章 从一个失控的脚本说起</span></a>
+        <a class="sb-item" href="../langgraph/02-di-2-zhang-zui-xiao-ke-yun-xing-tu.html"><span class="sb-item-num">02</span><span class="sb-item-title">第 2 章 最小可运行图</span></a>
+        <a class="sb-item" href="../langgraph/03-di-3-zhang-zhuang-tai-tu-de-shu-ju-xin.html"><span class="sb-item-num">03</span><span class="sb-item-title">第 3 章 状态：图的数据心脏</span></a>
+        <a class="sb-item" href="../langgraph/04-di-4-zhang-rang-liu-cheng-xue-hui-jue-ce.html"><span class="sb-item-num">04</span><span class="sb-item-title">第 4 章 让流程学会决策</span></a>
+        <a class="sb-item" href="../langgraph/05-di-5-zhang-bing-xing-shi-jie-chao-bu-zhi.html"><span class="sb-item-num">05</span><span class="sb-item-title">第 5 章 并行世界：超步执行模型</span></a>
+        <a class="sb-item" href="../langgraph/06-di-6-zhang-command-ba-kong-zhi-quan-jiao-jin.html"><span class="sb-item-num">06</span><span class="sb-item-title">第 6 章 Command：把控制权交进节点</span></a>
+        <a class="sb-item" href="../langgraph/07-di-7-zhang-dong-tai-bing-xing-send-yu-mapreduce.html"><span class="sb-item-num">07</span><span class="sb-item-title">第 7 章 动态并行：Send 与 MapReduce</span></a>
+        <a class="sb-item" href="../langgraph/08-di-8-zhang-gei-tu-zhuang-shang-shou-jiao-gong.html"><span class="sb-item-num">08</span><span class="sb-item-title">第 8 章 给图装上手脚：工具调用</span></a>
+        <a class="sb-item" href="../langgraph/09-di-9-zhang-fu-yong-yu-feng-zhuang-zi-tu.html"><span class="sb-item-num">09</span><span class="sb-item-title">第 9 章 复用与封装：子图</span></a>
+        <a class="sb-item" href="../langgraph/10-di-10-zhang-cong-dan-tu-dao-tuan-dui-duo.html"><span class="sb-item-num">10</span><span class="sb-item-title">第 10 章 从单图到团队：多 Agent 架构</span></a>
+        <a class="sb-item" href="../langgraph/11-di-11-zhang-liu-shi-shu-chu.html"><span class="sb-item-num">11</span><span class="sb-item-title">第 11 章 流式输出</span></a>
+        <a class="sb-item" href="../langgraph/12-di-12-zhang-chi-jiu-hua-checkpointer-yu-xian-cheng.html"><span class="sb-item-num">12</span><span class="sb-item-title">第 12 章 持久化：Checkpointer 与线程</span></a>
+        <a class="sb-item" href="../langgraph/13-di-13-zhang-shi-jian-lv-xing.html"><span class="sb-item-num">13</span><span class="sb-item-title">第 13 章 时间旅行</span></a>
+        <a class="sb-item" href="../langgraph/14-di-14-zhang-zhong-duan-yu-ren-zai-hui-lu.html"><span class="sb-item-num">14</span><span class="sb-item-title">第 14 章 中断与人在回路</span></a>
+        <a class="sb-item" href="../langgraph/15-di-15-zhang-ji-yi-guan-li.html"><span class="sb-item-num">15</span><span class="sb-item-title">第 15 章 记忆管理</span></a>
+        <a class="sb-item" href="../langgraph/16-di-16-zhang-rong-cuo-zhong-shi-chao-shi-yu.html"><span class="sb-item-num">16</span><span class="sb-item-title">第 16 章 容错：重试、超时与兜底</span></a>
+        <a class="sb-item" href="../langgraph/17-di-17-zhang-quan-jing-hui-gu.html"><span class="sb-item-num">17</span><span class="sb-item-title">第 17 章 全景回顾</span></a>
+      </div>
+    </section>
+    <section class="sb-group open" data-mod="backend">
+      <a class="sb-group-title" href="../modules/backend.html" data-toggle="backend">
+        <span class="sb-num">05</span>
+        <span class="sb-group-text"><b>Python 框架指南</b><i>14 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../backend/01-fastapi-ru-men-yu-asgi.html"><span class="sb-item-num">01</span><span class="sb-item-title">FastAPI 入门与 ASGI</span></a>
+        <a class="sb-item" href="../backend/02-lu-you-yu-qing-qiu-xiang-ying.html"><span class="sb-item-num">02</span><span class="sb-item-title">路由与请求响应</span></a>
+        <a class="sb-item" href="../backend/03-pydantic-shu-ju-jiao-yan-yu-pei-zhi.html"><span class="sb-item-num">03</span><span class="sb-item-title">Pydantic 数据校验与配置</span></a>
+        <a class="sb-item" href="../backend/04-sqlalchemy-yi-bu-yin-qing-yu-hui-hua.html"><span class="sb-item-num">04</span><span class="sb-item-title">SQLAlchemy 异步引擎与会话</span></a>
+        <a class="sb-item" href="../backend/05-orm-jian-mo.html"><span class="sb-item-num">05</span><span class="sb-item-title">ORM 建模</span></a>
+        <a class="sb-item" href="../backend/06-sql-biao-da-shi-yu-shu-ju-cao-zuo.html"><span class="sb-item-num">06</span><span class="sb-item-title">SQL 表达式与数据操作</span></a>
+        <a class="sb-item" href="../backend/07-alembic-shu-ju-qian-yi.html"><span class="sb-item-num">07</span><span class="sb-item-title">Alembic 数据迁移</span></a>
+        <a class="sb-item current" href="../backend/08-yi-lai-zhu-ru.html"><span class="sb-item-num">08</span><span class="sb-item-title">依赖注入</span></a>
+        <a class="sb-item" href="../backend/09-tong-yi-yi-chang-chu-li.html"><span class="sb-item-num">09</span><span class="sb-item-title">统一异常处理</span></a>
+        <a class="sb-item" href="../backend/10-zhong-jian-jian.html"><span class="sb-item-num">10</span><span class="sb-item-title">中间件</span></a>
+        <a class="sb-item" href="../backend/11-ren-zheng-yu-jwt.html"><span class="sb-item-num">11</span><span class="sb-item-title">认证与 JWT</span></a>
+        <a class="sb-item" href="../backend/12-pytest-ce-shi.html"><span class="sb-item-num">12</span><span class="sb-item-title">pytest 测试</span></a>
+        <a class="sb-item" href="../backend/13-ri-zhi-loguru.html"><span class="sb-item-num">13</span><span class="sb-item-title">日志 loguru</span></a>
+        <a class="sb-item" href="../backend/14-liu-shi-xiang-ying-sse-yu-websocket.html"><span class="sb-item-num">14</span><span class="sb-item-title">流式响应 SSE 与 WebSocket</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="interview">
+      <a class="sb-group-title" href="../modules/interview.html" data-toggle="interview">
+        <span class="sb-num">06</span>
+        <span class="sb-group-text"><b>面试题库</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../interview/01-llm-yuan-li-pian.html"><span class="sb-item-num">01</span><span class="sb-item-title">LLM 原理篇</span></a>
+        <a class="sb-item" href="../interview/02-rag-yu-jian-suo-pian.html"><span class="sb-item-num">02</span><span class="sb-item-title">RAG 与检索篇</span></a>
+        <a class="sb-item" href="../interview/03-agent-he-xin-pian.html"><span class="sb-item-num">03</span><span class="sb-item-title">Agent 核心篇</span></a>
+        <a class="sb-item" href="../interview/04-langgraph-pian.html"><span class="sb-item-num">04</span><span class="sb-item-title">LangGraph 篇</span></a>
+        <a class="sb-item" href="../interview/05-langchain-pian.html"><span class="sb-item-num">05</span><span class="sb-item-title">LangChain 篇</span></a>
+        <a class="sb-item" href="../interview/06-xi-tong-she-ji-pian.html"><span class="sb-item-num">06</span><span class="sb-item-title">系统设计篇</span></a>
+        <a class="sb-item" href="../interview/07-xiang-mu-shen-wa-pian.html"><span class="sb-item-num">07</span><span class="sb-item-title">项目深挖篇</span></a>
+        <a class="sb-item" href="../interview/08-gu-zhang-pai-cha-pian.html"><span class="sb-item-num">08</span><span class="sb-item-title">故障排查篇</span></a>
+        <a class="sb-item" href="../interview/09-python-ji-chu-pian.html"><span class="sb-item-num">09</span><span class="sb-item-title">Python 基础篇</span></a>
+        <a class="sb-item" href="../interview/10-fastapi-yu-hou-duan-pian.html"><span class="sb-item-num">10</span><span class="sb-item-title">FastAPI 与后端篇</span></a>
+        <a class="sb-item" href="../interview/11-ti-shi-ci-gong-cheng-yu-an-quan-pian.html"><span class="sb-item-num">11</span><span class="sb-item-title">提示词工程与安全篇</span></a>
+        <a class="sb-item" href="../interview/12-mo-xing-xuan-xing-yu-jiang-ben-pian.html"><span class="sb-item-num">12</span><span class="sb-item-title">模型选型与降本篇</span></a>
+      </div>
+    </section>
+  </nav>
+</aside>
+  <main class="main">
+    <header class="topbar">
+      <button class="menu-btn" id="menuBtn" aria-label="目录">☰</button>
+      <div class="crumbs"><a href="../index.html">首页</a><span>/</span><a href="../modules/backend.html">Python 框架指南</a><span>/</span><span class="cur">依赖注入</span></div>
+      <div class="topbar-actions">
+        <button class="icon-btn" id="themeBtn" title="切换深浅色" aria-label="切换深浅色">◐</button>
+      </div>
+    </header>
+    <div class="content">
+      <article class="article">
+
+<header class="page-head">
+  <div class="page-kicker">Python 框架指南 · 第 08 章</div>
+  <h1 class="page-title">依赖注入</h1>
+  <p class="page-desc">第 04 章结尾留了个钩子：getdb 里那句 async with ... yield session——「yield 前借、yield 后还」，但当时没解释谁来调用它、谁把 session 塞进路由函数。这一章就把幕…</p>
+  <div class="page-meta">
+    <span>约 32 分钟</span><span>12,901 字</span><span>23 个代码示例</span>
+  </div>
+</header>
+<div class="md"><p>第 04 章结尾留了个钩子：<code>get_db</code> 里那句 <code>async with ... yield session</code>——「yield 前借、yield 后还」，但当时没解释<strong>谁</strong>来调用它、<strong>谁</strong>把 session 塞进路由函数。这一章就把幕后角色请出来：<strong>依赖注入（Depends）</strong>。</p>
+<p>一句话定位：Depends 是 FastAPI 的「道具组」。你的路由函数是演员，只管伸手要道具；至于道具是哪个仓库调来的、用完怎么还，全是道具组的事——<strong>演员的台词本（函数签名）里写的是"我要什么"，从不写"上哪儿拿"</strong>。</p>
+<blockquote>
+<p>本章配套 demo：<code>demo/demo_depends.py</code>（单文件，内存假数据，内嵌 uvicorn，注释里有完整 curl 演示动线）</p>
+<p>示例场景延续「墨集 inkhub 内容平台」：文章存哪儿？——本地磁盘、云端对象存储、内存模拟，<strong>三种引擎随时切换</strong>，正是依赖注入最经典的用武之地。</p>
+</blockquote>
+<p><strong>章节衔接</strong>：04 章的 <code>get_db</code> 雏形在本章 7 节正式回收；11 章的 <code>get_current_user</code>（认证）会大量复用本章的写法；12 章 pytest 测试会用到 11 节的 <code>dependency_overrides</code>。</p>
+<hr />
+<h2 id="1-从一次换存储引擎翻车说起">1. 从一次「换存储引擎」翻车说起</h2>
+<p>先看一段"写死依赖"的代码，它没有任何语法问题，却是维护噩梦的开端：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># ❌ 反面教材：依赖被焊死在函数体里</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">storage.cloud</span><span class="w"> </span><span class="kn">import</span> <span class="n">CloudEngine</span>
+
+<span class="n">router</span> <span class="o">=</span> <span class="n">APIRouter</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s2">"/articles"</span><span class="p">)</span>
+
+<span class="nd">@router</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">""</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">create_article</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">ArticleIn</span><span class="p">):</span>
+    <span class="n">engine</span> <span class="o">=</span> <span class="n">CloudEngine</span><span class="p">(</span><span class="n">bucket</span><span class="o">=</span><span class="s2">"inkhub-articles"</span><span class="p">)</span>   <span class="c1"># 依赖在这里被写死</span>
+    <span class="k">return</span> <span class="n">engine</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>代价一：换实现 = 全项目大搜捕。</strong> 有一天墨集决定从云端搬到本地磁盘。你得满项目搜 <code>CloudEngine</code>，几十个路由文件一个个改。改漏一处，两套引擎同时写，数据悄悄裂成两半。</p>
+<p><strong>代价二：测试打的是真家伙。</strong> 跑单测时这段代码会真的往云端写文件——又慢、又花钱、还留下脏数据。想要一个"假引擎"跑测试？没有插的地方，除非改生产代码。</p>
+<p><strong>代价三：依赖的依赖，层层往里拖。</strong> 云端引擎需要访问令牌，令牌要从请求头解析——于是构造令牌的代码也得搬进路由函数。函数体越来越胖，业务逻辑被装配代码淹没。</p>
+<p>病根只有一个：<strong>"要用什么"和"从哪儿拿"被焊在了一起</strong>。解法也只有一个：路由只声明"要用什么"（类型），"从哪儿拿"交给外面。这就是本章全部内容的出发点。</p>
+<hr />
+<h2 id="2-先说人话iocdiioc-容器">2. 先说人话：IoC、DI、IoC 容器</h2>
+<p>三个绕不开的名词，先拆掉：</p>
+<ul>
+<li><strong>IoC</strong>：Inversion of Control，<strong>控制反转</strong>——一种设计思想。核心动作：把"选哪个实现"的<strong>选择权</strong>从函数内部移交出去，让自己和具体实现解耦。</li>
+<li><strong>DI</strong>：Dependency Injection，<strong>依赖注入</strong>——把 IoC 落地的手段。具体做法：依赖不再自己造，而是从外部<strong>注入</strong>进来（最常见就是"从参数递进来"）。</li>
+<li><strong>IoC 容器</strong>：优化 DI 的工具。依赖太多、注入关系太复杂时，由一个专职"管家"统一负责查表、构造、交付依赖。<strong>FastAPI 本身就是你的 IoC 容器。</strong></li>
+</ul>
+<p>不用框架，手动 DI 长这样：</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">MemoryEngine</span><span class="p">:</span> <span class="o">...</span>      <span class="c1"># 内存模拟，测试用</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">LocalEngine</span><span class="p">:</span> <span class="o">...</span>       <span class="c1"># 本地磁盘</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">CloudEngine</span><span class="p">:</span> <span class="o">...</span>       <span class="c1"># 云端对象存储</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">publish</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">ArticleIn</span><span class="p">,</span> <span class="n">engine</span><span class="p">):</span>     <span class="c1"># 依赖从参数递进来</span>
+    <span class="k">return</span> <span class="n">engine</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+<span class="n">publish</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">CloudEngine</span><span class="p">())</span>   <span class="c1"># 生产：云端</span>
+<span class="n">publish</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">LocalEngine</span><span class="p">())</span>   <span class="c1"># 内网部署：本地</span>
+<span class="n">publish</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">MemoryEngine</span><span class="p">())</span>  <span class="c1"># 测试：内存模拟</span>
+</code></pre></div>
+<p>选择权交出去了——<code>publish</code> 从此不关心引擎是谁，<strong>调用方说了算</strong>。这就是"控制反转"：原来是我（函数）说了算，现在是外面说了算。</p>
+<p>用剧组打个比方：</p>
+<ul>
+<li><strong>写死依赖</strong> = 演员自己揣着真西瓜上台，想换成塑料道具西瓜，只能把演员肚子剖开；</li>
+<li><strong>手动 DI</strong> = 演员空手上台，导演递什么拿什么——能换了，但每场戏导演都得亲自递；</li>
+<li><strong>IoC 容器</strong> = 剧组雇了道具组，剧本上写了"演员甲：西瓜一颗"，道具组看到就自动备好。演员照伸手，导演睡大觉。</li>
+</ul>
+<p>FastAPI 的 <code>Depends</code>，就是你雇的这个道具组。下一节开始讲怎么写"剧本"。</p>
+<hr />
+<h2 id="3-depends把依赖写进签名里">3. Depends：把依赖写进签名里</h2>
+<p><strong>作用</strong>：告诉 FastAPI"这个参数的值，请调用某个依赖去取"。FastAPI 会在每次请求时自动执行依赖、把返回值塞进参数，再调用你的路由函数。</p>
+<p><strong>两种写法</strong>（同一个意思）：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">fastapi</span><span class="w"> </span><span class="kn">import</span> <span class="n">Depends</span>
+
+<span class="c1"># 写法A：默认值挂 Depends（老项目常见）</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">list_articles</span><span class="p">(</span><span class="n">store</span><span class="p">:</span> <span class="n">ArticleStore</span> <span class="o">=</span> <span class="n">Depends</span><span class="p">(</span><span class="n">get_engine</span><span class="p">)):</span>
+    <span class="o">...</span>
+
+<span class="c1"># 写法B：Annotated 挂 Depends（官方推荐，FastAPI 0.95+）</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Annotated</span>
+
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">list_articles</span><span class="p">(</span><span class="n">store</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="n">ArticleStore</span><span class="p">,</span> <span class="n">Depends</span><span class="p">(</span><span class="n">get_engine</span><span class="p">)]):</span>
+    <span class="o">...</span>
+</code></pre></div>
+<p><strong>执行流程</strong>（背下来，后面全靠它）：</p>
+<div class="highlight"><pre><span></span><code>请求进来
+   │
+   ▼
+FastAPI 扫路由签名 → 发现参数挂着 Depends(get_engine)
+   │
+   ▼
+调用 get_engine() ──依赖自己声明的参数（query/path/header），框架照样解析
+   │
+   ▼
+拿到返回值（一个 ArticleStore 实例）
+   │
+   ▼
+塞进 store 参数 → 这才调用你的路由函数
+</code></pre></div>
+<p>关键洞察：<strong>依赖函数自己也可以声明 query、path、header 参数</strong>，FastAPI 会一视同仁地解析——这就是后面"参数透传"的伏笔。</p>
+<p><strong>最小可跑示例</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">fastapi</span><span class="w"> </span><span class="kn">import</span> <span class="n">Depends</span><span class="p">,</span> <span class="n">FastAPI</span><span class="p">,</span> <span class="n">Query</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Annotated</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">FastAPI</span><span class="p">()</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">get_engine</span><span class="p">(</span>
+    <span class="n">backend</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Query</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">"memory"</span><span class="p">,</span> <span class="n">pattern</span><span class="o">=</span><span class="s2">"^(memory|local|cloud)$"</span><span class="p">),</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ArticleStore</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""函数依赖：按 query 参数选引擎"""</span>
+    <span class="o">...</span>
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"/articles"</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">list_articles</span><span class="p">(</span><span class="n">store</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="n">ArticleStore</span><span class="p">,</span> <span class="n">Depends</span><span class="p">(</span><span class="n">get_engine</span><span class="p">)])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">"engine"</span><span class="p">:</span> <span class="n">store</span><span class="o">.</span><span class="n">backend</span><span class="p">,</span> <span class="s2">"titles"</span><span class="p">:</span> <span class="n">store</span><span class="o">.</span><span class="n">titles</span><span class="p">()}</span>
+</code></pre></div>
+<p>请求 <code>/articles?backend=cloud</code>，路由里拿到的 <code>store</code> 就是云端引擎——路由代码一个字没提"cloud"。</p>
+<p><strong>常见坑</strong></p>
+<ul>
+<li><code>Depends(get_engine)</code> 括号里传的是<strong>函数对象本身</strong>，不是调用结果。写成 <code>Depends(get_engine())</code> 是最经典的笔误——后者把"现在调一次"的返回值当依赖，行为全乱。</li>
+<li>Annotated 写法里，类型和 Depends 的顺序不能反：<code>Annotated[类型, Depends(...)]</code>，Depends 永远在第二位。</li>
+<li>两种写法别混在同一个参数上：<code>store: ArticleStore = Depends(...)</code> 又包 <code>Annotated</code>，属于自找麻烦。</li>
+</ul>
+<hr />
+<h2 id="4-函数依赖最常用的形态">4. 函数依赖：最常用的形态</h2>
+<p><strong>作用</strong>：任何可调用对象都能当依赖，函数是第一形态。同步、异步都行。</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 异步依赖：内部要 await 时用</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_engine</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">ArticleStore</span><span class="p">:</span>
+    <span class="n">engine</span> <span class="o">=</span> <span class="k">await</span> <span class="n">load_engine_config</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">engine</span>
+
+<span class="c1"># 同步依赖：纯计算、读配置这类快活儿</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_page_size</span><span class="p">(</span><span class="n">limit</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">Query</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">ge</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">le</span><span class="o">=</span><span class="mi">100</span><span class="p">))</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">limit</span>
+</code></pre></div>
+<p>路由端拿到的是<strong>函数的返回值</strong>——注意，不是函数本身：</p>
+<div class="highlight"><pre><span></span><code><span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"/articles"</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">list_articles</span><span class="p">(</span>
+    <span class="n">store</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="n">ArticleStore</span><span class="p">,</span> <span class="n">Depends</span><span class="p">(</span><span class="n">get_engine</span><span class="p">)],</span>   <span class="c1"># 拿到 ArticleStore 实例</span>
+    <span class="n">limit</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Depends</span><span class="p">(</span><span class="n">get_page_size</span><span class="p">)],</span>         <span class="c1"># 拿到 int</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+    <span class="k">return</span> <span class="n">store</span><span class="o">.</span><span class="n">titles</span><span class="p">()[:</span><span class="n">limit</span><span class="p">]</span>
+</code></pre></div>
+<p><strong>同步依赖跑在线程池里</strong>（和同步路由函数一个待遇），不会卡事件循环——所以纯 CPU 或阻塞 IO 的小活儿，写同步依赖完全没问题。</p>
+<p><strong>常见坑</strong></p>
+<ul>
+<li><strong>依赖的返回值不是响应体</strong>。依赖是"备料"，路由是"炒菜"——客户端永远只看到路由的返回值。</li>
+<li>依赖里可以直接 <code>raise HTTPException(401)</code> 做权限拦截，而且<strong>在路由执行之前</strong>就生效了（认证章节的标准姿势，11 章 <code>get_current_user</code> 就这么写）。</li>
+<li>依赖函数别起名 <code>get_xxx</code> 就以为是 GET 专用——它和 HTTP 方法无关，任何路由都能用。</li>
+</ul>
+<hr />
+<h2 id="5-类依赖new-的活儿外包给框架">5. 类依赖：new 的活儿外包给框架</h2>
+<p><strong>作用</strong>：把类传给 <code>Depends</code>，FastAPI 每个请求会<strong>实例化一次</strong>，把实例塞给你。相当于框架替你写了 <code>PublishGuard(...)</code> 这行 new。</p>
+<p><strong>签名规则</strong>：<code>__init__</code> 的参数会被 FastAPI 当成路由参数解析——类依赖天然自带状态和一小套方法。</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">fastapi</span><span class="w"> </span><span class="kn">import</span> <span class="n">Header</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">PublishGuard</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""发布权限守卫：类依赖示例"""</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_inkhub_editor</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Header</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">"匿名墨友"</span><span class="p">))</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">editor</span> <span class="o">=</span> <span class="n">x_inkhub_editor</span>     <span class="c1"># 参数名 → 请求头 X-Inkhub-Editor（下划线转连字符）</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">stamp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">"《</span><span class="si">{</span><span class="n">title</span><span class="si">}</span><span class="s2">》由 </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="si">}</span><span class="s2"> 发布"</span>
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">"/articles/publish"</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">publish</span><span class="p">(</span>
+    <span class="n">data</span><span class="p">:</span> <span class="n">ArticleIn</span><span class="p">,</span>
+    <span class="n">guard</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="n">PublishGuard</span><span class="p">,</span> <span class="n">Depends</span><span class="p">(</span><span class="n">PublishGuard</span><span class="p">)],</span>   <span class="c1"># 注意：传的是类本身</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="n">article_id</span> <span class="o">=</span> <span class="n">get_store</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">title</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">"id"</span><span class="p">:</span> <span class="n">article_id</span><span class="p">,</span> <span class="s2">"stamp"</span><span class="p">:</span> <span class="n">guard</span><span class="o">.</span><span class="n">stamp</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">title</span><span class="p">)}</span>
+</code></pre></div>
+<p>什么时候用类？当依赖<strong>需要携带状态</strong>（editor、超时配置、客户端句柄）或<strong>配套方法</strong>时，类比闭包函数清爽。函数依赖适合"算一个值就完事"的场景。</p>
+<p><strong>常见坑</strong></p>
+<ul>
+<li><code>Depends(PublishGuard)</code> 传的是<strong>类</strong>，不是实例。<code>Depends(PublishGuard())</code> 等于把一个现成对象当依赖调用——会按"可调用对象"走另一套逻辑，直接翻车。</li>
+<li>每个请求都会实例化一次：<code>__init__</code> 里别干重活（建连接、读大文件），那类开销请交给 7 节的 yield 依赖或全局单例。</li>
+<li>类依赖同样吃"同请求缓存"（9 节）：一次请求里多处 <code>Depends(PublishGuard)</code> 只会 new 一次。</li>
+<li><code>Header</code> 参数名的下划线会自动转连字符：<code>x_inkhub_editor</code> 对应请求头 <code>X-Inkhub-Editor</code>——<strong>框架不会替你加 <code>X-</code> 前缀</strong>。参数名写成 <code>inkhub_editor</code> 却去发 <code>X-Inkhub-Editor</code> 请求头，永远只拿到默认值，还不报错。名字对不上时用 <code>alias=</code> 显式指定。</li>
+</ul>
+<hr />
+<h2 id="6-annotated-写法与可复用别名">6. Annotated 写法与可复用别名</h2>
+<p><strong>作用</strong>：<code>Annotated</code> 不只是"新写法"——它把类型和依赖绑成<strong>一个可复用的类型别名</strong>，全项目声明一次，处处复用。</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Annotated</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fastapi</span><span class="w"> </span><span class="kn">import</span> <span class="n">Depends</span>
+
+<span class="c1"># 声明一次：类型 + 依赖打包</span>
+<span class="n">StoreDep</span> <span class="o">=</span> <span class="n">Annotated</span><span class="p">[</span><span class="n">ArticleStore</span><span class="p">,</span> <span class="n">Depends</span><span class="p">(</span><span class="n">get_engine</span><span class="p">)]</span>
+<span class="n">GuardDep</span> <span class="o">=</span> <span class="n">Annotated</span><span class="p">[</span><span class="n">PublishGuard</span><span class="p">,</span> <span class="n">Depends</span><span class="p">(</span><span class="n">PublishGuard</span><span class="p">)]</span>
+
+<span class="c1"># 到处复用，签名干净得像没写过依赖</span>
+<span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"/articles"</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">list_articles</span><span class="p">(</span><span class="n">store</span><span class="p">:</span> <span class="n">StoreDep</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span> <span class="o">...</span>
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">"/articles/publish"</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">publish</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">ArticleIn</span><span class="p">,</span> <span class="n">store</span><span class="p">:</span> <span class="n">StoreDep</span><span class="p">,</span> <span class="n">guard</span><span class="p">:</span> <span class="n">GuardDep</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span> <span class="o">...</span>
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="s2">"/articles/</span><span class="si">{article_id}</span><span class="s2">"</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">remove</span><span class="p">(</span><span class="n">article_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">store</span><span class="p">:</span> <span class="n">StoreDep</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span> <span class="o">...</span>
+</code></pre></div>
+<p>没有 Annotated 的年代，每个参数都要抄一遍 <code>= Depends(get_engine)</code>；改依赖时得满文件改。有了别名，<strong>改一处，全局生效</strong>。</p>
+<p><strong>常见坑</strong></p>
+<ul>
+<li>别名只是个类型别名，别在 <code>Annotated</code> 里塞业务参数——<code>Query</code>/<code>Depends</code> 之外的东西框架不认识。</li>
+<li>混用两种风格时优先统一到 Annotated，老式默认值写法留作"看得懂旧代码"的技能即可。</li>
+</ul>
+<hr />
+<h2 id="7-yield-依赖前置后置一段管完">7. yield 依赖：前置后置一段管完</h2>
+<p>第 04 章 <code>get_db</code> 的正式回收。普通依赖"算个值就退场"，yield 依赖是<strong>生成器</strong>：yield 前是准备段（借），yield 后是清理段（还），FastAPI 负责在恰当时机推进它。</p>
+<p><strong>形状</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">AsyncIterator</span>
+
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_db</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">AsyncIterator</span><span class="p">[</span><span class="n">AsyncSession</span><span class="p">]:</span>
+    <span class="k">async</span> <span class="k">with</span> <span class="n">session_factory</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>   <span class="c1"># 前置段：开仓借 session</span>
+        <span class="k">yield</span> <span class="n">session</span>                            <span class="c1"># ⬅ 路由函数在这里跑</span>
+    <span class="c1"># 后置段：路由跑完，退出 async with，session 自动归还</span>
+</code></pre></div>
+<p><strong>执行时序</strong>（一次请求）：</p>
+<div class="highlight"><pre><span></span><code>前置段执行（借）
+   │
+   ▼
+yield 值交给路由 → 路由函数执行 → 响应发回客户端
+   │
+   ▼
+后置段执行（还）
+</code></pre></div>
+<p><strong>最小示例</strong>——给存储引擎做"租借式"依赖：</p>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">lease_store</span><span class="p">(</span>
+    <span class="n">backend</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Query</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">"memory"</span><span class="p">,</span> <span class="n">pattern</span><span class="o">=</span><span class="s2">"^(memory|local|cloud)$"</span><span class="p">),</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AsyncIterator</span><span class="p">[</span><span class="n">ArticleStore</span><span class="p">]:</span>
+    <span class="n">store</span> <span class="o">=</span> <span class="n">build_engine</span><span class="p">(</span><span class="n">backend</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"前置段：</span><span class="si">{</span><span class="n">store</span><span class="o">.</span><span class="n">backend</span><span class="si">}</span><span class="s2"> 就绪"</span><span class="p">)</span>        <span class="c1"># 请求进来先执行</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">yield</span> <span class="n">store</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"后置段：</span><span class="si">{</span><span class="n">store</span><span class="o">.</span><span class="n">backend</span><span class="si">}</span><span class="s2"> 收尾归档"</span><span class="p">)</span>  <span class="c1"># 响应发完才执行</span>
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"/articles/leased"</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">leased_list</span><span class="p">(</span><span class="n">store</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="n">ArticleStore</span><span class="p">,</span> <span class="n">Depends</span><span class="p">(</span><span class="n">lease_store</span><span class="p">)])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">"engine"</span><span class="p">:</span> <span class="n">store</span><span class="o">.</span><span class="n">backend</span><span class="p">,</span> <span class="s2">"titles"</span><span class="p">:</span> <span class="n">store</span><span class="o">.</span><span class="n">titles</span><span class="p">()}</span>
+</code></pre></div>
+<p>服务端日志顺序：<code>前置段 → 路由返回 → 后置段</code>。<strong>后置段在响应发给客户端之后执行</strong>——所以清理再慢也不拖累用户体感。</p>
+<p>两个关键保证：</p>
+<ul>
+<li><strong>路由抛异常，finally 照样执行</strong>——资源不会因报错而泄漏；</li>
+<li>路由抛出的异常会<strong>穿越 yield 点</strong>传进依赖：想根据异常类型决定回滚策略，可以在 yield 后 <code>except</code> 捕获再 <code>raise</code> 放行。</li>
+</ul>
+<p><strong>常见坑</strong></p>
+<ul>
+<li>一个依赖函数只能有<strong>一个 yield</strong>，多个会直接报错。要分层清理就拆成多个 yield 依赖（下一节的嵌套正好能组合它们）。</li>
+<li>yield 后的清理代码里尽量别抛新异常——它发生在响应已发出之后，客户端什么都看不到，只剩服务端日志里一具难查的尸体。</li>
+<li>依赖在路由之前执行（包括 yield 前的段），但<strong>不在响应之后还活着的是 yield 前的挂起态</strong>——别在依赖里搞"先 yield 一个占位符、后置段再填充"的骚操作，路由拿到什么就是什么。</li>
+</ul>
+<hr />
+<h2 id="8-依赖嵌套依赖还能依赖">8. 依赖嵌套：依赖还能依赖</h2>
+<p><strong>作用</strong>：依赖函数自己的参数，也可以挂 <code>Depends</code>——依赖可以叠依赖，形成一棵树。FastAPI 从叶到根逐层求解。</p>
+<div class="highlight"><pre><span></span><code>        front_page（父依赖）
+        /          \
+review_channel   get_engine（子依赖）
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">review_channel</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">return</span> <span class="s2">"前沿速递"</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">front_page</span><span class="p">(</span>
+    <span class="n">channel</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Depends</span><span class="p">(</span><span class="n">review_channel</span><span class="p">)],</span>   <span class="c1"># 依赖套依赖</span>
+    <span class="n">store</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="n">ArticleStore</span><span class="p">,</span> <span class="n">Depends</span><span class="p">(</span><span class="n">get_engine</span><span class="p">)],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">"channel"</span><span class="p">:</span> <span class="n">channel</span><span class="p">,</span> <span class="s2">"headline"</span><span class="p">:</span> <span class="n">store</span><span class="o">.</span><span class="n">titles</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">store</span><span class="o">.</span><span class="n">titles</span><span class="p">()</span> <span class="k">else</span> <span class="s2">"空空如也"</span><span class="p">}</span>
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"/front-page"</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">read_front_page</span><span class="p">(</span><span class="n">page</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">Depends</span><span class="p">(</span><span class="n">front_page</span><span class="p">)])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">page</span>
+</code></pre></div>
+<p>路由只声明最顶层的 <code>front_page</code>，底下的 <code>review_channel</code>、<code>get_engine</code> 框架自动递归求解。<strong>依赖树让每层只管自己的事</strong>：channel 管栏目、engine 管存储、front_page 只负责组装——这就是 04 章会话、11 章认证将要反复出现的标准结构：</p>
+<div class="highlight"><pre><span></span><code>get_current_user            ← 11 章主角
+    └── get_token           ← 从请求头解 token
+          └── get_settings  ← 读配置
+</code></pre></div>
+<p><strong>常见坑</strong></p>
+<ul>
+<li><strong>循环依赖必炸</strong>：A 依赖 B、B 又依赖 A，框架求解时直接抛错。画依赖树时留意方向，别成环。</li>
+<li>嵌套层数是"必要的复杂度"，不是"架构含金量"。两层三层是常态，五层以上通常说明你在用依赖树写流程编排——那是业务层的事。</li>
+</ul>
+<hr />
+<h2 id="9-use_cache一次请求只买一单">9. use_cache：一次请求只买一单</h2>
+<p><strong>作用</strong>：默认情况下，<strong>同一个依赖在一次请求里只执行一次</strong>，多个参数共享同一个结果。这就是"同请求缓存"（<code>use_cache</code> 默认 <code>True</code>）。</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">next_seq</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"next_seq 被调用"</span><span class="p">)</span>     <span class="c1"># 观察点</span>
+    <span class="k">return</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">999</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">dep_left</span><span class="p">(</span><span class="n">seq</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Depends</span><span class="p">(</span><span class="n">next_seq</span><span class="p">)])</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">seq</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">dep_right</span><span class="p">(</span><span class="n">seq</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Depends</span><span class="p">(</span><span class="n">next_seq</span><span class="p">)])</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">seq</span>
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"/cache/on"</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">cache_on</span><span class="p">(</span>
+    <span class="n">left</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Depends</span><span class="p">(</span><span class="n">dep_left</span><span class="p">)],</span>
+    <span class="n">right</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Depends</span><span class="p">(</span><span class="n">dep_right</span><span class="p">)],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="c1"># left == right：底层 next_seq 只跑了一次，结果被缓存共享</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">"left"</span><span class="p">:</span> <span class="n">left</span><span class="p">,</span> <span class="s2">"right"</span><span class="p">:</span> <span class="n">right</span><span class="p">,</span> <span class="s2">"same"</span><span class="p">:</span> <span class="n">left</span> <span class="o">==</span> <span class="n">right</span><span class="p">}</span>
+</code></pre></div>
+<p>请求 <code>/cache/on</code>，服务端日志里 <code>next_seq 被调用</code> 只出现<strong>一次</strong>，<code>left</code> 与 <code>right</code> 相等。</p>
+<p><strong>什么时候关掉缓存</strong>——<code>use_cache=False</code>：</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">dep_fresh</span><span class="p">(</span><span class="n">seq</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Depends</span><span class="p">(</span><span class="n">next_seq</span><span class="p">,</span> <span class="n">use_cache</span><span class="o">=</span><span class="kc">False</span><span class="p">)])</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">seq</span>
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"/cache/off"</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">cache_off</span><span class="p">(</span>
+    <span class="n">left</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Depends</span><span class="p">(</span><span class="n">dep_left</span><span class="p">)],</span>
+    <span class="n">right</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Depends</span><span class="p">(</span><span class="n">dep_fresh</span><span class="p">)],</span>     <span class="c1"># 强制重跑</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">"left"</span><span class="p">:</span> <span class="n">left</span><span class="p">,</span> <span class="s2">"right"</span><span class="p">:</span> <span class="n">right</span><span class="p">,</span> <span class="s2">"same"</span><span class="p">:</span> <span class="n">left</span> <span class="o">==</span> <span class="n">right</span><span class="p">}</span>   <span class="c1"># same: False</span>
+</code></pre></div>
+<p>典型场景：依赖返回<strong>每次调用必须不同</strong>的东西（自增序列号、随机挑战值、需要独立实例的资源句柄）。</p>
+<p><strong>常见坑</strong></p>
+<ul>
+<li>缓存范围是<strong>这一次请求</strong>，不是全局。下一个请求来，依赖照样重新执行——它不是性能缓存，是"同一请求内去重"。</li>
+<li>别指望靠 <code>use_cache=False</code> 给同一请求开两个数据库会话来"规避事务"——那是设计问题，不是参数问题。会话类依赖保持默认缓存就好。</li>
+</ul>
+<hr />
+<h2 id="10-参数透传子依赖的参数端点不用重抄">10. 参数透传：子依赖的参数，端点不用重抄</h2>
+<p><strong>作用</strong>：子依赖里声明的 query/header 参数，FastAPI 会自动并入端点——路由签名<strong>不用重抄</strong>，文档里却完整出现。</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">editor_gate</span><span class="p">(</span>
+    <span class="n">editor</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Query</span><span class="p">(</span><span class="n">min_length</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">"作者笔名"</span><span class="p">),</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">editor</span>
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"/articles/by-me"</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">articles_by_me</span><span class="p">(</span>
+    <span class="n">gate</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Depends</span><span class="p">(</span><span class="n">editor_gate</span><span class="p">)],</span>   <span class="c1"># editor 参数从子依赖"透传"进来</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">"editor"</span><span class="p">:</span> <span class="n">gate</span><span class="p">}</span>
+</code></pre></div>
+<p>请求 <code>/articles/by-me?editor=林墨</code>：路由签名里根本没有 <code>editor</code>，但 query 参数照样被解析、文档（<code>/docs</code>）里照样列出——参数属于谁，由<strong>声明它的位置</strong>决定，不写在路由里。</p>
+<p>另一种形态是<strong>两端同名共享</strong>：路由和子依赖声明<strong>同名</strong>参数，FastAPI 会解析一次、两边同步拿到同一个值：</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">check_channel</span><span class="p">(</span><span class="n">channel</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Query</span><span class="p">())</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span> <span class="o">...</span>
+    <span class="k">return</span> <span class="n">channel</span>
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"/articles"</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">list_articles</span><span class="p">(</span>
+    <span class="n">channel</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Query</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">"栏目筛选"</span><span class="p">),</span>
+    <span class="n">ok</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Depends</span><span class="p">(</span><span class="n">check_channel</span><span class="p">)],</span>   <span class="c1"># 这里的 channel 与上面的同名同值</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span> <span class="o">...</span>
+</code></pre></div>
+<p><strong>常见坑</strong></p>
+<ul>
+<li>子依赖的参数是"隐形"的：读路由签名看不出来，<strong>看 <code>/docs</code> 或读依赖源码</strong>才能发现全貌。接手老项目时，先扫依赖树再数参数。</li>
+<li>共享参数必须<strong>同名</strong>，<code>channel</code> 和 <code>channel_id</code> 就是两个互不相干的参数——一个填了另一个没填，422 报错让你怀疑人生。</li>
+</ul>
+<hr />
+<h2 id="11-dependency_overrides给测试换替身">11. dependency_overrides：给测试换替身</h2>
+<p><strong>作用</strong>：运行时把某个依赖<strong>整体替换成另一个实现</strong>，路由代码零感知。<code>app.dependency_overrides</code> 是一个字典：key 是原依赖对象，value 是替身。</p>
+<p><strong>最小示例</strong>——测试时把真引擎换成假引擎：</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">FakeStore</span><span class="p">(</span><span class="n">ArticleStore</span><span class="p">):</span>
+    <span class="n">backend</span> <span class="o">=</span> <span class="s2">"fake（测试替身）"</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">42</span>                              <span class="c1"># 假数据，随便编</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">get_fake_store</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">FakeStore</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">FakeStore</span><span class="p">()</span>
+
+<span class="c1"># 一行替换，所有用到 Depends(get_engine) 的路由全部生效</span>
+<span class="n">app</span><span class="o">.</span><span class="n">dependency_overrides</span><span class="p">[</span><span class="n">get_engine</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_fake_store</span>
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">"/articles/publish"</span><span class="p">)</span>   <span class="c1"># 路由完全不知道自己拿到的是假引擎</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">publish</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">ArticleIn</span><span class="p">,</span> <span class="n">store</span><span class="p">:</span> <span class="n">StoreDep</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span> <span class="o">...</span>
+</code></pre></div>
+<p>测试脚本里的标准姿势（12 章预告，先混个眼熟）：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">fastapi.testclient</span><span class="w"> </span><span class="kn">import</span> <span class="n">TestClient</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">test_publish</span><span class="p">():</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">dependency_overrides</span><span class="p">[</span><span class="n">get_engine</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_fake_store</span>     <span class="c1"># 换替身</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">TestClient</span><span class="p">(</span><span class="n">app</span><span class="p">)</span> <span class="k">as</span> <span class="n">client</span><span class="p">:</span>
+            <span class="n">resp</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">"/articles/publish"</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="p">{</span><span class="s2">"title"</span><span class="p">:</span> <span class="s2">"测试文"</span><span class="p">})</span>
+            <span class="k">assert</span> <span class="n">resp</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="n">app</span><span class="o">.</span><span class="n">dependency_overrides</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>                      <span class="c1"># 必须还回来</span>
+</code></pre></div>
+<p>这就是 1 节"代价二"的正式解药：<strong>测试不打真云端、不建真数据库，替身随取随换</strong>。</p>
+<p><strong>常见坑</strong></p>
+<ul>
+<li>key 必须是<strong>传给 <code>Depends</code> 的那个函数对象</strong>。路由里写的是 <code>Depends(get_engine)</code>，你就得用 <code>get_engine</code> 当 key；传错了（比如传了别名、传了别的包装函数）替换静默失效，测试还在打真库。</li>
+<li>替身函数的<strong>返回类型要和原件兼容</strong>（最好同签名），否则路由拿到不相干的东西，错误出现在离现场很远的地方。</li>
+<li><code>dependency_overrides</code> 是<strong>全局字典</strong>，测完不 <code>clear()</code> 会污染后面的所有测试——这就是上面 <code>try/finally</code> 存在的意义。</li>
+</ul>
+<hr />
+<h2 id="12-手搓一个迷你注入器看懂-override-原理">12. 手搓一个迷你注入器（看懂 override 原理）</h2>
+<p>FastAPI 的 override 神不神奇？拆开看，核心就是<strong>一张替换表</strong>。自己搓一个 30 行的迷你版，原理立刻透明：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># mini_dep.py —— 手搓版 Depends，理解原理用</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">MiniDep</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""迷你注入器：包装一个依赖函数，调用时先查替换表"""</span>
+
+    <span class="n">_overrides</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="n">func</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+        <span class="n">actual</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_overrides</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">)</span>   <span class="c1"># 有替身用替身</span>
+        <span class="k">return</span> <span class="n">actual</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">override</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">original</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">replacement</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">_overrides</span><span class="p">[</span><span class="n">original</span><span class="p">]</span> <span class="o">=</span> <span class="n">replacement</span>               <span class="c1"># 登记替身</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">clear_overrides</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">_overrides</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>                               <span class="c1"># 撤掉全部替身</span>
+</code></pre></div>
+<p>用它复刻墨集的"换引擎"三连：</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_engine</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">ArticleStore</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">CloudEngine</span><span class="p">()</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">get_fake_engine</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">ArticleStore</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">MemoryEngine</span><span class="p">()</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">publish</span><span class="p">(</span><span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">engine</span><span class="p">:</span> <span class="n">ArticleStore</span> <span class="o">=</span> <span class="n">MiniDep</span><span class="p">(</span><span class="n">get_engine</span><span class="p">))</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">engine</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>        <span class="c1"># 不关心引擎是谁，伸手就写</span>
+
+<span class="n">publish</span><span class="p">(</span><span class="s2">"云端首篇"</span><span class="p">)</span>                          <span class="c1"># ① 走真云端</span>
+
+<span class="n">MiniDep</span><span class="o">.</span><span class="n">override</span><span class="p">(</span><span class="n">get_engine</span><span class="p">,</span> <span class="n">get_fake_engine</span><span class="p">)</span>
+<span class="n">publish</span><span class="p">(</span><span class="s2">"测试第二篇"</span><span class="p">)</span>                        <span class="c1"># ② 替身生效，写进内存</span>
+
+<span class="n">MiniDep</span><span class="o">.</span><span class="n">clear_overrides</span><span class="p">()</span>
+<span class="n">publish</span><span class="p">(</span><span class="s2">"又回云端"</span><span class="p">)</span>                          <span class="c1"># ③ 替身撤干净，恢复原样</span>
+</code></pre></div>
+<p>对着 <code>MiniDep</code> 看 FastAPI 的行为，三件事就通了：</p>
+<ol>
+<li><code>__call__</code> 里的 <code>_overrides.get(...)</code> 就是 <code>app.dependency_overrides</code> 的查表逻辑；</li>
+<li>替换表的 key 是<strong>函数对象</strong>——所以 FastAPI 那边传错 key 会静默失效；</li>
+<li><code>clear_overrides</code> 对应 <code>app.dependency_overrides.clear()</code>——替身是全局状态，用完必须还。</li>
+</ol>
+<p>当然，真 FastAPI 远比它强：异步支持、签名解析、yield 生命周期、请求级缓存、依赖树递归求解……但 override 的芯，就是这张字典。</p>
+<hr />
+<h2 id="13-本章速查表">13. 本章速查表</h2>
+<table>
+<thead>
+<tr>
+<th>要点</th>
+<th>一句话</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>写死的代价</td>
+<td>换实现全项目搜捕、测试打真家伙、依赖的依赖层层拖</td>
+</tr>
+<tr>
+<td>IoC / DI / 容器</td>
+<td>思想（移交选择权）/ 手段（外面递进来）/ 管家（FastAPI 本身）</td>
+</tr>
+<tr>
+<td>Depends 基本形</td>
+<td><code>Annotated[类型, Depends(依赖)]</code>，传函数/类对象本身</td>
+</tr>
+<tr>
+<td>函数依赖</td>
+<td>同步异步都行；返回值给路由；内部可抛 HTTPException 先拦截</td>
+</tr>
+<tr>
+<td>类依赖</td>
+<td>每请求实例化一次；<code>__init__</code> 参数参与解析；重活别放构造器</td>
+</tr>
+<tr>
+<td>Annotated 别名</td>
+<td><code>StoreDep = Annotated[...]</code> 声明一次全局复用</td>
+</tr>
+<tr>
+<td>yield 依赖</td>
+<td>前置借、yield 交、后置还；响应发出后才执行清理；异常穿 yield 可捕</td>
+</tr>
+<tr>
+<td>依赖嵌套</td>
+<td>依赖套依赖成树；框架从叶到根递归求解；别成环</td>
+</tr>
+<tr>
+<td>use_cache</td>
+<td>默认同请求只执行一次；需要每次不同就 <code>use_cache=False</code></td>
+</tr>
+<tr>
+<td>参数透传</td>
+<td>子依赖声明的参数自动并入端点与文档；两端同名则同步共享</td>
+</tr>
+<tr>
+<td>overrides</td>
+<td><code>app.dependency_overrides[原依赖] = 替身</code>；key 是函数对象；测完必须 clear</td>
+</tr>
+<tr>
+<td>迷你注入器</td>
+<td>一张替换表 + 查表调用，就是 override 的全部原理</td>
+</tr>
+</tbody>
+</table>
+<p><strong>下一章</strong>：<a href="../backend/09-tong-yi-yi-chang-chu-li.html">09 · 统一异常处理</a></p></div>
+
+      </article>
+<nav class="pager"><a class="pg-card pg-prev" href="../backend/07-alembic-shu-ju-qian-yi.html"><span class="pg-label">← 上一篇</span><span class="pg-title">Alembic 数据迁移</span><span class="pg-mod">Python 框架指南</span></a><a class="pg-card pg-next" href="../backend/09-tong-yi-yi-chang-chu-li.html"><span class="pg-label">下一篇 →</span><span class="pg-title">统一异常处理</span><span class="pg-mod">Python 框架指南</span></a></nav>
+    </div>
+    <footer class="foot">
+      <span>深栈 DeepStack · AI Agent 工程师转型训练营配套文档</span>
+    </footer>
+  </main>
+<nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#1-从一次换存储引擎翻车说起">1. 从一次「换存储引擎」翻车说起</a><a class="toc-link toc-h2" href="#2-先说人话iocdiioc-容器">2. 先说人话：IoC、DI、IoC 容器</a><a class="toc-link toc-h2" href="#3-depends把依赖写进签名里">3. Depends：把依赖写进签名里</a><a class="toc-link toc-h2" href="#4-函数依赖最常用的形态">4. 函数依赖：最常用的形态</a><a class="toc-link toc-h2" href="#5-类依赖new-的活儿外包给框架">5. 类依赖：new 的活儿外包给框架</a><a class="toc-link toc-h2" href="#6-annotated-写法与可复用别名">6. Annotated 写法与可复用别名</a><a class="toc-link toc-h2" href="#7-yield-依赖前置后置一段管完">7. yield 依赖：前置后置一段管完</a><a class="toc-link toc-h2" href="#8-依赖嵌套依赖还能依赖">8. 依赖嵌套：依赖还能依赖</a><a class="toc-link toc-h2" href="#9-use_cache一次请求只买一单">9. use_cache：一次请求只买一单</a><a class="toc-link toc-h2" href="#10-参数透传子依赖的参数端点不用重抄">10. 参数透传：子依赖的参数，端点不用重抄</a><a class="toc-link toc-h2" href="#11-dependency_overrides给测试换替身">11. dependency_overrides：给测试换替身</a><a class="toc-link toc-h2" href="#12-手搓一个迷你注入器看懂-override-原理">12. 手搓一个迷你注入器（看懂 override 原理）</a><a class="toc-link toc-h2" href="#13-本章速查表">13. 本章速查表</a></nav>
+</div>
+<div class="sb-mask" id="sbMask"></div>
+<script src="../assets/app.js"></script>
+</body>
+</html>

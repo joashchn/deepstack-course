@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>09 · 描述符与元类 · 深栈 DeepStack 课程文档</title>
+<meta name="description" content="上一章我们见识了一批魔术方法，其中 getattr 一家负责在实例层面拦截属性访问。这一章往更深处走两层：">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%23d9c39a' text-anchor='middle'%3EDS%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+<div class="progress" id="progress"></div>
+
+<div class="layout">
+<aside class="sidebar" id="sidebar">
+  <div class="sb-head">
+    <a class="brand" href="../index.html">
+      <span class="brand-mark">DS</span>
+      <span class="brand-text"><b>深栈 DeepStack</b><i>AI Agent 工程师转型训练营</i></span>
+    </a>
+    <button class="sb-close" id="sbClose" aria-label="关闭目录">✕</button>
+  </div>
+  <div class="sb-search"><input type="search" id="searchInput" placeholder="搜索 123 篇文档… ( / )" autocomplete="off">
+    <div class="sb-results" id="searchResults"></div></div>
+  <nav class="sb-nav">
+    <section class="sb-group open" data-mod="python">
+      <a class="sb-group-title" href="../modules/python.html" data-toggle="python">
+        <span class="sb-num">01</span>
+        <span class="sb-group-text"><b>Python 与数据实践</b><i>31 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../python/01-huan-jing-da-jian-yu-ban-ben-guan-li.html"><span class="sb-item-num">01</span><span class="sb-item-title">环境搭建与版本管理</span></a>
+        <a class="sb-item" href="../python/02-bian-liang-biao-da-shi-yu-liu-cheng-kong-zhi.html"><span class="sb-item-num">02</span><span class="sb-item-title">变量、表达式与流程控制</span></a>
+        <a class="sb-item" href="../python/03-xu-lie-zi-dian-yu-ji-he.html"><span class="sb-item-num">03</span><span class="sb-item-title">序列、字典与集合</span></a>
+        <a class="sb-item" href="../python/04-han-shu-she-ji-yu-lambda.html"><span class="sb-item-num">04</span><span class="sb-item-title">函数设计与 lambda</span></a>
+        <a class="sb-item" href="../python/05-zuo-yong-yu-gui-ze-yu-bi-bao.html"><span class="sb-item-num">05</span><span class="sb-item-title">作用域规则与闭包</span></a>
+        <a class="sb-item" href="../python/06-lei-de-ding-yi-yu-shi-li-hua.html"><span class="sb-item-num">06</span><span class="sb-item-title">类的定义与实例化</span></a>
+        <a class="sb-item" href="../python/07-lei-xing-pan-ding-yu-chou-xiang-ji-lei.html"><span class="sb-item-num">07</span><span class="sb-item-title">类型判定与抽象基类</span></a>
+        <a class="sb-item" href="../python/08-mo-shu-fang-fa-quan-jing.html"><span class="sb-item-num">08</span><span class="sb-item-title">魔术方法全景</span></a>
+        <a class="sb-item current" href="../python/09-miao-shu-fu-yu-yuan-lei.html"><span class="sb-item-num">09</span><span class="sb-item-title">描述符与元类</span></a>
+        <a class="sb-item" href="../python/10-zhuang-shi-qi.html"><span class="sb-item-num">10</span><span class="sb-item-title">装饰器</span></a>
+        <a class="sb-item" href="../python/11-die-dai-xie-yi-yu-sheng-cheng-qi.html"><span class="sb-item-num">11</span><span class="sb-item-title">迭代协议与生成器</span></a>
+        <a class="sb-item" href="../python/12-with-yu-shang-xia-wen-xie-yi.html"><span class="sb-item-num">12</span><span class="sb-item-title">with 与上下文协议</span></a>
+        <a class="sb-item" href="../python/13-yi-chang-ti-xi-yu-chu-li.html"><span class="sb-item-num">13</span><span class="sb-item-title">异常体系与处理</span></a>
+        <a class="sb-item" href="../python/14-lei-xing-biao-zhu.html"><span class="sb-item-num">14</span><span class="sb-item-title">类型标注</span></a>
+        <a class="sb-item" href="../python/15-mo-kuai-yu-bao-de-zu-zhi.html"><span class="sb-item-num">15</span><span class="sb-item-title">模块与包的组织</span></a>
+        <a class="sb-item" href="../python/16-biao-zhun-ku-xun-li.html"><span class="sb-item-num">16</span><span class="sb-item-title">标准库巡礼</span></a>
+        <a class="sb-item" href="../python/17-yi-lai-guan-li-yu-di-san-fang-ku.html"><span class="sb-item-num">17</span><span class="sb-item-title">依赖管理与第三方库</span></a>
+        <a class="sb-item" href="../python/18-xian-cheng-yu-jin-cheng.html"><span class="sb-item-num">18</span><span class="sb-item-title">线程与进程</span></a>
+        <a class="sb-item" href="../python/19-shi-jian-xun-huan.html"><span class="sb-item-num">19</span><span class="sb-item-title">事件循环</span></a>
+        <a class="sb-item" href="../python/20-future-yu-xie-cheng.html"><span class="sb-item-num">20</span><span class="sb-item-title">Future 与协程</span></a>
+        <a class="sb-item" href="../python/21-asyncio-shi-zhan.html"><span class="sb-item-num">21</span><span class="sb-item-title">asyncio 实战</span></a>
+        <a class="sb-item" href="../python/22-gou-jian-yu-fa-bu.html"><span class="sb-item-num">22</span><span class="sb-item-title">构建与发布</span></a>
+        <a class="sb-item" href="../python/23-gong-cheng-hua-gong-ju-lian.html"><span class="sb-item-num">23</span><span class="sb-item-title">工程化工具链</span></a>
+        <a class="sb-item" href="../python/24-monorepo-yu-tiao-shi.html"><span class="sb-item-num">24</span><span class="sb-item-title">monorepo 与调试</span></a>
+        <a class="sb-item" href="../python/25-jupyter-jiao-hu-huan-jing.html"><span class="sb-item-num">25</span><span class="sb-item-title">Jupyter 交互环境</span></a>
+        <a class="sb-item" href="../python/26-numpy-shu-zu-yu-xiang-liang-hua.html"><span class="sb-item-num">26</span><span class="sb-item-title">NumPy 数组与向量化</span></a>
+        <a class="sb-item" href="../python/27-pandas-shu-ju-jie-gou.html"><span class="sb-item-num">27</span><span class="sb-item-title">Pandas 数据结构</span></a>
+        <a class="sb-item" href="../python/28-pandas-shu-ju-qing-xi.html"><span class="sb-item-num">28</span><span class="sb-item-title">Pandas 数据清洗</span></a>
+        <a class="sb-item" href="../python/29-matplotlib-hui-tu-ti-xi.html"><span class="sb-item-num">29</span><span class="sb-item-title">Matplotlib 绘图体系</span></a>
+        <a class="sb-item" href="../python/30-matplotlib-dong-hua-yu-jiao-hu.html"><span class="sb-item-num">30</span><span class="sb-item-title">Matplotlib 动画与交互</span></a>
+        <a class="sb-item" href="../python/31-seaborn-tong-ji-ke-shi-hua.html"><span class="sb-item-num">31</span><span class="sb-item-title">Seaborn 统计可视化</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="agent">
+      <a class="sb-group-title" href="../modules/agent.html" data-toggle="agent">
+        <span class="sb-num">02</span>
+        <span class="sb-group-text"><b>Agent 核心</b><i>15 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../agent/01-token-yu-ci-qian-ru.html"><span class="sb-item-num">01</span><span class="sb-item-title">Token 与词嵌入</span></a>
+        <a class="sb-item" href="../agent/02-qian-xiang-chuan-bo-yu-fan-xiang-chuan-bo.html"><span class="sb-item-num">02</span><span class="sb-item-title">前向传播与反向传播</span></a>
+        <a class="sb-item" href="../agent/03-zhu-yi-li-ji-zhi-yu-transformer-jia-gou.html"><span class="sb-item-num">03</span><span class="sb-item-title">注意力机制与 Transformer 架构</span></a>
+        <a class="sb-item" href="../agent/04-yu-xun-lian-rlhf-yu-cai-yang-kv-cache.html"><span class="sb-item-num">04</span><span class="sb-item-title">预训练、RLHF 与采样（KV Cache）</span></a>
+        <a class="sb-item" href="../agent/05-ben-di-mo-xing-yu-xiao-xi-jie-gou.html"><span class="sb-item-num">05</span><span class="sb-item-title">本地模型与消息结构</span></a>
+        <a class="sb-item" href="../agent/06-hui-hua-guan-li-yu-json-shu-chu.html"><span class="sb-item-num">06</span><span class="sb-item-title">会话管理与 JSON 输出</span></a>
+        <a class="sb-item" href="../agent/07-tool-calling-xie-yi-yu-feng-zhuang.html"><span class="sb-item-num">07</span><span class="sb-item-title">Tool Calling：协议与封装</span></a>
+        <a class="sb-item" href="../agent/08-react-mo-shi-yu-zhu-xun-huan.html"><span class="sb-item-num">08</span><span class="sb-item-title">ReAct 模式与主循环</span></a>
+        <a class="sb-item" href="../agent/09-shi-zhan-deep-research-agent.html"><span class="sb-item-num">09</span><span class="sb-item-title">实战：Deep Research Agent</span></a>
+        <a class="sb-item" href="../agent/10-skill-yu-jian-jin-shi-pi-lu.html"><span class="sb-item-num">10</span><span class="sb-item-title">Skill 与渐进式披露</span></a>
+        <a class="sb-item" href="../agent/11-mcp-quan-jing.html"><span class="sb-item-num">11</span><span class="sb-item-title">MCP 全景</span></a>
+        <a class="sb-item" href="../agent/12-duo-agent-yu-xuan-xing-ce-lve.html"><span class="sb-item-num">12</span><span class="sb-item-title">多 Agent 与选型策略</span></a>
+        <a class="sb-item" href="../agent/13-ti-shi-ci-gong-cheng-yu-shang-xia-wen-gong.html"><span class="sb-item-num">13</span><span class="sb-item-title">提示词工程与上下文工程</span></a>
+        <a class="sb-item" href="../agent/14-xun-huan-tu-yu-gu-jia-gong-cheng.html"><span class="sb-item-num">14</span><span class="sb-item-title">循环、图与骨架工程</span></a>
+        <a class="sb-item" href="../agent/15-ji-yi-quan-xian-yu-ping-ce.html"><span class="sb-item-num">15</span><span class="sb-item-title">记忆、权限与评测</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="langchain">
+      <a class="sb-group-title" href="../modules/langchain.html" data-toggle="langchain">
+        <span class="sb-num">03</span>
+        <span class="sb-group-text"><b>LangChain 指南</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langchain/01-ren-shi-langchain.html"><span class="sb-item-num">01</span><span class="sb-item-title">认识 LangChain</span></a>
+        <a class="sb-item" href="../langchain/02-ti-shi-ci-mu-ban-yu-xiao-xi.html"><span class="sb-item-num">02</span><span class="sb-item-title">提示词模板与消息</span></a>
+        <a class="sb-item" href="../langchain/03-lcel-yu-runnable.html"><span class="sb-item-num">03</span><span class="sb-item-title">LCEL 与 Runnable</span></a>
+        <a class="sb-item" href="../langchain/04-liu-shi-yu-bing-fa.html"><span class="sb-item-num">04</span><span class="sb-item-title">流式与并发</span></a>
+        <a class="sb-item" href="../langchain/05-shu-chu-jie-xi-qi.html"><span class="sb-item-num">05</span><span class="sb-item-title">输出解析器</span></a>
+        <a class="sb-item" href="../langchain/06-wen-dang-jia-zai-yu-qie-ge.html"><span class="sb-item-num">06</span><span class="sb-item-title">文档加载与切割</span></a>
+        <a class="sb-item" href="../langchain/07-qian-ru-yu-xiang-liang-ku.html"><span class="sb-item-num">07</span><span class="sb-item-title">嵌入与向量库</span></a>
+        <a class="sb-item" href="../langchain/08-jian-suo-yu-rag.html"><span class="sb-item-num">08</span><span class="sb-item-title">检索与RAG</span></a>
+        <a class="sb-item" href="../langchain/09-dui-hua-ji-yi.html"><span class="sb-item-num">09</span><span class="sb-item-title">对话记忆</span></a>
+        <a class="sb-item" href="../langchain/10-gong-ju-diao-yong.html"><span class="sb-item-num">10</span><span class="sb-item-title">工具调用</span></a>
+        <a class="sb-item" href="../langchain/11-agent.html"><span class="sb-item-num">11</span><span class="sb-item-title">Agent</span></a>
+        <a class="sb-item" href="../langchain/12-hui-diao-yu-tiao-shi-quan-ke-cheng-shou-guan.html"><span class="sb-item-num">12</span><span class="sb-item-title">回调与调试（全课程收官章）</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="langgraph">
+      <a class="sb-group-title" href="../modules/langgraph.html" data-toggle="langgraph">
+        <span class="sb-num">04</span>
+        <span class="sb-group-text"><b>LangGraph 框架指南</b><i>17 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langgraph/01-di-1-zhang-cong-yi-ge-shi-kong-de-jiao.html"><span class="sb-item-num">01</span><span class="sb-item-title">第 1 章 从一个失控的脚本说起</span></a>
+        <a class="sb-item" href="../langgraph/02-di-2-zhang-zui-xiao-ke-yun-xing-tu.html"><span class="sb-item-num">02</span><span class="sb-item-title">第 2 章 最小可运行图</span></a>
+        <a class="sb-item" href="../langgraph/03-di-3-zhang-zhuang-tai-tu-de-shu-ju-xin.html"><span class="sb-item-num">03</span><span class="sb-item-title">第 3 章 状态：图的数据心脏</span></a>
+        <a class="sb-item" href="../langgraph/04-di-4-zhang-rang-liu-cheng-xue-hui-jue-ce.html"><span class="sb-item-num">04</span><span class="sb-item-title">第 4 章 让流程学会决策</span></a>
+        <a class="sb-item" href="../langgraph/05-di-5-zhang-bing-xing-shi-jie-chao-bu-zhi.html"><span class="sb-item-num">05</span><span class="sb-item-title">第 5 章 并行世界：超步执行模型</span></a>
+        <a class="sb-item" href="../langgraph/06-di-6-zhang-command-ba-kong-zhi-quan-jiao-jin.html"><span class="sb-item-num">06</span><span class="sb-item-title">第 6 章 Command：把控制权交进节点</span></a>
+        <a class="sb-item" href="../langgraph/07-di-7-zhang-dong-tai-bing-xing-send-yu-mapreduce.html"><span class="sb-item-num">07</span><span class="sb-item-title">第 7 章 动态并行：Send 与 MapReduce</span></a>
+        <a class="sb-item" href="../langgraph/08-di-8-zhang-gei-tu-zhuang-shang-shou-jiao-gong.html"><span class="sb-item-num">08</span><span class="sb-item-title">第 8 章 给图装上手脚：工具调用</span></a>
+        <a class="sb-item" href="../langgraph/09-di-9-zhang-fu-yong-yu-feng-zhuang-zi-tu.html"><span class="sb-item-num">09</span><span class="sb-item-title">第 9 章 复用与封装：子图</span></a>
+        <a class="sb-item" href="../langgraph/10-di-10-zhang-cong-dan-tu-dao-tuan-dui-duo.html"><span class="sb-item-num">10</span><span class="sb-item-title">第 10 章 从单图到团队：多 Agent 架构</span></a>
+        <a class="sb-item" href="../langgraph/11-di-11-zhang-liu-shi-shu-chu.html"><span class="sb-item-num">11</span><span class="sb-item-title">第 11 章 流式输出</span></a>
+        <a class="sb-item" href="../langgraph/12-di-12-zhang-chi-jiu-hua-checkpointer-yu-xian-cheng.html"><span class="sb-item-num">12</span><span class="sb-item-title">第 12 章 持久化：Checkpointer 与线程</span></a>
+        <a class="sb-item" href="../langgraph/13-di-13-zhang-shi-jian-lv-xing.html"><span class="sb-item-num">13</span><span class="sb-item-title">第 13 章 时间旅行</span></a>
+        <a class="sb-item" href="../langgraph/14-di-14-zhang-zhong-duan-yu-ren-zai-hui-lu.html"><span class="sb-item-num">14</span><span class="sb-item-title">第 14 章 中断与人在回路</span></a>
+        <a class="sb-item" href="../langgraph/15-di-15-zhang-ji-yi-guan-li.html"><span class="sb-item-num">15</span><span class="sb-item-title">第 15 章 记忆管理</span></a>
+        <a class="sb-item" href="../langgraph/16-di-16-zhang-rong-cuo-zhong-shi-chao-shi-yu.html"><span class="sb-item-num">16</span><span class="sb-item-title">第 16 章 容错：重试、超时与兜底</span></a>
+        <a class="sb-item" href="../langgraph/17-di-17-zhang-quan-jing-hui-gu.html"><span class="sb-item-num">17</span><span class="sb-item-title">第 17 章 全景回顾</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="backend">
+      <a class="sb-group-title" href="../modules/backend.html" data-toggle="backend">
+        <span class="sb-num">05</span>
+        <span class="sb-group-text"><b>Python 框架指南</b><i>14 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../backend/01-fastapi-ru-men-yu-asgi.html"><span class="sb-item-num">01</span><span class="sb-item-title">FastAPI 入门与 ASGI</span></a>
+        <a class="sb-item" href="../backend/02-lu-you-yu-qing-qiu-xiang-ying.html"><span class="sb-item-num">02</span><span class="sb-item-title">路由与请求响应</span></a>
+        <a class="sb-item" href="../backend/03-pydantic-shu-ju-jiao-yan-yu-pei-zhi.html"><span class="sb-item-num">03</span><span class="sb-item-title">Pydantic 数据校验与配置</span></a>
+        <a class="sb-item" href="../backend/04-sqlalchemy-yi-bu-yin-qing-yu-hui-hua.html"><span class="sb-item-num">04</span><span class="sb-item-title">SQLAlchemy 异步引擎与会话</span></a>
+        <a class="sb-item" href="../backend/05-orm-jian-mo.html"><span class="sb-item-num">05</span><span class="sb-item-title">ORM 建模</span></a>
+        <a class="sb-item" href="../backend/06-sql-biao-da-shi-yu-shu-ju-cao-zuo.html"><span class="sb-item-num">06</span><span class="sb-item-title">SQL 表达式与数据操作</span></a>
+        <a class="sb-item" href="../backend/07-alembic-shu-ju-qian-yi.html"><span class="sb-item-num">07</span><span class="sb-item-title">Alembic 数据迁移</span></a>
+        <a class="sb-item" href="../backend/08-yi-lai-zhu-ru.html"><span class="sb-item-num">08</span><span class="sb-item-title">依赖注入</span></a>
+        <a class="sb-item" href="../backend/09-tong-yi-yi-chang-chu-li.html"><span class="sb-item-num">09</span><span class="sb-item-title">统一异常处理</span></a>
+        <a class="sb-item" href="../backend/10-zhong-jian-jian.html"><span class="sb-item-num">10</span><span class="sb-item-title">中间件</span></a>
+        <a class="sb-item" href="../backend/11-ren-zheng-yu-jwt.html"><span class="sb-item-num">11</span><span class="sb-item-title">认证与 JWT</span></a>
+        <a class="sb-item" href="../backend/12-pytest-ce-shi.html"><span class="sb-item-num">12</span><span class="sb-item-title">pytest 测试</span></a>
+        <a class="sb-item" href="../backend/13-ri-zhi-loguru.html"><span class="sb-item-num">13</span><span class="sb-item-title">日志 loguru</span></a>
+        <a class="sb-item" href="../backend/14-liu-shi-xiang-ying-sse-yu-websocket.html"><span class="sb-item-num">14</span><span class="sb-item-title">流式响应 SSE 与 WebSocket</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="interview">
+      <a class="sb-group-title" href="../modules/interview.html" data-toggle="interview">
+        <span class="sb-num">06</span>
+        <span class="sb-group-text"><b>面试题库</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../interview/01-llm-yuan-li-pian.html"><span class="sb-item-num">01</span><span class="sb-item-title">LLM 原理篇</span></a>
+        <a class="sb-item" href="../interview/02-rag-yu-jian-suo-pian.html"><span class="sb-item-num">02</span><span class="sb-item-title">RAG 与检索篇</span></a>
+        <a class="sb-item" href="../interview/03-agent-he-xin-pian.html"><span class="sb-item-num">03</span><span class="sb-item-title">Agent 核心篇</span></a>
+        <a class="sb-item" href="../interview/04-langgraph-pian.html"><span class="sb-item-num">04</span><span class="sb-item-title">LangGraph 篇</span></a>
+        <a class="sb-item" href="../interview/05-langchain-pian.html"><span class="sb-item-num">05</span><span class="sb-item-title">LangChain 篇</span></a>
+        <a class="sb-item" href="../interview/06-xi-tong-she-ji-pian.html"><span class="sb-item-num">06</span><span class="sb-item-title">系统设计篇</span></a>
+        <a class="sb-item" href="../interview/07-xiang-mu-shen-wa-pian.html"><span class="sb-item-num">07</span><span class="sb-item-title">项目深挖篇</span></a>
+        <a class="sb-item" href="../interview/08-gu-zhang-pai-cha-pian.html"><span class="sb-item-num">08</span><span class="sb-item-title">故障排查篇</span></a>
+        <a class="sb-item" href="../interview/09-python-ji-chu-pian.html"><span class="sb-item-num">09</span><span class="sb-item-title">Python 基础篇</span></a>
+        <a class="sb-item" href="../interview/10-fastapi-yu-hou-duan-pian.html"><span class="sb-item-num">10</span><span class="sb-item-title">FastAPI 与后端篇</span></a>
+        <a class="sb-item" href="../interview/11-ti-shi-ci-gong-cheng-yu-an-quan-pian.html"><span class="sb-item-num">11</span><span class="sb-item-title">提示词工程与安全篇</span></a>
+        <a class="sb-item" href="../interview/12-mo-xing-xuan-xing-yu-jiang-ben-pian.html"><span class="sb-item-num">12</span><span class="sb-item-title">模型选型与降本篇</span></a>
+      </div>
+    </section>
+  </nav>
+</aside>
+  <main class="main">
+    <header class="topbar">
+      <button class="menu-btn" id="menuBtn" aria-label="目录">☰</button>
+      <div class="crumbs"><a href="../index.html">首页</a><span>/</span><a href="../modules/python.html">Python 与数据实践</a><span>/</span><span class="cur">描述符与元类</span></div>
+      <div class="topbar-actions">
+        <button class="icon-btn" id="themeBtn" title="切换深浅色" aria-label="切换深浅色">◐</button>
+      </div>
+    </header>
+    <div class="content">
+      <article class="article">
+
+<header class="page-head">
+  <div class="page-kicker">Python 与数据实践 · 第 09 章</div>
+  <h1 class="page-title">描述符与元类</h1>
+  <p class="page-desc">上一章我们见识了一批魔术方法，其中 getattr 一家负责在实例层面拦截属性访问。这一章往更深处走两层：</p>
+  <div class="page-meta">
+    <span>约 30 分钟</span><span>12,124 字</span><span>21 个代码示例</span>
+  </div>
+</header>
+<div class="md"><p>上一章我们见识了一批魔术方法，其中 <code>__getattr__</code> 一家负责在<strong>实例</strong>层面拦截属性访问。这一章往更深处走两层：</p>
+<ul>
+<li><strong>描述符</strong>：在<strong>类属性</strong>层面拦截读写删，<code>@property</code>、<code>@classmethod</code>、<code>@staticmethod</code> 这些常用工具，底层全是它；</li>
+<li><strong>元类</strong>：类的模板。实例由类造，那类由谁造？答案就是元类。</li>
+</ul>
+<p>先讲描述符（实用频率高），再讲元类（更抽象、更底层），两条线最后会汇合——你会发现它们本质上是同一件事在不同高度的投影：<strong>把"访问属性"和"创建类"这两个动作本身变成可编程的</strong>。</p>
+<hr />
+<h1 id="上篇描述符">上篇：描述符</h1>
+<h2 id="1-从一个数据不同步的-bug-说起">1. 从一个"数据不同步"的 bug 说起</h2>
+<p>先看一段埋着雷的代码：</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">Rectangle</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">width</span> <span class="o">=</span> <span class="n">width</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">height</span> <span class="o">=</span> <span class="n">height</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">area</span> <span class="o">=</span> <span class="n">width</span> <span class="o">*</span> <span class="n">height</span>          <span class="c1"># 面积：算好存起来</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">perimeter</span> <span class="o">=</span> <span class="p">(</span><span class="n">width</span> <span class="o">+</span> <span class="n">height</span><span class="p">)</span> <span class="o">*</span> <span class="mi">2</span>  <span class="c1"># 周长：算好存起来</span>
+
+
+<span class="n">r</span> <span class="o">=</span> <span class="n">Rectangle</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">width</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">area</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">perimeter</span><span class="p">)</span>  <span class="c1"># 3 12 14，一切正常</span>
+
+<span class="c1"># 雷 1：不合理的值拦不住</span>
+<span class="n">r</span><span class="o">.</span><span class="n">width</span> <span class="o">=</span> <span class="o">-</span><span class="mi">10</span>  <span class="c1"># 宽度为负？没人管</span>
+
+<span class="c1"># 雷 2：数据悄悄"过期"</span>
+<span class="n">r</span><span class="o">.</span><span class="n">width</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">width</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">area</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">perimeter</span><span class="p">)</span>  <span class="c1"># 10 12 14 —— area 还是旧值！</span>
+</code></pre></div>
+<p>问题拆开看是两个：</p>
+<ol>
+<li>给 <code>width</code> 赋值时，我们想要一次"安检"（校验合法性），但普通属性赋值无从插手；</li>
+<li><code>area</code>、<code>perimeter</code> 是<strong>推导出来的</strong>值，存成普通属性的那一刻就"冻结"了，源头一变它们就成了过期数据。</li>
+</ol>
+<p>理想方案：<code>width</code> 写入前校验；<code>area</code> 读取时现场计算。要做到"拦截读写"，就需要描述符出场了。</p>
+<h2 id="2-描述符协议一份三方契约">2. 描述符协议：一份三方契约</h2>
+<p>描述符的规则非常简单：一个类只要实现了 <code>__get__</code>、<code>__set__</code>、<code>__delete__</code> 中的<strong>任意一个</strong>，它就是<strong>描述符类</strong>；它的实例就是<strong>描述符对象</strong>（下文简称描述符）。描述符必须作为<strong>类属性</strong>放置才有意义，因此也常被叫作属性描述符。</p>
+<p>按实现方法的不同，描述符再分两档：</p>
+<ul>
+<li>实现了 <code>__set__</code> 或 <code>__delete__</code>（即"能管写入"）→ <strong>数据型描述符</strong>（Data Descriptor）；</li>
+<li>只实现了 <code>__get__</code>（"只能读"）→ <strong>非数据型描述符</strong>（Non-Data Descriptor）。</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="c1"># 一个描述符类：读、写、删三个钩子全备</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Inspector</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__get__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="n">owner</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"__get__ 被触发"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__set__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"__set__ 被触发"</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__delete__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"__delete__ 被触发"</span><span class="p">)</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Holder</span><span class="p">:</span>
+    <span class="n">probe</span> <span class="o">=</span> <span class="n">Inspector</span><span class="p">()</span>  <span class="c1"># 描述符挂在类属性的位置上</span>
+</code></pre></div>
+<h2 id="3-属性查找的优先级顺序">3. 属性查找的优先级顺序</h2>
+<p>当你写下 <code>ins.attr</code> 时，Python 内部其实按一套固定的"资历排序"找值：</p>
+<ol>
+<li><strong>数据型描述符</strong>（类身上的）</li>
+<li>实例自己的属性（<code>instance.__dict__</code>）</li>
+<li>类身上的普通属性</li>
+<li>一路向上找父类……</li>
+</ol>
+<p>数据型描述符排在实例字典<strong>前面</strong>，这一点非常关键——它意味着：只要类属性位置上放的是数据型描述符，实例字典就"抢不走"这个名字：</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">Inspector</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__get__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="n">owner</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">"经过 __get__ 的值"</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__set__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">pass</span>  <span class="c1"># 有 __set__，所以是数据型描述符</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Holder</span><span class="p">:</span>
+    <span class="n">probe</span> <span class="o">=</span> <span class="n">Inspector</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">probe</span> <span class="o">=</span> <span class="n">value</span>  <span class="c1"># 这句赋值被描述符接管，进不了实例字典</span>
+
+
+<span class="n">ins</span> <span class="o">=</span> <span class="n">Holder</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">ins</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">)</span>  <span class="c1"># {} —— 里面根本没有 probe</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">ins</span><span class="o">.</span><span class="n">probe</span><span class="p">)</span>     <span class="c1"># 经过 __get__ 的值 —— 拿到的是描述符给的</span>
+</code></pre></div>
+<h2 id="4-读写删分别怎么触发">4. 读、写、删，分别怎么触发</h2>
+<p>描述符的三个钩子各司其职，还要分清"从实例出发"和"从类出发"两条路径：</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">Inspector</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__get__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="n">owner</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"__get__：instance=</span><span class="si">{</span><span class="n">instance</span><span class="si">}</span><span class="s2">, owner=</span><span class="si">{</span><span class="n">owner</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__set__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"__set__：instance=</span><span class="si">{</span><span class="n">instance</span><span class="si">}</span><span class="s2">, value=</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__delete__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"__delete__：instance=</span><span class="si">{</span><span class="n">instance</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Holder</span><span class="p">:</span>
+    <span class="n">slot_a</span> <span class="o">=</span> <span class="n">Inspector</span><span class="p">()</span>
+    <span class="n">slot_b</span> <span class="o">=</span> <span class="n">Inspector</span><span class="p">()</span>
+
+
+<span class="n">ins</span> <span class="o">=</span> <span class="n">Holder</span><span class="p">()</span>
+
+<span class="c1"># ---- 从实例出发：读写删都会被描述符接住 ----</span>
+<span class="n">ins</span><span class="o">.</span><span class="n">slot_a</span>            <span class="c1"># Inspector.__get__(Holder.slot_a, ins, Holder)</span>
+<span class="n">ins</span><span class="o">.</span><span class="n">slot_a</span> <span class="o">=</span> <span class="mi">10</span>       <span class="c1"># Inspector.__set__(Holder.slot_a, ins, 10)</span>
+<span class="k">del</span> <span class="n">ins</span><span class="o">.</span><span class="n">slot_a</span>        <span class="c1"># Inspector.__delete__(Holder.slot_a, ins)</span>
+
+<span class="c1"># ---- 从类出发：要小心！ ----</span>
+<span class="n">Holder</span><span class="o">.</span><span class="n">slot_b</span>         <span class="c1"># __get__ 仍会触发，但 instance 参数是 None</span>
+<span class="n">Holder</span><span class="o">.</span><span class="n">slot_b</span> <span class="o">=</span> <span class="mi">20</span>    <span class="c1"># 危险！这不是调用 __set__，而是把描述符整个覆盖掉了！</span>
+<span class="k">del</span> <span class="n">Holder</span><span class="o">.</span><span class="n">slot_b</span>     <span class="c1"># 直接删掉类属性，slot_b 从此不存在</span>
+</code></pre></div>
+<p>给类属性直接赋值，等于拿一个普通值顶替了描述符的位置——描述符就此失效。由此得出两条最佳实践：</p>
+<ol>
+<li>绝大多数场景都用<strong>数据型描述符</strong>（读写都在掌控中）；</li>
+<li>对描述符的访问，<strong>永远走实例</strong>这条路径。</li>
+</ol>
+<h2 id="5-__set_name__让描述符知道自己姓什么">5. <code>__set_name__</code>：让描述符知道自己"姓什么"</h2>
+<p>Python 3.6 起描述符多了一个专属钩子 <code>__set_name__</code>：描述符被赋值到类属性上的那一刻（赋值完成后），它会自动收到"你被挂在了哪个类的哪个属性名下"这条通知：</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">Inspector</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">__set_name__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">owner</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="c1"># owner：挂载它的类；name：它占用的属性名</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"我被挂到了 </span><span class="si">{</span><span class="n">owner</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> 类的 '</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">' 上"</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__get__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="n">owner</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__set__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Holder</span><span class="p">:</span>
+    <span class="c1"># 下面两行各触发一次 __set_name__</span>
+    <span class="n">slot_a</span> <span class="o">=</span> <span class="n">Inspector</span><span class="p">()</span>  <span class="c1"># 我被挂到了 Holder 类的 'slot_a' 上</span>
+    <span class="n">slot_b</span> <span class="o">=</span> <span class="n">Inspector</span><span class="p">()</span>  <span class="c1"># 我被挂到了 Holder 类的 'slot_b' 上</span>
+</code></pre></div>
+<p>这个钩子看似不起眼，却是"一个描述符类服务多个属性"的关键——第 9 节的类型检查示例会用到它。</p>
+<h2 id="6-修复开篇的-bug">6. 修复开篇的 bug</h2>
+<p>装备齐全，回头收拾 <code>Rectangle</code>：宽、高是数据型描述符（写入时校验），面积、周长是只读描述符（读取时现算）：</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">WidthField</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""宽度：可写，但必须为正数"""</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__set__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"宽度必须是正数"</span><span class="p">)</span>
+        <span class="n">instance</span><span class="o">.</span><span class="n">_width</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__get__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="n">owner</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">instance</span><span class="o">.</span><span class="n">_width</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__delete__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">"宽度不允许删除"</span><span class="p">)</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">HeightField</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""高度：可写，但必须为正数"""</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__set__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"高度必须是正数"</span><span class="p">)</span>
+        <span class="n">instance</span><span class="o">.</span><span class="n">_height</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__get__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="n">owner</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">instance</span><span class="o">.</span><span class="n">_height</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__delete__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">"高度不允许删除"</span><span class="p">)</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">AreaField</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""面积：只读，永远由当前宽高现算"""</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__get__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="n">owner</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">instance</span><span class="o">.</span><span class="n">width</span> <span class="o">*</span> <span class="n">instance</span><span class="o">.</span><span class="n">height</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__set__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">"面积是只读的，不能设置"</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__delete__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">"面积不允许删除"</span><span class="p">)</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">PerimeterField</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""周长：只读，永远由当前宽高现算"""</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__get__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="n">owner</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">instance</span><span class="o">.</span><span class="n">width</span> <span class="o">+</span> <span class="n">instance</span><span class="o">.</span><span class="n">height</span><span class="p">)</span> <span class="o">*</span> <span class="mi">2</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__set__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">"周长是只读的，不能设置"</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__delete__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">"周长不允许删除"</span><span class="p">)</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Rectangle</span><span class="p">:</span>
+    <span class="n">width</span> <span class="o">=</span> <span class="n">WidthField</span><span class="p">()</span>
+    <span class="n">height</span> <span class="o">=</span> <span class="n">HeightField</span><span class="p">()</span>
+    <span class="n">area</span> <span class="o">=</span> <span class="n">AreaField</span><span class="p">()</span>
+    <span class="n">perimeter</span> <span class="o">=</span> <span class="n">PerimeterField</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">width</span> <span class="o">=</span> <span class="n">width</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">height</span> <span class="o">=</span> <span class="n">height</span>
+
+
+<span class="n">r</span> <span class="o">=</span> <span class="n">Rectangle</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">width</span><span class="p">)</span>       <span class="c1"># 3</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">area</span><span class="p">)</span>        <span class="c1"># 12</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">perimeter</span><span class="p">)</span>   <span class="c1"># 14</span>
+
+<span class="n">r</span><span class="o">.</span><span class="n">width</span> <span class="o">=</span> <span class="mi">10</span>         <span class="c1"># 合法修改，畅通无阻</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">width</span><span class="p">)</span>       <span class="c1"># 10</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">area</span><span class="p">)</span>        <span class="c1"># 40 —— 自动跟着变了，再也不会过期</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">perimeter</span><span class="p">)</span>   <span class="c1"># 28</span>
+
+<span class="c1"># r.area = 100       # AttributeError! 面积不许直写</span>
+<span class="c1"># r.width = -10      # ValueError! 宽度必须是正数</span>
+</code></pre></div>
+<p>开篇的两颗雷，就这么被排掉了。</p>
+<h2 id="7-property描述符的官方快捷方式">7. <code>@property</code>：描述符的官方快捷方式</h2>
+<p>描述符功能强大，但为一个属性写一个类确实隆重了些。于是 Python 提供了 <code>@property</code>——它本质上就是一个内置的数据型描述符，把"读时计算、写时校验"压缩成装饰器写法：</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">Rectangle</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_width</span> <span class="o">=</span> <span class="n">width</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_height</span> <span class="o">=</span> <span class="n">height</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">width</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""读取宽度"""</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_width</span>
+
+    <span class="nd">@width</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">width</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""写入宽度，顺带校验"""</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"宽度必须是正数"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_width</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="nd">@width</span><span class="o">.</span><span class="n">deleter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">width</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""删除宽度"""</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"正在删除宽度"</span><span class="p">)</span>
+        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_width</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">area</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""面积：只读属性，现算"""</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_width</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_height</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">perimeter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""周长：只读属性，现算"""</span>
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_width</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_height</span><span class="p">)</span> <span class="o">*</span> <span class="mi">2</span>
+
+
+<span class="n">r</span> <span class="o">=</span> <span class="n">Rectangle</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">width</span><span class="p">)</span>       <span class="c1"># 3 —— 触发 getter</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">area</span><span class="p">)</span>        <span class="c1"># 12</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">perimeter</span><span class="p">)</span>   <span class="c1"># 14</span>
+
+<span class="n">r</span><span class="o">.</span><span class="n">width</span> <span class="o">=</span> <span class="mi">10</span>         <span class="c1"># 触发 setter</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">area</span><span class="p">)</span>        <span class="c1"># 40 —— 始终同步</span>
+
+<span class="c1"># r.area = 100       # AttributeError! area 没配 setter，天然只读</span>
+<span class="c1"># r.width = -5       # ValueError! 校验挡住了脏数据</span>
+<span class="c1"># del r.width        # 触发 deleter</span>
+</code></pre></div>
+<p>三个部件记清楚：</p>
+<ul>
+<li><code>@property</code> 把方法包装成<strong>只读属性</strong>（访问不加括号）；</li>
+<li><code>@属性名.setter</code> 补上<strong>写入</strong>能力（方法名必须与属性同名）；</li>
+<li><code>@属性名.deleter</code> 补上<strong>删除</strong>能力。</li>
+</ul>
+<h2 id="8-亲手造一个-property">8. 亲手造一个 property</h2>
+<p><code>@property</code> 不神秘，用描述符就能复刻一个（完整可运行版本见本章 <code>demo.py</code>）。骨架长这样：</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">MyProp</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""迷你版 property：装饰器进、描述符出"""</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">read_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">write_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">remove_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="c1"># 存钩子的字段名刻意避开方法名（setter/deleter），</span>
+        <span class="c1"># 否则实例属性会遮蔽同名方法，@xxx.setter 就失效了</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">read_fn</span> <span class="o">=</span> <span class="n">read_fn</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write_fn</span> <span class="o">=</span> <span class="n">write_fn</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">remove_fn</span> <span class="o">=</span> <span class="n">remove_fn</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__get__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="n">owner</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_fn</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">"属性不可读"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_fn</span><span class="p">(</span><span class="n">instance</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__set__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">write_fn</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">"属性不可写"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write_fn</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__delete__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">remove_fn</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">"属性不可删除"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">remove_fn</span><span class="p">(</span><span class="n">instance</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">setter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write_fn</span> <span class="o">=</span> <span class="n">func</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">deleter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">remove_fn</span> <span class="o">=</span> <span class="n">func</span>
+        <span class="k">return</span> <span class="bp">self</span>
+</code></pre></div>
+<p>这段代码还顺带说明了一个有趣的事实：<code>@property</code> 这类"装饰器"其实是个<strong>可调用对象</strong>——装饰器接收可调用对象、可以返回任何东西，这里返回的正是描述符实例。装饰器与可调用对象的关系，下一章还会细说。</p>
+<h2 id="9-描述符的两大经典应用">9. 描述符的两大经典应用</h2>
+<h3 id="91-惰性计算算一次用一辈子">9.1 惰性计算：算一次，用一辈子</h3>
+<p>有些属性算起来很费劲（读大文件、跑重模型），但算过一次后基本不变——适合"第一次访问才算，之后直接吃缓存"：</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">LazyAttr</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""惰性属性：首次访问才执行计算，结果存进实例字典备用"""</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="n">func</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">func</span><span class="o">.</span><span class="vm">__name__</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__get__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="n">owner</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">instance</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span>  <span class="c1"># 从类身上访问时，返回描述符自身</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="n">instance</span><span class="p">)</span>
+        <span class="c1"># 把结果写进实例字典——注意 LazyAttr 没实现 __set__，</span>
+        <span class="c1"># 是非数据型描述符，斗不过实例字典，下次访问直接命中缓存</span>
+        <span class="nb">setattr</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">value</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">UserProfile</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_id</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">user_id</span> <span class="o">=</span> <span class="n">user_id</span>
+
+    <span class="nd">@LazyAttr</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">history</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"正在拉取用户 </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">user_id</span><span class="si">}</span><span class="s2"> 的历史记录……（很慢）"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">[</span><span class="s2">"登录"</span><span class="p">,</span> <span class="s2">"下单"</span><span class="p">,</span> <span class="s2">"评价"</span><span class="p">,</span> <span class="s2">"退款"</span><span class="p">]</span>
+
+
+<span class="n">profile</span> <span class="o">=</span> <span class="n">UserProfile</span><span class="p">(</span><span class="s2">"u_1001"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">profile</span><span class="o">.</span><span class="n">history</span><span class="p">)</span>  <span class="c1"># 第一次：打印"正在拉取……"，返回完整记录</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">profile</span><span class="o">.</span><span class="n">history</span><span class="p">)</span>  <span class="c1"># 第二次：直接吐缓存，不再打印</span>
+</code></pre></div>
+<p>注意这里的门道：<code>LazyAttr</code> 只实现 <code>__get__</code>，是非数据型描述符，查找优先级排在实例字典<strong>后面</strong>——所以第一次算完写进实例字典后，后续访问会直接命中字典，描述符连出场机会都没有。优先级规则在这里被用成了特性。</p>
+<h3 id="92-类型检查一个描述符守住一个字段">9.2 类型检查：一个描述符守住一个字段</h3>
+<p>配合 <code>__set_name__</code>，一个描述符类可以同时服务多个属性：</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">TypeGuard</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""强制类型检查的描述符"""</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expected</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">expected</span> <span class="o">=</span> <span class="n">expected</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__set_name__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">owner</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="c1"># 记下自己看守的字段名，报错信息才能说清楚</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__get__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="n">owner</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">instance</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span>
+        <span class="k">return</span> <span class="n">instance</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__set__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">expected</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> 需要的是 </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">expected</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> 类型，"</span>
+                <span class="sa">f</span><span class="s2">"而不是 </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">"</span>
+            <span class="p">)</span>
+        <span class="n">instance</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Movie</span><span class="p">:</span>
+    <span class="n">title</span> <span class="o">=</span> <span class="n">TypeGuard</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+    <span class="n">year</span> <span class="o">=</span> <span class="n">TypeGuard</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">rating</span> <span class="o">=</span> <span class="n">TypeGuard</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">year</span><span class="p">,</span> <span class="n">rating</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="n">title</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">year</span> <span class="o">=</span> <span class="n">year</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rating</span> <span class="o">=</span> <span class="n">rating</span>
+
+
+<span class="n">film</span> <span class="o">=</span> <span class="n">Movie</span><span class="p">(</span><span class="s2">"星际漫游"</span><span class="p">,</span> <span class="mi">2024</span><span class="p">,</span> <span class="mf">8.5</span><span class="p">)</span>
+<span class="c1"># film.year = "2024"  # TypeError! year 需要的是 int 类型，而不是 str</span>
+</code></pre></div>
+<hr />
+<h1 id="下篇元类">下篇：元类</h1>
+<h2 id="10-换个视角类自己也是对象">10. 换个视角：类自己也是对象</h2>
+<p>我们早已习惯"类造实例"。可类本身也是个对象啊——那<strong>类是谁造出来的</strong>？</p>
+<p>先做个小实验。下面四种写法完全等价：</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">Bird</span><span class="p">:</span>
+    <span class="k">pass</span>
+
+
+<span class="c1"># 写法二：显式声明用 type 这个元类来造</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Bird</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="nb">type</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<span class="c1"># 写法三：直接调用 type，三个参数分别是：类名、父类元组、属性字典</span>
+<span class="n">Bird</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="s2">"Bird"</span><span class="p">,</span> <span class="p">(),</span> <span class="p">{})</span>
+
+
+<span class="c1"># 写法四：把 type 当对象调用，背后其实是 type 的 __call__</span>
+<span class="n">Bird</span> <span class="o">=</span> <span class="nb">type</span><span class="o">.</span><span class="fm">__call__</span><span class="p">(</span><span class="nb">type</span><span class="p">,</span> <span class="s2">"Bird"</span><span class="p">,</span> <span class="p">(),</span> <span class="p">{})</span>
+</code></pre></div>
+<p>结论很震撼：<strong><code>class</code> 关键字只是语法糖</strong>，你写的每个类，底层都是 <code>type</code> 这个"类的工厂"生产出来的。这个"工厂"就有个名字——<strong>元类（metaclass）</strong>。元类就是"造类的类"。</p>
+<p>顺着上一章的记忆捋一遍就通了：调用 <code>Bird()</code> 造实例，走的是 <code>Bird.__call__</code>；那调用 <code>type(...)</code> 造类，走的自然是 <code>type.__call__</code>。一切都是同一套魔术方法逻辑，只是抬高了一层。</p>
+<h2 id="11-自定义元类接管造类这件事">11. 自定义元类：接管"造类"这件事</h2>
+<p>既然类由元类生产，那我们继承 <code>type</code> 写个子类，就能在生产线上插手——这就是自定义元类：</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">WatchMeta</span><span class="p">(</span><span class="nb">type</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__new__</span><span class="p">(</span><span class="n">mcs</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">namespace</span><span class="p">):</span>
+        <span class="c1"># 类图纸送到生产线，我们先过目一遍</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"即将开工的类: </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"它的父类: </span><span class="si">{</span><span class="n">bases</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"它携带的属性: </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="n">namespace</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+        <span class="c1"># 真正的"造类"动作还是要请示 type 本尊</span>
+        <span class="bp">cls</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="n">mcs</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">namespace</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span>
+
+
+<span class="c1"># 通过 metaclass 关键字参数指派生产线</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Bird</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">WatchMeta</span><span class="p">):</span>
+    <span class="n">species</span> <span class="o">=</span> <span class="s2">"凤头鹦鹉"</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">sing</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"啾啾！"</span><span class="p">)</span>
+
+
+<span class="c1"># 输出（注意：这些打印发生在"类定义那一刻"，还没造任何实例）：</span>
+<span class="c1"># 即将开工的类: Bird</span>
+<span class="c1"># 它的父类: ()</span>
+<span class="c1"># 它携带的属性: ['__module__', '__qualname__', 'species', 'sing']</span>
+</code></pre></div>
+<p>四个参数的含义：</p>
+<ul>
+<li><code>mcs</code>：元类自己（相当于普通方法里的 <code>cls</code>）；</li>
+<li><code>name</code>：类的名字（字符串）；</li>
+<li><code>bases</code>：父类们（元组）；</li>
+<li><code>namespace</code>：类体里所有成员（字典）。</li>
+</ul>
+<p>元类身上同样有 <code>__new__</code>、<code>__init__</code>、<code>__call__</code> 三件套，分工和上一章讲的完全同构：</p>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>职责</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>__new__</code></td>
+<td>造出类对象并返回</td>
+</tr>
+<tr>
+<td><code>__init__</code></td>
+<td>给刚造好的类做初始化（无返回值）</td>
+</tr>
+<tr>
+<td><code>__call__</code></td>
+<td>拦截"类名加括号"——类的实例化过程被它捏在手里</td>
+</tr>
+</tbody>
+</table>
+<p>三者触发时机，可运行演示见本章 <code>demo.py</code>。典型应用场景：命名规范检查、子类自动注册、批量方法增强、ORM 框架的模型定义等。</p>
+<h2 id="12-元类的继承与冲突">12. 元类的继承与冲突</h2>
+<p>子类会自动继承父类的元类——毕竟"生产线"也是家产的一部分：</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">WatchMeta</span><span class="p">(</span><span class="nb">type</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Root</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">WatchMeta</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Leaf</span><span class="p">(</span><span class="n">Root</span><span class="p">):</span>  <span class="c1"># 没写 metaclass，但自动用上了 WatchMeta</span>
+    <span class="k">pass</span>
+
+
+<span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">Leaf</span><span class="p">))</span>  <span class="c1"># &lt;class '__main__.WatchMeta'&gt;</span>
+</code></pre></div>
+<p>麻烦出在多继承：两个父类各用各的元类，Python 不知道听谁的，直接报错。解法是造一个"共同上级"：</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">MetaOne</span><span class="p">(</span><span class="nb">type</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">MetaTwo</span><span class="p">(</span><span class="nb">type</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">A</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">MetaOne</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">B</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">MetaTwo</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<span class="c1"># class C(A, B): pass  # TypeError! 两条生产线合不到一块儿</span>
+
+
+<span class="c1"># 解决：让新元类同时继承两条生产线</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">JointMeta</span><span class="p">(</span><span class="n">MetaOne</span><span class="p">,</span> <span class="n">MetaTwo</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">C</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">JointMeta</span><span class="p">):</span>  <span class="c1"># 正常运行</span>
+    <span class="k">pass</span>
+</code></pre></div>
+<h2 id="13-本章总结">13. 本章总结</h2>
+<table>
+<thead>
+<tr>
+<th>概念</th>
+<th>一句话说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>描述符类</td>
+<td>实现了 <code>__get__</code>/<code>__set__</code>/<code>__delete__</code> 之一的类</td>
+</tr>
+<tr>
+<td>数据型描述符</td>
+<td>带写入能力的描述符，优先级压过实例字典</td>
+</tr>
+<tr>
+<td>非数据型描述符</td>
+<td>只有 <code>__get__</code> 的描述符，会被实例字典反超</td>
+</tr>
+<tr>
+<td><code>__set_name__</code></td>
+<td>挂载到类属性时自动触发，告知类名与属性名</td>
+</tr>
+<tr>
+<td><code>@property</code></td>
+<td>官方提供的数据型描述符快捷方式</td>
+</tr>
+<tr>
+<td>元类</td>
+<td>造类的类，默认为 <code>type</code></td>
+</tr>
+<tr>
+<td>元类 <code>__new__</code></td>
+<td>创建类，返回类对象</td>
+</tr>
+<tr>
+<td>元类 <code>__init__</code></td>
+<td>初始化类，无返回值</td>
+</tr>
+<tr>
+<td>元类 <code>__call__</code></td>
+<td>接管类的实例化过程</td>
+</tr>
+<tr>
+<td>元类应用</td>
+<td>命名检查、自动注册、方法增强、ORM 等</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="习题">习题</h2>
+<h3 id="一只读的扑克牌">一、只读的扑克牌</h3>
+<p>编写一个 <code>Card</code> 类，点数和花色一旦确定就不许再改（提示：用 <code>@property</code>，且不提供 setter）：</p>
+<div class="highlight"><pre><span></span><code><span class="n">card</span> <span class="o">=</span> <span class="n">Card</span><span class="p">(</span><span class="s2">"A"</span><span class="p">,</span> <span class="s2">"黑桃"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">card</span><span class="o">.</span><span class="n">rank</span><span class="p">)</span>   <span class="c1"># A</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">card</span><span class="o">.</span><span class="n">suit</span><span class="p">)</span>   <span class="c1"># 黑桃</span>
+
+<span class="c1"># card.rank = "K"  # AttributeError! 不许修改</span>
+</code></pre></div>
+<h3 id="二工资条校验">二、工资条校验</h3>
+<p>编写一个 <code>Salary</code> 类：月薪可修改，但必须在 0 到 1000000 之间（闭区间）；年薪和时薪是只读的派生属性（按每年 12 个月、每月 22 个工作日、每日 8 小时折算）：</p>
+<div class="highlight"><pre><span></span><code><span class="n">s</span> <span class="o">=</span> <span class="n">Salary</span><span class="p">(</span><span class="mi">20000</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">monthly</span><span class="p">)</span>    <span class="c1"># 20000</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">yearly</span><span class="p">)</span>     <span class="c1"># 240000（只读，自动计算）</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">hourly</span><span class="p">)</span>     <span class="c1"># 113.63636363636364（只读，自动计算）</span>
+
+<span class="c1"># s.monthly = -1    # ValueError! 月薪不合法</span>
+</code></pre></div>
+<h3 id="三带监控的配置项">三、带监控的配置项</h3>
+<p>编写一个描述符 <code>UsageMeter</code>，统计它守护的属性被读取、被改写各多少次（次数记录在描述符类身上，全班共享）：</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">Device</span><span class="p">:</span>
+    <span class="n">voltage</span> <span class="o">=</span> <span class="n">UsageMeter</span><span class="p">(</span><span class="mi">220</span><span class="p">)</span>  <span class="c1"># 初始电压 220</span>
+
+
+<span class="n">d</span> <span class="o">=</span> <span class="n">Device</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">voltage</span><span class="p">)</span>      <span class="c1"># 220</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">voltage</span><span class="p">)</span>      <span class="c1"># 220</span>
+<span class="n">d</span><span class="o">.</span><span class="n">voltage</span> <span class="o">=</span> <span class="mi">380</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">voltage</span><span class="p">)</span>      <span class="c1"># 380</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">UsageMeter</span><span class="o">.</span><span class="n">get_read_count</span><span class="p">())</span>    <span class="c1"># 3 —— 一共被读了 3 次</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">UsageMeter</span><span class="o">.</span><span class="n">get_write_count</span><span class="p">())</span>   <span class="c1"># 1 —— 一共被写了 1 次</span>
+</code></pre></div>
+<h3 id="四思考题">四、思考题</h3>
+<p>不运行代码，先推理输出结果，再说明原因：</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">Inspector</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__get__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="n">owner</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"__get__ 触发，instance=</span><span class="si">{</span><span class="n">instance</span><span class="si">}</span><span class="s2">, owner=</span><span class="si">{</span><span class="n">owner</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="mi">42</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__set__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"__set__ 触发，instance=</span><span class="si">{</span><span class="n">instance</span><span class="si">}</span><span class="s2">, value=</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Host</span><span class="p">:</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">Inspector</span><span class="p">()</span>
+
+
+<span class="n">h</span> <span class="o">=</span> <span class="n">Host</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">h</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+<span class="n">h</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="n">h</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="s2">"x"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"藏在实例字典里"</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">h</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">h</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="五单例元类">五、单例元类</h3>
+<p>编写元类 <code>OneOnlyMeta</code>，凡是用它生产的类，实例化多少次都只发同一个对象：</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">OneOnlyMeta</span><span class="p">(</span><span class="nb">type</span><span class="p">):</span>
+    <span class="c1"># 你的代码</span>
+    <span class="k">pass</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">CacheStore</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">OneOnlyMeta</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">region</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">region</span> <span class="o">=</span> <span class="n">region</span>
+
+
+<span class="n">store_a</span> <span class="o">=</span> <span class="n">CacheStore</span><span class="p">(</span><span class="s2">"华东"</span><span class="p">)</span>
+<span class="n">store_b</span> <span class="o">=</span> <span class="n">CacheStore</span><span class="p">(</span><span class="s2">"华北"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">store_a</span> <span class="ow">is</span> <span class="n">store_b</span><span class="p">)</span>  <span class="c1"># True</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">store_a</span><span class="o">.</span><span class="n">region</span><span class="p">)</span>      <span class="c1"># 华东 —— 第一次实例化的参数说了算</span>
+</code></pre></div>
+<h3 id="六自动注册的导出器">六、自动注册的导出器</h3>
+<p>编写元类 <code>ExporterMeta</code>：凡是继承 <code>Exporter</code> 的子类，定义完成的一瞬间就自动登记进 <code>ExporterMeta.registry</code> 字典（键为类名，值为类本身）：</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">ExporterMeta</span><span class="p">(</span><span class="nb">type</span><span class="p">):</span>
+    <span class="c1"># 你的代码</span>
+    <span class="k">pass</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Exporter</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">ExporterMeta</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">CsvExporter</span><span class="p">(</span><span class="n">Exporter</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">JsonExporter</span><span class="p">(</span><span class="n">Exporter</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<span class="nb">print</span><span class="p">(</span><span class="n">ExporterMeta</span><span class="o">.</span><span class="n">registry</span><span class="p">)</span>
+<span class="c1"># {'CsvExporter': &lt;class CsvExporter&gt;, 'JsonExporter': &lt;class JsonExporter&gt;}</span>
+</code></pre></div>
+<h3 id="七给所有方法装上追踪器">七、给所有方法装上追踪器</h3>
+<p>编写元类 <code>TraceMeta</code>：自动为类中每个非私有方法（名字不以 <code>_</code> 开头的方法）包一层追踪——调用时先打印 <code>[TRACE] 进入 {方法名}</code>，再执行原方法逻辑：</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">TraceMeta</span><span class="p">(</span><span class="nb">type</span><span class="p">):</span>
+    <span class="c1"># 你的代码</span>
+    <span class="k">pass</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">TextStats</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">TraceMeta</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">word_count</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">char_count</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+
+
+<span class="n">stats</span> <span class="o">=</span> <span class="n">TextStats</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">stats</span><span class="o">.</span><span class="n">word_count</span><span class="p">(</span><span class="s2">"hello magic world"</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">stats</span><span class="o">.</span><span class="n">char_count</span><span class="p">(</span><span class="s2">"hello magic world"</span><span class="p">))</span>
+
+<span class="c1"># 期望输出：</span>
+<span class="c1"># [TRACE] 进入 word_count</span>
+<span class="c1"># 3</span>
+<span class="c1"># [TRACE] 进入 char_count</span>
+<span class="c1"># 17</span>
+</code></pre></div>
+<hr />
+<p><strong>下一章</strong>：<a href="../python/10-zhuang-shi-qi.html">10 · 装饰器</a></p></div>
+
+      </article>
+<nav class="pager"><a class="pg-card pg-prev" href="../python/08-mo-shu-fang-fa-quan-jing.html"><span class="pg-label">← 上一篇</span><span class="pg-title">魔术方法全景</span><span class="pg-mod">Python 与数据实践</span></a><a class="pg-card pg-next" href="../python/10-zhuang-shi-qi.html"><span class="pg-label">下一篇 →</span><span class="pg-title">装饰器</span><span class="pg-mod">Python 与数据实践</span></a></nav>
+    </div>
+    <footer class="foot">
+      <span>深栈 DeepStack · AI Agent 工程师转型训练营配套文档</span>
+    </footer>
+  </main>
+<nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#1-从一个数据不同步的-bug-说起">1. 从一个&quot;数据不同步&quot;的 bug 说起</a><a class="toc-link toc-h2" href="#2-描述符协议一份三方契约">2. 描述符协议：一份三方契约</a><a class="toc-link toc-h2" href="#3-属性查找的优先级顺序">3. 属性查找的优先级顺序</a><a class="toc-link toc-h2" href="#4-读写删分别怎么触发">4. 读、写、删，分别怎么触发</a><a class="toc-link toc-h2" href="#5-__set_name__让描述符知道自己姓什么">5. __set_name__：让描述符知道自己&quot;姓什么&quot;</a><a class="toc-link toc-h2" href="#6-修复开篇的-bug">6. 修复开篇的 bug</a><a class="toc-link toc-h2" href="#7-property描述符的官方快捷方式">7. @property：描述符的官方快捷方式</a><a class="toc-link toc-h2" href="#8-亲手造一个-property">8. 亲手造一个 property</a><a class="toc-link toc-h2" href="#9-描述符的两大经典应用">9. 描述符的两大经典应用</a><a class="toc-link toc-h3" href="#91-惰性计算算一次用一辈子">9.1 惰性计算：算一次，用一辈子</a><a class="toc-link toc-h3" href="#92-类型检查一个描述符守住一个字段">9.2 类型检查：一个描述符守住一个字段</a><a class="toc-link toc-h2" href="#10-换个视角类自己也是对象">10. 换个视角：类自己也是对象</a><a class="toc-link toc-h2" href="#11-自定义元类接管造类这件事">11. 自定义元类：接管&quot;造类&quot;这件事</a><a class="toc-link toc-h2" href="#12-元类的继承与冲突">12. 元类的继承与冲突</a><a class="toc-link toc-h2" href="#13-本章总结">13. 本章总结</a><a class="toc-link toc-h2" href="#习题">习题</a><a class="toc-link toc-h3" href="#一只读的扑克牌">一、只读的扑克牌</a><a class="toc-link toc-h3" href="#二工资条校验">二、工资条校验</a><a class="toc-link toc-h3" href="#三带监控的配置项">三、带监控的配置项</a><a class="toc-link toc-h3" href="#四思考题">四、思考题</a><a class="toc-link toc-h3" href="#五单例元类">五、单例元类</a><a class="toc-link toc-h3" href="#六自动注册的导出器">六、自动注册的导出器</a><a class="toc-link toc-h3" href="#七给所有方法装上追踪器">七、给所有方法装上追踪器</a></nav>
+</div>
+<div class="sb-mask" id="sbMask"></div>
+<script src="../assets/app.js"></script>
+</body>
+</html>

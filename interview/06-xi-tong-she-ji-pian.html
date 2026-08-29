@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>06 · 系统设计篇 · 深栈 DeepStack 课程文档</title>
+<meta name="description" content="综合应用五套课件的知识。系统设计题是区分&quot;知识点都会但没串起来&quot;和&quot;能独立交付&quot;的关键题型。答题套路统一：先问清楚需求 → 给分层架构 → 每层给选型和理由 → 主动暴露风险和演进。面试官在这一环节最看重的是结构感和取舍…">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%23d9c39a' text-anchor='middle'%3EDS%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+<div class="progress" id="progress"></div>
+
+<div class="layout">
+<aside class="sidebar" id="sidebar">
+  <div class="sb-head">
+    <a class="brand" href="../index.html">
+      <span class="brand-mark">DS</span>
+      <span class="brand-text"><b>深栈 DeepStack</b><i>AI Agent 工程师转型训练营</i></span>
+    </a>
+    <button class="sb-close" id="sbClose" aria-label="关闭目录">✕</button>
+  </div>
+  <div class="sb-search"><input type="search" id="searchInput" placeholder="搜索 123 篇文档… ( / )" autocomplete="off">
+    <div class="sb-results" id="searchResults"></div></div>
+  <nav class="sb-nav">
+    <section class="sb-group" data-mod="python">
+      <a class="sb-group-title" href="../modules/python.html" data-toggle="python">
+        <span class="sb-num">01</span>
+        <span class="sb-group-text"><b>Python 与数据实践</b><i>31 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../python/01-huan-jing-da-jian-yu-ban-ben-guan-li.html"><span class="sb-item-num">01</span><span class="sb-item-title">环境搭建与版本管理</span></a>
+        <a class="sb-item" href="../python/02-bian-liang-biao-da-shi-yu-liu-cheng-kong-zhi.html"><span class="sb-item-num">02</span><span class="sb-item-title">变量、表达式与流程控制</span></a>
+        <a class="sb-item" href="../python/03-xu-lie-zi-dian-yu-ji-he.html"><span class="sb-item-num">03</span><span class="sb-item-title">序列、字典与集合</span></a>
+        <a class="sb-item" href="../python/04-han-shu-she-ji-yu-lambda.html"><span class="sb-item-num">04</span><span class="sb-item-title">函数设计与 lambda</span></a>
+        <a class="sb-item" href="../python/05-zuo-yong-yu-gui-ze-yu-bi-bao.html"><span class="sb-item-num">05</span><span class="sb-item-title">作用域规则与闭包</span></a>
+        <a class="sb-item" href="../python/06-lei-de-ding-yi-yu-shi-li-hua.html"><span class="sb-item-num">06</span><span class="sb-item-title">类的定义与实例化</span></a>
+        <a class="sb-item" href="../python/07-lei-xing-pan-ding-yu-chou-xiang-ji-lei.html"><span class="sb-item-num">07</span><span class="sb-item-title">类型判定与抽象基类</span></a>
+        <a class="sb-item" href="../python/08-mo-shu-fang-fa-quan-jing.html"><span class="sb-item-num">08</span><span class="sb-item-title">魔术方法全景</span></a>
+        <a class="sb-item" href="../python/09-miao-shu-fu-yu-yuan-lei.html"><span class="sb-item-num">09</span><span class="sb-item-title">描述符与元类</span></a>
+        <a class="sb-item" href="../python/10-zhuang-shi-qi.html"><span class="sb-item-num">10</span><span class="sb-item-title">装饰器</span></a>
+        <a class="sb-item" href="../python/11-die-dai-xie-yi-yu-sheng-cheng-qi.html"><span class="sb-item-num">11</span><span class="sb-item-title">迭代协议与生成器</span></a>
+        <a class="sb-item" href="../python/12-with-yu-shang-xia-wen-xie-yi.html"><span class="sb-item-num">12</span><span class="sb-item-title">with 与上下文协议</span></a>
+        <a class="sb-item" href="../python/13-yi-chang-ti-xi-yu-chu-li.html"><span class="sb-item-num">13</span><span class="sb-item-title">异常体系与处理</span></a>
+        <a class="sb-item" href="../python/14-lei-xing-biao-zhu.html"><span class="sb-item-num">14</span><span class="sb-item-title">类型标注</span></a>
+        <a class="sb-item" href="../python/15-mo-kuai-yu-bao-de-zu-zhi.html"><span class="sb-item-num">15</span><span class="sb-item-title">模块与包的组织</span></a>
+        <a class="sb-item" href="../python/16-biao-zhun-ku-xun-li.html"><span class="sb-item-num">16</span><span class="sb-item-title">标准库巡礼</span></a>
+        <a class="sb-item" href="../python/17-yi-lai-guan-li-yu-di-san-fang-ku.html"><span class="sb-item-num">17</span><span class="sb-item-title">依赖管理与第三方库</span></a>
+        <a class="sb-item" href="../python/18-xian-cheng-yu-jin-cheng.html"><span class="sb-item-num">18</span><span class="sb-item-title">线程与进程</span></a>
+        <a class="sb-item" href="../python/19-shi-jian-xun-huan.html"><span class="sb-item-num">19</span><span class="sb-item-title">事件循环</span></a>
+        <a class="sb-item" href="../python/20-future-yu-xie-cheng.html"><span class="sb-item-num">20</span><span class="sb-item-title">Future 与协程</span></a>
+        <a class="sb-item" href="../python/21-asyncio-shi-zhan.html"><span class="sb-item-num">21</span><span class="sb-item-title">asyncio 实战</span></a>
+        <a class="sb-item" href="../python/22-gou-jian-yu-fa-bu.html"><span class="sb-item-num">22</span><span class="sb-item-title">构建与发布</span></a>
+        <a class="sb-item" href="../python/23-gong-cheng-hua-gong-ju-lian.html"><span class="sb-item-num">23</span><span class="sb-item-title">工程化工具链</span></a>
+        <a class="sb-item" href="../python/24-monorepo-yu-tiao-shi.html"><span class="sb-item-num">24</span><span class="sb-item-title">monorepo 与调试</span></a>
+        <a class="sb-item" href="../python/25-jupyter-jiao-hu-huan-jing.html"><span class="sb-item-num">25</span><span class="sb-item-title">Jupyter 交互环境</span></a>
+        <a class="sb-item" href="../python/26-numpy-shu-zu-yu-xiang-liang-hua.html"><span class="sb-item-num">26</span><span class="sb-item-title">NumPy 数组与向量化</span></a>
+        <a class="sb-item" href="../python/27-pandas-shu-ju-jie-gou.html"><span class="sb-item-num">27</span><span class="sb-item-title">Pandas 数据结构</span></a>
+        <a class="sb-item" href="../python/28-pandas-shu-ju-qing-xi.html"><span class="sb-item-num">28</span><span class="sb-item-title">Pandas 数据清洗</span></a>
+        <a class="sb-item" href="../python/29-matplotlib-hui-tu-ti-xi.html"><span class="sb-item-num">29</span><span class="sb-item-title">Matplotlib 绘图体系</span></a>
+        <a class="sb-item" href="../python/30-matplotlib-dong-hua-yu-jiao-hu.html"><span class="sb-item-num">30</span><span class="sb-item-title">Matplotlib 动画与交互</span></a>
+        <a class="sb-item" href="../python/31-seaborn-tong-ji-ke-shi-hua.html"><span class="sb-item-num">31</span><span class="sb-item-title">Seaborn 统计可视化</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="agent">
+      <a class="sb-group-title" href="../modules/agent.html" data-toggle="agent">
+        <span class="sb-num">02</span>
+        <span class="sb-group-text"><b>Agent 核心</b><i>15 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../agent/01-token-yu-ci-qian-ru.html"><span class="sb-item-num">01</span><span class="sb-item-title">Token 与词嵌入</span></a>
+        <a class="sb-item" href="../agent/02-qian-xiang-chuan-bo-yu-fan-xiang-chuan-bo.html"><span class="sb-item-num">02</span><span class="sb-item-title">前向传播与反向传播</span></a>
+        <a class="sb-item" href="../agent/03-zhu-yi-li-ji-zhi-yu-transformer-jia-gou.html"><span class="sb-item-num">03</span><span class="sb-item-title">注意力机制与 Transformer 架构</span></a>
+        <a class="sb-item" href="../agent/04-yu-xun-lian-rlhf-yu-cai-yang-kv-cache.html"><span class="sb-item-num">04</span><span class="sb-item-title">预训练、RLHF 与采样（KV Cache）</span></a>
+        <a class="sb-item" href="../agent/05-ben-di-mo-xing-yu-xiao-xi-jie-gou.html"><span class="sb-item-num">05</span><span class="sb-item-title">本地模型与消息结构</span></a>
+        <a class="sb-item" href="../agent/06-hui-hua-guan-li-yu-json-shu-chu.html"><span class="sb-item-num">06</span><span class="sb-item-title">会话管理与 JSON 输出</span></a>
+        <a class="sb-item" href="../agent/07-tool-calling-xie-yi-yu-feng-zhuang.html"><span class="sb-item-num">07</span><span class="sb-item-title">Tool Calling：协议与封装</span></a>
+        <a class="sb-item" href="../agent/08-react-mo-shi-yu-zhu-xun-huan.html"><span class="sb-item-num">08</span><span class="sb-item-title">ReAct 模式与主循环</span></a>
+        <a class="sb-item" href="../agent/09-shi-zhan-deep-research-agent.html"><span class="sb-item-num">09</span><span class="sb-item-title">实战：Deep Research Agent</span></a>
+        <a class="sb-item" href="../agent/10-skill-yu-jian-jin-shi-pi-lu.html"><span class="sb-item-num">10</span><span class="sb-item-title">Skill 与渐进式披露</span></a>
+        <a class="sb-item" href="../agent/11-mcp-quan-jing.html"><span class="sb-item-num">11</span><span class="sb-item-title">MCP 全景</span></a>
+        <a class="sb-item" href="../agent/12-duo-agent-yu-xuan-xing-ce-lve.html"><span class="sb-item-num">12</span><span class="sb-item-title">多 Agent 与选型策略</span></a>
+        <a class="sb-item" href="../agent/13-ti-shi-ci-gong-cheng-yu-shang-xia-wen-gong.html"><span class="sb-item-num">13</span><span class="sb-item-title">提示词工程与上下文工程</span></a>
+        <a class="sb-item" href="../agent/14-xun-huan-tu-yu-gu-jia-gong-cheng.html"><span class="sb-item-num">14</span><span class="sb-item-title">循环、图与骨架工程</span></a>
+        <a class="sb-item" href="../agent/15-ji-yi-quan-xian-yu-ping-ce.html"><span class="sb-item-num">15</span><span class="sb-item-title">记忆、权限与评测</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="langchain">
+      <a class="sb-group-title" href="../modules/langchain.html" data-toggle="langchain">
+        <span class="sb-num">03</span>
+        <span class="sb-group-text"><b>LangChain 指南</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langchain/01-ren-shi-langchain.html"><span class="sb-item-num">01</span><span class="sb-item-title">认识 LangChain</span></a>
+        <a class="sb-item" href="../langchain/02-ti-shi-ci-mu-ban-yu-xiao-xi.html"><span class="sb-item-num">02</span><span class="sb-item-title">提示词模板与消息</span></a>
+        <a class="sb-item" href="../langchain/03-lcel-yu-runnable.html"><span class="sb-item-num">03</span><span class="sb-item-title">LCEL 与 Runnable</span></a>
+        <a class="sb-item" href="../langchain/04-liu-shi-yu-bing-fa.html"><span class="sb-item-num">04</span><span class="sb-item-title">流式与并发</span></a>
+        <a class="sb-item" href="../langchain/05-shu-chu-jie-xi-qi.html"><span class="sb-item-num">05</span><span class="sb-item-title">输出解析器</span></a>
+        <a class="sb-item" href="../langchain/06-wen-dang-jia-zai-yu-qie-ge.html"><span class="sb-item-num">06</span><span class="sb-item-title">文档加载与切割</span></a>
+        <a class="sb-item" href="../langchain/07-qian-ru-yu-xiang-liang-ku.html"><span class="sb-item-num">07</span><span class="sb-item-title">嵌入与向量库</span></a>
+        <a class="sb-item" href="../langchain/08-jian-suo-yu-rag.html"><span class="sb-item-num">08</span><span class="sb-item-title">检索与RAG</span></a>
+        <a class="sb-item" href="../langchain/09-dui-hua-ji-yi.html"><span class="sb-item-num">09</span><span class="sb-item-title">对话记忆</span></a>
+        <a class="sb-item" href="../langchain/10-gong-ju-diao-yong.html"><span class="sb-item-num">10</span><span class="sb-item-title">工具调用</span></a>
+        <a class="sb-item" href="../langchain/11-agent.html"><span class="sb-item-num">11</span><span class="sb-item-title">Agent</span></a>
+        <a class="sb-item" href="../langchain/12-hui-diao-yu-tiao-shi-quan-ke-cheng-shou-guan.html"><span class="sb-item-num">12</span><span class="sb-item-title">回调与调试（全课程收官章）</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="langgraph">
+      <a class="sb-group-title" href="../modules/langgraph.html" data-toggle="langgraph">
+        <span class="sb-num">04</span>
+        <span class="sb-group-text"><b>LangGraph 框架指南</b><i>17 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langgraph/01-di-1-zhang-cong-yi-ge-shi-kong-de-jiao.html"><span class="sb-item-num">01</span><span class="sb-item-title">第 1 章 从一个失控的脚本说起</span></a>
+        <a class="sb-item" href="../langgraph/02-di-2-zhang-zui-xiao-ke-yun-xing-tu.html"><span class="sb-item-num">02</span><span class="sb-item-title">第 2 章 最小可运行图</span></a>
+        <a class="sb-item" href="../langgraph/03-di-3-zhang-zhuang-tai-tu-de-shu-ju-xin.html"><span class="sb-item-num">03</span><span class="sb-item-title">第 3 章 状态：图的数据心脏</span></a>
+        <a class="sb-item" href="../langgraph/04-di-4-zhang-rang-liu-cheng-xue-hui-jue-ce.html"><span class="sb-item-num">04</span><span class="sb-item-title">第 4 章 让流程学会决策</span></a>
+        <a class="sb-item" href="../langgraph/05-di-5-zhang-bing-xing-shi-jie-chao-bu-zhi.html"><span class="sb-item-num">05</span><span class="sb-item-title">第 5 章 并行世界：超步执行模型</span></a>
+        <a class="sb-item" href="../langgraph/06-di-6-zhang-command-ba-kong-zhi-quan-jiao-jin.html"><span class="sb-item-num">06</span><span class="sb-item-title">第 6 章 Command：把控制权交进节点</span></a>
+        <a class="sb-item" href="../langgraph/07-di-7-zhang-dong-tai-bing-xing-send-yu-mapreduce.html"><span class="sb-item-num">07</span><span class="sb-item-title">第 7 章 动态并行：Send 与 MapReduce</span></a>
+        <a class="sb-item" href="../langgraph/08-di-8-zhang-gei-tu-zhuang-shang-shou-jiao-gong.html"><span class="sb-item-num">08</span><span class="sb-item-title">第 8 章 给图装上手脚：工具调用</span></a>
+        <a class="sb-item" href="../langgraph/09-di-9-zhang-fu-yong-yu-feng-zhuang-zi-tu.html"><span class="sb-item-num">09</span><span class="sb-item-title">第 9 章 复用与封装：子图</span></a>
+        <a class="sb-item" href="../langgraph/10-di-10-zhang-cong-dan-tu-dao-tuan-dui-duo.html"><span class="sb-item-num">10</span><span class="sb-item-title">第 10 章 从单图到团队：多 Agent 架构</span></a>
+        <a class="sb-item" href="../langgraph/11-di-11-zhang-liu-shi-shu-chu.html"><span class="sb-item-num">11</span><span class="sb-item-title">第 11 章 流式输出</span></a>
+        <a class="sb-item" href="../langgraph/12-di-12-zhang-chi-jiu-hua-checkpointer-yu-xian-cheng.html"><span class="sb-item-num">12</span><span class="sb-item-title">第 12 章 持久化：Checkpointer 与线程</span></a>
+        <a class="sb-item" href="../langgraph/13-di-13-zhang-shi-jian-lv-xing.html"><span class="sb-item-num">13</span><span class="sb-item-title">第 13 章 时间旅行</span></a>
+        <a class="sb-item" href="../langgraph/14-di-14-zhang-zhong-duan-yu-ren-zai-hui-lu.html"><span class="sb-item-num">14</span><span class="sb-item-title">第 14 章 中断与人在回路</span></a>
+        <a class="sb-item" href="../langgraph/15-di-15-zhang-ji-yi-guan-li.html"><span class="sb-item-num">15</span><span class="sb-item-title">第 15 章 记忆管理</span></a>
+        <a class="sb-item" href="../langgraph/16-di-16-zhang-rong-cuo-zhong-shi-chao-shi-yu.html"><span class="sb-item-num">16</span><span class="sb-item-title">第 16 章 容错：重试、超时与兜底</span></a>
+        <a class="sb-item" href="../langgraph/17-di-17-zhang-quan-jing-hui-gu.html"><span class="sb-item-num">17</span><span class="sb-item-title">第 17 章 全景回顾</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="backend">
+      <a class="sb-group-title" href="../modules/backend.html" data-toggle="backend">
+        <span class="sb-num">05</span>
+        <span class="sb-group-text"><b>Python 框架指南</b><i>14 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../backend/01-fastapi-ru-men-yu-asgi.html"><span class="sb-item-num">01</span><span class="sb-item-title">FastAPI 入门与 ASGI</span></a>
+        <a class="sb-item" href="../backend/02-lu-you-yu-qing-qiu-xiang-ying.html"><span class="sb-item-num">02</span><span class="sb-item-title">路由与请求响应</span></a>
+        <a class="sb-item" href="../backend/03-pydantic-shu-ju-jiao-yan-yu-pei-zhi.html"><span class="sb-item-num">03</span><span class="sb-item-title">Pydantic 数据校验与配置</span></a>
+        <a class="sb-item" href="../backend/04-sqlalchemy-yi-bu-yin-qing-yu-hui-hua.html"><span class="sb-item-num">04</span><span class="sb-item-title">SQLAlchemy 异步引擎与会话</span></a>
+        <a class="sb-item" href="../backend/05-orm-jian-mo.html"><span class="sb-item-num">05</span><span class="sb-item-title">ORM 建模</span></a>
+        <a class="sb-item" href="../backend/06-sql-biao-da-shi-yu-shu-ju-cao-zuo.html"><span class="sb-item-num">06</span><span class="sb-item-title">SQL 表达式与数据操作</span></a>
+        <a class="sb-item" href="../backend/07-alembic-shu-ju-qian-yi.html"><span class="sb-item-num">07</span><span class="sb-item-title">Alembic 数据迁移</span></a>
+        <a class="sb-item" href="../backend/08-yi-lai-zhu-ru.html"><span class="sb-item-num">08</span><span class="sb-item-title">依赖注入</span></a>
+        <a class="sb-item" href="../backend/09-tong-yi-yi-chang-chu-li.html"><span class="sb-item-num">09</span><span class="sb-item-title">统一异常处理</span></a>
+        <a class="sb-item" href="../backend/10-zhong-jian-jian.html"><span class="sb-item-num">10</span><span class="sb-item-title">中间件</span></a>
+        <a class="sb-item" href="../backend/11-ren-zheng-yu-jwt.html"><span class="sb-item-num">11</span><span class="sb-item-title">认证与 JWT</span></a>
+        <a class="sb-item" href="../backend/12-pytest-ce-shi.html"><span class="sb-item-num">12</span><span class="sb-item-title">pytest 测试</span></a>
+        <a class="sb-item" href="../backend/13-ri-zhi-loguru.html"><span class="sb-item-num">13</span><span class="sb-item-title">日志 loguru</span></a>
+        <a class="sb-item" href="../backend/14-liu-shi-xiang-ying-sse-yu-websocket.html"><span class="sb-item-num">14</span><span class="sb-item-title">流式响应 SSE 与 WebSocket</span></a>
+      </div>
+    </section>
+    <section class="sb-group open" data-mod="interview">
+      <a class="sb-group-title" href="../modules/interview.html" data-toggle="interview">
+        <span class="sb-num">06</span>
+        <span class="sb-group-text"><b>面试题库</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../interview/01-llm-yuan-li-pian.html"><span class="sb-item-num">01</span><span class="sb-item-title">LLM 原理篇</span></a>
+        <a class="sb-item" href="../interview/02-rag-yu-jian-suo-pian.html"><span class="sb-item-num">02</span><span class="sb-item-title">RAG 与检索篇</span></a>
+        <a class="sb-item" href="../interview/03-agent-he-xin-pian.html"><span class="sb-item-num">03</span><span class="sb-item-title">Agent 核心篇</span></a>
+        <a class="sb-item" href="../interview/04-langgraph-pian.html"><span class="sb-item-num">04</span><span class="sb-item-title">LangGraph 篇</span></a>
+        <a class="sb-item" href="../interview/05-langchain-pian.html"><span class="sb-item-num">05</span><span class="sb-item-title">LangChain 篇</span></a>
+        <a class="sb-item current" href="../interview/06-xi-tong-she-ji-pian.html"><span class="sb-item-num">06</span><span class="sb-item-title">系统设计篇</span></a>
+        <a class="sb-item" href="../interview/07-xiang-mu-shen-wa-pian.html"><span class="sb-item-num">07</span><span class="sb-item-title">项目深挖篇</span></a>
+        <a class="sb-item" href="../interview/08-gu-zhang-pai-cha-pian.html"><span class="sb-item-num">08</span><span class="sb-item-title">故障排查篇</span></a>
+        <a class="sb-item" href="../interview/09-python-ji-chu-pian.html"><span class="sb-item-num">09</span><span class="sb-item-title">Python 基础篇</span></a>
+        <a class="sb-item" href="../interview/10-fastapi-yu-hou-duan-pian.html"><span class="sb-item-num">10</span><span class="sb-item-title">FastAPI 与后端篇</span></a>
+        <a class="sb-item" href="../interview/11-ti-shi-ci-gong-cheng-yu-an-quan-pian.html"><span class="sb-item-num">11</span><span class="sb-item-title">提示词工程与安全篇</span></a>
+        <a class="sb-item" href="../interview/12-mo-xing-xuan-xing-yu-jiang-ben-pian.html"><span class="sb-item-num">12</span><span class="sb-item-title">模型选型与降本篇</span></a>
+      </div>
+    </section>
+  </nav>
+</aside>
+  <main class="main">
+    <header class="topbar">
+      <button class="menu-btn" id="menuBtn" aria-label="目录">☰</button>
+      <div class="crumbs"><a href="../index.html">首页</a><span>/</span><a href="../modules/interview.html">面试题库</a><span>/</span><span class="cur">系统设计篇</span></div>
+      <div class="topbar-actions">
+        <button class="icon-btn" id="themeBtn" title="切换深浅色" aria-label="切换深浅色">◐</button>
+      </div>
+    </header>
+    <div class="content">
+      <article class="article">
+
+<header class="page-head">
+  <div class="page-kicker">面试题库 · 第 06 章</div>
+  <h1 class="page-title">系统设计篇</h1>
+  <p class="page-desc">综合应用五套课件的知识。系统设计题是区分&quot;知识点都会但没串起来&quot;和&quot;能独立交付&quot;的关键题型。答题套路统一：先问清楚需求 → 给分层架构 → 每层给选型和理由 → 主动暴露风险和演进。面试官在这一环节最看重的是结构感和取舍…</p>
+  <div class="page-meta">
+    <span>约 28 分钟</span><span>11,385 字</span><span>0 个代码示例</span>
+  </div>
+</header>
+<div class="md"><blockquote>
+<p>综合应用五套课件的知识。系统设计题是区分"知识点都会但没串起来"和"能独立交付"的关键题型。答题套路统一：<strong>先问清楚需求 → 给分层架构 → 每层给选型和理由 → 主动暴露风险和演进</strong>。面试官在这一环节最看重的是结构感和取舍意识，不是方案完美。本篇 7 题覆盖知识库、研究、客服、BI、网关五类高频场景。</p>
+</blockquote>
+<hr />
+<h2 id="q01-设计一个企业知识库问答系统">Q01 · 设计一个企业知识库问答系统</h2>
+<blockquote>
+<p>难度：★★★★ ｜ 频率：极高 ｜ 对应课件：LangChain指南/06-08、agent核心/15</p>
+</blockquote>
+<p><strong>面试官</strong>：给你一个场景：5000 人规模的公司，各部门有内部文档（Confluence 导出、PDF 制度文件、Excel 台账），要做一个人人可用的问答系统。要求带引用溯源，且各部门文档不能互相泄露。设计一下。</p>
+<p><strong>第 1 层追问：先反问需求</strong></p>
+<blockquote>
+<p>你会先确认什么？</p>
+</blockquote>
+<p>参考回答：先问四个问题再画图，这是系统设计的基本功。<strong>一，问答性质</strong>：事实型（"年假多少天"）还是综合型（"总结竞品策略"）——决定检索粒度和生成复杂度。<strong>二，数据规模与更新频率</strong>：十万级文档、天级更新 vs 百万级、小时级——决定入库管线是批处理还是流式。<strong>三，权限模型</strong>：按部门隔离还是文档级 ACL——直接决定检索层设计（这是本题最大的坑）。<strong>四，验收标准</strong>：正确率要求多高、能不能拒答——决定要不要上人工反馈闭环。<strong>不问需求直接画图，是初级工程师的典型动作</strong>。</p>
+<p><strong>第 2 层追问：架构分层</strong></p>
+<blockquote>
+<p>给你的总体设计。</p>
+</blockquote>
+<p>参考回答：五层管线 + 一条回环。<strong>入库层</strong>：文档解析（PDF/Confluence 各自的 Loader）→ <strong>按结构切割</strong>（Markdown 尊重标题层级、CSV 一行一 Document）→ <code>embed_documents</code> 批量嵌入（<strong>分批 + Semaphore 限流 + 断点续跑</strong>）→ 入向量库，<strong>metadata 必带：部门/权限标签/文档 id/更新时间</strong>。<strong>检索层</strong>：<code>embed_query</code> → 向量检索 + BM25 混合 → RRF 融合 → cross-encoder 重排取 top5；<strong>权限过滤在检索入口处用 metadata filter 强制注入</strong>（不是事后过滤——事后过滤会把结果滤空，事前过滤缩小检索范围）。<strong>生成层</strong>：<code>RunnableParallel(context=retriever|format_docs, question=Passthrough) | prompt | model</code>，提示词铁律"只依据材料回答，没有就说不知道"，temperature≈0。<strong>溯源层</strong>：结构化输出带引用块 id，<strong>校验引用真实存在</strong>才渲染。<strong>回环</strong>：用户点赞/点踩 + 失败案例回流评测集。</p>
+<p><strong>第 3 层追问：权限你怎么保证不泄露？</strong></p>
+<blockquote>
+<p>这是最关键的安全问题，具体说。</p>
+</blockquote>
+<p>参考回答：三道防线。<strong>一，检索入口强制 filter</strong>：用户身份 → 可见文档集合 → 作为向量库 filter 条件，<strong>在相似度计算之前生效</strong>——这是唯一正确的位置，模型永远拿不到无权文档的向量。<strong>二，生成层兜底</strong>：就算混进了无权内容，提示词 + 引用校验让答案必须可溯源到用户可见的块，引用不到的内容出不来。<strong>三，审计</strong>：每次检索记录"谁、用什么 filter、命中哪些文档 id"——出事可倒查。<strong>反模式警告</strong>：把所有文档塞上下文再让模型"自己注意权限"是绝对红线——提示词是软约束，权限是安全边界，安全边界必须放在确定性代码里，这是课程"权限控制"一节的核心主张。</p>
+<p><strong>第 4 层追问：上线后怎么迭代？</strong></p>
+<blockquote>
+<p>系统跑起来了，怎么持续变好？</p>
+</blockquote>
+<p>参考回答：两条数据线 + 一条评测线。<strong>数据线一（文档侧）</strong>：监控"检索为空"的 query 分布——高频空检索的 topic 说明知识库覆盖缺口，推动对应部门补文档。<strong>数据线二（用户侧）</strong>：点踩日志 + 追问"这不是我要的"聚类分析，定位是检索问题还是生成问题（<strong>分段归因</strong>：检索命中了吗？命中了但没用上吗？）。<strong>评测线</strong>：月度回归——固定测试集（含负例）跑命中率/MRR/忠实度，防止某次换嵌入模型/改切割参数引入回退。<strong>升级路径预留</strong>：单轮检索答不好的综合问题，后续升级为"Agent 化"——先检索、发现不够再深挖多轮，但初版不上 Agent，<strong>用最简单的架构满足需求</strong>。</p>
+<h3 id="考察意图与踩坑点">考察意图与踩坑点</h3>
+<ul>
+<li>考察意图：这是 AI 应用岗最常见的系统设计题。核心考察<strong>权限在检索层的正确位置</strong>（能答出的人立刻脱颖而出）和 RAG 全链路的完整度。</li>
+<li>踩坑点：权限靠提示词"嘱咐模型"（安全红线）；事后过滤导致结果为空；没有拒答/负例意识；一开始就上多 Agent 炫技。</li>
+<li>一句话总结：五层管线 + 引用校验回环；权限在检索入口强制 filter，安全边界放确定性代码，绝不放提示词。</li>
+</ul>
+<hr />
+<h2 id="q02-设计一个联网深度研究-agentdeepresearch">Q02 · 设计一个联网深度研究 Agent（DeepResearch）</h2>
+<blockquote>
+<p>难度：★★★★ ｜ 频率：高 ｜ 对应课件：agent核心/08、09</p>
+</blockquote>
+<p><strong>面试官</strong>：做一个"深度研究"产品：用户提一个开放问题（如"对比主流向量数据库的选型建议"），系统联网查证并给出带引用的综合答案。设计核心架构。</p>
+<p><strong>第 1 层追问：为什么这是 Agent 而不是链？</strong></p>
+<blockquote>
+<p>先论证技术选型。</p>
+</blockquote>
+<p>参考回答：因为<strong>研究任务的步骤写不死</strong>。要搜几次取决于第一轮结果质量、读哪些页取决于搜索返回的 URL、要不要换角度取决于已收集信息的相关性——路径强依赖中间结果，必须让模型在运行时决定控制流。这是 Agent 的正当主场（对照选型框架：分支不可枚举 + 多轮依赖 + 失败要换路 + 目标明确路径开放）。同时引用课程实战的克制结论：<strong>两个小工具 + 主循环</strong>就够起步，不需要一上来就多 Agent。</p>
+<p><strong>第 2 层追问：核心架构</strong></p>
+<blockquote>
+<p>给出你的设计。</p>
+</blockquote>
+<p>参考回答：三层。<strong>工具层（关键设计）</strong>：只给两个正交小工具——<code>web_search(query)</code>（返回标题+URL+摘要列表）和 <code>read_webpage(url)</code>（返回<strong>清洗截断后</strong>的正文关键段，绝不把原始 HTML 塞上下文）。<strong>行为层</strong>：系统提示词定义角色（"严谨的研究员，结论必须给出来源，冲突信息要交叉验证"）+ 策略提示（"多角度并行搜索，结果不足时换关键词"——给模型"承认失败换方向"的合法出口）；ReAct 主循环串起来。<strong>工程层</strong>：四道闸门（自然终止/轮次上限/token 预算/重复检测）+ 事件轨迹全量落日志 + 检测到卡带时的纠偏提示注入。<strong>涌现的价值</strong>：工具小而正交，模型自己发展出"并行多路搜索 → 筛选 URL 精读 → 交叉对比"的策略——策略是运行时组合的，不是代码写死的。</p>
+<p><strong>第 3 层追问：引用可信怎么保证？</strong></p>
+<blockquote>
+<p>答案里的引用，怎么防止模型编造 URL？</p>
+</blockquote>
+<p>参考回答：引用链全程可验证，分三步。<strong>一，来源白名单</strong>：模型只能引用工具返回结果里的 URL——<code>read_webpage</code> 没读过的链接不进引用池；工具返回结构里带 URL+标题，Agent 的最终输出要求引用映射到这些实体。<strong>二，生成后校验</strong>：结构化输出（JSON：结论 + 每条依据的 url + 摘录），<strong>校验器逐条核对 URL 是否出现在本次轨迹的工具返回里</strong>——编造的引用直接打回重试。<strong>三，冲突标注</strong>：多来源信息冲突时提示词要求明示"来源 A 说 X，来源 B 说 Y"——研究产品的可信度不来自"语气自信"，来自<strong>可核验</strong>。</p>
+<p><strong>第 4 层追问：成本和延迟怎么控制？</strong></p>
+<blockquote>
+<p>一次深度研究可能十几轮，用户要等几分钟。怎么办？</p>
+</blockquote>
+<p>参考回答：四板斧。<strong>一，过程可视化</strong>：流式吐出"正在搜索 X → 正在阅读 Y"的步骤事件——研究产品的体验核心是<strong>过程可感知</strong>，用户愿意为透明的过程等，不愿意为黑盒转圈等。<strong>二，预算分层</strong>：预检问题的难度（简单事实题直接单轮搜索回答，只有开放研究题才进深循环）——<strong>先路由再深跑</strong>。<strong>三，结果缓存</strong>：同题或近题的最终报告缓存复用（嵌入相似度判断"近题"）。<strong>四，异步化</strong>：长研究任务转后台作业 + 完成通知，把"等待"从产品体验里剥离。成本意识贯穿始终：<strong>每轮 token 都要给用户换来可见的信息增量</strong>，闸门 + 轨迹复盘就是在监控这件事。</p>
+<h3 id="考察意图与踩坑点_1">考察意图与踩坑点</h3>
+<ul>
+<li>考察意图：这题直接对应课程第九章的完整实战——答得好等于证明你把"小工具 + 闸门 + 引用链"这套生产化组合拳内化了。第 3 层引用校验是多数候选人完全想不到的点。</li>
+<li>踩坑点：一上来设计三个 Agent 协作（过度工程）；工具返回原文不清洗（上下文爆炸）；没有闸门和预算层。</li>
+<li>一句话总结：两个正交小工具 + ReAct 主循环 + 四道闸门 + 引用白名单校验——生产级研究的骨架，简洁压倒炫技。</li>
+</ul>
+<hr />
+<h2 id="q03-设计一个电商客服-agent">Q03 · 设计一个电商客服 Agent</h2>
+<blockquote>
+<p>难度：★★★ ｜ 频率：高 ｜ 对应课件：langgraph框架指南/10、14、agent核心/15</p>
+</blockquote>
+<p><strong>面试官</strong>：为电商平台设计客服 Agent：能查订单、改地址、处理退款，复杂情况转人工。注意有写操作，出错的代价是真金白银。</p>
+<p><strong>第 1 层追问：总体架构</strong></p>
+<blockquote>
+<p>怎么组织这个系统？</p>
+</blockquote>
+<p>参考回答：<strong>LangGraph 图 + 局部 Agent 的混合架构</strong>，不是单一巨型 Agent。流程图化：<strong>意图识别节点</strong>（分类：查单/改地址/退款/闲聊/投诉）→ <strong>固定工具节点</strong>（查订单是确定性 API 调用，不需要模型决策）→ <strong>退款处理子图</strong>（真 Agent：原因多样、要收集证据、路径开放）→ <strong>人工转接节点</strong>。关键决策理由：<strong>能用固定链解决的绝不上 Agent</strong>——查单这种步骤完全确定的操作，走模型决策纯属浪费 token 和延迟；只有退款谈判这种路径开放的任务才给模型决策权。这就是"图里嵌 Agent"的标准形态。</p>
+<p><strong>第 2 层追问：写操作的安全设计</strong></p>
+<blockquote>
+<p>改地址、退款都是写操作，怎么防模型出错？</p>
+</blockquote>
+<p>参考回答：三道闸。<strong>一，权限分级</strong>：读操作（查订单）Agent 自主执行；<strong>写操作（改地址、发起退款）一律 interrupt 人在回路</strong>——LangGraph 的 <code>interrupt()</code> 暂停，前端渲染"模型提议：将订单 X 的地址改为 Y，确认吗？"，用户点击后 <code>Command(resume=决定)</code> 恢复。<strong>二，参数校验前置</strong>：模型给的参数先过 Pydantic 业务校验（订单号存在且属于当前用户、新地址格式合法）再进确认环节。<strong>三，幂等与可回滚</strong>：写接口设计成幂等（重试不重复扣款），退款走先冻结后执行的二段式。<strong>核心原则：模型的决策是"提议"，人的确认是"批准"，系统的校验是"底线"</strong>——三者缺一不可。</p>
+<p><strong>第 3 层追问：转人工怎么设计？</strong></p>
+<blockquote>
+<p>什么时候转、怎么转？</p>
+</blockquote>
+<p>参考回答：三个触发器 + 一个交接协议。<strong>触发器</strong>：情绪触发（用户表达愤怒——分类器判定）、能力触发（Agent 连续两轮没解决/闸门触发/模型自己输出"需转人工"意图）、业务触发（涉及金额超阈值的退款必须人工复核）。<strong>交接协议</strong>：转人工时<strong>上下文要完整打包</strong>——会话历史 + Agent 已做的事（查过什么、提议过什么、用户拒绝过什么）+ 未完成的诉求，客服接手不需要用户重新讲一遍——<strong>交接质量是客服产品体验的分水岭</strong>，也是 LangGraph thread 状态导出的标准用法。<strong>回归路径</strong>：人工处理完后会话状态更新，用户再找 Agent 能看到人工结果——单一 thread 贯穿始终。</p>
+<p><strong>第 4 层追问：怎么衡量这个 Agent 好不好？</strong></p>
+<blockquote>
+<p>上线后的北极星指标是什么？</p>
+</blockquote>
+<p>参考回答：分三层。<strong>业务层（北极星）</strong>：自助解决率（不转人工闭环的比例）——降本的核心数字；同时盯<strong>转人工后的二次投诉率</strong>（防止 Agent"假解决"把麻烦推给后面）。<strong>质量层</strong>：写操作的事故率（改错地址/退款错误的绝对数——<strong>写操作事故是长尾，一票否决式监控</strong>）、意图识别准确率。<strong>体验层</strong>：响应延迟 P95、会话轮次（异常长的轮次往往意味着 Agent 在绕路）。配套机制：<strong>全量轨迹 + 抽样人工质检</strong>，事故案例强制进回归测试集——客服 Agent 的迭代是案例驱动的，不是灵感驱动的。</p>
+<h3 id="考察意图与踩坑点_2">考察意图与踩坑点</h3>
+<ul>
+<li>考察意图：客服是 Agent 落地最广的场景，这题考<strong>读写分离的权限意识</strong>和<strong>混合架构的克制</strong>——全 Agent 化方案是典型的过度设计信号。</li>
+<li>踩坑点：所有操作都给模型决策权；写操作不设人工确认；转人工不打包上下文（用户体验的隐形杀手）；只汇报"能回答多少问题"不监控写操作事故。</li>
+<li>一句话总结：图里嵌 Agent——确定的事走链、开放的事给模型、写的事必须人批；交接打包上下文，事故一票否决。</li>
+</ul>
+<hr />
+<h2 id="q04-设计一个多-agent-协作的报告生成流水线">Q04 · 设计一个多 Agent 协作的报告生成流水线</h2>
+<blockquote>
+<p>难度：★★★★ ｜ 频率：中（对得上 LangGraph 课程的人极少）｜ 对应课件：langgraph框架指南/07、10、agent核心/12</p>
+</blockquote>
+<p><strong>面试官</strong>：要做一个"行业分析报告"生成系统：给定一个主题，产出一份结构化报告——需要并行调研多个子方向、汇总成稿。你怎么设计？</p>
+<p><strong>第 1 层追问：为什么用多 Agent？</strong></p>
+<blockquote>
+<p>先论证：单 Agent 不行吗？</p>
+</blockquote>
+<p>参考回答：单 Agent 会撞两堵墙。<strong>上下文墙</strong>：一个 Agent 串行调研 5 个子方向，每个方向的搜索结果/阅读材料都堆在同一个上下文里——很快爆窗，且互相稀释注意力。<strong>串行延迟墙</strong>：5 个方向顺序调研，时间线性叠加。多 Agent 方案的本质：<strong>每个子 Agent 有独立上下文（互相不污染）+ 并行执行（时间由最长分支决定）</strong>。但要带着代价意识说：多 Agent 的协调误差和 token 放大是真实成本——所以任务确实"大到单 Agent 装不下"才用，这是课程多 Agent 选型的前提。</p>
+<p><strong>第 2 层追问：架构设计</strong></p>
+<blockquote>
+<p>具体怎么编排？</p>
+</blockquote>
+<p>参考回答：<strong>map-reduce 模式，LangGraph 的 Send 就是为此而生的</strong>。<strong>规划节点</strong>：LLM 把主题拆成 N 个子方向（返回结构化列表）。<strong>动态扇出</strong>：规划节点后的边返回 N 个 <code>Send("调研子节点", {"方向": 子方向_i, "私有载荷"})</code>——N 是运行时决定的（不同主题拆出 3 个或 7 个方向），这正是条件边做不到的（条件边只能从编译期枚举的分支里挑）。<strong>调研子节点</strong>：每个实例只拿私有载荷（<strong>不是全量状态</strong>——每个分支不背别人的包袱），独立跑 ReAct 循环（联网查证），返回补丁写入 <code>findings</code> 列表。<strong>两个 reducer 关键点</strong>：<code>findings</code> 必须挂追加 reducer（N 路并发写入）；汇合的<strong>汇总节点要防"跨超步到达重复触发"</strong>（超步陷阱，见 LangGraph 篇 Q03）。<strong>汇总节点</strong>：拿到全部 findings 后综合成稿——单 Agent、大上下文、一次性生成。</p>
+<p><strong>第 3 层追问：失败怎么处理？</strong></p>
+<blockquote>
+<p>5 个调研分支挂了 2 个，整个报告怎么办？</p>
+</blockquote>
+<p>参考回答：分级降级，不整体报废。<strong>一，分支级隔离</strong>：单个子调研失败（超时/闸门触发）只标记该分支 <code>status=failed</code>，不阻断其他分支——Send 的各实例天然隔离，这是架构送的红利。<strong>二，汇总级感知</strong>：汇总节点的提示词要求"基于成功的 findings 生成，缺失部分在报告中明示'本报告未覆盖 X 方向'"——<strong>诚实的缺口标注好过假装完整</strong>。<strong>三，补漏机制</strong>：汇总时发现某关键方向缺失，可以再发一轮 Send 定向补调研（动态扇出的二次利用）。<strong>四，资源兜底</strong>：全部失败（如联网服务整体故障）走纯参数知识 + 免责声明的降级版。Checkpointer 在这里的加成：长流程跑一半崩了，从 checkpoint 续跑，<strong>已完成的调研分支不重跑</strong>。</p>
+<p><strong>第 4 层追问：结果质量怎么保证？</strong></p>
+<blockquote>
+<p>报告是给人看的，怎么避免"结构工整、内容注水"？</p>
+</blockquote>
+<p>参考回答：三道工序。<strong>一，子调研带证据规范</strong>：每个 finding 强制结构化（结论 + 依据来源 + 置信度）——子 Agent 的输出协议决定上游材料质量，上游注水下游必然注水。<strong>二，汇总前先"审稿"</strong>：在汇总节点前加一个轻量校验环节（LLM 裁判或规则）：过滤低置信度 finding、去重、标记互相矛盾的结论交给汇总节点显式处理。<strong>三，终稿自评 + 修订循环</strong>：生成初稿后跑一轮"编辑审稿"（对照主题检查覆盖度、逻辑一致性），不合格回炉——<strong>用图的条件边做"质检-修订"循环</strong>（最多 N 轮，闸门思想）。报告系统的差异化不在"能生成"，在"敢署名"。</p>
+<h3 id="考察意图与踩坑点_3">考察意图与踩坑点</h3>
+<ul>
+<li>考察意图：这是 LangGraph 课程的招牌场景（对应 asyncio 实战和 Send 章节），能把 <strong>Send 动态扇出 + reducer + 汇合陷阱</strong>在一道题里串起来讲的人，几乎一定是真学过这套课程或做过类似系统。</li>
+<li>踩坑点：用固定 5 个并行节点硬编码子方向（表达不出运行时扇出）；汇总节点不知道防重复触发；失败即全盘报废；报告质量靠"换个好模型"。</li>
+<li>一句话总结：规划 → Send 动态扇出独立调研 → reducer 汇合 → 审稿汇总——map-reduce 的 Agent 版，失败分级降级，质检节点循环。</li>
+</ul>
+<hr />
+<h2 id="q05-设计高并发-llm-应用的服务架构">Q05 · 设计高并发 LLM 应用的服务架构</h2>
+<blockquote>
+<p>难度：★★★ ｜ 频率：中 ｜ 对应课件：Python框架指南/14、agent核心/13</p>
+</blockquote>
+<p><strong>面试官</strong>：你的 Agent 服务要支撑峰值 500 QPS，单次请求涉及多轮 LLM 调用，预算有限。FastAPI 层到 LLM 层，整个链路怎么设计？</p>
+<p><strong>第 1 层追问：并发模型选型</strong></p>
+<blockquote>
+<p>服务端用什么并发模型？为什么？</p>
+</blockquote>
+<p>参考回答：<strong>FastAPI + asyncio 协程</strong>，因为负载是<strong>IO 密集型</strong>——每请求的耗时大头在等 LLM 返回（秒级），CPU 几乎空闲。协程（事件循环挂起等待 IO）比线程省资源得多（单进程数千并发连接 vs 线程数受内存限制），课程里"事件循环 → Future 与协程 → asyncio 实战"三章就是为这个场景铺的路。关键实现纪律：<strong>LLM 调用必须用异步客户端（httpx/AsyncOpenAI）</strong>——在事件循环里用同步阻塞调用，一个请求就把整个 loop 卡死，这是 FastAI/async 最经典的翻车点。</p>
+<p><strong>第 2 层追问：瓶颈在 LLM 服务，怎么办？</strong></p>
+<blockquote>
+<p>你的应用层 500 QPS 没问题，但 LLM API 限速 50 并发。这层怎么过？</p>
+</blockquote>
+<p>参考回答：四件套。<strong>一，全局限流闸</strong>：<code>asyncio.Semaphore(50)</code> 包住所有 LLM 调用——<strong>在自己的边界内排队，好过把压力打给上游被 429</strong>；配合请求队列和超时，对外表现为"变慢"而不是"失败"。<strong>二，缓存层</strong>：语义缓存（问题嵌入 → 相似问题命中缓存答案，RAG 基建的复用）+ 精确缓存（固定上下文的重复请求，如 prompt 前缀的 KV 缓存命中）；<strong>热点问题通常集中在头部，缓存收益超直觉</strong>。<strong>三，降级矩阵</strong>：超载时按优先级丢——先降模型档位（大模型 → 小模型），再降功能（流式 Agent → 固定链兜底回复），最后限新请求保存量会话。<strong>四，成本预算护栏</strong>：全局限流 + 单请求 token 预算（Agent 的闸门在服务层再加一道），<strong>防止高峰期 token 账单失控</strong>——峰值 500 QPS 的多轮 Agent，烧钱速度是乘法关系。</p>
+<p><strong>第 3 层追问：状态和长任务怎么管理？</strong></p>
+<blockquote>
+<p>Agent 是长任务（几十秒），HTTP 请求怎么扛？</p>
+</blockquote>
+<p>参考回答：<strong>同步壳 + 异步核</strong>。短任务（单轮问答）：SSE 流式响应（课程 FastAPI 篇第 14 章）——HTTP 连接挂着，token 逐块推送，用户体感流畅。长任务（多轮研究）：<strong>提交-查询模式</strong>——POST 提交返回 task_id，后台任务跑（任务队列 + LangGraph 的 Checkpointer 存进度），前端轮询或 WebSocket 订阅进度；<strong>HTTP 请求绝不为长任务保持几十秒</strong>（超时、重试、网关都在为难长连接）。状态归置：会话历史进持久化存储（thread_id 关联），服务实例<strong>无状态化</strong>——任意实例可接任意请求，才能水平扩容。</p>
+<p><strong>第 4 层追问：可观测性呢？</strong></p>
+<blockquote>
+<p>上线后你怎么知道链路哪里慢、哪里贵？</p>
+</blockquote>
+<p>参考回答：三张图 + 一条链路。<strong>三张图</strong>：延迟分布（P50/P95/P99 分解到环节：检索/每轮 LLM/工具执行）、<strong>token 成本流</strong>（按 endpoint/用户/模型档位聚合的每分钟美元）、错误率（按类型：超时/限流/解析失败/闸门触发）。<strong>一条链路</strong>：全链路 trace——用 context 注入 request_id，Agent 的事件轨迹（轮次、工具调用、token 数）按请求聚合，一次慢请求能展开看到"卡在第 3 轮的 web_search 8 秒"。<strong>告警绑业务</strong>：闸门触发率突增、语义缓存命中率骤降、单用户成本异常——这些比 CPU 告警早发现问题。可观测不是锦上添花：<strong>LLM 应用的故障是"静默变贵/变慢/变错"，没有指标等于盲飞</strong>。</p>
+<h3 id="考察意图与踩坑点_4">考察意图与踩坑点</h3>
+<ul>
+<li>考察意图：考后端基本功和 LLM 特有问题的结合——<strong>限流在自己边界内、降级矩阵、长任务异步化</strong>三个点答出，就是"AI 应用工程师"而不只是"调 API 的"。</li>
+<li>踩坑点：事件循环里用同步客户端；把压力直接打给上游被限速；长任务挂长连接；没有成本维度的监控（LLM 应用的独特盲区）。</li>
+<li>一句话总结：asyncio 扛并发、Semaphore 守上游、缓存削峰、降级矩阵保体验、长任务异步化、成本和延迟一起监控。</li>
+</ul>
+<hr />
+<h2 id="q06-设计一个-chatbi让业务人员用自然语言查数据">Q06 · 设计一个 ChatBI：让业务人员用自然语言查数据</h2>
+<blockquote>
+<p>难度：★★★★ ｜ 频率：高（数据方向必考）｜ 对应课件：agent核心/07-09（工具调用与 schema）、LangChain指南/08</p>
+</blockquote>
+<p><strong>面试官</strong>：公司有数仓，业务人员不会 SQL，天天找分析师拉数。设计一个自然语言查数的 ChatBI，怎么做？</p>
+<p><strong>第 1 层追问：先澄清需求</strong></p>
+<blockquote>
+<p>你会先问清哪些问题？</p>
+</blockquote>
+<p>参考回答：三个关键澄清。<strong>用户是谁</strong>：业务运营——会问"上个月华南区销售额多少"，不懂数仓表结构。<strong>数据在哪</strong>：数仓 + 已有指标平台（有多少现成指标可复用，直接决定方案）。<strong>错的代价多大</strong>：ChatBI 的特殊之处——<strong>查询结果错一个数，业务会基于错误数字做决策</strong>，危害比闲聊幻觉大得多，所以准确性优先级压倒一切。</p>
+<p><strong>第 2 层追问：整体架构</strong></p>
+<blockquote>
+<p>核心链路怎么设计？</p>
+</blockquote>
+<p>参考回答：五段管线。<strong>意图识别</strong>：闲聊 / 数据查询 / 模糊待澄清，先分流。<strong>语义层（关键设计）</strong>：不直接对数仓裸跑 Text2SQL——先建指标字典，把"销售额"映射到受控的指标定义（口径、维度、过滤条件），把模糊业务词对齐到规范词表。<strong>查询生成</strong>：拿语义层对齐后的结构化意图生成 SQL 或调用指标 API，表结构 + 指标定义 + few-shot 样例注入 prompt。<strong>校验执行</strong>：只读账号、表白名单、强制 LIMIT、超时控制。<strong>结果表述</strong>：数字 + 口径说明（"销售额，含税，口径为支付时间"）+ 图表——口径说明是 ChatBI 的信任基石。</p>
+<p><strong>第 3 层追问：准确性和安全怎么保？</strong></p>
+<blockquote>
+<p>模型编造指标、越权查数怎么办？</p>
+</blockquote>
+<p>参考回答：四个防线。<strong>宁可澄清不要编造</strong>：问的指标在语义层不存在或口径歧义（"销售额"含税不含税），反问澄清而不是硬猜——幻觉在 BI 场景是灾难。<strong>执行前校验</strong>：只读账号 + 白名单表 + LIMIT + 超时，生成的 SQL 过一道解析校验再放行。<strong>行级权限</strong>：查询自动拼接数据权限过滤，用户只能看到权限内的数据——权限在执行层兜底，不依赖 prompt。<strong>置信度兜底</strong>：低置信度路由到人工/分析师，别让边缘 case 污染信任。</p>
+<p><strong>第 4 层追问：怎么评估和演进？</strong></p>
+<blockquote>
+<p>上线怎么迭代？</p>
+</blockquote>
+<p>参考回答：<strong>评测集</strong>：收集真实业务问题 + 标准答案，持续测查准率；错误要分类——指标错、维度错、过滤条件错、语法错，不同类对应不同修法（指标错修语义层，语法错加 few-shot）。<strong>沉淀飞轮</strong>：高频问题固化成语义层指标和缓存，用户越用越准越快。<strong>演进方向</strong>：从单轮 Text2SQL 到 Agent 化——多轮澄清、SQL 报错自动修复重试、跨指标对比分析。</p>
+<h3 id="考察意图与踩坑点_5">考察意图与踩坑点</h3>
+<ul>
+<li>考察意图：考"幻觉高风险场景的工程约束"——候选人有没有意识到 ChatBI 的核心矛盾是<strong>用概率系统产出确定性数字</strong>，以及用语义层、校验、澄清机制对冲它的能力。</li>
+<li>踩坑点：直接对数仓 schema 裸跑 Text2SQL（错误率不可接受）；不提权限和只读校验；没有"宁可澄清不要编造"的意识。</li>
+<li>一句话总结：语义层对齐业务词、执行层校验权限、模糊就澄清——ChatBI 用工程约束把概率系统逼成确定性输出。</li>
+</ul>
+<hr />
+<h2 id="q07-设计一个-llm-网关模型接入层">Q07 · 设计一个 LLM 网关（模型接入层）</h2>
+<blockquote>
+<p>难度：★★★ ｜ 频率：中（中大型公司/架构岗高频）｜ 对应课件：Python框架指南/14、agent核心/13</p>
+</blockquote>
+<p><strong>面试官</strong>：公司十几个业务都要接大模型，各家 API 都在用。让你设计统一的 LLM 网关，解决什么问题、怎么设计？</p>
+<p><strong>第 1 层追问：为什么需要网关</strong></p>
+<blockquote>
+<p>不就调个 API 吗，统一它干嘛？</p>
+</blockquote>
+<p>参考回答：三个真实痛点。<strong>供应商分散</strong>：不同任务适合不同模型（简单分类用小模型、复杂推理用大模型），各家 API 协议、参数、流式格式、错误码都不同——业务代码直接对接等于每家绑死一份。<strong>治理集中</strong>：密钥管理、成本计量、限流、审计，这些不该散在每个业务里各自实现。<strong>容灾</strong>：供应商超时、限流、宕机时要能切换，没有统一层就没法做降级链。</p>
+<p><strong>第 2 层追问：核心能力</strong></p>
+<blockquote>
+<p>网关具体提供什么？</p>
+</blockquote>
+<p>参考回答：四块。<strong>协议适配</strong>：对内统一接口（事实标准是 OpenAI 协议），对外适配各家差异——业务方一套代码接所有模型。<strong>路由策略</strong>：按任务类型路由（分类走小模型、推理走大模型）、按成本路由、按健康度路由——主模型 429/超时自动切备模型。<strong>弹性能力</strong>：重试（指数退避 + 尊重 Retry-After）、熔断、超时分级控制。<strong>配额与预算</strong>：按业务方的 token 配额管理、预算告警——防止某个业务失控烧钱拖垮全公司账单。</p>
+<p><strong>第 3 层追问：可观测和成本</strong></p>
+<blockquote>
+<p>成本怎么管清楚？</p>
+</blockquote>
+<p>参考回答：网关是成本治理的天然卡点。<strong>全量调用日志</strong>：业务方、模型、token 用量、延迟、错误码——这是计量计费和成本分摊的数据底座。<strong>缓存下沉</strong>：语义缓存、固定前缀缓存放网关层，全公司共享收益。<strong>告警体系</strong>：错误率、延迟、token 成本异常——比业务自己发现"这个月账单怎么这么高"早得多。</p>
+<p><strong>第 4 层追问：有什么坑？</strong></p>
+<blockquote>
+<p>设计上要小心什么？</p>
+</blockquote>
+<p>参考回答：三个坑。<strong>流式透传</strong>：SSE 转发要处理好超时和背压，网关别成为流式链路的瓶颈。<strong>抽象泄漏</strong>：某家模型的独特参数和行为统一不掉——要留 escape hatch 允许透传原始请求，别为了统一接口阉割能力。<strong>别过度设计</strong>：两家供应商、三个业务方之前，一个薄适配层就够——网关的规模应该随规模长出来，不是第一天就上全家桶。</p>
+<h3 id="考察意图与踩坑点_6">考察意图与踩坑点</h3>
+<ul>
+<li>考察意图：考架构层面的"统一治理"意识——能不能把散落的共性能力（鉴权、路由、计量、容灾）识别出来收口到一层，这是从业务工程师到架构工程师的分水岭。</li>
+<li>踩坑点：只会答"统一封装 API"；漏掉路由降级和成本计量这两块核心价值；不提 escape hatch（强行统一所有模型能力的接口会阉割能力）。</li>
+<li>一句话总结：协议统一是壳，路由降级 + 成本计量 + 容灾才是魂——网关让"换模型"从改造变成配置。</li>
+</ul>
+<hr />
+<h2 id="本篇速记卡">本篇速记卡</h2>
+<table>
+<thead>
+<tr>
+<th>题</th>
+<th>一句话核心</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Q01 知识库</td>
+<td>五层管线；权限在检索入口 filter，安全边界不进提示词</td>
+</tr>
+<tr>
+<td>Q02 深度研究</td>
+<td>两个小工具 + 闸门 + 引用白名单校验；过程可视化对冲等待</td>
+</tr>
+<tr>
+<td>Q03 客服</td>
+<td>图里嵌 Agent；读自主、写审批；转人工打包上下文</td>
+</tr>
+<tr>
+<td>Q04 报告流水线</td>
+<td>Send 动态扇出 + reducer 汇合 + 审稿循环；失败分级降级</td>
+</tr>
+<tr>
+<td>Q05 高并发</td>
+<td>协程 + 信号量守边界 + 缓存 + 降级矩阵；成本监控是独有维度</td>
+</tr>
+<tr>
+<td>Q06 ChatBI</td>
+<td>语义层对齐、执行层校验、模糊就澄清——概率系统逼成确定性</td>
+</tr>
+<tr>
+<td>Q07 LLM 网关</td>
+<td>协议统一是壳，路由降级 + 成本计量 + 容灾才是魂</td>
+</tr>
+</tbody>
+</table></div>
+
+      </article>
+<nav class="pager"><a class="pg-card pg-prev" href="../interview/05-langchain-pian.html"><span class="pg-label">← 上一篇</span><span class="pg-title">LangChain 篇</span><span class="pg-mod">面试题库</span></a><a class="pg-card pg-next" href="../interview/07-xiang-mu-shen-wa-pian.html"><span class="pg-label">下一篇 →</span><span class="pg-title">项目深挖篇</span><span class="pg-mod">面试题库</span></a></nav>
+    </div>
+    <footer class="foot">
+      <span>深栈 DeepStack · AI Agent 工程师转型训练营配套文档</span>
+    </footer>
+  </main>
+<nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#q01-设计一个企业知识库问答系统">Q01 · 设计一个企业知识库问答系统</a><a class="toc-link toc-h3" href="#考察意图与踩坑点">考察意图与踩坑点</a><a class="toc-link toc-h2" href="#q02-设计一个联网深度研究-agentdeepresearch">Q02 · 设计一个联网深度研究 Agent（DeepResearch）</a><a class="toc-link toc-h3" href="#考察意图与踩坑点_1">考察意图与踩坑点</a><a class="toc-link toc-h2" href="#q03-设计一个电商客服-agent">Q03 · 设计一个电商客服 Agent</a><a class="toc-link toc-h3" href="#考察意图与踩坑点_2">考察意图与踩坑点</a><a class="toc-link toc-h2" href="#q04-设计一个多-agent-协作的报告生成流水线">Q04 · 设计一个多 Agent 协作的报告生成流水线</a><a class="toc-link toc-h3" href="#考察意图与踩坑点_3">考察意图与踩坑点</a><a class="toc-link toc-h2" href="#q05-设计高并发-llm-应用的服务架构">Q05 · 设计高并发 LLM 应用的服务架构</a><a class="toc-link toc-h3" href="#考察意图与踩坑点_4">考察意图与踩坑点</a><a class="toc-link toc-h2" href="#q06-设计一个-chatbi让业务人员用自然语言查数据">Q06 · 设计一个 ChatBI：让业务人员用自然语言查数据</a><a class="toc-link toc-h3" href="#考察意图与踩坑点_5">考察意图与踩坑点</a><a class="toc-link toc-h2" href="#q07-设计一个-llm-网关模型接入层">Q07 · 设计一个 LLM 网关（模型接入层）</a><a class="toc-link toc-h3" href="#考察意图与踩坑点_6">考察意图与踩坑点</a><a class="toc-link toc-h2" href="#本篇速记卡">本篇速记卡</a></nav>
+</div>
+<div class="sb-mask" id="sbMask"></div>
+<script src="../assets/app.js"></script>
+</body>
+</html>

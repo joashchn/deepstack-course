@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>11 · Agent · 深栈 DeepStack 课程文档</title>
+<meta name="description" content="本章配套可运行示例：demo/demoagent.py。demo 用四个本地纯函数工具（查书、门店信息、滞纳金计算、活动查询）搭了一个「拾光书屋小助手」，一个 invoke 跑完一个多工具协作任务，并打印完整决策路径；本…">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%23d9c39a' text-anchor='middle'%3EDS%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+<div class="progress" id="progress"></div>
+
+<div class="layout">
+<aside class="sidebar" id="sidebar">
+  <div class="sb-head">
+    <a class="brand" href="../index.html">
+      <span class="brand-mark">DS</span>
+      <span class="brand-text"><b>深栈 DeepStack</b><i>AI Agent 工程师转型训练营</i></span>
+    </a>
+    <button class="sb-close" id="sbClose" aria-label="关闭目录">✕</button>
+  </div>
+  <div class="sb-search"><input type="search" id="searchInput" placeholder="搜索 123 篇文档… ( / )" autocomplete="off">
+    <div class="sb-results" id="searchResults"></div></div>
+  <nav class="sb-nav">
+    <section class="sb-group" data-mod="python">
+      <a class="sb-group-title" href="../modules/python.html" data-toggle="python">
+        <span class="sb-num">01</span>
+        <span class="sb-group-text"><b>Python 与数据实践</b><i>31 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../python/01-huan-jing-da-jian-yu-ban-ben-guan-li.html"><span class="sb-item-num">01</span><span class="sb-item-title">环境搭建与版本管理</span></a>
+        <a class="sb-item" href="../python/02-bian-liang-biao-da-shi-yu-liu-cheng-kong-zhi.html"><span class="sb-item-num">02</span><span class="sb-item-title">变量、表达式与流程控制</span></a>
+        <a class="sb-item" href="../python/03-xu-lie-zi-dian-yu-ji-he.html"><span class="sb-item-num">03</span><span class="sb-item-title">序列、字典与集合</span></a>
+        <a class="sb-item" href="../python/04-han-shu-she-ji-yu-lambda.html"><span class="sb-item-num">04</span><span class="sb-item-title">函数设计与 lambda</span></a>
+        <a class="sb-item" href="../python/05-zuo-yong-yu-gui-ze-yu-bi-bao.html"><span class="sb-item-num">05</span><span class="sb-item-title">作用域规则与闭包</span></a>
+        <a class="sb-item" href="../python/06-lei-de-ding-yi-yu-shi-li-hua.html"><span class="sb-item-num">06</span><span class="sb-item-title">类的定义与实例化</span></a>
+        <a class="sb-item" href="../python/07-lei-xing-pan-ding-yu-chou-xiang-ji-lei.html"><span class="sb-item-num">07</span><span class="sb-item-title">类型判定与抽象基类</span></a>
+        <a class="sb-item" href="../python/08-mo-shu-fang-fa-quan-jing.html"><span class="sb-item-num">08</span><span class="sb-item-title">魔术方法全景</span></a>
+        <a class="sb-item" href="../python/09-miao-shu-fu-yu-yuan-lei.html"><span class="sb-item-num">09</span><span class="sb-item-title">描述符与元类</span></a>
+        <a class="sb-item" href="../python/10-zhuang-shi-qi.html"><span class="sb-item-num">10</span><span class="sb-item-title">装饰器</span></a>
+        <a class="sb-item" href="../python/11-die-dai-xie-yi-yu-sheng-cheng-qi.html"><span class="sb-item-num">11</span><span class="sb-item-title">迭代协议与生成器</span></a>
+        <a class="sb-item" href="../python/12-with-yu-shang-xia-wen-xie-yi.html"><span class="sb-item-num">12</span><span class="sb-item-title">with 与上下文协议</span></a>
+        <a class="sb-item" href="../python/13-yi-chang-ti-xi-yu-chu-li.html"><span class="sb-item-num">13</span><span class="sb-item-title">异常体系与处理</span></a>
+        <a class="sb-item" href="../python/14-lei-xing-biao-zhu.html"><span class="sb-item-num">14</span><span class="sb-item-title">类型标注</span></a>
+        <a class="sb-item" href="../python/15-mo-kuai-yu-bao-de-zu-zhi.html"><span class="sb-item-num">15</span><span class="sb-item-title">模块与包的组织</span></a>
+        <a class="sb-item" href="../python/16-biao-zhun-ku-xun-li.html"><span class="sb-item-num">16</span><span class="sb-item-title">标准库巡礼</span></a>
+        <a class="sb-item" href="../python/17-yi-lai-guan-li-yu-di-san-fang-ku.html"><span class="sb-item-num">17</span><span class="sb-item-title">依赖管理与第三方库</span></a>
+        <a class="sb-item" href="../python/18-xian-cheng-yu-jin-cheng.html"><span class="sb-item-num">18</span><span class="sb-item-title">线程与进程</span></a>
+        <a class="sb-item" href="../python/19-shi-jian-xun-huan.html"><span class="sb-item-num">19</span><span class="sb-item-title">事件循环</span></a>
+        <a class="sb-item" href="../python/20-future-yu-xie-cheng.html"><span class="sb-item-num">20</span><span class="sb-item-title">Future 与协程</span></a>
+        <a class="sb-item" href="../python/21-asyncio-shi-zhan.html"><span class="sb-item-num">21</span><span class="sb-item-title">asyncio 实战</span></a>
+        <a class="sb-item" href="../python/22-gou-jian-yu-fa-bu.html"><span class="sb-item-num">22</span><span class="sb-item-title">构建与发布</span></a>
+        <a class="sb-item" href="../python/23-gong-cheng-hua-gong-ju-lian.html"><span class="sb-item-num">23</span><span class="sb-item-title">工程化工具链</span></a>
+        <a class="sb-item" href="../python/24-monorepo-yu-tiao-shi.html"><span class="sb-item-num">24</span><span class="sb-item-title">monorepo 与调试</span></a>
+        <a class="sb-item" href="../python/25-jupyter-jiao-hu-huan-jing.html"><span class="sb-item-num">25</span><span class="sb-item-title">Jupyter 交互环境</span></a>
+        <a class="sb-item" href="../python/26-numpy-shu-zu-yu-xiang-liang-hua.html"><span class="sb-item-num">26</span><span class="sb-item-title">NumPy 数组与向量化</span></a>
+        <a class="sb-item" href="../python/27-pandas-shu-ju-jie-gou.html"><span class="sb-item-num">27</span><span class="sb-item-title">Pandas 数据结构</span></a>
+        <a class="sb-item" href="../python/28-pandas-shu-ju-qing-xi.html"><span class="sb-item-num">28</span><span class="sb-item-title">Pandas 数据清洗</span></a>
+        <a class="sb-item" href="../python/29-matplotlib-hui-tu-ti-xi.html"><span class="sb-item-num">29</span><span class="sb-item-title">Matplotlib 绘图体系</span></a>
+        <a class="sb-item" href="../python/30-matplotlib-dong-hua-yu-jiao-hu.html"><span class="sb-item-num">30</span><span class="sb-item-title">Matplotlib 动画与交互</span></a>
+        <a class="sb-item" href="../python/31-seaborn-tong-ji-ke-shi-hua.html"><span class="sb-item-num">31</span><span class="sb-item-title">Seaborn 统计可视化</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="agent">
+      <a class="sb-group-title" href="../modules/agent.html" data-toggle="agent">
+        <span class="sb-num">02</span>
+        <span class="sb-group-text"><b>Agent 核心</b><i>15 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../agent/01-token-yu-ci-qian-ru.html"><span class="sb-item-num">01</span><span class="sb-item-title">Token 与词嵌入</span></a>
+        <a class="sb-item" href="../agent/02-qian-xiang-chuan-bo-yu-fan-xiang-chuan-bo.html"><span class="sb-item-num">02</span><span class="sb-item-title">前向传播与反向传播</span></a>
+        <a class="sb-item" href="../agent/03-zhu-yi-li-ji-zhi-yu-transformer-jia-gou.html"><span class="sb-item-num">03</span><span class="sb-item-title">注意力机制与 Transformer 架构</span></a>
+        <a class="sb-item" href="../agent/04-yu-xun-lian-rlhf-yu-cai-yang-kv-cache.html"><span class="sb-item-num">04</span><span class="sb-item-title">预训练、RLHF 与采样（KV Cache）</span></a>
+        <a class="sb-item" href="../agent/05-ben-di-mo-xing-yu-xiao-xi-jie-gou.html"><span class="sb-item-num">05</span><span class="sb-item-title">本地模型与消息结构</span></a>
+        <a class="sb-item" href="../agent/06-hui-hua-guan-li-yu-json-shu-chu.html"><span class="sb-item-num">06</span><span class="sb-item-title">会话管理与 JSON 输出</span></a>
+        <a class="sb-item" href="../agent/07-tool-calling-xie-yi-yu-feng-zhuang.html"><span class="sb-item-num">07</span><span class="sb-item-title">Tool Calling：协议与封装</span></a>
+        <a class="sb-item" href="../agent/08-react-mo-shi-yu-zhu-xun-huan.html"><span class="sb-item-num">08</span><span class="sb-item-title">ReAct 模式与主循环</span></a>
+        <a class="sb-item" href="../agent/09-shi-zhan-deep-research-agent.html"><span class="sb-item-num">09</span><span class="sb-item-title">实战：Deep Research Agent</span></a>
+        <a class="sb-item" href="../agent/10-skill-yu-jian-jin-shi-pi-lu.html"><span class="sb-item-num">10</span><span class="sb-item-title">Skill 与渐进式披露</span></a>
+        <a class="sb-item" href="../agent/11-mcp-quan-jing.html"><span class="sb-item-num">11</span><span class="sb-item-title">MCP 全景</span></a>
+        <a class="sb-item" href="../agent/12-duo-agent-yu-xuan-xing-ce-lve.html"><span class="sb-item-num">12</span><span class="sb-item-title">多 Agent 与选型策略</span></a>
+        <a class="sb-item" href="../agent/13-ti-shi-ci-gong-cheng-yu-shang-xia-wen-gong.html"><span class="sb-item-num">13</span><span class="sb-item-title">提示词工程与上下文工程</span></a>
+        <a class="sb-item" href="../agent/14-xun-huan-tu-yu-gu-jia-gong-cheng.html"><span class="sb-item-num">14</span><span class="sb-item-title">循环、图与骨架工程</span></a>
+        <a class="sb-item" href="../agent/15-ji-yi-quan-xian-yu-ping-ce.html"><span class="sb-item-num">15</span><span class="sb-item-title">记忆、权限与评测</span></a>
+      </div>
+    </section>
+    <section class="sb-group open" data-mod="langchain">
+      <a class="sb-group-title" href="../modules/langchain.html" data-toggle="langchain">
+        <span class="sb-num">03</span>
+        <span class="sb-group-text"><b>LangChain 指南</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langchain/01-ren-shi-langchain.html"><span class="sb-item-num">01</span><span class="sb-item-title">认识 LangChain</span></a>
+        <a class="sb-item" href="../langchain/02-ti-shi-ci-mu-ban-yu-xiao-xi.html"><span class="sb-item-num">02</span><span class="sb-item-title">提示词模板与消息</span></a>
+        <a class="sb-item" href="../langchain/03-lcel-yu-runnable.html"><span class="sb-item-num">03</span><span class="sb-item-title">LCEL 与 Runnable</span></a>
+        <a class="sb-item" href="../langchain/04-liu-shi-yu-bing-fa.html"><span class="sb-item-num">04</span><span class="sb-item-title">流式与并发</span></a>
+        <a class="sb-item" href="../langchain/05-shu-chu-jie-xi-qi.html"><span class="sb-item-num">05</span><span class="sb-item-title">输出解析器</span></a>
+        <a class="sb-item" href="../langchain/06-wen-dang-jia-zai-yu-qie-ge.html"><span class="sb-item-num">06</span><span class="sb-item-title">文档加载与切割</span></a>
+        <a class="sb-item" href="../langchain/07-qian-ru-yu-xiang-liang-ku.html"><span class="sb-item-num">07</span><span class="sb-item-title">嵌入与向量库</span></a>
+        <a class="sb-item" href="../langchain/08-jian-suo-yu-rag.html"><span class="sb-item-num">08</span><span class="sb-item-title">检索与RAG</span></a>
+        <a class="sb-item" href="../langchain/09-dui-hua-ji-yi.html"><span class="sb-item-num">09</span><span class="sb-item-title">对话记忆</span></a>
+        <a class="sb-item" href="../langchain/10-gong-ju-diao-yong.html"><span class="sb-item-num">10</span><span class="sb-item-title">工具调用</span></a>
+        <a class="sb-item current" href="../langchain/11-agent.html"><span class="sb-item-num">11</span><span class="sb-item-title">Agent</span></a>
+        <a class="sb-item" href="../langchain/12-hui-diao-yu-tiao-shi-quan-ke-cheng-shou-guan.html"><span class="sb-item-num">12</span><span class="sb-item-title">回调与调试（全课程收官章）</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="langgraph">
+      <a class="sb-group-title" href="../modules/langgraph.html" data-toggle="langgraph">
+        <span class="sb-num">04</span>
+        <span class="sb-group-text"><b>LangGraph 框架指南</b><i>17 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langgraph/01-di-1-zhang-cong-yi-ge-shi-kong-de-jiao.html"><span class="sb-item-num">01</span><span class="sb-item-title">第 1 章 从一个失控的脚本说起</span></a>
+        <a class="sb-item" href="../langgraph/02-di-2-zhang-zui-xiao-ke-yun-xing-tu.html"><span class="sb-item-num">02</span><span class="sb-item-title">第 2 章 最小可运行图</span></a>
+        <a class="sb-item" href="../langgraph/03-di-3-zhang-zhuang-tai-tu-de-shu-ju-xin.html"><span class="sb-item-num">03</span><span class="sb-item-title">第 3 章 状态：图的数据心脏</span></a>
+        <a class="sb-item" href="../langgraph/04-di-4-zhang-rang-liu-cheng-xue-hui-jue-ce.html"><span class="sb-item-num">04</span><span class="sb-item-title">第 4 章 让流程学会决策</span></a>
+        <a class="sb-item" href="../langgraph/05-di-5-zhang-bing-xing-shi-jie-chao-bu-zhi.html"><span class="sb-item-num">05</span><span class="sb-item-title">第 5 章 并行世界：超步执行模型</span></a>
+        <a class="sb-item" href="../langgraph/06-di-6-zhang-command-ba-kong-zhi-quan-jiao-jin.html"><span class="sb-item-num">06</span><span class="sb-item-title">第 6 章 Command：把控制权交进节点</span></a>
+        <a class="sb-item" href="../langgraph/07-di-7-zhang-dong-tai-bing-xing-send-yu-mapreduce.html"><span class="sb-item-num">07</span><span class="sb-item-title">第 7 章 动态并行：Send 与 MapReduce</span></a>
+        <a class="sb-item" href="../langgraph/08-di-8-zhang-gei-tu-zhuang-shang-shou-jiao-gong.html"><span class="sb-item-num">08</span><span class="sb-item-title">第 8 章 给图装上手脚：工具调用</span></a>
+        <a class="sb-item" href="../langgraph/09-di-9-zhang-fu-yong-yu-feng-zhuang-zi-tu.html"><span class="sb-item-num">09</span><span class="sb-item-title">第 9 章 复用与封装：子图</span></a>
+        <a class="sb-item" href="../langgraph/10-di-10-zhang-cong-dan-tu-dao-tuan-dui-duo.html"><span class="sb-item-num">10</span><span class="sb-item-title">第 10 章 从单图到团队：多 Agent 架构</span></a>
+        <a class="sb-item" href="../langgraph/11-di-11-zhang-liu-shi-shu-chu.html"><span class="sb-item-num">11</span><span class="sb-item-title">第 11 章 流式输出</span></a>
+        <a class="sb-item" href="../langgraph/12-di-12-zhang-chi-jiu-hua-checkpointer-yu-xian-cheng.html"><span class="sb-item-num">12</span><span class="sb-item-title">第 12 章 持久化：Checkpointer 与线程</span></a>
+        <a class="sb-item" href="../langgraph/13-di-13-zhang-shi-jian-lv-xing.html"><span class="sb-item-num">13</span><span class="sb-item-title">第 13 章 时间旅行</span></a>
+        <a class="sb-item" href="../langgraph/14-di-14-zhang-zhong-duan-yu-ren-zai-hui-lu.html"><span class="sb-item-num">14</span><span class="sb-item-title">第 14 章 中断与人在回路</span></a>
+        <a class="sb-item" href="../langgraph/15-di-15-zhang-ji-yi-guan-li.html"><span class="sb-item-num">15</span><span class="sb-item-title">第 15 章 记忆管理</span></a>
+        <a class="sb-item" href="../langgraph/16-di-16-zhang-rong-cuo-zhong-shi-chao-shi-yu.html"><span class="sb-item-num">16</span><span class="sb-item-title">第 16 章 容错：重试、超时与兜底</span></a>
+        <a class="sb-item" href="../langgraph/17-di-17-zhang-quan-jing-hui-gu.html"><span class="sb-item-num">17</span><span class="sb-item-title">第 17 章 全景回顾</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="backend">
+      <a class="sb-group-title" href="../modules/backend.html" data-toggle="backend">
+        <span class="sb-num">05</span>
+        <span class="sb-group-text"><b>Python 框架指南</b><i>14 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../backend/01-fastapi-ru-men-yu-asgi.html"><span class="sb-item-num">01</span><span class="sb-item-title">FastAPI 入门与 ASGI</span></a>
+        <a class="sb-item" href="../backend/02-lu-you-yu-qing-qiu-xiang-ying.html"><span class="sb-item-num">02</span><span class="sb-item-title">路由与请求响应</span></a>
+        <a class="sb-item" href="../backend/03-pydantic-shu-ju-jiao-yan-yu-pei-zhi.html"><span class="sb-item-num">03</span><span class="sb-item-title">Pydantic 数据校验与配置</span></a>
+        <a class="sb-item" href="../backend/04-sqlalchemy-yi-bu-yin-qing-yu-hui-hua.html"><span class="sb-item-num">04</span><span class="sb-item-title">SQLAlchemy 异步引擎与会话</span></a>
+        <a class="sb-item" href="../backend/05-orm-jian-mo.html"><span class="sb-item-num">05</span><span class="sb-item-title">ORM 建模</span></a>
+        <a class="sb-item" href="../backend/06-sql-biao-da-shi-yu-shu-ju-cao-zuo.html"><span class="sb-item-num">06</span><span class="sb-item-title">SQL 表达式与数据操作</span></a>
+        <a class="sb-item" href="../backend/07-alembic-shu-ju-qian-yi.html"><span class="sb-item-num">07</span><span class="sb-item-title">Alembic 数据迁移</span></a>
+        <a class="sb-item" href="../backend/08-yi-lai-zhu-ru.html"><span class="sb-item-num">08</span><span class="sb-item-title">依赖注入</span></a>
+        <a class="sb-item" href="../backend/09-tong-yi-yi-chang-chu-li.html"><span class="sb-item-num">09</span><span class="sb-item-title">统一异常处理</span></a>
+        <a class="sb-item" href="../backend/10-zhong-jian-jian.html"><span class="sb-item-num">10</span><span class="sb-item-title">中间件</span></a>
+        <a class="sb-item" href="../backend/11-ren-zheng-yu-jwt.html"><span class="sb-item-num">11</span><span class="sb-item-title">认证与 JWT</span></a>
+        <a class="sb-item" href="../backend/12-pytest-ce-shi.html"><span class="sb-item-num">12</span><span class="sb-item-title">pytest 测试</span></a>
+        <a class="sb-item" href="../backend/13-ri-zhi-loguru.html"><span class="sb-item-num">13</span><span class="sb-item-title">日志 loguru</span></a>
+        <a class="sb-item" href="../backend/14-liu-shi-xiang-ying-sse-yu-websocket.html"><span class="sb-item-num">14</span><span class="sb-item-title">流式响应 SSE 与 WebSocket</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="interview">
+      <a class="sb-group-title" href="../modules/interview.html" data-toggle="interview">
+        <span class="sb-num">06</span>
+        <span class="sb-group-text"><b>面试题库</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../interview/01-llm-yuan-li-pian.html"><span class="sb-item-num">01</span><span class="sb-item-title">LLM 原理篇</span></a>
+        <a class="sb-item" href="../interview/02-rag-yu-jian-suo-pian.html"><span class="sb-item-num">02</span><span class="sb-item-title">RAG 与检索篇</span></a>
+        <a class="sb-item" href="../interview/03-agent-he-xin-pian.html"><span class="sb-item-num">03</span><span class="sb-item-title">Agent 核心篇</span></a>
+        <a class="sb-item" href="../interview/04-langgraph-pian.html"><span class="sb-item-num">04</span><span class="sb-item-title">LangGraph 篇</span></a>
+        <a class="sb-item" href="../interview/05-langchain-pian.html"><span class="sb-item-num">05</span><span class="sb-item-title">LangChain 篇</span></a>
+        <a class="sb-item" href="../interview/06-xi-tong-she-ji-pian.html"><span class="sb-item-num">06</span><span class="sb-item-title">系统设计篇</span></a>
+        <a class="sb-item" href="../interview/07-xiang-mu-shen-wa-pian.html"><span class="sb-item-num">07</span><span class="sb-item-title">项目深挖篇</span></a>
+        <a class="sb-item" href="../interview/08-gu-zhang-pai-cha-pian.html"><span class="sb-item-num">08</span><span class="sb-item-title">故障排查篇</span></a>
+        <a class="sb-item" href="../interview/09-python-ji-chu-pian.html"><span class="sb-item-num">09</span><span class="sb-item-title">Python 基础篇</span></a>
+        <a class="sb-item" href="../interview/10-fastapi-yu-hou-duan-pian.html"><span class="sb-item-num">10</span><span class="sb-item-title">FastAPI 与后端篇</span></a>
+        <a class="sb-item" href="../interview/11-ti-shi-ci-gong-cheng-yu-an-quan-pian.html"><span class="sb-item-num">11</span><span class="sb-item-title">提示词工程与安全篇</span></a>
+        <a class="sb-item" href="../interview/12-mo-xing-xuan-xing-yu-jiang-ben-pian.html"><span class="sb-item-num">12</span><span class="sb-item-title">模型选型与降本篇</span></a>
+      </div>
+    </section>
+  </nav>
+</aside>
+  <main class="main">
+    <header class="topbar">
+      <button class="menu-btn" id="menuBtn" aria-label="目录">☰</button>
+      <div class="crumbs"><a href="../index.html">首页</a><span>/</span><a href="../modules/langchain.html">LangChain 指南</a><span>/</span><span class="cur">Agent</span></div>
+      <div class="topbar-actions">
+        <button class="icon-btn" id="themeBtn" title="切换深浅色" aria-label="切换深浅色">◐</button>
+      </div>
+    </header>
+    <div class="content">
+      <article class="article">
+
+<header class="page-head">
+  <div class="page-kicker">LangChain 指南 · 第 11 章</div>
+  <h1 class="page-title">Agent</h1>
+  <p class="page-desc">本章配套可运行示例：demo/demoagent.py。demo 用四个本地纯函数工具（查书、门店信息、滞纳金计算、活动查询）搭了一个「拾光书屋小助手」，一个 invoke 跑完一个多工具协作任务，并打印完整决策路径；本…</p>
+  <div class="page-meta">
+    <span>约 28 分钟</span><span>11,324 字</span><span>10 个代码示例</span>
+  </div>
+</header>
+<div class="md"><blockquote>
+<p>本章配套可运行示例：<a href="../code/langchain/11-Agent/demo/demo_agent.py">demo/demo_agent.py</a>。demo 用四个本地纯函数工具（查书、门店信息、滞纳金计算、活动查询）搭了一个「拾光书屋小助手」，一个 <code>invoke</code> 跑完一个多工具协作任务，并打印完整决策路径；本机没启动 Ollama 时自动降级，改为展示工具定义与 agent 构造代码。</p>
+<p><strong>本章你将学会</strong></p>
+<ul>
+<li>一句话说清 Agent：模型 + 工具 + 循环决策——以及它跟第 10 章那个手写 <code>while</code> 循环的血脉关系</li>
+<li>链与 Agent 的分界线：固定管线 vs 动态决策，什么活儿该交给谁</li>
+<li>ReAct 思想：思考 → 行动 → 观察 的转圈循环</li>
+<li><code>create_agent</code>：LangChain 1.x 的官方入口——<code>model</code> / <code>tools</code> / <code>system_prompt</code> 三个参数，循环框架包办</li>
+<li>读懂返回值：<code>messages</code> 里的 ToolMessage 就是决策路径，最终答案在 <code>messages[-1].content</code></li>
+<li>书屋小助手综合实战：一个任务、多个工具、一条完整的决策路径</li>
+<li>工具设计三原则：描述写清楚、粒度拿捏、错误返回字符串（而不是抛异常）</li>
+</ul>
+</blockquote>
+<p><a href="../langchain/10-gong-ju-diao-yong.html">第 10 章</a>我们干了一件挺硬核的事：用 <code>bind_tools</code> 把工具挂上模型，然后<strong>亲手</strong>写了一个循环——模型说「我要调工具」，我们就执行工具、把结果包成 <code>ToolMessage</code> 塞回消息列表，再问模型「好了吗」……直到模型不再要工具为止。那套代码跑是能跑，但你大概也注意到了：真正干活的十几行之外，剩下的全是「司机操作」——判断循环何时停、装配消息、回填结果。</p>
+<p>本章就干一件事：<strong>把方向盘留下，把换挡交给变速箱</strong>。</p>
+<p><strong>比喻</strong>：第 10 章你开的是手动挡——什么时候换挡（判断 <code>tool_calls</code>）、怎么踩离合（执行工具）、何时松油门（回填结果），全靠自己。本章换自动挡：油门（提问）还是你踩，但换挡逻辑由框架承包，你只管看路。</p>
+<p><strong>技术基线</strong>：Python + LangChain 1.x（<code>langchain</code> + <code>langchain-ollama</code>），本地 Ollama 跑 <code>qwen3:4b</code>。没装的话回 <a href="../langchain/01-ren-shi-langchain.html">第 01 章</a>看环境准备。</p>
+<hr />
+<h2 id="1-重新认识-agent模型-工具-循环决策">1. 重新认识 Agent：模型 + 工具 + 循环决策</h2>
+<p><strong>比喻</strong>：链是地铁，Agent 是网约车。坐地铁，路线图开工前就焊死了——从 A 站到 B 站怎么走、在哪换乘，一毫米都不能改；打网约车，你只报目的地，司机看着路况现场拍板——前方拥堵就绕行，乘客临时改口就重新规划。本章讲的 Agent（智能体），就是那位「看着路况开车的司机」。</p>
+<p><strong>Agent 是什么</strong>：一个能<strong>自主决定下一步做什么</strong>的程序，可以拆成一个三件套公式：</p>
+<div class="highlight"><pre><span></span><code>Agent = 模型（大脑：理解任务、决定下一步）
+      + 工具（手脚：查库存、算费用、读日程）
+      + 循环决策（工作法：干一步、看一眼结果、再决定下一步）
+</code></pre></div>
+<p>注意这个公式里<strong>没有</strong>「更聪明的模型」这一项。拾光书屋的 Agent 用的还是同一个 <code>qwen3:4b</code>，模型本身没变——变的是外面这层循环：以前是链替它规划好每一步（或者像第 10 章那样，你手写循环伺候它），现在是它自己看着办。学界给这类系统总结了规划、工具使用、行动执行、记忆管理四大能力，你不用背——规划就是「决定下一步」，记忆在 <a href="../langchain/09-dui-hua-ji-yi.html">第 09 章</a> 已经见过（<code>create_agent</code> 也有个 <code>checkpointer</code> 参数可以把记忆挂上），本章把前两样打通。</p>
+<h3 id="11-和链的分界线">1.1 和链的分界线</h3>
+<p>前面十章我们一直在拼链：<code>检索器 | 提示词 | 模型 | 解析器</code>。链和 Agent 不是替代关系，而是分工关系：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Chain（链）</th>
+<th>Agent（智能体）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>执行路线</td>
+<td>开工前焊死：A → B → C，一步不差</td>
+<td>跑一步看一步，下一步现场决定</td>
+</tr>
+<tr>
+<td>用不用工具、用哪个</td>
+<td>代码里写死</td>
+<td>模型自己判断</td>
+</tr>
+<tr>
+<td>循环</td>
+<td>没有，一遍过</td>
+<td>有，直到模型给出最终答案</td>
+</tr>
+<tr>
+<td>结果不对时</td>
+<td>回来改代码</td>
+<td>模型看工具返回，自己纠偏重试</td>
+</tr>
+<tr>
+<td>成本与速度</td>
+<td>一次模型调用，快、便宜、可预测</td>
+<td>可能多轮调用，慢、贵、有悬念</td>
+</tr>
+<tr>
+<td>典型场景</td>
+<td>RAG 问答、固定格式抽取</td>
+<td>多工具协作的开放任务</td>
+</tr>
+</tbody>
+</table>
+<p>一条实用的判断标准：<strong>这个任务的步骤能不能在写代码时就数清楚</strong>。「读者问营业时间 → 检索公告 → 生成答案」，三步焊死，用链；「帮读者查书、算滞纳金、看看读书会赶不赶得上」，查完书才知道算什么、算完钱才决定推不推荐周五活动——步骤数不清，用 Agent。</p>
+<h3 id="12-react转圈的工作法">1.2 ReAct：转圈的工作法</h3>
+<p>Agent 内部那个循环，业界最经典的描述叫 <strong>ReAct</strong>——<strong>Rea</strong>son（推理）+ <strong>Act</strong>（行动）。说穿了就是你做菜尝咸淡的过程：</p>
+<div class="highlight"><pre><span></span><code>加一勺盐（行动）→ 尝一口（观察）→ 不够咸？再加盐（思考后再行动）
+                                    → 咸淡正好？出锅（最终答案）
+</code></pre></div>
+<p>换成 Agent 的语言，一圈是这样转的：</p>
+<ol>
+<li><strong>思考</strong>：模型看着当前的消息列表，判断还缺什么信息；</li>
+<li><strong>行动</strong>：缺什么就发一次工具调用（<code>tool_calls</code>）；</li>
+<li><strong>观察</strong>：框架执行工具，把结果作为 <code>ToolMessage</code> 追加回消息列表；</li>
+<li>回到第 1 步，直到模型认为信息齐了，输出不带 <code>tool_calls</code> 的最终回答——循环结束。</li>
+</ol>
+<p>眼熟吗？这就是第 10 章你手写的那个循环，一步都没多。ReAct 早期的实现靠提示词哄着模型输出 <code>Thought: ... Action: ...</code> 这种固定格式的文本，再拿正则去抠；现在的模型（包括 Ollama 里的 qwen3）原生支持工具调用，<code>tool_calls</code> 是结构化字段，不用再靠正则猜。<strong>思想还是那个思想，接口早就鸟枪换炮了。</strong></p>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li><strong>把 Agent 神化</strong>。它不是更强的模型，而是同一个模型加了循环和工具。模型答不对的问题，包成 Agent 一样答不对——先怀疑工具描述和提示词，再怀疑人生。</li>
+<li><strong>为了炫技上 Agent</strong>。能用链解决的别上 Agent：链更快、更便宜、行为更可预测。Agent 的多轮循环意味着一次提问可能触发三五次模型调用，延迟和 token 都翻着倍涨。</li>
+<li><strong>术语打架</strong>。「Agent」在别处还指代理服务器（网络的中间人），跟本章的「智能体」半毛钱关系没有。看旧资料时先分清场合。</li>
+</ul>
+<hr />
+<h2 id="2-create_agent从手动挡换自动挡">2. create_agent：从手动挡换自动挡</h2>
+<p><strong>作用</strong>：一个函数把第 10 章的三件事全包了——给模型绑工具、跑「决策 → 执行 → 回填」的循环、在模型给出最终答案时收尾。你只需要提供三样原料：模型、工具、一句系统提示词。</p>
+<p><strong>签名</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain.agents</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_agent</span>
+
+<span class="n">agent</span> <span class="o">=</span> <span class="n">create_agent</span><span class="p">(</span>
+    <span class="n">model</span><span class="p">,</span>                  <span class="c1"># 模型：ChatOllama 实例（或模型字符串 "ollama:qwen3:4b"）</span>
+    <span class="n">tools</span><span class="p">,</span>                  <span class="c1"># 工具列表：@tool 装饰的函数；裸函数也收（docstring 当描述）</span>
+    <span class="n">system_prompt</span><span class="o">=</span><span class="s2">"..."</span><span class="p">,</span>    <span class="c1"># 系统提示词：Agent 的人设与规矩</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>完整签名还有一长串关键字参数（<code>middleware</code>、<code>checkpointer</code>、<code>response_format</code>、<code>debug</code>……），本章用前三个就能干活，其余遇到再查。返回值是一个编译好的 LangGraph 图（<code>CompiledStateGraph</code>）——不理解也没关系，把它当成「一个自带循环的特殊 Runnable」就行，照样 <code>.invoke()</code>。</p>
+<p>第 10 章手写循环 ↔ 本章的对照表，换挡点一目了然：</p>
+<table>
+<thead>
+<tr>
+<th>第 10 章（手动挡）</th>
+<th>create_agent（自动挡）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>model.bind_tools(tools)</code></td>
+<td>框架在图里自动绑定</td>
+</tr>
+<tr>
+<td><code>while True:</code> 判断还有没有 <code>tool_calls</code></td>
+<td>图的循环边，框架判断</td>
+</tr>
+<tr>
+<td>手动执行工具、包 <code>ToolMessage</code>、塞回列表</td>
+<td>工具节点代劳</td>
+</tr>
+<tr>
+<td>自己决定何时退出</td>
+<td>模型不再发 <code>tool_calls</code> 时框架收尾</td>
+</tr>
+</tbody>
+</table>
+<p><strong>最小示例</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain.agents</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_agent</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.tools</span><span class="w"> </span><span class="kn">import</span> <span class="n">tool</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain_ollama</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChatOllama</span>
+
+
+<span class="nd">@tool</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_store_info</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""查询拾光书屋的营业时间与借阅规则。"""</span>
+    <span class="k">return</span> <span class="s2">"营业时间：每天 10:00-22:00；会员一次最多借 5 本，借期 14 天。"</span>
+
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">ChatOllama</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="s2">"qwen3:4b"</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">reasoning</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="n">agent</span> <span class="o">=</span> <span class="n">create_agent</span><span class="p">(</span>
+    <span class="n">model</span><span class="p">,</span>
+    <span class="p">[</span><span class="n">get_store_info</span><span class="p">],</span>
+    <span class="n">system_prompt</span><span class="o">=</span><span class="s2">"你是拾光书屋的店员，回答读者的问题；需要店内数据时必须调用工具，不要凭空编造。"</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">result</span> <span class="o">=</span> <span class="n">agent</span><span class="o">.</span><span class="n">invoke</span><span class="p">({</span><span class="s2">"messages"</span><span class="p">:</span> <span class="p">[{</span><span class="s2">"role"</span><span class="p">:</span> <span class="s2">"user"</span><span class="p">,</span> <span class="s2">"content"</span><span class="p">:</span> <span class="s2">"书屋几点关门？"</span><span class="p">}]})</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s2">"messages"</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>  <span class="c1"># 最终答案：最后一条 AIMessage 的正文</span>
+</code></pre></div>
+<p><strong>注意输入输出形状</strong>：进是 <code>{"messages": [...]}</code>，出是 <code>{"messages": [...], "structured_response": ...}</code>——两边都不是裸字符串。<code>structured_response</code> 要配合 <code>response_format</code> 参数（结构化输出）才有值，本章不用它，拿到手永远是 <code>None</code>。</p>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li><strong>裸字符串进不去</strong>。<code>agent.invoke("几点关门？")</code> 会直接报 <code>InvalidUpdateError: Expected dict</code>——必须包成 <code>{"messages": [{"role": "user", "content": "几点关门？"}]}</code>。消息用 dict 形式、<code>("user", "几点关门？")</code> 元组形式都可以。</li>
+<li><strong>返回值不是答案本身</strong>。<code>agent.invoke(...)</code> 给的是一个 dict，直接 <code>print(result)</code> 只会看到一堆消息对象；答案取 <code>result["messages"][-1].content</code>。</li>
+<li><strong><code>system_prompt</code> 别省</strong>。不写的话，模型对「该不该调工具」的判断会相当随意——qwen3:4b 有时不调工具直接编一个营业时间。人设 + 「必须调用工具」的硬规矩，是 Agent 稳定干活的地基。</li>
+<li><strong>qwen3 的思考标签</strong>。老朋友了：<code>ChatOllama(..., reasoning=False)</code> 关掉 <code>&lt;think&gt;</code>，不然决策文本里混着思考过程。</li>
+<li><strong>认不出旧教程的 API</strong>。JS 版教程里的 <code>createReactAgent</code> + <code>AgentExecutor</code> 两件套、Python 老教程的 <code>initialize_agent</code>，都是上一代写法；LangChain 1.x 的正门就是 <code>create_agent</code>——agent 和执行器合并成了一个函数，Hub 拉提示词那步也省了（<code>system_prompt</code> 参数直接给）。看到旧代码心里有数即可，新项目别再照抄。</li>
+<li><strong><code>tools</code> 传空列表</strong>（或 <code>None</code>）不报错，但图里没有工具节点、没有循环——退化成「单发模型」，Agent 名存实亡。</li>
+</ul>
+<hr />
+<h2 id="3-读懂返回值messages-就是行车记录仪">3. 读懂返回值：messages 就是行车记录仪</h2>
+<p><strong>比喻</strong>：<code>invoke</code> 是一脚油门跑完全程，返回的 <code>messages</code> 是行车记录仪的回放。读者提问、模型每次调了什么工具、工具回了什么、模型最后怎么总结——一趟行程的每一脚油门刹车全在里面。调 Agent 的第一件事，就是把这段回放打印出来看。</p>
+<p>一次带工具调用的运行，<code>result["messages"]</code> 长这个样（四种消息接力）：</p>
+<div class="highlight"><pre><span></span><code>HumanMessage  # 读者的原始提问
+AIMessage     # 决策：正文可能只有一句，重点在 tool_calls 属性里
+ToolMessage   # 观察：工具的执行结果
+AIMessage     # 最终答案：不再带 tool_calls，循环到此为止
+</code></pre></div>
+<p>两个关键字段要认识：</p>
+<ul>
+<li><strong><code>AIMessage.tool_calls</code></strong>：一个列表，每项是 <code>{"name": 工具名, "args": 参数字典, "id": 调用编号}</code>。它是 AIMessage 的<strong>属性</strong>，不是独立的消息类型——模型一次可以发多个调用（并行工具调用）。</li>
+<li><strong><code>ToolMessage.tool_call_id</code></strong>：和上面那个 <code>id</code> 配对，说明「这是哪次调用的结果」。<code>ToolMessage.name</code> 则是工具名，框架自动填。</li>
+</ul>
+<p>打印决策路径的固定写法（demo 里同款）：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.messages</span><span class="w"> </span><span class="kn">import</span> <span class="n">AIMessage</span><span class="p">,</span> <span class="n">BaseMessage</span><span class="p">,</span> <span class="n">ToolMessage</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">print_trace</span><span class="p">(</span><span class="n">messages</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">BaseMessage</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""把一次 agent 运行的完整决策路径打印出来。"""</span>
+    <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">messages</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">AIMessage</span><span class="p">)</span> <span class="ow">and</span> <span class="n">m</span><span class="o">.</span><span class="n">tool_calls</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">call</span> <span class="ow">in</span> <span class="n">m</span><span class="o">.</span><span class="n">tool_calls</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"[决策] 调用 </span><span class="si">{</span><span class="n">call</span><span class="p">[</span><span class="s1">'name'</span><span class="p">]</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="n">call</span><span class="p">[</span><span class="s1">'args'</span><span class="p">]</span><span class="si">}</span><span class="s2">)"</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">ToolMessage</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"[观察] </span><span class="si">{</span><span class="n">m</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> 返回：</span><span class="si">{</span><span class="n">m</span><span class="o">.</span><span class="n">content</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"[</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">m</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">] </span><span class="si">{</span><span class="n">m</span><span class="o">.</span><span class="n">content</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li><strong>别自己造 ToolMessage</strong>。工具函数只管返回字符串（或可序列化对象），包成 <code>ToolMessage</code>、配 <code>tool_call_id</code> 都是框架的活。你的工具返回 <code>str</code>，剩下的不用管。</li>
+<li><strong><code>messages[-1]</code> 一般就是最终答案</strong>，但更稳的写法是「找最后一条 <code>tool_calls</code> 为空的 AIMessage」——万一将来加了后处理节点，末尾就不一定是模型的消息了。</li>
+<li><strong><code>invoke</code> 只有回放，没有直播</strong>。所有消息都是跑完一次性给你的；想边跑边看每一轮决策（直播），用流式和事件回调——这正是 <a href="../langchain/12-hui-diao-yu-tiao-shi-quan-ke-cheng-shou-guan.html">第 12 章</a>的主角，这里埋个钩子。</li>
+</ul>
+<hr />
+<h2 id="4-书屋小助手多工具协作实战">4. 书屋小助手：多工具协作实战</h2>
+<p><strong>比喻</strong>：一位新店员上岗，柜台后挂着四张工具卡。顾客一口气抛来三个问题（「书还有吗、滞纳金多少、周五活动几点」），店员不会傻站着一次全答——他一会儿伸手抽「查库存」的卡，一会儿抽「算费用」的卡，抽一张、看一眼结果、再决定抽下一张。你要做的只是把四张卡挂上去，剩下的交给他。</p>
+<p><strong>作用</strong>：把多个工具交给一个 <code>create_agent</code>，用一个开放式的复合任务检验它——观察模型怎么自主拆解任务、怎么决定调用顺序。</p>
+<p>工具还是第 10 章的写法（<code>@tool</code> + 类型标注 + docstring），四个全是本地纯函数，没有任何外部依赖：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain.agents</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_agent</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.tools</span><span class="w"> </span><span class="kn">import</span> <span class="n">tool</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain_ollama</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChatOllama</span>
+
+<span class="c1"># 书屋的「数据库」，全部硬编码（同款数据在 demo 里）</span>
+<span class="n">BOOKS</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">"夜航船"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"category"</span><span class="p">:</span> <span class="s2">"古籍"</span><span class="p">,</span> <span class="s2">"stock"</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">"note"</span><span class="p">:</span> <span class="s2">"张岱的类书式笔记，条目短小"</span><span class="p">},</span>
+    <span class="s2">"山月记"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"category"</span><span class="p">:</span> <span class="s2">"小说"</span><span class="p">,</span> <span class="s2">"stock"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">"note"</span><span class="p">:</span> <span class="s2">"中岛敦短篇，一晚读完"</span><span class="p">},</span>
+    <span class="s2">"小王子"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"category"</span><span class="p">:</span> <span class="s2">"童话"</span><span class="p">,</span> <span class="s2">"stock"</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span> <span class="s2">"note"</span><span class="p">:</span> <span class="s2">"亲子共读常客"</span><span class="p">},</span>
+<span class="p">}</span>
+
+
+<span class="nd">@tool</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">search_books</span><span class="p">(</span><span class="n">keyword</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""按书名、类别或主题关键词搜索拾光书屋的在库图书，返回书名、库存与一句推荐语。"""</span>
+    <span class="n">hits</span> <span class="o">=</span> <span class="p">[</span><span class="n">name</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">info</span> <span class="ow">in</span> <span class="n">BOOKS</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">keyword</span> <span class="ow">in</span> <span class="n">name</span> <span class="ow">or</span> <span class="n">keyword</span> <span class="ow">in</span> <span class="n">info</span><span class="p">[</span><span class="s2">"category"</span><span class="p">]]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">hits</span><span class="p">:</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">"没有找到与「</span><span class="si">{</span><span class="n">keyword</span><span class="si">}</span><span class="s2">」相关的书。"</span>
+    <span class="k">return</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">"《</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2">》（</span><span class="si">{</span><span class="n">BOOKS</span><span class="p">[</span><span class="n">n</span><span class="p">][</span><span class="s1">'category'</span><span class="p">]</span><span class="si">}</span><span class="s2">，库存 </span><span class="si">{</span><span class="n">BOOKS</span><span class="p">[</span><span class="n">n</span><span class="p">][</span><span class="s1">'stock'</span><span class="p">]</span><span class="si">}</span><span class="s2"> 本）"</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">hits</span><span class="p">)</span>
+
+
+<span class="nd">@tool</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">calculate_late_fee</span><span class="p">(</span><span class="n">overdue_days</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">book_count</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""计算会员逾期还书的滞纳金。书屋规定：逾期每本书每天收取 0.5 元。</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        overdue_days: 逾期天数</span>
+<span class="sd">        book_count: 逾期未还的书籍数量</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="n">overdue_days</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">book_count</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">"参数不合法：逾期天数和书籍数量都必须是非负整数。"</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">"滞纳金共 </span><span class="si">{</span><span class="n">overdue_days</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">book_count</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mf">0.5</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> 元（</span><span class="si">{</span><span class="n">book_count</span><span class="si">}</span><span class="s2"> 本 × </span><span class="si">{</span><span class="n">overdue_days</span><span class="si">}</span><span class="s2"> 天 × 0.5 元）。"</span>
+
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">ChatOllama</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="s2">"qwen3:4b"</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">reasoning</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="n">agent</span> <span class="o">=</span> <span class="n">create_agent</span><span class="p">(</span>
+    <span class="n">model</span><span class="p">,</span>
+    <span class="p">[</span><span class="n">search_books</span><span class="p">,</span> <span class="n">calculate_late_fee</span><span class="p">],</span>  <span class="c1"># 实际 demo 里还有 get_store_info / get_member_events</span>
+    <span class="n">system_prompt</span><span class="o">=</span><span class="p">(</span>
+        <span class="s2">"你是拾光书屋的店员。回答读者问题需要店内数据时必须调用工具，不要编造；"</span>
+        <span class="s2">"读者问了多个问题时，依次回答，别漏项。"</span>
+    <span class="p">),</span>
+<span class="p">)</span>
+
+<span class="n">question</span> <span class="o">=</span> <span class="s2">"《夜航船》还有吗？另外我上次借的 3 本书逾期 5 天了，要交多少滞纳金？"</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">agent</span><span class="o">.</span><span class="n">invoke</span><span class="p">({</span><span class="s2">"messages"</span><span class="p">:</span> <span class="p">[{</span><span class="s2">"role"</span><span class="p">:</span> <span class="s2">"user"</span><span class="p">,</span> <span class="s2">"content"</span><span class="p">:</span> <span class="n">question</span><span class="p">}]})</span>
+
+<span class="n">print_trace</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s2">"messages"</span><span class="p">])</span>          <span class="c1"># 第 3 节的打印函数</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s2">"messages"</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>    <span class="c1"># 最终答案</span>
+</code></pre></div>
+<p>跑起来你会看到一条典型的决策路径（示意）：</p>
+<div class="highlight"><pre><span></span><code>[HumanMessage] 《夜航船》还有吗？另外我上次借的 3 本书逾期 5 天了，要交多少滞纳金？
+[决策] 调用 search_books({'keyword': '夜航船'})
+[观察] search_books 返回：《夜航船》（古籍，库存 3 本）
+[决策] 调用 calculate_late_fee({'overdue_days': 5, 'book_count': 3})
+[观察] calculate_late_fee 返回：滞纳金共 7.5 元（3 本 × 5 天 × 0.5 元）。
+[AIMessage] 《夜航船》还有 3 本；滞纳金 7.5 元，下次记得按时还～
+</code></pre></div>
+<p>两个值得盯着看的细节：</p>
+<ul>
+<li><strong>任务是被模型自己拆开的</strong>。我们没有写任何「先查书、再算钱」的代码——顺序是模型读题后自己定的。甚至两个工具谁先谁后都可能换：这正说明「动态决策」四个字不是白叫的。</li>
+<li><strong>每一步都踩在工具的真实返回上</strong>。库存 3、滞纳金 7.5，全是工具算出来的数字，模型只负责组织语言。数据错了改工具，话术错了改 <code>system_prompt</code>——排错时分得清清楚楚。</li>
+</ul>
+<p>完整版（四个工具 + 备货库存 + 活动日程）在 <a href="../code/langchain/11-Agent/demo/demo_agent.py">demo/demo_agent.py</a> 里，一条龙可跑。</p>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li><strong>复合问题漏答</strong>。一次问三件事，小模型偶尔只答两件——要么像上面那样在 <code>system_prompt</code> 里写死「依次回答，别漏项」，要么把任务拆成多次 <code>invoke</code>。</li>
+<li><strong>模型不调工具、张口就编</strong>。八成是工具描述没写到点子上（下节细说），或者问题太泛（「推荐本书」）让模型觉得不用查。先把描述写细，再把提示词的「必须调用工具」加上。</li>
+<li><strong><code>temperature</code> 压到 0</strong>。决策类任务要的是老实，不是创造性——温度一高，同一问题每次走的工具路径都可能不一样，排查起来想哭。</li>
+</ul>
+<hr />
+<h2 id="5-工具设计的三个细节说明书粒度报错方式">5. 工具设计的三个细节：说明书、粒度、报错方式</h2>
+<p><a href="../langchain/10-gong-ju-diao-yong.html">第 10 章</a>已经教了工具的「形」（<code>@tool</code> + 类型标注 + docstring）；Agent 时代，工具设计直接决定 Agent 的「命」。三个细节，个个都是踩过坑才知道的。</p>
+<h3 id="51-描述是写给模型看的说明书">5.1 描述是写给模型看的说明书</h3>
+<p><strong>比喻</strong>：工具柜抽屉上的标签。标签只写一个「东西」俩字，没人敢开；写上「电池（5 号 / 7 号，全新）」，伸手就拿对了。模型选工具时<strong>唯一</strong>的依据就是工具名、参数名和那段描述——它看不到你的函数体，猜不到你的心思。</p>
+<p>反例与正例：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 反例：模型不知道什么时候该用它、参数填什么</span>
+<span class="nd">@tool</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">search</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""搜索"""</span>
+    <span class="o">...</span>
+
+<span class="c1"># 正例：干什么用、吃什么参数、返回什么，一句话交代齐全</span>
+<span class="nd">@tool</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">search_books</span><span class="p">(</span><span class="n">keyword</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""按书名、类别或主题关键词搜索拾光书屋的在库图书，返回书名、库存与一句推荐语。"""</span>
+    <span class="o">...</span>
+</code></pre></div>
+<p>写描述的三个自查项：<strong>什么时候用</strong>（「回答店内图书相关问题时」）、<strong>参数怎么填</strong>（「keyword 是书名或类别关键词」）、<strong>返回什么</strong>（「书名、库存与推荐语」）。参数复杂时，就在 docstring 里用 <code>Args:</code> 段落逐个说明（上面 <code>calculate_late_fee</code> 的写法）——这些文字会原样进入参数 schema，模型看得见。</p>
+<h3 id="52-粒度一个工具干一件事">5.2 粒度：一个工具干一件事</h3>
+<p><strong>比喻</strong>：厨房刀具。一把瑞士军刀包打天下，结果每样都费劲；满墙挂三十把专业刀，光认刀就累死人。家用厨房的正确答案是三四把顺手的。</p>
+<p>放到书屋场景：</p>
+<ul>
+<li><strong>太粗</strong>：<code>book_store_do_everything(action: str, params: str)</code>——模型得先学会「填表」，<code>action</code> 写成 <code>"search"</code>、<code>"查询"</code>、<code>"找书"</code> 都得你的代码兜着，参数一复杂就填错，错了还不好重试；</li>
+<li><strong>太碎</strong>：<code>search_book_by_name</code> / <code>search_book_by_category</code> / <code>search_book_by_author</code> 各一个——模型光在三个兄弟工具里挑就要多想半天，还容易挑错；</li>
+<li><strong>刚好</strong>：一个 <code>search_books(keyword)</code>，书名、类别、主题一把抓。</li>
+</ul>
+<p>拿捏的口诀：<strong>一个工具对应店员的一句口头禅</strong>（「帮我查下书」「算下滞纳金」「看下这周活动」）。口头禅数得出来，工具数量就刚好。</p>
+<h3 id="53-报错返回字符串别抛异常">5.3 报错：返回字符串，别抛异常</h3>
+<p><strong>比喻</strong>：后厨暗号。店员朝仓库喊「还有《夜航船》吗」，仓库要是直接摔门（抛异常），整个店当场停摆；回一句「没货了，下周补」（返回字符串），店员立刻改口推荐别的书，顾客毫无感知。</p>
+<p>这不是风格建议，是 LangChain 1.x 的<strong>实测行为</strong>——工具报错分两条路，命运天差地别：</p>
+<ul>
+<li><strong>参数不合法</strong>（枚举外取值、类型对不上、必填项缺失）：框架兜底。错误被转成一条带说明的 <code>ToolMessage</code> 回给模型，模型看到后<strong>自己修正参数重试</strong>——整个过程 agent 不崩，像打了个喷嚏继续跑。</li>
+<li><strong>函数内部抛异常</strong>（<code>raise ValueError("库存为 0")</code> 这类业务错误）：默认<strong>直接击穿整个 agent</strong>，<code>invoke</code> 当场抛异常，前面跑的几步全白费。</li>
+</ul>
+<p>所以业务错误要自己接住、翻译成模型能看懂的字符串：</p>
+<div class="highlight"><pre><span></span><code><span class="nd">@tool</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">borrow_book</span><span class="p">(</span><span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""为会员办理借书，成功与否都会返回说明。"""</span>
+    <span class="k">if</span> <span class="n">BOOKS</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"stock"</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="c1"># 不抛异常！把失败原因说清楚，模型自己会想下一步（换书/预约）</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">"借书失败：《</span><span class="si">{</span><span class="n">title</span><span class="si">}</span><span class="s2">》库存为 0，可以试试预约，或让我推荐同类书。"</span>
+    <span class="n">BOOKS</span><span class="p">[</span><span class="n">title</span><span class="p">][</span><span class="s2">"stock"</span><span class="p">]</span> <span class="o">-=</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">"借书成功：《</span><span class="si">{</span><span class="n">title</span><span class="si">}</span><span class="s2">》，请在 14 天内归还。"</span>
+</code></pre></div>
+<p>错误字符串里最好带上<strong>出路</strong>（「可以试试预约」「让我推荐同类书」）——模型读到出路，下一轮就会真的沿着出路走；只给一句「失败」，它多半原样转述给用户，场面一度尴尬。</p>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li><strong>描述里写实现细节</strong>。模型不关心你连了哪个数据库、用了什么缓存——它只需要「干什么用、参数怎么填」。废话越多，重点越糊。</li>
+<li><strong>错误字符串太含糊</strong>。返回一个 <code>"error"</code>，模型猜不出发生了什么，要么复读要么瞎编。把「哪里错、怎么办」写进去。</li>
+<li><strong>把参数校验也自己写</strong>。参数合法性交给框架的 schema 校验就行（那条路有兜底、能自愈）；你只处理「参数合法但业务不成立」的情况（库存为零、日期已过）。</li>
+<li><strong>用 <code>print</code> 调试工具</strong>。工具在循环里被反复调用，print 满天飞还看不出轮次——用第 3 节的 <code>print_trace</code> 打印整条路径，一眼看清哪一轮、哪个工具出了问题。</li>
+</ul>
+<hr />
+<h2 id="6-本章小结">6. 本章小结</h2>
+<p>一张速查表带走本章：</p>
+<table>
+<thead>
+<tr>
+<th>需求</th>
+<th>用法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>创建 Agent</td>
+<td><code>create_agent(model, tools, system_prompt=...)</code>（from <code>langchain.agents</code>）</td>
+</tr>
+<tr>
+<td>调用</td>
+<td><code>agent.invoke({"messages": [{"role": "user", "content": ...}]})</code></td>
+</tr>
+<tr>
+<td>拿最终答案</td>
+<td><code>result["messages"][-1].content</code></td>
+</tr>
+<tr>
+<td>看决策路径</td>
+<td>遍历 <code>result["messages"]</code>，AIMessage 看 <code>.tool_calls</code>，ToolMessage 看 <code>.content</code></td>
+</tr>
+<tr>
+<td>工具定义</td>
+<td><code>@tool</code> + 类型标注 + docstring（描述写「何时用、参数怎么填、返回什么」）</td>
+</tr>
+<tr>
+<td>工具粒度</td>
+<td>一个工具对应店员的一句口头禅</td>
+</tr>
+<tr>
+<td>工具报错</td>
+<td>业务错误返回描述性字符串（带出路），别 raise；参数错误交给框架自愈</td>
+</tr>
+<tr>
+<td>挂记忆</td>
+<td><code>create_agent(..., checkpointer=...)</code>（<a href="../langchain/09-dui-hua-ji-yi.html">第 09 章</a>的方案）</td>
+</tr>
+</tbody>
+</table>
+<p>配套 demo（本章 <code>demo/</code> 目录）：</p>
+<ul>
+<li><code>demo_agent.py</code>：单文件书屋小助手——四个本地纯函数工具（查书 / 门店信息 / 滞纳金计算 / 活动查询），<code>create_agent</code> 组装后用一个「三连问」任务跑完整决策路径并逐条打印；另附「描述好坏对照 + 错误返回字符串」的演示。<strong>需要本机 Ollama 已启动并拉取 <code>qwen3:4b</code></strong>；连不上时自动降级为「打印工具定义与 agent 构造代码」，文件头部注释写了全部前提。</li>
+</ul>
+<p>到这里，拾光书屋的应用已经会自己拿主意了。但 <code>invoke</code> 跑完只能看回放——Agent 内部转了几圈、每圈调了什么、token 花在哪，跑的过程中一片安静。下一章我们给车装上行车记录仪的「实时画面」：回调与调试。</p>
+<p><strong>下一章</strong>：<a href="../langchain/12-hui-diao-yu-tiao-shi-quan-ke-cheng-shou-guan.html">12 · 回调与调试</a></p></div>
+
+      </article>
+<nav class="pager"><a class="pg-card pg-prev" href="../langchain/10-gong-ju-diao-yong.html"><span class="pg-label">← 上一篇</span><span class="pg-title">工具调用</span><span class="pg-mod">LangChain 指南</span></a><a class="pg-card pg-next" href="../langchain/12-hui-diao-yu-tiao-shi-quan-ke-cheng-shou-guan.html"><span class="pg-label">下一篇 →</span><span class="pg-title">回调与调试（全课程收官章）</span><span class="pg-mod">LangChain 指南</span></a></nav>
+    </div>
+    <footer class="foot">
+      <span>深栈 DeepStack · AI Agent 工程师转型训练营配套文档</span>
+    </footer>
+  </main>
+<nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#1-重新认识-agent模型-工具-循环决策">1. 重新认识 Agent：模型 + 工具 + 循环决策</a><a class="toc-link toc-h3" href="#11-和链的分界线">1.1 和链的分界线</a><a class="toc-link toc-h3" href="#12-react转圈的工作法">1.2 ReAct：转圈的工作法</a><a class="toc-link toc-h2" href="#2-create_agent从手动挡换自动挡">2. create_agent：从手动挡换自动挡</a><a class="toc-link toc-h2" href="#3-读懂返回值messages-就是行车记录仪">3. 读懂返回值：messages 就是行车记录仪</a><a class="toc-link toc-h2" href="#4-书屋小助手多工具协作实战">4. 书屋小助手：多工具协作实战</a><a class="toc-link toc-h2" href="#5-工具设计的三个细节说明书粒度报错方式">5. 工具设计的三个细节：说明书、粒度、报错方式</a><a class="toc-link toc-h3" href="#51-描述是写给模型看的说明书">5.1 描述是写给模型看的说明书</a><a class="toc-link toc-h3" href="#52-粒度一个工具干一件事">5.2 粒度：一个工具干一件事</a><a class="toc-link toc-h3" href="#53-报错返回字符串别抛异常">5.3 报错：返回字符串，别抛异常</a><a class="toc-link toc-h2" href="#6-本章小结">6. 本章小结</a></nav>
+</div>
+<div class="sb-mask" id="sbMask"></div>
+<script src="../assets/app.js"></script>
+</body>
+</html>

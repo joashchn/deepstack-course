@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>05 · 输出解析器 · 深栈 DeepStack 课程文档</title>
+<meta name="description" content="本章你将学会
+
+ - 为什么需要解析器：模型吐出来的是「带一大堆元数据的 AIMessage」，而你的业务代码想要的是 str / dict / list / 对象——解析器就是站在流水线末端的「海关拆箱员」
+ - St…">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%23d9c39a' text-anchor='middle'%3EDS%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+<div class="progress" id="progress"></div>
+
+<div class="layout">
+<aside class="sidebar" id="sidebar">
+  <div class="sb-head">
+    <a class="brand" href="../index.html">
+      <span class="brand-mark">DS</span>
+      <span class="brand-text"><b>深栈 DeepStack</b><i>AI Agent 工程师转型训练营</i></span>
+    </a>
+    <button class="sb-close" id="sbClose" aria-label="关闭目录">✕</button>
+  </div>
+  <div class="sb-search"><input type="search" id="searchInput" placeholder="搜索 123 篇文档… ( / )" autocomplete="off">
+    <div class="sb-results" id="searchResults"></div></div>
+  <nav class="sb-nav">
+    <section class="sb-group" data-mod="python">
+      <a class="sb-group-title" href="../modules/python.html" data-toggle="python">
+        <span class="sb-num">01</span>
+        <span class="sb-group-text"><b>Python 与数据实践</b><i>31 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../python/01-huan-jing-da-jian-yu-ban-ben-guan-li.html"><span class="sb-item-num">01</span><span class="sb-item-title">环境搭建与版本管理</span></a>
+        <a class="sb-item" href="../python/02-bian-liang-biao-da-shi-yu-liu-cheng-kong-zhi.html"><span class="sb-item-num">02</span><span class="sb-item-title">变量、表达式与流程控制</span></a>
+        <a class="sb-item" href="../python/03-xu-lie-zi-dian-yu-ji-he.html"><span class="sb-item-num">03</span><span class="sb-item-title">序列、字典与集合</span></a>
+        <a class="sb-item" href="../python/04-han-shu-she-ji-yu-lambda.html"><span class="sb-item-num">04</span><span class="sb-item-title">函数设计与 lambda</span></a>
+        <a class="sb-item" href="../python/05-zuo-yong-yu-gui-ze-yu-bi-bao.html"><span class="sb-item-num">05</span><span class="sb-item-title">作用域规则与闭包</span></a>
+        <a class="sb-item" href="../python/06-lei-de-ding-yi-yu-shi-li-hua.html"><span class="sb-item-num">06</span><span class="sb-item-title">类的定义与实例化</span></a>
+        <a class="sb-item" href="../python/07-lei-xing-pan-ding-yu-chou-xiang-ji-lei.html"><span class="sb-item-num">07</span><span class="sb-item-title">类型判定与抽象基类</span></a>
+        <a class="sb-item" href="../python/08-mo-shu-fang-fa-quan-jing.html"><span class="sb-item-num">08</span><span class="sb-item-title">魔术方法全景</span></a>
+        <a class="sb-item" href="../python/09-miao-shu-fu-yu-yuan-lei.html"><span class="sb-item-num">09</span><span class="sb-item-title">描述符与元类</span></a>
+        <a class="sb-item" href="../python/10-zhuang-shi-qi.html"><span class="sb-item-num">10</span><span class="sb-item-title">装饰器</span></a>
+        <a class="sb-item" href="../python/11-die-dai-xie-yi-yu-sheng-cheng-qi.html"><span class="sb-item-num">11</span><span class="sb-item-title">迭代协议与生成器</span></a>
+        <a class="sb-item" href="../python/12-with-yu-shang-xia-wen-xie-yi.html"><span class="sb-item-num">12</span><span class="sb-item-title">with 与上下文协议</span></a>
+        <a class="sb-item" href="../python/13-yi-chang-ti-xi-yu-chu-li.html"><span class="sb-item-num">13</span><span class="sb-item-title">异常体系与处理</span></a>
+        <a class="sb-item" href="../python/14-lei-xing-biao-zhu.html"><span class="sb-item-num">14</span><span class="sb-item-title">类型标注</span></a>
+        <a class="sb-item" href="../python/15-mo-kuai-yu-bao-de-zu-zhi.html"><span class="sb-item-num">15</span><span class="sb-item-title">模块与包的组织</span></a>
+        <a class="sb-item" href="../python/16-biao-zhun-ku-xun-li.html"><span class="sb-item-num">16</span><span class="sb-item-title">标准库巡礼</span></a>
+        <a class="sb-item" href="../python/17-yi-lai-guan-li-yu-di-san-fang-ku.html"><span class="sb-item-num">17</span><span class="sb-item-title">依赖管理与第三方库</span></a>
+        <a class="sb-item" href="../python/18-xian-cheng-yu-jin-cheng.html"><span class="sb-item-num">18</span><span class="sb-item-title">线程与进程</span></a>
+        <a class="sb-item" href="../python/19-shi-jian-xun-huan.html"><span class="sb-item-num">19</span><span class="sb-item-title">事件循环</span></a>
+        <a class="sb-item" href="../python/20-future-yu-xie-cheng.html"><span class="sb-item-num">20</span><span class="sb-item-title">Future 与协程</span></a>
+        <a class="sb-item" href="../python/21-asyncio-shi-zhan.html"><span class="sb-item-num">21</span><span class="sb-item-title">asyncio 实战</span></a>
+        <a class="sb-item" href="../python/22-gou-jian-yu-fa-bu.html"><span class="sb-item-num">22</span><span class="sb-item-title">构建与发布</span></a>
+        <a class="sb-item" href="../python/23-gong-cheng-hua-gong-ju-lian.html"><span class="sb-item-num">23</span><span class="sb-item-title">工程化工具链</span></a>
+        <a class="sb-item" href="../python/24-monorepo-yu-tiao-shi.html"><span class="sb-item-num">24</span><span class="sb-item-title">monorepo 与调试</span></a>
+        <a class="sb-item" href="../python/25-jupyter-jiao-hu-huan-jing.html"><span class="sb-item-num">25</span><span class="sb-item-title">Jupyter 交互环境</span></a>
+        <a class="sb-item" href="../python/26-numpy-shu-zu-yu-xiang-liang-hua.html"><span class="sb-item-num">26</span><span class="sb-item-title">NumPy 数组与向量化</span></a>
+        <a class="sb-item" href="../python/27-pandas-shu-ju-jie-gou.html"><span class="sb-item-num">27</span><span class="sb-item-title">Pandas 数据结构</span></a>
+        <a class="sb-item" href="../python/28-pandas-shu-ju-qing-xi.html"><span class="sb-item-num">28</span><span class="sb-item-title">Pandas 数据清洗</span></a>
+        <a class="sb-item" href="../python/29-matplotlib-hui-tu-ti-xi.html"><span class="sb-item-num">29</span><span class="sb-item-title">Matplotlib 绘图体系</span></a>
+        <a class="sb-item" href="../python/30-matplotlib-dong-hua-yu-jiao-hu.html"><span class="sb-item-num">30</span><span class="sb-item-title">Matplotlib 动画与交互</span></a>
+        <a class="sb-item" href="../python/31-seaborn-tong-ji-ke-shi-hua.html"><span class="sb-item-num">31</span><span class="sb-item-title">Seaborn 统计可视化</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="agent">
+      <a class="sb-group-title" href="../modules/agent.html" data-toggle="agent">
+        <span class="sb-num">02</span>
+        <span class="sb-group-text"><b>Agent 核心</b><i>15 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../agent/01-token-yu-ci-qian-ru.html"><span class="sb-item-num">01</span><span class="sb-item-title">Token 与词嵌入</span></a>
+        <a class="sb-item" href="../agent/02-qian-xiang-chuan-bo-yu-fan-xiang-chuan-bo.html"><span class="sb-item-num">02</span><span class="sb-item-title">前向传播与反向传播</span></a>
+        <a class="sb-item" href="../agent/03-zhu-yi-li-ji-zhi-yu-transformer-jia-gou.html"><span class="sb-item-num">03</span><span class="sb-item-title">注意力机制与 Transformer 架构</span></a>
+        <a class="sb-item" href="../agent/04-yu-xun-lian-rlhf-yu-cai-yang-kv-cache.html"><span class="sb-item-num">04</span><span class="sb-item-title">预训练、RLHF 与采样（KV Cache）</span></a>
+        <a class="sb-item" href="../agent/05-ben-di-mo-xing-yu-xiao-xi-jie-gou.html"><span class="sb-item-num">05</span><span class="sb-item-title">本地模型与消息结构</span></a>
+        <a class="sb-item" href="../agent/06-hui-hua-guan-li-yu-json-shu-chu.html"><span class="sb-item-num">06</span><span class="sb-item-title">会话管理与 JSON 输出</span></a>
+        <a class="sb-item" href="../agent/07-tool-calling-xie-yi-yu-feng-zhuang.html"><span class="sb-item-num">07</span><span class="sb-item-title">Tool Calling：协议与封装</span></a>
+        <a class="sb-item" href="../agent/08-react-mo-shi-yu-zhu-xun-huan.html"><span class="sb-item-num">08</span><span class="sb-item-title">ReAct 模式与主循环</span></a>
+        <a class="sb-item" href="../agent/09-shi-zhan-deep-research-agent.html"><span class="sb-item-num">09</span><span class="sb-item-title">实战：Deep Research Agent</span></a>
+        <a class="sb-item" href="../agent/10-skill-yu-jian-jin-shi-pi-lu.html"><span class="sb-item-num">10</span><span class="sb-item-title">Skill 与渐进式披露</span></a>
+        <a class="sb-item" href="../agent/11-mcp-quan-jing.html"><span class="sb-item-num">11</span><span class="sb-item-title">MCP 全景</span></a>
+        <a class="sb-item" href="../agent/12-duo-agent-yu-xuan-xing-ce-lve.html"><span class="sb-item-num">12</span><span class="sb-item-title">多 Agent 与选型策略</span></a>
+        <a class="sb-item" href="../agent/13-ti-shi-ci-gong-cheng-yu-shang-xia-wen-gong.html"><span class="sb-item-num">13</span><span class="sb-item-title">提示词工程与上下文工程</span></a>
+        <a class="sb-item" href="../agent/14-xun-huan-tu-yu-gu-jia-gong-cheng.html"><span class="sb-item-num">14</span><span class="sb-item-title">循环、图与骨架工程</span></a>
+        <a class="sb-item" href="../agent/15-ji-yi-quan-xian-yu-ping-ce.html"><span class="sb-item-num">15</span><span class="sb-item-title">记忆、权限与评测</span></a>
+      </div>
+    </section>
+    <section class="sb-group open" data-mod="langchain">
+      <a class="sb-group-title" href="../modules/langchain.html" data-toggle="langchain">
+        <span class="sb-num">03</span>
+        <span class="sb-group-text"><b>LangChain 指南</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langchain/01-ren-shi-langchain.html"><span class="sb-item-num">01</span><span class="sb-item-title">认识 LangChain</span></a>
+        <a class="sb-item" href="../langchain/02-ti-shi-ci-mu-ban-yu-xiao-xi.html"><span class="sb-item-num">02</span><span class="sb-item-title">提示词模板与消息</span></a>
+        <a class="sb-item" href="../langchain/03-lcel-yu-runnable.html"><span class="sb-item-num">03</span><span class="sb-item-title">LCEL 与 Runnable</span></a>
+        <a class="sb-item" href="../langchain/04-liu-shi-yu-bing-fa.html"><span class="sb-item-num">04</span><span class="sb-item-title">流式与并发</span></a>
+        <a class="sb-item current" href="../langchain/05-shu-chu-jie-xi-qi.html"><span class="sb-item-num">05</span><span class="sb-item-title">输出解析器</span></a>
+        <a class="sb-item" href="../langchain/06-wen-dang-jia-zai-yu-qie-ge.html"><span class="sb-item-num">06</span><span class="sb-item-title">文档加载与切割</span></a>
+        <a class="sb-item" href="../langchain/07-qian-ru-yu-xiang-liang-ku.html"><span class="sb-item-num">07</span><span class="sb-item-title">嵌入与向量库</span></a>
+        <a class="sb-item" href="../langchain/08-jian-suo-yu-rag.html"><span class="sb-item-num">08</span><span class="sb-item-title">检索与RAG</span></a>
+        <a class="sb-item" href="../langchain/09-dui-hua-ji-yi.html"><span class="sb-item-num">09</span><span class="sb-item-title">对话记忆</span></a>
+        <a class="sb-item" href="../langchain/10-gong-ju-diao-yong.html"><span class="sb-item-num">10</span><span class="sb-item-title">工具调用</span></a>
+        <a class="sb-item" href="../langchain/11-agent.html"><span class="sb-item-num">11</span><span class="sb-item-title">Agent</span></a>
+        <a class="sb-item" href="../langchain/12-hui-diao-yu-tiao-shi-quan-ke-cheng-shou-guan.html"><span class="sb-item-num">12</span><span class="sb-item-title">回调与调试（全课程收官章）</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="langgraph">
+      <a class="sb-group-title" href="../modules/langgraph.html" data-toggle="langgraph">
+        <span class="sb-num">04</span>
+        <span class="sb-group-text"><b>LangGraph 框架指南</b><i>17 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langgraph/01-di-1-zhang-cong-yi-ge-shi-kong-de-jiao.html"><span class="sb-item-num">01</span><span class="sb-item-title">第 1 章 从一个失控的脚本说起</span></a>
+        <a class="sb-item" href="../langgraph/02-di-2-zhang-zui-xiao-ke-yun-xing-tu.html"><span class="sb-item-num">02</span><span class="sb-item-title">第 2 章 最小可运行图</span></a>
+        <a class="sb-item" href="../langgraph/03-di-3-zhang-zhuang-tai-tu-de-shu-ju-xin.html"><span class="sb-item-num">03</span><span class="sb-item-title">第 3 章 状态：图的数据心脏</span></a>
+        <a class="sb-item" href="../langgraph/04-di-4-zhang-rang-liu-cheng-xue-hui-jue-ce.html"><span class="sb-item-num">04</span><span class="sb-item-title">第 4 章 让流程学会决策</span></a>
+        <a class="sb-item" href="../langgraph/05-di-5-zhang-bing-xing-shi-jie-chao-bu-zhi.html"><span class="sb-item-num">05</span><span class="sb-item-title">第 5 章 并行世界：超步执行模型</span></a>
+        <a class="sb-item" href="../langgraph/06-di-6-zhang-command-ba-kong-zhi-quan-jiao-jin.html"><span class="sb-item-num">06</span><span class="sb-item-title">第 6 章 Command：把控制权交进节点</span></a>
+        <a class="sb-item" href="../langgraph/07-di-7-zhang-dong-tai-bing-xing-send-yu-mapreduce.html"><span class="sb-item-num">07</span><span class="sb-item-title">第 7 章 动态并行：Send 与 MapReduce</span></a>
+        <a class="sb-item" href="../langgraph/08-di-8-zhang-gei-tu-zhuang-shang-shou-jiao-gong.html"><span class="sb-item-num">08</span><span class="sb-item-title">第 8 章 给图装上手脚：工具调用</span></a>
+        <a class="sb-item" href="../langgraph/09-di-9-zhang-fu-yong-yu-feng-zhuang-zi-tu.html"><span class="sb-item-num">09</span><span class="sb-item-title">第 9 章 复用与封装：子图</span></a>
+        <a class="sb-item" href="../langgraph/10-di-10-zhang-cong-dan-tu-dao-tuan-dui-duo.html"><span class="sb-item-num">10</span><span class="sb-item-title">第 10 章 从单图到团队：多 Agent 架构</span></a>
+        <a class="sb-item" href="../langgraph/11-di-11-zhang-liu-shi-shu-chu.html"><span class="sb-item-num">11</span><span class="sb-item-title">第 11 章 流式输出</span></a>
+        <a class="sb-item" href="../langgraph/12-di-12-zhang-chi-jiu-hua-checkpointer-yu-xian-cheng.html"><span class="sb-item-num">12</span><span class="sb-item-title">第 12 章 持久化：Checkpointer 与线程</span></a>
+        <a class="sb-item" href="../langgraph/13-di-13-zhang-shi-jian-lv-xing.html"><span class="sb-item-num">13</span><span class="sb-item-title">第 13 章 时间旅行</span></a>
+        <a class="sb-item" href="../langgraph/14-di-14-zhang-zhong-duan-yu-ren-zai-hui-lu.html"><span class="sb-item-num">14</span><span class="sb-item-title">第 14 章 中断与人在回路</span></a>
+        <a class="sb-item" href="../langgraph/15-di-15-zhang-ji-yi-guan-li.html"><span class="sb-item-num">15</span><span class="sb-item-title">第 15 章 记忆管理</span></a>
+        <a class="sb-item" href="../langgraph/16-di-16-zhang-rong-cuo-zhong-shi-chao-shi-yu.html"><span class="sb-item-num">16</span><span class="sb-item-title">第 16 章 容错：重试、超时与兜底</span></a>
+        <a class="sb-item" href="../langgraph/17-di-17-zhang-quan-jing-hui-gu.html"><span class="sb-item-num">17</span><span class="sb-item-title">第 17 章 全景回顾</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="backend">
+      <a class="sb-group-title" href="../modules/backend.html" data-toggle="backend">
+        <span class="sb-num">05</span>
+        <span class="sb-group-text"><b>Python 框架指南</b><i>14 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../backend/01-fastapi-ru-men-yu-asgi.html"><span class="sb-item-num">01</span><span class="sb-item-title">FastAPI 入门与 ASGI</span></a>
+        <a class="sb-item" href="../backend/02-lu-you-yu-qing-qiu-xiang-ying.html"><span class="sb-item-num">02</span><span class="sb-item-title">路由与请求响应</span></a>
+        <a class="sb-item" href="../backend/03-pydantic-shu-ju-jiao-yan-yu-pei-zhi.html"><span class="sb-item-num">03</span><span class="sb-item-title">Pydantic 数据校验与配置</span></a>
+        <a class="sb-item" href="../backend/04-sqlalchemy-yi-bu-yin-qing-yu-hui-hua.html"><span class="sb-item-num">04</span><span class="sb-item-title">SQLAlchemy 异步引擎与会话</span></a>
+        <a class="sb-item" href="../backend/05-orm-jian-mo.html"><span class="sb-item-num">05</span><span class="sb-item-title">ORM 建模</span></a>
+        <a class="sb-item" href="../backend/06-sql-biao-da-shi-yu-shu-ju-cao-zuo.html"><span class="sb-item-num">06</span><span class="sb-item-title">SQL 表达式与数据操作</span></a>
+        <a class="sb-item" href="../backend/07-alembic-shu-ju-qian-yi.html"><span class="sb-item-num">07</span><span class="sb-item-title">Alembic 数据迁移</span></a>
+        <a class="sb-item" href="../backend/08-yi-lai-zhu-ru.html"><span class="sb-item-num">08</span><span class="sb-item-title">依赖注入</span></a>
+        <a class="sb-item" href="../backend/09-tong-yi-yi-chang-chu-li.html"><span class="sb-item-num">09</span><span class="sb-item-title">统一异常处理</span></a>
+        <a class="sb-item" href="../backend/10-zhong-jian-jian.html"><span class="sb-item-num">10</span><span class="sb-item-title">中间件</span></a>
+        <a class="sb-item" href="../backend/11-ren-zheng-yu-jwt.html"><span class="sb-item-num">11</span><span class="sb-item-title">认证与 JWT</span></a>
+        <a class="sb-item" href="../backend/12-pytest-ce-shi.html"><span class="sb-item-num">12</span><span class="sb-item-title">pytest 测试</span></a>
+        <a class="sb-item" href="../backend/13-ri-zhi-loguru.html"><span class="sb-item-num">13</span><span class="sb-item-title">日志 loguru</span></a>
+        <a class="sb-item" href="../backend/14-liu-shi-xiang-ying-sse-yu-websocket.html"><span class="sb-item-num">14</span><span class="sb-item-title">流式响应 SSE 与 WebSocket</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="interview">
+      <a class="sb-group-title" href="../modules/interview.html" data-toggle="interview">
+        <span class="sb-num">06</span>
+        <span class="sb-group-text"><b>面试题库</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../interview/01-llm-yuan-li-pian.html"><span class="sb-item-num">01</span><span class="sb-item-title">LLM 原理篇</span></a>
+        <a class="sb-item" href="../interview/02-rag-yu-jian-suo-pian.html"><span class="sb-item-num">02</span><span class="sb-item-title">RAG 与检索篇</span></a>
+        <a class="sb-item" href="../interview/03-agent-he-xin-pian.html"><span class="sb-item-num">03</span><span class="sb-item-title">Agent 核心篇</span></a>
+        <a class="sb-item" href="../interview/04-langgraph-pian.html"><span class="sb-item-num">04</span><span class="sb-item-title">LangGraph 篇</span></a>
+        <a class="sb-item" href="../interview/05-langchain-pian.html"><span class="sb-item-num">05</span><span class="sb-item-title">LangChain 篇</span></a>
+        <a class="sb-item" href="../interview/06-xi-tong-she-ji-pian.html"><span class="sb-item-num">06</span><span class="sb-item-title">系统设计篇</span></a>
+        <a class="sb-item" href="../interview/07-xiang-mu-shen-wa-pian.html"><span class="sb-item-num">07</span><span class="sb-item-title">项目深挖篇</span></a>
+        <a class="sb-item" href="../interview/08-gu-zhang-pai-cha-pian.html"><span class="sb-item-num">08</span><span class="sb-item-title">故障排查篇</span></a>
+        <a class="sb-item" href="../interview/09-python-ji-chu-pian.html"><span class="sb-item-num">09</span><span class="sb-item-title">Python 基础篇</span></a>
+        <a class="sb-item" href="../interview/10-fastapi-yu-hou-duan-pian.html"><span class="sb-item-num">10</span><span class="sb-item-title">FastAPI 与后端篇</span></a>
+        <a class="sb-item" href="../interview/11-ti-shi-ci-gong-cheng-yu-an-quan-pian.html"><span class="sb-item-num">11</span><span class="sb-item-title">提示词工程与安全篇</span></a>
+        <a class="sb-item" href="../interview/12-mo-xing-xuan-xing-yu-jiang-ben-pian.html"><span class="sb-item-num">12</span><span class="sb-item-title">模型选型与降本篇</span></a>
+      </div>
+    </section>
+  </nav>
+</aside>
+  <main class="main">
+    <header class="topbar">
+      <button class="menu-btn" id="menuBtn" aria-label="目录">☰</button>
+      <div class="crumbs"><a href="../index.html">首页</a><span>/</span><a href="../modules/langchain.html">LangChain 指南</a><span>/</span><span class="cur">输出解析器</span></div>
+      <div class="topbar-actions">
+        <button class="icon-btn" id="themeBtn" title="切换深浅色" aria-label="切换深浅色">◐</button>
+      </div>
+    </header>
+    <div class="content">
+      <article class="article">
+
+<header class="page-head">
+  <div class="page-kicker">LangChain 指南 · 第 05 章</div>
+  <h1 class="page-title">输出解析器</h1>
+  <p class="page-desc">本章你将学会
+
+ - 为什么需要解析器：模型吐出来的是「带一大堆元数据的 AIMessage」，而你的业务代码想要的是 str / dict / list / 对象——解析器就是站在流水线末端的「海关拆箱员」
+ - St…</p>
+  <div class="page-meta">
+    <span>约 53 分钟</span><span>21,214 字</span><span>31 个代码示例</span>
+  </div>
+</header>
+<div class="md"><blockquote>
+<p><strong>本章你将学会</strong></p>
+<ul>
+<li>为什么需要解析器：模型吐出来的是「带一大堆元数据的 AIMessage」，而你的业务代码想要的是 <code>str</code> / <code>dict</code> / <code>list</code> / 对象——解析器就是站在流水线末端的「海关拆箱员」</li>
+<li><code>StrOutputParser</code>：最常用的一行代码，把 <code>AIMessage</code> 拆成纯文本（JS 旧名 <code>StringOutputParser</code>，1.x 统一改名，从 JS 迁移要留意）</li>
+<li>Pydantic 基础速览：<code>BaseModel</code> + <code>Field</code> 怎么写，为什么 <code>description</code> 写得好能直接影响输出质量</li>
+<li>结构化输出两条路：模型原生的 <code>with_structured_output</code>（<code>function_calling</code> vs <code>json_mode</code> vs <code>json_schema</code> 三种方向盘）和提示词层面的 <code>PydanticOutputParser</code></li>
+<li>列表解析器：<code>CommaSeparatedListOutputParser</code> 一行提示词换来一个 <code>list[str]</code></li>
+<li><code>JsonOutputParser</code>：不卡字段、只要一段能 <code>parse</code> 的 JSON</li>
+<li><code>RegexParser</code>：用正则从纯文本里「抠」出结构化字段</li>
+<li>输出坏了怎么办：<code>OutputFixingParser</code> 的 auto-fix 思路</li>
+</ul>
+</blockquote>
+<p>上一章我们把流式和并发玩明白了，但有个问题一直被绕着走：<strong>模型输出的本质是一坨字符串</strong>（外加一堆对你业务没用的元数据），而「拾光书屋」的代码需要的是能直接用的东西——荐语要 <code>str</code>、书评卡片要对象、书单要 <code>list</code>、数据接口要 JSON。03 章链尾挂的那个 <code>StrOutputParser</code>，就是本章的主角之一。</p>
+<p><strong>比喻</strong>：模型像一家只发「大纸箱」的快递公司。箱子里有你要的商品（<code>content</code>），也塞满了填充物（token 统计、模型名、耗时……）。解析器就是流水线末端的<strong>海关拆箱员</strong>——按你申报的报关单（schema），把商品取出来、摆成你要的样子，填充物就地丢弃。申报单写得越细，拆箱员工作越准；不申报，你就得自己开箱翻找。</p>
+<p><strong>技术基线</strong>：Python + LangChain 1.x（<code>langchain</code> + <code>langchain-ollama</code>），本地 Ollama 跑 <code>qwen3:4b</code>。本章大量示例<strong>不需要模型</strong>（解析器是纯函数性质的数据变换），demo 离线可跑。</p>
+<hr />
+<h2 id="0-一张-js-python-对照表先收藏">0. 一张 JS → Python 对照表（先收藏）</h2>
+<table>
+<thead>
+<tr>
+<th>原课程 JS 写法</th>
+<th>本章 Python 写法</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>StringOutputParser</code>（<code>@langchain/core</code>）</td>
+<td><code>StrOutputParser</code>（<code>langchain_core.output_parsers</code>）</td>
+<td>JS 1.x 也改名成 <code>StrOutputParser</code> 了，两边对齐</td>
+</tr>
+<tr>
+<td><code>StructuredOutputParser.fromNamesAndDescriptions</code></td>
+<td>首选 <code>with_structured_output(PydanticModel)</code>；备选 <code>PydanticOutputParser</code></td>
+<td>字段名+描述那套轻量玩法，Python 1.x 主推 Pydantic 路线；<code>from_response_schemas</code> 还在 <code>langchain-classic</code> 里</td>
+</tr>
+<tr>
+<td><code>z.object({...})</code>（Zod schema）</td>
+<td><code>class Xxx(BaseModel)</code>（Pydantic）</td>
+<td>Zod 的 Python 亲家，字段描述同样会进提示词</td>
+</tr>
+<tr>
+<td><code>model.withStructuredOutput(zodSchema)</code></td>
+<td><code>model.with_structured_output(PydanticModel)</code></td>
+<td>Python 版多一个 <code>method</code> 参数可选方向盘</td>
+</tr>
+<tr>
+<td><code>CommaSeparatedListOutputParser</code></td>
+<td>同名（<code>langchain_core.output_parsers</code>）</td>
+<td>Python 版的 <code>parse</code> 底层走 CSV 语义，见第 6 节</td>
+</tr>
+<tr>
+<td><code>JsonOutputParser</code></td>
+<td>同名（<code>langchain_core.output_parsers</code>）</td>
+<td>1.x 的格式指令措辞更严格了，能力不变</td>
+</tr>
+<tr>
+<td><code>RegexParser</code>（<code>langchain/output_parsers</code>）</td>
+<td><code>RegexParser</code>（<code>langchain_classic.output_parsers</code>）</td>
+<td>1.x 里老解析器家族搬去了 <code>langchain-classic</code> 包，需额外安装</td>
+</tr>
+<tr>
+<td>——（JS 版没讲）</td>
+<td><code>OutputFixingParser</code>（<code>langchain_classic</code>）</td>
+<td>输出损坏时的「返厂维修」通道，本章第 9 节</td>
+</tr>
+</tbody>
+</table>
+<p>一个总原则先立住：<strong>解析器也是 Runnable</strong>。03 章讲过 <code>|</code> 管道和 <code>invoke</code>/<code>stream</code>/<code>batch</code> 三兄弟——解析器继承这套接口，所以它能挂在链尾、能被 batch、能参与流式（是否真流式，取决于解析器种类，后面逐个说）。</p>
+<hr />
+<h2 id="1-为什么需要解析器先看看模型到底吐了什么">1. 为什么需要解析器：先看看模型到底吐了什么</h2>
+<p>不挂解析器直接调模型，拿到的是 <code>AIMessage</code>——一个「商品+填充物」大纸箱：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_ollama</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChatOllama</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">ChatOllama</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="s2">"qwen3:4b"</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="mf">0.7</span><span class="p">)</span>
+<span class="n">resp</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span><span class="s2">"用一句话推荐《夜航船》"</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">resp</span><span class="p">))</span>          <span class="c1"># &lt;class 'langchain_core.messages.ai.AIMessage'&gt;</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>        <span class="c1"># "一本明代文人的冷知识小百科……"  ← 你要的商品</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">response_metadata</span><span class="p">)</span>  <span class="c1"># {'model': 'qwen3:4b', 'done_reason': 'stop', ...} ← 填充物</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">usage_metadata</span><span class="p">)</span>     <span class="c1"># {'input_tokens': 12, 'output_tokens': 34, ...}    ← 填充物</span>
+</code></pre></div>
+<p>元数据不是垃圾——统计 token、排查耗时、审计调用时都用得上。但对「把荐语展示给读者」这个业务来说，它是<strong>噪音</strong>：你要的只是 <code>resp.content</code> 那一行。</p>
+<p>当然你可以每次都手写 <code>resp.content</code>，但麻烦会滚雪球：</p>
+<ul>
+<li>不同模型的返回细节不完全一致（有的包一层、有的带额外字段）；</li>
+<li>链上好几处都要用时，<code>xxx.content</code> 会散落一地；</li>
+<li>万一后面接的是「非消息」环节（比如提示词模板的输出），类型就对不上了。</li>
+</ul>
+<p><strong>解析器的职责</strong>就是把「拿原始输出 → 转成你要的结构」这件事固化成一个可复用的链上零件：提取 JSON、列表、对象、按正则抠字段、纯文本清洗，全都是它的活。03 章讲过 Tool 和 Agent 的参数提取离不开它——那是后话，先从最简单的开始。</p>
+<hr />
+<h2 id="2-stroutputparser拆箱取文字">2. <code>StrOutputParser</code>：拆箱取文字</h2>
+<p><strong>作用</strong>：把 <code>AIMessage</code>（或任意消息）拆成纯 <code>str</code>。最基础、出场率最高的解析器——凡是要把模型文字直接给人看的链，链尾都是它。</p>
+<p><strong>一个改名提醒</strong>：JS 版旧名 <code>StringOutputParser</code>，LangChain 1.x 起统一为 <code>StrOutputParser</code>。Python 侧一直就叫 <code>StrOutputParser</code>，所以从 JS 代码迁过来时，别照抄旧名。</p>
+<p><strong>签名</strong>（简化后）：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.output_parsers</span><span class="w"> </span><span class="kn">import</span> <span class="n">StrOutputParser</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">StrOutputParser</span><span class="p">(</span><span class="n">BaseTransformOutputParser</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span> <span class="o">...</span>
+</code></pre></div>
+<p>它继承的是转换型解析器：链式调用时逐块转换（流式友好），<code>invoke</code> 时直接吃进消息吐出文字。输入既可以是 <code>AIMessage</code>，也可以就是普通 <code>str</code>（它只管「保证你拿到 str」）。</p>
+<p><strong>最小示例</strong>——荐书官的三件套，第 03 章的老朋友：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.output_parsers</span><span class="w"> </span><span class="kn">import</span> <span class="n">StrOutputParser</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.prompts</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChatPromptTemplate</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain_ollama</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChatOllama</span>
+
+<span class="n">prompt</span> <span class="o">=</span> <span class="n">ChatPromptTemplate</span><span class="o">.</span><span class="n">from_template</span><span class="p">(</span>
+    <span class="s2">"你是拾光书屋的荐书官，用不超过两句话向读者推荐《</span><span class="si">{book}</span><span class="s2">》"</span>
+<span class="p">)</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">ChatOllama</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="s2">"qwen3:4b"</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="mf">0.7</span><span class="p">)</span>
+
+<span class="n">chain</span> <span class="o">=</span> <span class="n">prompt</span> <span class="o">|</span> <span class="n">model</span> <span class="o">|</span> <span class="n">StrOutputParser</span><span class="p">()</span>
+
+<span class="n">text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">chain</span><span class="o">.</span><span class="n">invoke</span><span class="p">({</span><span class="s2">"book"</span><span class="p">:</span> <span class="s2">"夜航船"</span><span class="p">})</span>   <span class="c1"># 拿到的直接是 str</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+</code></pre></div>
+<p>不挂它，<code>chain.invoke</code> 返回 <code>AIMessage</code>，你得自己 <code>.content</code>；挂上它，链尾类型从「消息」收敛成「文字」——下游不管是 <code>print</code>、写库还是拼前端文案，都干净了。</p>
+<p>离线也能感受它的行为（不需要模型）：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.messages</span><span class="w"> </span><span class="kn">import</span> <span class="n">AIMessage</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.output_parsers</span><span class="w"> </span><span class="kn">import</span> <span class="n">StrOutputParser</span>
+
+<span class="n">parser</span> <span class="o">=</span> <span class="n">StrOutputParser</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">parser</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span><span class="n">AIMessage</span><span class="p">(</span><span class="n">content</span><span class="o">=</span><span class="s2">"夜航人的掌灯"</span><span class="p">)))</span>  <span class="c1"># 夜航人的掌灯</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">parser</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span><span class="s2">"山月记"</span><span class="p">))</span>                          <span class="c1"># 山月记</span>
+</code></pre></div>
+<p><strong>流式</strong>：第 04 章已经体验过 <code>chain.stream(...)</code> 逐块拿文字——那正是 <code>StrOutputParser</code> 在逐块转发 <code>AIMessageChunk</code> 的 <code>content</code>，它<strong>不会把流攒成一坨</strong>。</p>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li><strong>它只取文字，不做任何「解析」</strong>。模型回了一段废话、夹了一句英文、带了思考过程，它原样给你。内容层面的清洗得自己加 <code>RunnableLambda</code>（04 章 4.4 节的校验器思路）。</li>
+<li><strong>别把 <code>resp.content</code> 和解析器混着用</strong>。链尾挂了 <code>StrOutputParser</code> 之后，<code>invoke</code> 的返回值已经是 <code>str</code>，再写 <code>.content</code> 会直接 <code>AttributeError</code>。</li>
+<li><strong>流式时每块是碎片</strong>。<code>"夜航" + "船"</code> 分两块到达，别在循环里对单块做「完整句子」级别的判断。</li>
+</ul>
+<hr />
+<h2 id="3-pydantic-速览给模型填一张数据表格">3. Pydantic 速览：给模型填一张「数据表格」</h2>
+<p>（原课程在这一讲安排了 Zod 基础，Python 侧的对应物是 Pydantic——先把表格画好，后面两节的结构化输出全靠它。）</p>
+<p><strong>它解决什么痛点</strong>：Python 的类型标注是「给人和 IDE 看的」，<strong>运行时不设防</strong>。<code>resp: dict</code> 装着什么字段、字段是什么类型，跑起来才知道——API 返回的数据、模型生成的 JSON，全是这种「动态数据」。Pydantic 的思路和 Zod 同源：<strong>把类型定义写成类，定义即校验</strong>——数据进来当场验，不合格当场报错，合格则变成带类型提示的对象。</p>
+<p><strong>最小示例</strong>——拾光书屋的「书评卡片」：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">Field</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">BookReview</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">title</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">"书名，例如《夜航船》"</span><span class="p">)</span>
+    <span class="n">rating</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">"评分，1 到 5 的整数"</span><span class="p">)</span>
+    <span class="n">comment</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">"一句话点评，不超过 30 字"</span><span class="p">)</span>
+    <span class="n">spoiler_free</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">"是否无剧透"</span><span class="p">)</span>
+
+
+<span class="n">card</span> <span class="o">=</span> <span class="n">BookReview</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">"夜航船"</span><span class="p">,</span> <span class="n">rating</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">comment</span><span class="o">=</span><span class="s2">"掌灯人的小百科"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">card</span><span class="o">.</span><span class="n">rating</span><span class="p">)</span>        <span class="c1"># 5 —— 属性访问，IDE 全程提示</span>
+
+<span class="n">bad</span> <span class="o">=</span> <span class="n">BookReview</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">"夜航船"</span><span class="p">,</span> <span class="n">rating</span><span class="o">=</span><span class="s2">"五星"</span><span class="p">)</span>   <span class="c1"># 类型不对</span>
+<span class="c1"># pydantic.ValidationError: Input should be a valid integer ...</span>
+</code></pre></div>
+<p><strong>Zod → Pydantic 对照</strong>（写过 JS 的按这张表迁移）：</p>
+<table>
+<thead>
+<tr>
+<th>Zod 写法</th>
+<th>Pydantic 写法</th>
+<th>一句话</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>z.object({ name: z.string() })</code></td>
+<td><code>class M(BaseModel): name: str</code></td>
+<td>对象 = 类，字段 = 标注</td>
+</tr>
+<tr>
+<td><code>z.string().describe("...")</code></td>
+<td><code>Field(description="...")</code></td>
+<td>描述会进 schema，模型看得见</td>
+</tr>
+<tr>
+<td><code>z.number().int()</code> / <code>z.string()</code></td>
+<td><code>int</code> / <code>str</code></td>
+<td>类型即标注</td>
+</tr>
+<tr>
+<td><code>z.array(z.string())</code></td>
+<td><code>list[str]</code></td>
+<td>列表泛型</td>
+</tr>
+<tr>
+<td><code>.optional()</code></td>
+<td><code>str \| None = None</code> 或 <code>Optional[str]</code></td>
+<td>可选字段（缺失不报错）</td>
+</tr>
+<tr>
+<td><code>.default(v)</code></td>
+<td><code>Field(default=v)</code></td>
+<td>默认值</td>
+</tr>
+<tr>
+<td><code>z.union([A, B])</code></td>
+<td><code>A \| B</code>（或 <code>Union[A, B]</code>）</td>
+<td>联合类型</td>
+</tr>
+<tr>
+<td><code>.refine(fn, { message })</code></td>
+<td><code>@field_validator</code> 装饰器</td>
+<td>自定义校验</td>
+</tr>
+</tbody>
+</table>
+<p><strong>为什么 <code>description</code> 能影响输出质量</strong>：后面两节里，这张「表格」会被翻译成提示词（或工具 schema）发给模型。模型看不到你的字段名有多自明，只看得到 <code>description</code> 写了什么。<code>"评分"</code> 和 <code>"评分，1 到 5 的整数，5 为最高"</code>，生成结果的靠谱程度完全不同——<strong>描述写给模型看，不是写给自己看</strong>，把取值范围、格式、示例都塞进去。</p>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li><strong><code>Field</code> 两个高频参数别混</strong>：<code>description</code> 是给模型的说明，<code>default</code> 是数据缺失时的兜底值，前者影响生成、后者影响校验。</li>
+<li><strong>可选 ≠ 随便缺</strong>。<code>rating: int | None = None</code> 时缺 <code>rating</code> 能过；<code>rating: int</code> 时缺了直接 <code>ValidationError</code>。想让模型「尽量给」但允许不给，用前者。</li>
+<li><strong>校验发生在解析器里，不在模型里</strong>。模型完全可能生成不合规数据（比如 <code>rating: "五星"</code>），是 Pydantic 在解析时把它拦下来的——这正是第 9 节要处理的场景。</li>
+<li>Python 3.10+ 才能直接写 <code>int | None</code>；要兼容更老版本用 <code>Optional[int]</code>（从 <code>typing</code> 导入）。</li>
+</ul>
+<hr />
+<h2 id="4-结构化输出上with_structured_output让模型自己填表">4. 结构化输出（上）：<code>with_structured_output</code>，让模型自己填表</h2>
+<p><strong>作用</strong>：不靠提示词「求」模型输出 JSON，而是<strong>把你的 Pydantic 表格直接下发给模型</strong>，让它在生成阶段就被 schema 约束住。这是 1.x 里做结构化输出的首选，对应 JS 版的 <code>withStructuredOutput(zodSchema)</code>。</p>
+<p><strong>比喻</strong>：<code>PydanticOutputParser</code>（下一节）像给作家寄一张空白表格让他「照着填」，填成什么样看手感；<code>with_structured_output</code> 像给作家换了一台<strong>表格打字机</strong>——机器物理上只允许打出表格里的内容。</p>
+<p><strong>签名</strong>（langchain-ollama 1.x 实测）：</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">with_structured_output</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">schema</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="nb">type</span><span class="p">,</span>                                  <span class="c1"># Pydantic 类 / TypedDict / JSON Schema dict</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">method</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"function_calling"</span><span class="p">,</span> <span class="s2">"json_mode"</span><span class="p">,</span> <span class="s2">"json_schema"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"json_schema"</span><span class="p">,</span>
+    <span class="n">include_raw</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Runnable</span><span class="p">[</span><span class="n">LanguageModelInput</span><span class="p">,</span> <span class="nb">dict</span> <span class="o">|</span> <span class="n">BaseModel</span><span class="p">]:</span> <span class="o">...</span>
+</code></pre></div>
+<p>返回一个<strong>新的 Runnable</strong>（不是原来的模型），链尾自动带解析——<code>invoke</code> 直接吐 Pydantic 实例或 <code>dict</code>。</p>
+<p><strong>最小示例</strong>——把荐书官升级成「书评卡生成器」：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_ollama</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChatOllama</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">ChatOllama</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="s2">"qwen3:4b"</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">structured</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">with_structured_output</span><span class="p">(</span><span class="n">BookReview</span><span class="p">)</span>   <span class="c1"># 第 3 节定义的卡片</span>
+
+<span class="n">card</span> <span class="o">=</span> <span class="n">structured</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span><span class="s2">"给《夜航船》写一张书评卡片"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">card</span><span class="o">.</span><span class="n">title</span><span class="p">,</span> <span class="n">card</span><span class="o">.</span><span class="n">rating</span><span class="p">)</span>      <span class="c1"># 直接当对象用，已通过校验</span>
+</code></pre></div>
+<p>注意这里不用再写「请输出 JSON」的提示词——schema 已经从<strong>协议层</strong>下发，提示词只描述任务本身。</p>
+<h3 id="41-三种方向盘method-参数">4.1 三种方向盘：<code>method</code> 参数</h3>
+<table>
+<thead>
+<tr>
+<th><code>method</code></th>
+<th>原理</th>
+<th>特点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>"json_schema"</code>（默认）</td>
+<td>Ollama 的结构化输出 API，<code>format=schema</code></td>
+<td>硬约束，模型端强制贴合 schema，<strong>首选</strong></td>
+</tr>
+<tr>
+<td><code>"function_calling"</code></td>
+<td>走 Ollama 工具调用，schema 包装成工具</td>
+<td>语义上借「工具参数」的格式训练；字段描述遵循工具参数写法效果最好</td>
+</tr>
+<tr>
+<td><code>"json_mode"</code></td>
+<td>只设 <code>format='json'</code>，<strong>不管字段</strong></td>
+<td>只保证「是合法 JSON」，字段结构要你自己写进提示词</td>
+</tr>
+</tbody>
+</table>
+<p><strong><code>json_mode</code> 的坑</strong>（最容易翻车）：它约束的只是「输出必须是 JSON」，<strong>并不知道你有哪些字段</strong>。这样写会拿到「格式正确但字段随缘」的结果：</p>
+<div class="highlight"><pre><span></span><code><span class="n">loose</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">with_structured_output</span><span class="p">(</span><span class="n">BookReview</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">"json_mode"</span><span class="p">)</span>
+<span class="c1"># 提示词里不写字段要求 -&gt; 模型可能回 {"书名": "夜航船", "评分": 5}</span>
+</code></pre></div>
+<p>补救：用 <code>json_mode</code> 时，把字段要求写进提示词（手动塞 <code>BookReview.model_json_schema()</code>，或者干脆用下一节的 <code>get_format_instructions()</code>）。而 <code>json_schema</code> / <code>function_calling</code> 都不需要这步。</p>
+<h3 id="42-include_rawtrue原始输出和解析结果都要">4.2 <code>include_raw=True</code>：原始输出和解析结果都要</h3>
+<p>解析失败时默认直接抛异常。想拿到「原文 + 解析结果 + 报错」三件套自己处置，加 <code>include_raw=True</code>：</p>
+<div class="highlight"><pre><span></span><code><span class="n">runnable</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">with_structured_output</span><span class="p">(</span><span class="n">BookReview</span><span class="p">,</span> <span class="n">include_raw</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">runnable</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span><span class="s2">"给《夜航船》写一张书评卡片"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s2">"raw"</span><span class="p">])</span>            <span class="c1"># 原始 BaseMessage</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s2">"parsed"</span><span class="p">])</span>         <span class="c1"># BookReview 实例；解析失败时是 None</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s2">"parsing_error"</span><span class="p">])</span>  <span class="c1"># 异常对象；成功时是 None</span>
+</code></pre></div>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li><strong>传 Pydantic 类才有校验</strong>。<code>with_structured_output(BookReview)</code> 输出实例、解析时校验字段；传 dict 形式的 JSON Schema 时输出裸 <code>dict</code>，<strong>不做校验</strong>——字段缺了不报错，坑在下游。</li>
+<li><strong>schema 的字段描述依然是质量关键</strong>。约束住的是「形状」，填得好不好还是看 <code>Field(description=...)</code>（第 3 节）。</li>
+<li><strong>结构化输出和流式是两套节奏</strong>。<code>json_schema</code>/<code>function_calling</code> 模式下模型一次性产出完整 JSON，链尾解析器要拿到全文才能校验——别指望 token 级流式；要流式 + 结构化，得退回 <code>StrOutputParser</code> 边流边攒、攒完再解析。</li>
+<li><strong>方法名换模型要复查</strong>。<code>method</code> 的可选项是 Ollama 集成自己的约定，换 OpenAI 等其他集成时可选值不同，不能无脑照搬。</li>
+</ul>
+<hr />
+<h2 id="5-结构化输出下pydanticoutputparser提示词层面的引导">5. 结构化输出（下）：<code>PydanticOutputParser</code>，提示词层面的引导</h2>
+<p><strong>作用</strong>：不换模型、不动协议，纯靠<strong>一段精心生成的提示词</strong>引导模型按 schema 输出 JSON，再由解析器转成 Pydantic 实例。原课程 JS 用 <code>StructuredOutputParser.fromNamesAndDescriptions({字段: 描述})</code> 走的就是这条路；Python 1.x 的对应主力是 <code>PydanticOutputParser</code>。</p>
+<p><strong>签名</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.output_parsers</span><span class="w"> </span><span class="kn">import</span> <span class="n">PydanticOutputParser</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">PydanticOutputParser</span><span class="p">(</span><span class="n">BaseOutputParser</span><span class="p">[</span><span class="n">TBaseModel</span><span class="p">]):</span>
+    <span class="n">pydantic_object</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">BaseModel</span><span class="p">]</span>      <span class="c1"># 你的「表格」类</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TBaseModel</span><span class="p">:</span> <span class="o">...</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_format_instructions</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span> <span class="o">...</span>
+</code></pre></div>
+<p><strong>关键配角 <code>get_format_instructions()</code></strong>：它自动生成一段「生产级」格式提示词，把模型容易犯的错提前都堵上了。看它实际吐什么（截选）：</p>
+<p><div class="highlight"><pre><span></span><code>The output should be formatted as a JSON instance that conforms to the JSON schema below.
+
+As an example, for the schema {"properties": {"foo": {...}}}, ...    ← few-shot 示例
+
+Here is the output schema:
+</code></pre></div>
+{"properties": {"title": {"description": "书名", "type": "string"}, ...}}
+<div class="highlight"><pre><span></span><code>
+</code></pre></div></p>
+<p>拆开看这段提示词的<strong>四板斧</strong>——每一板都值得偷学到自己的 prompt 里：</p>
+<ol>
+<li><strong>先声明输出物</strong>：必须是符合 JSON Schema 的 JSON 实例；</li>
+<li><strong>few-shot 示例</strong>：拿一个虚构 schema（<code>foo</code> 字段）示范「什么算合格」，正反例都给；</li>
+<li><strong>强调校验后果</strong>：「输出会被解析和类型检查」，给模型上压力；</li>
+<li><strong>细节提醒</strong>：别带尾逗号、别裹多余文本——都是真实翻车高发点。</li>
+</ol>
+<p>最后才把你的字段（含 <code>description</code>）逐一嵌进去。原课程对这段自动生成文本的分析结论依然成立：这是拿来即用的 prompt 工程范本。</p>
+<p><strong>最小示例</strong>——问答带出处（原课程的「答案/依据/置信度」场景）：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.output_parsers</span><span class="w"> </span><span class="kn">import</span> <span class="n">PydanticOutputParser</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.prompts</span><span class="w"> </span><span class="kn">import</span> <span class="n">PromptTemplate</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain_ollama</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChatOllama</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">Field</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">BookQA</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">answer</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">"用户问题的答案"</span><span class="p">)</span>
+    <span class="n">evidence</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">"回答所依据的书本内容"</span><span class="p">)</span>
+    <span class="n">confidence</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">"置信度，百分数格式，如 85%"</span><span class="p">)</span>
+
+
+<span class="n">parser</span> <span class="o">=</span> <span class="n">PydanticOutputParser</span><span class="p">(</span><span class="n">pydantic_object</span><span class="o">=</span><span class="n">BookQA</span><span class="p">)</span>
+<span class="n">prompt</span> <span class="o">=</span> <span class="n">PromptTemplate</span><span class="o">.</span><span class="n">from_template</span><span class="p">(</span>
+    <span class="s2">"回答读者的问题：</span><span class="se">\n</span><span class="si">{format_instructions}</span><span class="se">\n\n</span><span class="s2">问题：</span><span class="si">{question}</span><span class="s2">"</span>
+<span class="p">)</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">ChatOllama</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="s2">"qwen3:4b"</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="n">chain</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">prompt</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">format_instructions</span><span class="o">=</span><span class="n">parser</span><span class="o">.</span><span class="n">get_format_instructions</span><span class="p">())</span>
+    <span class="o">|</span> <span class="n">model</span>
+    <span class="o">|</span> <span class="n">parser</span>
+<span class="p">)</span>
+
+<span class="n">res</span><span class="p">:</span> <span class="n">BookQA</span> <span class="o">=</span> <span class="n">chain</span><span class="o">.</span><span class="n">invoke</span><span class="p">({</span><span class="s2">"question"</span><span class="p">:</span> <span class="s2">"《夜航船》的作者是谁？"</span><span class="p">})</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">answer</span><span class="p">,</span> <span class="n">res</span><span class="o">.</span><span class="n">confidence</span><span class="p">)</span>
+</code></pre></div>
+<p><code>prompt.partial(...)</code> 把格式说明提前「焊」进模板，之后每次 <code>invoke</code> 只传业务变量——比每次手动传 <code>format_instructions</code> 干净。</p>
+<p>解析这头也不是傻子：模型输出带 <code>```json</code> 围栏时它能自动剥掉再转对象；字段缺失或类型不对时抛 <code>OutputParserException</code>（错误里带着 pydantic 的校验详情），这是第 9 节的主角。</p>
+<p><strong>和 <code>with_structured_output</code> 怎么选</strong>：</p>
+<ul>
+<li>模型/运行时支持结构化能力（Ollama 支持）→ <strong>优先 <code>with_structured_output</code></strong>，协议层硬约束，稳；</li>
+<li>要<strong>显式控制提示词</strong>、要在链上灵活拼装、或者用的模型只有文本接口 → <code>PydanticOutputParser</code>；</li>
+<li>只想「字段名 + 描述」快速起个架子，不想写 Pydantic 类 → <code>langchain_classic.output_parsers</code> 里还留着老朋友 <code>StructuredOutputParser.from_response_schemas([ResponseSchema(name=..., description=...)])</code>，输出是 <code>dict</code>（无校验）。</li>
+</ul>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li><strong>忘了把 <code>get_format_instructions()</code> 接进提示词</strong>，只挂了解析器——模型根本不知道你要 JSON，<code>parse</code> 阶段当场爆炸。这是原课程演示过的经典报错现场：解析器管「收」，格式说明管「教」，缺一不可。</li>
+<li><strong>不支持流式</strong>。它必须等模型吐完全文才能 <code>parse</code>——<code>chain.stream()</code> 会退化成「攒完一次性给」。列表解析器同理（第 6 节）。</li>
+<li><strong><code>PydanticOutputParser</code> 在链尾吃的是 <code>AIMessage</code></strong>。单独调用它的 <code>parse(str)</code> 也可以，但挂链上时它会从消息里取文字再解析。</li>
+<li>小模型输出 JSON 的稳定性不如结构化 API——同一个 <code>qwen3:4b</code>，走提示词引导的失败率高于 <code>json_schema</code> 模式，重要业务优先第 4 节。</li>
+</ul>
+<hr />
+<h2 id="6-列表解析器一行提示词换一个-liststr">6. 列表解析器：一行提示词换一个 <code>list[str]</code></h2>
+<p><strong>作用</strong>：场景很具体——「给我列 3 本适合失眠夜读的书」，你想要的是 <code>["夜航船", "山月记", "小王子"]</code> 这样的列表，而不是一段话。<code>CommaSeparatedListOutputParser</code> 负责把逗号分隔的文本切成 <code>list[str]</code>。</p>
+<p><strong>签名</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.output_parsers</span><span class="w"> </span><span class="kn">import</span> <span class="n">CommaSeparatedListOutputParser</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">CommaSeparatedListOutputParser</span><span class="p">(</span><span class="n">ListOutputParser</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_format_instructions</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span> <span class="o">...</span>   <span class="c1"># 固定一句话，无参数</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span> <span class="o">...</span>
+</code></pre></div>
+<p>它的格式说明是<strong>固定文案</strong>（不接受参数）：</p>
+<div class="highlight"><pre><span></span><code>Your response should be a list of comma separated values, eg: `foo, bar, baz` or `foo,bar,baz`
+</code></pre></div>
+<p><strong>最小示例</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.output_parsers</span><span class="w"> </span><span class="kn">import</span> <span class="n">CommaSeparatedListOutputParser</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.prompts</span><span class="w"> </span><span class="kn">import</span> <span class="n">PromptTemplate</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain_ollama</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChatOllama</span>
+
+<span class="n">parser</span> <span class="o">=</span> <span class="n">CommaSeparatedListOutputParser</span><span class="p">()</span>
+<span class="n">prompt</span> <span class="o">=</span> <span class="n">PromptTemplate</span><span class="o">.</span><span class="n">from_template</span><span class="p">(</span>
+    <span class="s2">"</span><span class="si">{format_instructions}</span><span class="se">\n</span><span class="s2">列出3本适合</span><span class="si">{mood}</span><span class="s2">时读的书，只给书名。"</span>
+<span class="p">)</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">ChatOllama</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="s2">"qwen3:4b"</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="n">chain</span> <span class="o">=</span> <span class="n">prompt</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">format_instructions</span><span class="o">=</span><span class="n">parser</span><span class="o">.</span><span class="n">get_format_instructions</span><span class="p">())</span> <span class="o">|</span> <span class="n">model</span> <span class="o">|</span> <span class="n">parser</span>
+
+<span class="n">books</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">chain</span><span class="o">.</span><span class="n">invoke</span><span class="p">({</span><span class="s2">"mood"</span><span class="p">:</span> <span class="s2">"失眠"</span><span class="p">})</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">books</span><span class="p">)</span>   <span class="c1"># ['《夜航船》', '《山月记》', '《小王子》']</span>
+</code></pre></div>
+<p><strong><code>parse</code> 的隐藏技能</strong>：它底层用的是 <code>csv.reader</code>（带引号、<code>skipinitialspace</code>）。所以除了逗号，<strong>换行分隔的输入它也能切</strong>，甚至支持引号包裹（书名里带逗号也不怕）：</p>
+<div class="highlight"><pre><span></span><code><span class="n">parser</span> <span class="o">=</span> <span class="n">CommaSeparatedListOutputParser</span><span class="p">()</span>
+<span class="n">parser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="s2">"《夜航船》</span><span class="se">\n</span><span class="s2">《山月记》</span><span class="se">\n</span><span class="s2">《小王子》"</span><span class="p">)</span>        <span class="c1"># 也能切成 3 个元素</span>
+<span class="n">parser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="s1">'"百年孤独, 精装版", 红楼梦'</span><span class="p">)</span>               <span class="c1"># ['百年孤独, 精装版', '红楼梦']</span>
+</code></pre></div>
+<p>把它理解成「宽松的 CSV 单行解析」比「切逗号」更接近真相。</p>
+<p><strong>两位表亲</strong>（同一个 <code>ListOutputParser</code> 家族，按模型的输出习惯挑）：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.output_parsers</span><span class="w"> </span><span class="kn">import</span> <span class="n">NumberedListOutputParser</span><span class="p">,</span> <span class="n">MarkdownListOutputParser</span>
+
+<span class="n">NumberedListOutputParser</span><span class="p">()</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="s2">"1. 夜航船</span><span class="se">\n</span><span class="s2">2. 山月记"</span><span class="p">)</span>   <span class="c1"># ['夜航船', '山月记']</span>
+<span class="n">MarkdownListOutputParser</span><span class="p">()</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="s2">"- 夜航船</span><span class="se">\n</span><span class="s2">- 山月记"</span><span class="p">)</span>     <span class="c1"># ['夜航船', '山月记']</span>
+</code></pre></div>
+<p>小模型经常不理你「用逗号分隔」的要求、自顾自编起号来——这时换 <code>NumberedListOutputParser</code> 往往事半功倍。</p>
+<p><strong>另一条路：Pydantic 的 <code>list</code> 字段</strong>。要的列表更复杂（每项是对象），就别用逗号解析器，直接让结构化输出上：</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">BookList</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">books</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">"书名列表，每项形如《书名》"</span><span class="p">)</span>
+    <span class="n">reason</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">"为什么推荐这组书"</span><span class="p">)</span>
+
+<span class="n">runnable</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">with_structured_output</span><span class="p">(</span><span class="n">BookList</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li><strong>切完的元素可能带前后空格以外的脏东西</strong>。它做了基础清理，但「1. 夜航船」（编号没去掉）这类输入逗号解析器是无能为力的——编号格式交给 <code>NumberedListOutputParser</code>。</li>
+<li><strong>同样不支持流式</strong>（要全文才能切），流式场景攒完再解析一次。</li>
+<li><strong>别对它指望嵌套结构</strong>。它是平面 <code>list[str]</code> 专用，要「列表套对象」走 Pydantic 路线。</li>
+<li>提示词里<strong>加一句「只给书名」</strong>很重要——否则模型爱在每项后面附一句简介，切出来的元素全成了长句。</li>
+</ul>
+<hr />
+<h2 id="7-jsonoutputparser只要一段能-parse-的-json">7. <code>JsonOutputParser</code>：只要一段能 parse 的 JSON</h2>
+<p><strong>作用</strong>：介于「字符串」和「严格 schema」之间——<strong>不卡字段结构，只要模型吐出一段合法 JSON</strong>，就帮你转成 <code>dict</code>。适合快速原型、字段不固定的场景。</p>
+<p><strong>和 <code>PydanticOutputParser</code> 的分工</strong>（原课程这组对比很清晰，照着记）：</p>
+<ul>
+<li><code>PydanticOutputParser</code>：<strong>结构要完全听我的</strong>——字段、类型、描述都定死，模型照表格填；</li>
+<li><code>JsonOutputParser</code>：<strong>只要能 parse 就行</strong>——字段叫什么、有几个，随模型发挥，我拿到 <code>dict</code> 自己看。</li>
+</ul>
+<p><strong>签名</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.output_parsers</span><span class="w"> </span><span class="kn">import</span> <span class="n">JsonOutputParser</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">JsonOutputParser</span><span class="p">(</span><span class="n">BaseCumulativeTransformOutputParser</span><span class="p">[</span><span class="n">Any</span><span class="p">]):</span>
+    <span class="n">pydantic_object</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">BaseModel</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>    <span class="c1"># 可选！给了就进格式说明</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span> <span class="o">...</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_format_instructions</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span> <span class="o">...</span>
+</code></pre></div>
+<p>注意 <code>pydantic_object</code> 是<strong>可选的</strong>——这是它和 <code>PydanticOutputParser</code> 最大的配置差异：不给 schema 也能用（纯「给我 JSON」）；给了 schema，则字段说明会写进格式提示词，<strong>但解析结果仍是 <code>dict</code>，不做校验</strong>。</p>
+<p><strong>最小示例</strong>——拾光书屋的「门店信息卡」，字段先不定死：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.output_parsers</span><span class="w"> </span><span class="kn">import</span> <span class="n">JsonOutputParser</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.prompts</span><span class="w"> </span><span class="kn">import</span> <span class="n">PromptTemplate</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain_ollama</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChatOllama</span>
+
+<span class="n">parser</span> <span class="o">=</span> <span class="n">JsonOutputParser</span><span class="p">()</span>      <span class="c1"># 不传 schema：只要 JSON</span>
+<span class="n">prompt</span> <span class="o">=</span> <span class="n">PromptTemplate</span><span class="o">.</span><span class="n">from_template</span><span class="p">(</span>
+    <span class="s2">"用 JSON 介绍一下《</span><span class="si">{book}</span><span class="s2">》这本书的基本信息"</span>
+<span class="p">)</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">ChatOllama</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="s2">"qwen3:4b"</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+
+<span class="n">chain</span> <span class="o">=</span> <span class="n">prompt</span> <span class="o">|</span> <span class="n">model</span> <span class="o">|</span> <span class="n">parser</span>
+
+<span class="n">info</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">chain</span><span class="o">.</span><span class="n">invoke</span><span class="p">({</span><span class="s2">"book"</span><span class="p">:</span> <span class="s2">"夜航船"</span><span class="p">})</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">info</span><span class="p">[</span><span class="s2">"author"</span><span class="p">])</span>   <span class="c1"># dict 随取随用（字段名模型说了算）</span>
+</code></pre></div>
+<p>想约束字段又不想上校验？把 schema 描述写进提示词即可（原课程的做法：在模板里列字段名），或者把 Pydantic 类传给 <code>pydantic_object</code>——此时 <code>get_format_instructions()</code> 会带上字段说明，但输出仍是宽松的 <code>dict</code>。</p>
+<p><strong>容错细节</strong>：它对「裹了 markdown 围栏」的输出有免疫力——<code>```json {...} ```</code> 会自动剥掉围栏再 <code>json.loads</code>；真遇到无法解析的文本，抛 <code>OutputParserException: Invalid json output: ...</code>。</p>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li><strong>输出类型是 <code>Any</code>（实际多为 <code>dict</code>）</strong>。IDE 不知道里面有什么字段，<code>info["author"]</code> 拼错键名要到运行时才炸——要类型安全，转投第 5 节。</li>
+<li><strong>传了 <code>pydantic_object</code> ≠ 有校验</strong>。字段说明只是「写进了提示词」，模型不守约也不报错，拿到缺字段的 <code>dict</code> 照样往下走。要硬校验必须用 <code>PydanticOutputParser</code> 或 <code>with_structured_output</code>。</li>
+<li>1.x 的格式说明分两档措辞：不传 <code>pydantic_object</code> 时只有一句 <code>Return a JSON object.</code>；传了则是「STRICT OUTPUT FORMAT」开头的命令式清单（要求裸 JSON、禁解释文字）。用法和 0.x 完全一致，从旧资料迁过来不用改代码。</li>
+</ul>
+<hr />
+<h2 id="8-regexparser用正则从纯文本里抠字段">8. <code>RegexParser</code>：用正则从纯文本里抠字段</h2>
+<p><strong>作用</strong>：有时候你既不想让模型输出 JSON，也没法用结构化 API——模型只能吐固定格式的纯文本（很多老模型、纯补全类接口就是这样）。<code>RegexParser</code> 让你拿一个正则表达式，从文本里「抠」出命名的捕获组，直接变 <code>dict</code>。</p>
+<p><strong>归属变化</strong>：这个解析器不在 <code>langchain_core</code> 里——1.x 把老解析器家族搬去了 <code>langchain-classic</code> 包：</p>
+<div class="highlight"><pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span>langchain-classic
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_classic.output_parsers</span><span class="w"> </span><span class="kn">import</span> <span class="n">RegexParser</span>
+</code></pre></div>
+<p><strong>签名</strong>（实测源码）：</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">RegexParser</span><span class="p">(</span><span class="n">BaseOutputParser</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]):</span>
+    <span class="n">regex</span><span class="p">:</span> <span class="nb">str</span>                              <span class="c1"># 正则表达式</span>
+    <span class="n">output_keys</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>                  <span class="c1"># 捕获组依次对应的字段名</span>
+    <span class="n">default_output_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>   <span class="c1"># 兜底字段名</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span> <span class="o">...</span>
+</code></pre></div>
+<p><code>parse</code> 的规则（实测，和 JS 版有出入，见下）：</p>
+<ul>
+<li><code>re.search</code> 匹配成功：捕获组按 <code>output_keys</code> 顺序对号入座，组数不够会 <code>IndexError</code>；</li>
+<li><strong>没匹配上</strong>且 <code>default_output_key</code> 为 <code>None</code>：抛 <code>ValueError</code>；</li>
+<li><strong>没匹配上</strong>且 <code>default_output_key</code> 有值：<code>output_keys</code> 里的字段全部置空串，原文只有当 <code>default_output_key</code> <strong>恰好也在 <code>output_keys</code> 里</strong>时才被保留。</li>
+</ul>
+<p><strong>最小示例</strong>——书屋编目员按固定格式吐「书名+评分」：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_classic.output_parsers</span><span class="w"> </span><span class="kn">import</span> <span class="n">RegexParser</span>
+
+<span class="n">parser</span> <span class="o">=</span> <span class="n">RegexParser</span><span class="p">(</span>
+    <span class="n">regex</span><span class="o">=</span><span class="sa">r</span><span class="s2">"Title:\s*(.+)\nScore:\s*(\d{1,3})"</span><span class="p">,</span>
+    <span class="n">output_keys</span><span class="o">=</span><span class="p">[</span><span class="s2">"title"</span><span class="p">,</span> <span class="s2">"score"</span><span class="p">],</span>   <span class="c1"># 第 1、2 个捕获组分别叫 title、score</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">parser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="s2">"Title: 夜航船</span><span class="se">\n</span><span class="s2">Score: 92"</span><span class="p">))</span>
+<span class="c1"># {'title': '夜航船', 'score': '92'}</span>
+</code></pre></div>
+<p>兜底行为实测（这里最容易踩 JS 的坑）：照 JS 习惯写 <code>default_output_key="raw"</code> 但 <code>raw</code> 不在 <code>output_keys</code> 里——Python 版<strong>不会</strong>像 JS 那样把原文放进 <code>raw</code> 键，而是所有字段置空串、原文<strong>静默丢弃</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="n">parser</span> <span class="o">=</span> <span class="n">RegexParser</span><span class="p">(</span>
+    <span class="n">regex</span><span class="o">=</span><span class="sa">r</span><span class="s2">"Title:\s*(.+)\nScore:\s*(\d{1,3})"</span><span class="p">,</span>
+    <span class="n">output_keys</span><span class="o">=</span><span class="p">[</span><span class="s2">"title"</span><span class="p">,</span> <span class="s2">"score"</span><span class="p">],</span>
+    <span class="n">default_output_key</span><span class="o">=</span><span class="s2">"raw"</span><span class="p">,</span>          <span class="c1"># raw 不在 output_keys 里！</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">parser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="s2">"今天心情不错，不想编目"</span><span class="p">))</span>
+<span class="c1"># {'title': '', 'score': ''}   ← 原文没了，raw 键也没出现</span>
+</code></pre></div>
+<p>想要「不匹配时原文可追查」，要么接受抛 <code>ValueError</code>（不设 <code>default_output_key</code>），要么用 <code>try/except</code> 自己接住原文——别指望 JS 那种 <code>raw</code> 键。</p>
+<p>配套的链（提示词里得<strong>自己写</strong>格式约定，见下）：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.prompts</span><span class="w"> </span><span class="kn">import</span> <span class="n">PromptTemplate</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain_ollama</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChatOllama</span>
+
+<span class="n">prompt</span> <span class="o">=</span> <span class="n">PromptTemplate</span><span class="o">.</span><span class="n">from_template</span><span class="p">(</span>
+    <span class="s2">"为下面这段书摘拟一个书名标签和一个 0-100 的贴合度评分。</span><span class="se">\n</span><span class="s2">"</span>
+    <span class="s2">"严格按此格式输出（两行，不要任何其他内容）：</span><span class="se">\n</span><span class="s2">"</span>
+    <span class="s2">"Title: &lt;书名&gt;</span><span class="se">\n</span><span class="s2">Score: &lt;整数&gt;</span><span class="se">\n\n</span><span class="s2">书摘：</span><span class="si">{excerpt}</span><span class="s2">"</span>
+<span class="p">)</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">ChatOllama</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="s2">"qwen3:4b"</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">chain</span> <span class="o">=</span> <span class="n">prompt</span> <span class="o">|</span> <span class="n">model</span> <span class="o">|</span> <span class="n">parser</span>
+
+<span class="n">result</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">chain</span><span class="o">.</span><span class="n">invoke</span><span class="p">({</span><span class="s2">"excerpt"</span><span class="p">:</span> <span class="s2">"天下学问，惟夜航船中最难对付……"</span><span class="p">})</span>
+</code></pre></div>
+<p><strong>JS → Python 的两个硬差异</strong>（别照 JS 资料抄这个类）：</p>
+<ol>
+<li>JS 版自带 <code>getFormatInstructions()</code>（能生成「请匹配这个正则」的提示词）；<strong>Python 版没有这个方法</strong>（调用会抛 <code>NotImplementedError</code>）——格式约定要像上面那样自己写进提示词。</li>
+<li>JS 版兜底是「不匹配时把全文放进 <code>raw</code> 键」；Python 版如前所述，<code>raw</code> 不在 <code>output_keys</code> 里就<strong>静默丢弃</strong>。</li>
+</ol>
+<p><strong>为什么正则这条路依然有生命力</strong>：格式简单、可预测（<code>Title: xxx\nScore: 92</code>）时，正则抠取<strong>比 JSON 更稳</strong>——没有引号转义、没有尾逗号这些 JSON 翻车点，小模型照葫芦画瓢的成功率反而高。</p>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li><strong>捕获组数量必须和 <code>output_keys</code> 对上</strong>。正则里 <code>( )</code> 的个数少于 <code>output_keys</code> 的长度，匹配成功也会 <code>IndexError: no such group</code>；组数多了倒是无妨（多出的组丢弃）。不想要某个组就用非捕获分组 <code>(?:...)</code>。</li>
+<li><strong>值全是 <code>str</code></strong>。<code>score</code> 拿到的是 <code>'92'</code> 不是 <code>92</code>，参与运算前自己 <code>int()</code>。</li>
+<li><strong>兜底不是「软失败信号」而是「静默失败」</strong>。Python 版里没匹配上时字段全空、原文大概率被丢（见上面的实测）——坏数据会一声不吭地入库。想要显式失败，干脆不设 <code>default_output_key</code>，让它抛 <code>ValueError</code>。</li>
+<li>正则别写得太贪。<code>(.+)</code> 会一路吃到行尾，输出里如果混了解释文字，全进了 <code>title</code>——格式约束要靠提示词和正则两头夹。</li>
+</ul>
+<hr />
+<h2 id="9-输出坏了怎么办outputfixingparser-与-auto-fix-思路">9. 输出坏了怎么办：<code>OutputFixingParser</code> 与 auto-fix 思路</h2>
+<p><strong>问题现场</strong>：不管提示词写得多好，模型总有失手的时候——JSON 尾逗号、字段名拼错、<code>"五星"</code> 塞进 <code>int</code> 字段。第 5 节说过，这时 <code>PydanticOutputParser</code> 会抛 <code>OutputParserException</code>（里面裹着 pydantic 的 <code>ValidationError</code>，信息很全）。<strong>整条链就地为一次手滑买单</strong>，值不值？</p>
+<p><strong>比喻</strong>：质检员发现包装不合格，正常流程是把货<strong>退回原厂返修</strong>（把坏输出和报错发回模型重做），而不是直接扔进海里。</p>
+<h3 id="91-outputfixingparser包一层返修通道">9.1 <code>OutputFixingParser</code>：包一层「返修通道」</h3>
+<p>来自 <code>langchain_classic</code>（同样需要 <code>pip install langchain-classic</code>）：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_classic.output_parsers</span><span class="w"> </span><span class="kn">import</span> <span class="n">OutputFixingParser</span>
+</code></pre></div>
+<p><strong>思路</strong>（JS 生态叫 auto-fix parser，同一个设计）：解析失败时不抛错，而是把「格式要求 + 坏输出 + 报错信息」拼成一段修复提示词，<strong>再调一次模型</strong>让它照着改，然后重新解析。<code>max_retries</code> 控制返修次数。</p>
+<p><strong>签名</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">from_llm</span><span class="p">(</span>
+    <span class="n">llm</span><span class="p">:</span> <span class="n">Runnable</span><span class="p">,</span>                 <span class="c1"># 用来执行修复的模型（任意 Runnable）</span>
+    <span class="n">parser</span><span class="p">:</span> <span class="n">BaseOutputParser</span><span class="p">[</span><span class="n">T</span><span class="p">],</span>   <span class="c1"># 被包住的原始解析器</span>
+    <span class="n">max_retries</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>          <span class="c1"># 最多返修几次</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OutputFixingParser</span><span class="p">[</span><span class="n">T</span><span class="p">]:</span> <span class="o">...</span>
+</code></pre></div>
+<p><strong>最小示例</strong>——给书评卡解析器穿「返修马甲」：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_classic.output_parsers</span><span class="w"> </span><span class="kn">import</span> <span class="n">OutputFixingParser</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.output_parsers</span><span class="w"> </span><span class="kn">import</span> <span class="n">PydanticOutputParser</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain_ollama</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChatOllama</span>
+
+<span class="n">inner</span> <span class="o">=</span> <span class="n">PydanticOutputParser</span><span class="p">(</span><span class="n">pydantic_object</span><span class="o">=</span><span class="n">BookReview</span><span class="p">)</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">ChatOllama</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="s2">"qwen3:4b"</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="n">fixer</span> <span class="o">=</span> <span class="n">OutputFixingParser</span><span class="o">.</span><span class="n">from_llm</span><span class="p">(</span><span class="n">llm</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">parser</span><span class="o">=</span><span class="n">inner</span><span class="p">)</span>
+
+<span class="c1"># 第一份输出坏掉（rating 类型不对），fixer 会拿它找模型返修，再解析</span>
+<span class="n">card</span> <span class="o">=</span> <span class="n">fixer</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="s1">'{"title": "夜航船", "rating": "五星"}'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">card</span><span class="p">)</span>   <span class="c1"># 修复成功则拿到合法 BookReview；返修后仍失败才抛错</span>
+</code></pre></div>
+<p>离线也能看清它的机制——返修用的 <code>llm</code> 只要求是 <code>Runnable</code>，塞个假模型进去（本章 demo 就是这么做的）：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.messages</span><span class="w"> </span><span class="kn">import</span> <span class="n">AIMessage</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.runnables</span><span class="w"> </span><span class="kn">import</span> <span class="n">RunnableLambda</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">fake_fix_llm</span><span class="p">(</span><span class="n">fix_prompt</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AIMessage</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"被发回返修的提示里包含："</span><span class="p">,</span> <span class="s2">"Instructions"</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">fix_prompt</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">AIMessage</span><span class="p">(</span><span class="n">content</span><span class="o">=</span><span class="s1">'{"title": "夜航船", "rating": 5}'</span><span class="p">)</span>
+
+<span class="n">fixer</span> <span class="o">=</span> <span class="n">OutputFixingParser</span><span class="o">.</span><span class="n">from_llm</span><span class="p">(</span><span class="n">llm</span><span class="o">=</span><span class="n">RunnableLambda</span><span class="p">(</span><span class="n">fake_fix_llm</span><span class="p">),</span> <span class="n">parser</span><span class="o">=</span><span class="n">inner</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">fixer</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="s1">'{"title": "夜航船", "rating": "五星"}'</span><span class="p">))</span>   <span class="c1"># 正常返回修好的实例</span>
+</code></pre></div>
+<h3 id="92-修不好怎么办include_raw-自己的兜底链">9.2 修不好怎么办：<code>include_raw</code> + 自己的兜底链</h3>
+<p><code>OutputFixingParser</code> 返修后仍失败，异常照样抛。更工程化的姿势是把它和 04 章的<strong>回退</strong>组合：解析环节挂上 <code>include_raw=True</code>（第 4.2 节），失败时 <code>parsing_error</code> 有值、<code>parsed</code> 为 <code>None</code>——你可以在下游用 <code>RunnableLambda</code> 把「软失败」翻译成「硬失败」抛出，让 <code>with_fallbacks</code> 接管。三件套的分工：</p>
+<table>
+<thead>
+<tr>
+<th>环节</th>
+<th>用什么</th>
+<th>职责</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>预防</td>
+<td><code>with_structured_output(method="json_schema")</code></td>
+<td>协议层让模型别犯错</td>
+</tr>
+<tr>
+<td>返修</td>
+<td><code>OutputFixingParser</code>（或重试链）</td>
+<td>偶发手滑，自动修</td>
+</tr>
+<tr>
+<td>兜底</td>
+<td><code>include_raw</code> + 校验器 + <code>with_fallbacks</code></td>
+<td>修不好，走备用路，别掀桌</td>
+</tr>
+</tbody>
+</table>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li><strong>修复调用的是模型，要花钱花时间</strong>。失败一次 = 多一轮完整生成；对延迟敏感的链，宁可让它抛、走 fallback。</li>
+<li><strong><code>max_retries</code> 不是「总尝试次数」的语义</strong>，别设成 0 还指望它修复。</li>
+<li><strong>返修提示词是英文模板</strong>（源码里的默认 <code>PromptTemplate</code>），小模型对着英文说明修中文 JSON 偶尔会「修着修着跑题」，必要时传自定义 <code>prompt</code> 参数。</li>
+<li>更简单的替代：<code>with_structured_output(..., include_raw=True)</code> + 自己写 <code>RunnableLambda</code> 判断重试——机制透明，可控性强，代价是样板代码多。</li>
+</ul>
+<hr />
+<h2 id="10-本章小结">10. 本章小结</h2>
+<p>一张表带走全部解析器（1.x 实测）：</p>
+<table>
+<thead>
+<tr>
+<th>你要什么</th>
+<th>用什么</th>
+<th>输出类型</th>
+<th>流式</th>
+<th>硬校验</th>
+<th>额外依赖</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>纯文字</td>
+<td><code>StrOutputParser</code></td>
+<td><code>str</code></td>
+<td>✅</td>
+<td>——</td>
+<td>无</td>
+</tr>
+<tr>
+<td>结构化对象（首选）</td>
+<td><code>model.with_structured_output(Model)</code></td>
+<td><code>Model</code> 实例</td>
+<td>❌</td>
+<td>✅</td>
+<td>无</td>
+</tr>
+<tr>
+<td>结构化对象（提示词路线）</td>
+<td><code>PydanticOutputParser</code></td>
+<td><code>Model</code> 实例</td>
+<td>❌</td>
+<td>✅</td>
+<td>无</td>
+</tr>
+<tr>
+<td>字段名+描述快速起架</td>
+<td><code>StructuredOutputParser.from_response_schemas</code></td>
+<td><code>dict</code></td>
+<td>❌</td>
+<td>❌</td>
+<td>langchain-classic</td>
+</tr>
+<tr>
+<td>平面字符串列表</td>
+<td><code>CommaSeparatedListOutputParser</code></td>
+<td><code>list[str]</code></td>
+<td>❌</td>
+<td>❌</td>
+<td>无</td>
+</tr>
+<tr>
+<td>列表+字段都齐全</td>
+<td><code>with_structured_output(list 字段的 Model)</code></td>
+<td><code>Model</code> 实例</td>
+<td>❌</td>
+<td>✅</td>
+<td>无</td>
+</tr>
+<tr>
+<td>宽松 JSON</td>
+<td><code>JsonOutputParser</code></td>
+<td><code>Any</code>/<code>dict</code></td>
+<td>❌</td>
+<td>❌</td>
+<td>无</td>
+</tr>
+<tr>
+<td>固定格式纯文本</td>
+<td><code>RegexParser</code></td>
+<td><code>dict[str, str]</code></td>
+<td>❌</td>
+<td>❌（兜底会静默丢原文）</td>
+<td>langchain-classic</td>
+</tr>
+<tr>
+<td>坏输出返修</td>
+<td><code>OutputFixingParser.from_llm(...)</code></td>
+<td>同内层</td>
+<td>❌</td>
+<td>✅</td>
+<td>langchain-classic</td>
+</tr>
+</tbody>
+</table>
+<p>三个心智锚点：</p>
+<ol>
+<li><strong>解析器是链尾的 Runnable</strong>——<code>invoke</code>/<code>stream</code>/<code>batch</code> 全套通用，但除了 <code>StrOutputParser</code>，多数解析器<strong>必须等全文</strong>，流式会退化成单块。</li>
+<li><strong>引导在前，解析在后</strong>：<code>get_format_instructions()</code> 负责「教模型怎么输出」，<code>parse</code> 负责「把输出变结构」——只挂解析器不写格式说明，等于只设海关不发文规则。</li>
+<li><strong>约束越硬越省心</strong>：能上 <code>with_structured_output</code> 就别纯靠提示词；能写 Pydantic 校验就别拿裸 <code>dict</code> 裸奔。</li>
+</ol>
+<p>配套 demo（本章 <code>demo/</code> 目录）：</p>
+<ul>
+<li><code>demo_parser.py</code>：单文件演示 <code>StrOutputParser</code> / Pydantic 结构化 / 列表 / <code>JsonOutputParser</code> / <code>RegexParser</code> / <code>OutputFixingParser</code> 的真实行为——<strong>全部离线可跑</strong>（用固定假响应喂给解析器，解析器本身不需要模型）；设 <code>USE_MODEL=1</code> 可追加真模型环节（需本地 Ollama + <code>qwen3:4b</code>）。其中 <code>RegexParser</code> / <code>OutputFixingParser</code> 两节需要 <code>pip install langchain-classic</code>（缺了会自动跳过，不影响其余演示）。</li>
+</ul>
+<p><strong>下一章</strong>：<a href="../langchain/06-wen-dang-jia-zai-yu-qie-ge.html">06 · 文档加载与切割</a></p></div>
+
+      </article>
+<nav class="pager"><a class="pg-card pg-prev" href="../langchain/04-liu-shi-yu-bing-fa.html"><span class="pg-label">← 上一篇</span><span class="pg-title">流式与并发</span><span class="pg-mod">LangChain 指南</span></a><a class="pg-card pg-next" href="../langchain/06-wen-dang-jia-zai-yu-qie-ge.html"><span class="pg-label">下一篇 →</span><span class="pg-title">文档加载与切割</span><span class="pg-mod">LangChain 指南</span></a></nav>
+    </div>
+    <footer class="foot">
+      <span>深栈 DeepStack · AI Agent 工程师转型训练营配套文档</span>
+    </footer>
+  </main>
+<nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#0-一张-js-python-对照表先收藏">0. 一张 JS → Python 对照表（先收藏）</a><a class="toc-link toc-h2" href="#1-为什么需要解析器先看看模型到底吐了什么">1. 为什么需要解析器：先看看模型到底吐了什么</a><a class="toc-link toc-h2" href="#2-stroutputparser拆箱取文字">2. StrOutputParser：拆箱取文字</a><a class="toc-link toc-h2" href="#3-pydantic-速览给模型填一张数据表格">3. Pydantic 速览：给模型填一张「数据表格」</a><a class="toc-link toc-h2" href="#4-结构化输出上with_structured_output让模型自己填表">4. 结构化输出（上）：with_structured_output，让模型自己填表</a><a class="toc-link toc-h3" href="#41-三种方向盘method-参数">4.1 三种方向盘：method 参数</a><a class="toc-link toc-h3" href="#42-include_rawtrue原始输出和解析结果都要">4.2 include_raw=True：原始输出和解析结果都要</a><a class="toc-link toc-h2" href="#5-结构化输出下pydanticoutputparser提示词层面的引导">5. 结构化输出（下）：PydanticOutputParser，提示词层面的引导</a><a class="toc-link toc-h2" href="#6-列表解析器一行提示词换一个-liststr">6. 列表解析器：一行提示词换一个 list[str]</a><a class="toc-link toc-h2" href="#7-jsonoutputparser只要一段能-parse-的-json">7. JsonOutputParser：只要一段能 parse 的 JSON</a><a class="toc-link toc-h2" href="#8-regexparser用正则从纯文本里抠字段">8. RegexParser：用正则从纯文本里抠字段</a><a class="toc-link toc-h2" href="#9-输出坏了怎么办outputfixingparser-与-auto-fix-思路">9. 输出坏了怎么办：OutputFixingParser 与 auto-fix 思路</a><a class="toc-link toc-h3" href="#91-outputfixingparser包一层返修通道">9.1 OutputFixingParser：包一层「返修通道」</a><a class="toc-link toc-h3" href="#92-修不好怎么办include_raw-自己的兜底链">9.2 修不好怎么办：include_raw + 自己的兜底链</a><a class="toc-link toc-h2" href="#10-本章小结">10. 本章小结</a></nav>
+</div>
+<div class="sb-mask" id="sbMask"></div>
+<script src="../assets/app.js"></script>
+</body>
+</html>

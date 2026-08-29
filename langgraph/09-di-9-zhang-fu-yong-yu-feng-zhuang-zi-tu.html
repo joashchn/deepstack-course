@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>09 · 第 9 章 复用与封装：子图 · 深栈 DeepStack 课程文档</title>
+<meta name="description" content="本章目标：把一张图变成另一个节点——掌握子图的两种嵌入方式（状态共享与状态转换），理解&quot;编译产物是 Runnable&quot;这句话在架构层面的真正威力。第 2 章埋下的伏笔，本章兑现">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%23d9c39a' text-anchor='middle'%3EDS%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+<div class="progress" id="progress"></div>
+
+<div class="layout">
+<aside class="sidebar" id="sidebar">
+  <div class="sb-head">
+    <a class="brand" href="../index.html">
+      <span class="brand-mark">DS</span>
+      <span class="brand-text"><b>深栈 DeepStack</b><i>AI Agent 工程师转型训练营</i></span>
+    </a>
+    <button class="sb-close" id="sbClose" aria-label="关闭目录">✕</button>
+  </div>
+  <div class="sb-search"><input type="search" id="searchInput" placeholder="搜索 123 篇文档… ( / )" autocomplete="off">
+    <div class="sb-results" id="searchResults"></div></div>
+  <nav class="sb-nav">
+    <section class="sb-group" data-mod="python">
+      <a class="sb-group-title" href="../modules/python.html" data-toggle="python">
+        <span class="sb-num">01</span>
+        <span class="sb-group-text"><b>Python 与数据实践</b><i>31 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../python/01-huan-jing-da-jian-yu-ban-ben-guan-li.html"><span class="sb-item-num">01</span><span class="sb-item-title">环境搭建与版本管理</span></a>
+        <a class="sb-item" href="../python/02-bian-liang-biao-da-shi-yu-liu-cheng-kong-zhi.html"><span class="sb-item-num">02</span><span class="sb-item-title">变量、表达式与流程控制</span></a>
+        <a class="sb-item" href="../python/03-xu-lie-zi-dian-yu-ji-he.html"><span class="sb-item-num">03</span><span class="sb-item-title">序列、字典与集合</span></a>
+        <a class="sb-item" href="../python/04-han-shu-she-ji-yu-lambda.html"><span class="sb-item-num">04</span><span class="sb-item-title">函数设计与 lambda</span></a>
+        <a class="sb-item" href="../python/05-zuo-yong-yu-gui-ze-yu-bi-bao.html"><span class="sb-item-num">05</span><span class="sb-item-title">作用域规则与闭包</span></a>
+        <a class="sb-item" href="../python/06-lei-de-ding-yi-yu-shi-li-hua.html"><span class="sb-item-num">06</span><span class="sb-item-title">类的定义与实例化</span></a>
+        <a class="sb-item" href="../python/07-lei-xing-pan-ding-yu-chou-xiang-ji-lei.html"><span class="sb-item-num">07</span><span class="sb-item-title">类型判定与抽象基类</span></a>
+        <a class="sb-item" href="../python/08-mo-shu-fang-fa-quan-jing.html"><span class="sb-item-num">08</span><span class="sb-item-title">魔术方法全景</span></a>
+        <a class="sb-item" href="../python/09-miao-shu-fu-yu-yuan-lei.html"><span class="sb-item-num">09</span><span class="sb-item-title">描述符与元类</span></a>
+        <a class="sb-item" href="../python/10-zhuang-shi-qi.html"><span class="sb-item-num">10</span><span class="sb-item-title">装饰器</span></a>
+        <a class="sb-item" href="../python/11-die-dai-xie-yi-yu-sheng-cheng-qi.html"><span class="sb-item-num">11</span><span class="sb-item-title">迭代协议与生成器</span></a>
+        <a class="sb-item" href="../python/12-with-yu-shang-xia-wen-xie-yi.html"><span class="sb-item-num">12</span><span class="sb-item-title">with 与上下文协议</span></a>
+        <a class="sb-item" href="../python/13-yi-chang-ti-xi-yu-chu-li.html"><span class="sb-item-num">13</span><span class="sb-item-title">异常体系与处理</span></a>
+        <a class="sb-item" href="../python/14-lei-xing-biao-zhu.html"><span class="sb-item-num">14</span><span class="sb-item-title">类型标注</span></a>
+        <a class="sb-item" href="../python/15-mo-kuai-yu-bao-de-zu-zhi.html"><span class="sb-item-num">15</span><span class="sb-item-title">模块与包的组织</span></a>
+        <a class="sb-item" href="../python/16-biao-zhun-ku-xun-li.html"><span class="sb-item-num">16</span><span class="sb-item-title">标准库巡礼</span></a>
+        <a class="sb-item" href="../python/17-yi-lai-guan-li-yu-di-san-fang-ku.html"><span class="sb-item-num">17</span><span class="sb-item-title">依赖管理与第三方库</span></a>
+        <a class="sb-item" href="../python/18-xian-cheng-yu-jin-cheng.html"><span class="sb-item-num">18</span><span class="sb-item-title">线程与进程</span></a>
+        <a class="sb-item" href="../python/19-shi-jian-xun-huan.html"><span class="sb-item-num">19</span><span class="sb-item-title">事件循环</span></a>
+        <a class="sb-item" href="../python/20-future-yu-xie-cheng.html"><span class="sb-item-num">20</span><span class="sb-item-title">Future 与协程</span></a>
+        <a class="sb-item" href="../python/21-asyncio-shi-zhan.html"><span class="sb-item-num">21</span><span class="sb-item-title">asyncio 实战</span></a>
+        <a class="sb-item" href="../python/22-gou-jian-yu-fa-bu.html"><span class="sb-item-num">22</span><span class="sb-item-title">构建与发布</span></a>
+        <a class="sb-item" href="../python/23-gong-cheng-hua-gong-ju-lian.html"><span class="sb-item-num">23</span><span class="sb-item-title">工程化工具链</span></a>
+        <a class="sb-item" href="../python/24-monorepo-yu-tiao-shi.html"><span class="sb-item-num">24</span><span class="sb-item-title">monorepo 与调试</span></a>
+        <a class="sb-item" href="../python/25-jupyter-jiao-hu-huan-jing.html"><span class="sb-item-num">25</span><span class="sb-item-title">Jupyter 交互环境</span></a>
+        <a class="sb-item" href="../python/26-numpy-shu-zu-yu-xiang-liang-hua.html"><span class="sb-item-num">26</span><span class="sb-item-title">NumPy 数组与向量化</span></a>
+        <a class="sb-item" href="../python/27-pandas-shu-ju-jie-gou.html"><span class="sb-item-num">27</span><span class="sb-item-title">Pandas 数据结构</span></a>
+        <a class="sb-item" href="../python/28-pandas-shu-ju-qing-xi.html"><span class="sb-item-num">28</span><span class="sb-item-title">Pandas 数据清洗</span></a>
+        <a class="sb-item" href="../python/29-matplotlib-hui-tu-ti-xi.html"><span class="sb-item-num">29</span><span class="sb-item-title">Matplotlib 绘图体系</span></a>
+        <a class="sb-item" href="../python/30-matplotlib-dong-hua-yu-jiao-hu.html"><span class="sb-item-num">30</span><span class="sb-item-title">Matplotlib 动画与交互</span></a>
+        <a class="sb-item" href="../python/31-seaborn-tong-ji-ke-shi-hua.html"><span class="sb-item-num">31</span><span class="sb-item-title">Seaborn 统计可视化</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="agent">
+      <a class="sb-group-title" href="../modules/agent.html" data-toggle="agent">
+        <span class="sb-num">02</span>
+        <span class="sb-group-text"><b>Agent 核心</b><i>15 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../agent/01-token-yu-ci-qian-ru.html"><span class="sb-item-num">01</span><span class="sb-item-title">Token 与词嵌入</span></a>
+        <a class="sb-item" href="../agent/02-qian-xiang-chuan-bo-yu-fan-xiang-chuan-bo.html"><span class="sb-item-num">02</span><span class="sb-item-title">前向传播与反向传播</span></a>
+        <a class="sb-item" href="../agent/03-zhu-yi-li-ji-zhi-yu-transformer-jia-gou.html"><span class="sb-item-num">03</span><span class="sb-item-title">注意力机制与 Transformer 架构</span></a>
+        <a class="sb-item" href="../agent/04-yu-xun-lian-rlhf-yu-cai-yang-kv-cache.html"><span class="sb-item-num">04</span><span class="sb-item-title">预训练、RLHF 与采样（KV Cache）</span></a>
+        <a class="sb-item" href="../agent/05-ben-di-mo-xing-yu-xiao-xi-jie-gou.html"><span class="sb-item-num">05</span><span class="sb-item-title">本地模型与消息结构</span></a>
+        <a class="sb-item" href="../agent/06-hui-hua-guan-li-yu-json-shu-chu.html"><span class="sb-item-num">06</span><span class="sb-item-title">会话管理与 JSON 输出</span></a>
+        <a class="sb-item" href="../agent/07-tool-calling-xie-yi-yu-feng-zhuang.html"><span class="sb-item-num">07</span><span class="sb-item-title">Tool Calling：协议与封装</span></a>
+        <a class="sb-item" href="../agent/08-react-mo-shi-yu-zhu-xun-huan.html"><span class="sb-item-num">08</span><span class="sb-item-title">ReAct 模式与主循环</span></a>
+        <a class="sb-item" href="../agent/09-shi-zhan-deep-research-agent.html"><span class="sb-item-num">09</span><span class="sb-item-title">实战：Deep Research Agent</span></a>
+        <a class="sb-item" href="../agent/10-skill-yu-jian-jin-shi-pi-lu.html"><span class="sb-item-num">10</span><span class="sb-item-title">Skill 与渐进式披露</span></a>
+        <a class="sb-item" href="../agent/11-mcp-quan-jing.html"><span class="sb-item-num">11</span><span class="sb-item-title">MCP 全景</span></a>
+        <a class="sb-item" href="../agent/12-duo-agent-yu-xuan-xing-ce-lve.html"><span class="sb-item-num">12</span><span class="sb-item-title">多 Agent 与选型策略</span></a>
+        <a class="sb-item" href="../agent/13-ti-shi-ci-gong-cheng-yu-shang-xia-wen-gong.html"><span class="sb-item-num">13</span><span class="sb-item-title">提示词工程与上下文工程</span></a>
+        <a class="sb-item" href="../agent/14-xun-huan-tu-yu-gu-jia-gong-cheng.html"><span class="sb-item-num">14</span><span class="sb-item-title">循环、图与骨架工程</span></a>
+        <a class="sb-item" href="../agent/15-ji-yi-quan-xian-yu-ping-ce.html"><span class="sb-item-num">15</span><span class="sb-item-title">记忆、权限与评测</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="langchain">
+      <a class="sb-group-title" href="../modules/langchain.html" data-toggle="langchain">
+        <span class="sb-num">03</span>
+        <span class="sb-group-text"><b>LangChain 指南</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langchain/01-ren-shi-langchain.html"><span class="sb-item-num">01</span><span class="sb-item-title">认识 LangChain</span></a>
+        <a class="sb-item" href="../langchain/02-ti-shi-ci-mu-ban-yu-xiao-xi.html"><span class="sb-item-num">02</span><span class="sb-item-title">提示词模板与消息</span></a>
+        <a class="sb-item" href="../langchain/03-lcel-yu-runnable.html"><span class="sb-item-num">03</span><span class="sb-item-title">LCEL 与 Runnable</span></a>
+        <a class="sb-item" href="../langchain/04-liu-shi-yu-bing-fa.html"><span class="sb-item-num">04</span><span class="sb-item-title">流式与并发</span></a>
+        <a class="sb-item" href="../langchain/05-shu-chu-jie-xi-qi.html"><span class="sb-item-num">05</span><span class="sb-item-title">输出解析器</span></a>
+        <a class="sb-item" href="../langchain/06-wen-dang-jia-zai-yu-qie-ge.html"><span class="sb-item-num">06</span><span class="sb-item-title">文档加载与切割</span></a>
+        <a class="sb-item" href="../langchain/07-qian-ru-yu-xiang-liang-ku.html"><span class="sb-item-num">07</span><span class="sb-item-title">嵌入与向量库</span></a>
+        <a class="sb-item" href="../langchain/08-jian-suo-yu-rag.html"><span class="sb-item-num">08</span><span class="sb-item-title">检索与RAG</span></a>
+        <a class="sb-item" href="../langchain/09-dui-hua-ji-yi.html"><span class="sb-item-num">09</span><span class="sb-item-title">对话记忆</span></a>
+        <a class="sb-item" href="../langchain/10-gong-ju-diao-yong.html"><span class="sb-item-num">10</span><span class="sb-item-title">工具调用</span></a>
+        <a class="sb-item" href="../langchain/11-agent.html"><span class="sb-item-num">11</span><span class="sb-item-title">Agent</span></a>
+        <a class="sb-item" href="../langchain/12-hui-diao-yu-tiao-shi-quan-ke-cheng-shou-guan.html"><span class="sb-item-num">12</span><span class="sb-item-title">回调与调试（全课程收官章）</span></a>
+      </div>
+    </section>
+    <section class="sb-group open" data-mod="langgraph">
+      <a class="sb-group-title" href="../modules/langgraph.html" data-toggle="langgraph">
+        <span class="sb-num">04</span>
+        <span class="sb-group-text"><b>LangGraph 框架指南</b><i>17 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langgraph/01-di-1-zhang-cong-yi-ge-shi-kong-de-jiao.html"><span class="sb-item-num">01</span><span class="sb-item-title">第 1 章 从一个失控的脚本说起</span></a>
+        <a class="sb-item" href="../langgraph/02-di-2-zhang-zui-xiao-ke-yun-xing-tu.html"><span class="sb-item-num">02</span><span class="sb-item-title">第 2 章 最小可运行图</span></a>
+        <a class="sb-item" href="../langgraph/03-di-3-zhang-zhuang-tai-tu-de-shu-ju-xin.html"><span class="sb-item-num">03</span><span class="sb-item-title">第 3 章 状态：图的数据心脏</span></a>
+        <a class="sb-item" href="../langgraph/04-di-4-zhang-rang-liu-cheng-xue-hui-jue-ce.html"><span class="sb-item-num">04</span><span class="sb-item-title">第 4 章 让流程学会决策</span></a>
+        <a class="sb-item" href="../langgraph/05-di-5-zhang-bing-xing-shi-jie-chao-bu-zhi.html"><span class="sb-item-num">05</span><span class="sb-item-title">第 5 章 并行世界：超步执行模型</span></a>
+        <a class="sb-item" href="../langgraph/06-di-6-zhang-command-ba-kong-zhi-quan-jiao-jin.html"><span class="sb-item-num">06</span><span class="sb-item-title">第 6 章 Command：把控制权交进节点</span></a>
+        <a class="sb-item" href="../langgraph/07-di-7-zhang-dong-tai-bing-xing-send-yu-mapreduce.html"><span class="sb-item-num">07</span><span class="sb-item-title">第 7 章 动态并行：Send 与 MapReduce</span></a>
+        <a class="sb-item" href="../langgraph/08-di-8-zhang-gei-tu-zhuang-shang-shou-jiao-gong.html"><span class="sb-item-num">08</span><span class="sb-item-title">第 8 章 给图装上手脚：工具调用</span></a>
+        <a class="sb-item current" href="../langgraph/09-di-9-zhang-fu-yong-yu-feng-zhuang-zi-tu.html"><span class="sb-item-num">09</span><span class="sb-item-title">第 9 章 复用与封装：子图</span></a>
+        <a class="sb-item" href="../langgraph/10-di-10-zhang-cong-dan-tu-dao-tuan-dui-duo.html"><span class="sb-item-num">10</span><span class="sb-item-title">第 10 章 从单图到团队：多 Agent 架构</span></a>
+        <a class="sb-item" href="../langgraph/11-di-11-zhang-liu-shi-shu-chu.html"><span class="sb-item-num">11</span><span class="sb-item-title">第 11 章 流式输出</span></a>
+        <a class="sb-item" href="../langgraph/12-di-12-zhang-chi-jiu-hua-checkpointer-yu-xian-cheng.html"><span class="sb-item-num">12</span><span class="sb-item-title">第 12 章 持久化：Checkpointer 与线程</span></a>
+        <a class="sb-item" href="../langgraph/13-di-13-zhang-shi-jian-lv-xing.html"><span class="sb-item-num">13</span><span class="sb-item-title">第 13 章 时间旅行</span></a>
+        <a class="sb-item" href="../langgraph/14-di-14-zhang-zhong-duan-yu-ren-zai-hui-lu.html"><span class="sb-item-num">14</span><span class="sb-item-title">第 14 章 中断与人在回路</span></a>
+        <a class="sb-item" href="../langgraph/15-di-15-zhang-ji-yi-guan-li.html"><span class="sb-item-num">15</span><span class="sb-item-title">第 15 章 记忆管理</span></a>
+        <a class="sb-item" href="../langgraph/16-di-16-zhang-rong-cuo-zhong-shi-chao-shi-yu.html"><span class="sb-item-num">16</span><span class="sb-item-title">第 16 章 容错：重试、超时与兜底</span></a>
+        <a class="sb-item" href="../langgraph/17-di-17-zhang-quan-jing-hui-gu.html"><span class="sb-item-num">17</span><span class="sb-item-title">第 17 章 全景回顾</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="backend">
+      <a class="sb-group-title" href="../modules/backend.html" data-toggle="backend">
+        <span class="sb-num">05</span>
+        <span class="sb-group-text"><b>Python 框架指南</b><i>14 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../backend/01-fastapi-ru-men-yu-asgi.html"><span class="sb-item-num">01</span><span class="sb-item-title">FastAPI 入门与 ASGI</span></a>
+        <a class="sb-item" href="../backend/02-lu-you-yu-qing-qiu-xiang-ying.html"><span class="sb-item-num">02</span><span class="sb-item-title">路由与请求响应</span></a>
+        <a class="sb-item" href="../backend/03-pydantic-shu-ju-jiao-yan-yu-pei-zhi.html"><span class="sb-item-num">03</span><span class="sb-item-title">Pydantic 数据校验与配置</span></a>
+        <a class="sb-item" href="../backend/04-sqlalchemy-yi-bu-yin-qing-yu-hui-hua.html"><span class="sb-item-num">04</span><span class="sb-item-title">SQLAlchemy 异步引擎与会话</span></a>
+        <a class="sb-item" href="../backend/05-orm-jian-mo.html"><span class="sb-item-num">05</span><span class="sb-item-title">ORM 建模</span></a>
+        <a class="sb-item" href="../backend/06-sql-biao-da-shi-yu-shu-ju-cao-zuo.html"><span class="sb-item-num">06</span><span class="sb-item-title">SQL 表达式与数据操作</span></a>
+        <a class="sb-item" href="../backend/07-alembic-shu-ju-qian-yi.html"><span class="sb-item-num">07</span><span class="sb-item-title">Alembic 数据迁移</span></a>
+        <a class="sb-item" href="../backend/08-yi-lai-zhu-ru.html"><span class="sb-item-num">08</span><span class="sb-item-title">依赖注入</span></a>
+        <a class="sb-item" href="../backend/09-tong-yi-yi-chang-chu-li.html"><span class="sb-item-num">09</span><span class="sb-item-title">统一异常处理</span></a>
+        <a class="sb-item" href="../backend/10-zhong-jian-jian.html"><span class="sb-item-num">10</span><span class="sb-item-title">中间件</span></a>
+        <a class="sb-item" href="../backend/11-ren-zheng-yu-jwt.html"><span class="sb-item-num">11</span><span class="sb-item-title">认证与 JWT</span></a>
+        <a class="sb-item" href="../backend/12-pytest-ce-shi.html"><span class="sb-item-num">12</span><span class="sb-item-title">pytest 测试</span></a>
+        <a class="sb-item" href="../backend/13-ri-zhi-loguru.html"><span class="sb-item-num">13</span><span class="sb-item-title">日志 loguru</span></a>
+        <a class="sb-item" href="../backend/14-liu-shi-xiang-ying-sse-yu-websocket.html"><span class="sb-item-num">14</span><span class="sb-item-title">流式响应 SSE 与 WebSocket</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="interview">
+      <a class="sb-group-title" href="../modules/interview.html" data-toggle="interview">
+        <span class="sb-num">06</span>
+        <span class="sb-group-text"><b>面试题库</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../interview/01-llm-yuan-li-pian.html"><span class="sb-item-num">01</span><span class="sb-item-title">LLM 原理篇</span></a>
+        <a class="sb-item" href="../interview/02-rag-yu-jian-suo-pian.html"><span class="sb-item-num">02</span><span class="sb-item-title">RAG 与检索篇</span></a>
+        <a class="sb-item" href="../interview/03-agent-he-xin-pian.html"><span class="sb-item-num">03</span><span class="sb-item-title">Agent 核心篇</span></a>
+        <a class="sb-item" href="../interview/04-langgraph-pian.html"><span class="sb-item-num">04</span><span class="sb-item-title">LangGraph 篇</span></a>
+        <a class="sb-item" href="../interview/05-langchain-pian.html"><span class="sb-item-num">05</span><span class="sb-item-title">LangChain 篇</span></a>
+        <a class="sb-item" href="../interview/06-xi-tong-she-ji-pian.html"><span class="sb-item-num">06</span><span class="sb-item-title">系统设计篇</span></a>
+        <a class="sb-item" href="../interview/07-xiang-mu-shen-wa-pian.html"><span class="sb-item-num">07</span><span class="sb-item-title">项目深挖篇</span></a>
+        <a class="sb-item" href="../interview/08-gu-zhang-pai-cha-pian.html"><span class="sb-item-num">08</span><span class="sb-item-title">故障排查篇</span></a>
+        <a class="sb-item" href="../interview/09-python-ji-chu-pian.html"><span class="sb-item-num">09</span><span class="sb-item-title">Python 基础篇</span></a>
+        <a class="sb-item" href="../interview/10-fastapi-yu-hou-duan-pian.html"><span class="sb-item-num">10</span><span class="sb-item-title">FastAPI 与后端篇</span></a>
+        <a class="sb-item" href="../interview/11-ti-shi-ci-gong-cheng-yu-an-quan-pian.html"><span class="sb-item-num">11</span><span class="sb-item-title">提示词工程与安全篇</span></a>
+        <a class="sb-item" href="../interview/12-mo-xing-xuan-xing-yu-jiang-ben-pian.html"><span class="sb-item-num">12</span><span class="sb-item-title">模型选型与降本篇</span></a>
+      </div>
+    </section>
+  </nav>
+</aside>
+  <main class="main">
+    <header class="topbar">
+      <button class="menu-btn" id="menuBtn" aria-label="目录">☰</button>
+      <div class="crumbs"><a href="../index.html">首页</a><span>/</span><a href="../modules/langgraph.html">LangGraph 框架指南</a><span>/</span><span class="cur">第 9 章 复用与封装：子图</span></div>
+      <div class="topbar-actions">
+        <button class="icon-btn" id="themeBtn" title="切换深浅色" aria-label="切换深浅色">◐</button>
+      </div>
+    </header>
+    <div class="content">
+      <article class="article">
+
+<header class="page-head">
+  <div class="page-kicker">LangGraph 框架指南 · 第 09 章</div>
+  <h1 class="page-title">第 9 章 复用与封装：子图</h1>
+  <p class="page-desc">本章目标：把一张图变成另一个节点——掌握子图的两种嵌入方式（状态共享与状态转换），理解&quot;编译产物是 Runnable&quot;这句话在架构层面的真正威力。第 2 章埋下的伏笔，本章兑现</p>
+  <div class="page-meta">
+    <span>约 16 分钟</span><span>6,538 字</span><span>4 个代码示例</span>
+  </div>
+</header>
+<div class="md"><blockquote>
+<p>本章目标：把一张图变成另一个节点——掌握子图的两种嵌入方式（状态共享与状态转换），理解"编译产物是 Runnable"这句话在架构层面的真正威力。第 2 章埋下的伏笔，本章兑现。</p>
+</blockquote>
+<h2 id="91-当同样的流程要用第二次">9.1 当同样的流程要用第二次</h2>
+<p>系统演进到现在，<code>evaluate</code>（单份评估）已经是一张五脏俱全的小图：解析、工具循环、打分。新的需求来了：</p>
+<blockquote>
+<p>「深度评估」要复用整套评估流程；「快速预筛」要用它的前半段；下个季度上线的「人才库盘点」还要用它。</p>
+</blockquote>
+<p>你面临三个选择：</p>
+<ol>
+<li><strong>把逻辑抽成普通函数</strong>——但函数进不了图：无法单独观测、无法单独持久化、无法参与 Send 扇出</li>
+<li><strong>复制粘贴一份改改</strong>——从此两个版本各自腐化</li>
+<li><strong>把整张图打包成一个节点</strong>——LangGraph 原生支持</li>
+</ol>
+<p>第 3 个选择就是子图。它的可行性来自第 2 章的一个事实：<strong>编译产物实现了 Runnable 协议，而节点可以接收任何 Runnable</strong>。所以"把一张图注册为另一张图的节点"不需要任何新机制——<code>add_node("evaluate", evaluate_graph)</code> 就够了。</p>
+<p>但这只是最表层的用法。子图真正的核心议题是：<strong>外图和子图的状态怎么对接？</strong> 两种模式，语义截然不同。</p>
+<h2 id="92-两种嵌入模式总览">9.2 两种嵌入模式总览</h2>
+<div class="mermaid" data-code="flowchart TB
+    subgraph 模式A[模式一：状态共享]
+        PS[父图状态] ---|同一个状态对象| SG1[子图直接读写]
+    end
+    subgraph 模式B[模式二：状态转换]
+        PS2[父图状态] --&gt;|入参映射| SG2[子图独立状态]
+        SG2 --&gt;|返回值映射| PS2
+    end">flowchart TB
+    subgraph 模式A[模式一：状态共享]
+        PS[父图状态] ---|同一个状态对象| SG1[子图直接读写]
+    end
+    subgraph 模式B[模式二：状态转换]
+        PS2[父图状态] --&gt;|入参映射| SG2[子图独立状态]
+        SG2 --&gt;|返回值映射| PS2
+    end</div>
+<ul>
+<li><strong>模式一（状态共享）</strong>：子图与父图使用<strong>同一个状态 schema</strong>（或子图 schema 是父图 schema 的子集）。子图节点直接读写父图状态——父子之间不传参，共享一块黑板。</li>
+<li><strong>模式二（状态转换）</strong>：子图有<strong>自己独立的状态 schema</strong>。它作为节点被调用时接收父图状态，运行完把自己的最终状态返回给父图合并。需要写胶水代码做字段映射。</li>
+</ul>
+<p>选择标准一句话：<strong>想要"透明协作"选模式一（父子共谋一块状态）；想要"独立封装"选模式二（子图是黑盒组件）</strong>。</p>
+<h2 id="93-模式一状态共享子图">9.3 模式一：状态共享子图</h2>
+<p>需求：把"报告生成"做成可复用子图，供主流程在多处调用。父子共用同一个状态 schema：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Annotated</span><span class="p">,</span> <span class="n">TypedDict</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">operator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langgraph.graph</span><span class="w"> </span><span class="kn">import</span> <span class="n">StateGraph</span><span class="p">,</span> <span class="n">START</span><span class="p">,</span> <span class="n">END</span>
+
+<span class="c1"># ---- 共享的状态 schema：父图与子图都用它 ----</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ScreenState</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
+    <span class="n">resume_text</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">candidate</span><span class="p">:</span> <span class="nb">dict</span>
+    <span class="n">score</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">operator</span><span class="o">.</span><span class="n">add</span><span class="p">]</span>
+    <span class="n">breakdown</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">operator</span><span class="o">.</span><span class="n">add</span><span class="p">]</span>
+    <span class="n">report</span><span class="p">:</span> <span class="nb">str</span>                       <span class="c1"># 由报告子图填写</span>
+
+<span class="c1"># ---- 子图：报告生成（复用单元） ----</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">outline</span><span class="p">(</span><span class="n">state</span><span class="p">:</span> <span class="n">ScreenState</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">"breakdown"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"报告大纲：总分 + 明细 + 建议"</span><span class="p">]}</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">compose</span><span class="p">(</span><span class="n">state</span><span class="p">:</span> <span class="n">ScreenState</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="n">report</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="sa">f</span><span class="s2">"候选人 </span><span class="si">{</span><span class="n">state</span><span class="p">[</span><span class="s1">'candidate'</span><span class="p">][</span><span class="s1">'name'</span><span class="p">]</span><span class="si">}</span><span class="s2"> 总分 </span><span class="si">{</span><span class="n">state</span><span class="p">[</span><span class="s1">'score'</span><span class="p">]</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">state</span><span class="p">[</span><span class="s2">"breakdown"</span><span class="p">])</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">"report"</span><span class="p">:</span> <span class="n">report</span><span class="p">}</span>
+
+<span class="n">report_builder</span> <span class="o">=</span> <span class="n">StateGraph</span><span class="p">(</span><span class="n">ScreenState</span><span class="p">)</span>
+<span class="n">report_builder</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="s2">"outline"</span><span class="p">,</span> <span class="n">outline</span><span class="p">)</span>
+<span class="n">report_builder</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="s2">"compose"</span><span class="p">,</span> <span class="n">compose</span><span class="p">)</span>
+<span class="n">report_builder</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="n">START</span><span class="p">,</span> <span class="s2">"outline"</span><span class="p">)</span>
+<span class="n">report_builder</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="s2">"outline"</span><span class="p">,</span> <span class="s2">"compose"</span><span class="p">)</span>
+<span class="n">report_builder</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="s2">"compose"</span><span class="p">,</span> <span class="n">END</span><span class="p">)</span>
+<span class="n">report_graph</span> <span class="o">=</span> <span class="n">report_builder</span><span class="o">.</span><span class="n">compile</span><span class="p">()</span>      <span class="c1"># 子图：编译一次，处处复用</span>
+
+<span class="c1"># ---- 父图：主评估流程 ----</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">evaluate</span><span class="p">(</span><span class="n">state</span><span class="p">:</span> <span class="n">ScreenState</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">state</span><span class="p">[</span><span class="s2">"candidate"</span><span class="p">]</span>
+    <span class="n">score</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">20</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">c</span><span class="p">[</span><span class="s2">"skills"</span><span class="p">])</span> <span class="o">*</span> <span class="mi">10</span> <span class="o">+</span> <span class="n">c</span><span class="p">[</span><span class="s2">"years"</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">"score"</span><span class="p">:</span> <span class="n">score</span><span class="p">,</span> <span class="s2">"breakdown"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"技能匹配良好"</span><span class="p">]}</span>
+
+<span class="n">builder</span> <span class="o">=</span> <span class="n">StateGraph</span><span class="p">(</span><span class="n">ScreenState</span><span class="p">)</span>
+<span class="n">builder</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="s2">"evaluate"</span><span class="p">,</span> <span class="n">evaluate</span><span class="p">)</span>
+<span class="n">builder</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="s2">"generate_report"</span><span class="p">,</span> <span class="n">report_graph</span><span class="p">)</span>   <span class="c1"># 直接把子图当节点注册！</span>
+<span class="n">builder</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="n">START</span><span class="p">,</span> <span class="s2">"evaluate"</span><span class="p">)</span>
+<span class="n">builder</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="s2">"evaluate"</span><span class="p">,</span> <span class="s2">"generate_report"</span><span class="p">)</span>
+<span class="n">builder</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="s2">"generate_report"</span><span class="p">,</span> <span class="n">END</span><span class="p">)</span>
+<span class="n">main_graph</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">compile</span><span class="p">()</span>
+
+<span class="n">result</span> <span class="o">=</span> <span class="n">main_graph</span><span class="o">.</span><span class="n">invoke</span><span class="p">({</span>
+    <span class="s2">"resume_text"</span><span class="p">:</span> <span class="s2">"..."</span><span class="p">,</span>
+    <span class="s2">"candidate"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"name"</span><span class="p">:</span> <span class="s2">"李思远"</span><span class="p">,</span> <span class="s2">"skills"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"Python"</span><span class="p">,</span> <span class="s2">"FastAPI"</span><span class="p">,</span> <span class="s2">"PostgreSQL"</span><span class="p">],</span> <span class="s2">"years"</span><span class="p">:</span> <span class="mi">6</span><span class="p">},</span>
+<span class="p">})</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s2">"report"</span><span class="p">])</span>
+<span class="c1"># 候选人 李思远 总分 68</span>
+<span class="c1"># 技能匹配良好</span>
+<span class="c1"># 报告大纲：总分 + 明细 + 建议</span>
+</code></pre></div>
+<p>注意子图内部的微妙之处：<code>outline</code> 向 <code>breakdown</code>（reducer 字段）追加了一条；<code>compose</code> 读到的 <code>breakdown</code> 已包含父图里 <code>evaluate</code> 写入的内容——<strong>子图节点看到的就是父图的实时状态</strong>。没有入参出参、没有字段映射，一块黑板大家共用。</p>
+<p>代价也在这里：子图与父图的状态 schema 耦死了。父图哪天重构字段名，子图跟着改；子图也没法复用到状态 schema 不同的图里。<strong>模式一是用耦合换简洁</strong>。</p>
+<h2 id="94-模式二状态转换子图黑盒封装">9.4 模式二：状态转换子图（黑盒封装）</h2>
+<p>需求变了：报告子图要沉淀为团队公共组件，谁的状态 schema 都不能假设。这时子图定义自己的状态，由一个<strong>包装函数</strong>负责父子之间的翻译：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Annotated</span><span class="p">,</span> <span class="n">TypedDict</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">operator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langgraph.graph</span><span class="w"> </span><span class="kn">import</span> <span class="n">StateGraph</span><span class="p">,</span> <span class="n">START</span><span class="p">,</span> <span class="n">END</span>
+
+<span class="c1"># ---- 子图：完全独立的状态 schema（黑盒） ----</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ReportInput</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">score</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">highlights</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">ReportState</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>        <span class="c1"># 子图内部状态</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">score</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">highlights</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+    <span class="n">report</span><span class="p">:</span> <span class="nb">str</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">compose</span><span class="p">(</span><span class="n">state</span><span class="p">:</span> <span class="n">ReportState</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="n">report</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">state</span><span class="p">[</span><span class="s1">'name'</span><span class="p">]</span><span class="si">}</span><span class="s2"> 总分 </span><span class="si">{</span><span class="n">state</span><span class="p">[</span><span class="s1">'score'</span><span class="p">]</span><span class="si">}</span><span class="s2">："</span> <span class="o">+</span> <span class="s2">"；"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">state</span><span class="p">[</span><span class="s2">"highlights"</span><span class="p">])</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">"report"</span><span class="p">:</span> <span class="n">report</span><span class="p">}</span>
+
+<span class="n">report_builder</span> <span class="o">=</span> <span class="n">StateGraph</span><span class="p">(</span><span class="n">ReportState</span><span class="p">)</span>
+<span class="n">report_builder</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="s2">"compose"</span><span class="p">,</span> <span class="n">compose</span><span class="p">)</span>
+<span class="n">report_builder</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="n">START</span><span class="p">,</span> <span class="s2">"compose"</span><span class="p">)</span>
+<span class="n">report_builder</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="s2">"compose"</span><span class="p">,</span> <span class="n">END</span><span class="p">)</span>
+<span class="n">report_graph</span> <span class="o">=</span> <span class="n">report_builder</span><span class="o">.</span><span class="n">compile</span><span class="p">()</span>
+
+<span class="c1"># ---- 包装函数：父子状态翻译层 ----</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">generate_report</span><span class="p">(</span><span class="n">state</span><span class="p">:</span> <span class="n">ScreenState</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="c1"># 父图状态 → 子图输入</span>
+    <span class="n">sub_input</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">"name"</span><span class="p">:</span> <span class="n">state</span><span class="p">[</span><span class="s2">"candidate"</span><span class="p">][</span><span class="s2">"name"</span><span class="p">],</span>
+        <span class="s2">"score"</span><span class="p">:</span> <span class="n">state</span><span class="p">[</span><span class="s2">"score"</span><span class="p">],</span>
+        <span class="s2">"highlights"</span><span class="p">:</span> <span class="n">state</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"breakdown"</span><span class="p">,</span> <span class="p">[]),</span>
+    <span class="p">}</span>
+    <span class="n">sub_result</span> <span class="o">=</span> <span class="n">report_graph</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span><span class="n">sub_input</span><span class="p">)</span>     <span class="c1"># 子图作为普通 Runnable 调用</span>
+    <span class="c1"># 子图输出 → 父图补丁</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">"report"</span><span class="p">:</span> <span class="n">sub_result</span><span class="p">[</span><span class="s2">"report"</span><span class="p">]}</span>
+
+<span class="c1"># ---- 父图：与 9.3 相同的组装方式 ----</span>
+<span class="n">builder</span> <span class="o">=</span> <span class="n">StateGraph</span><span class="p">(</span><span class="n">ScreenState</span><span class="p">)</span>
+<span class="n">builder</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="s2">"evaluate"</span><span class="p">,</span> <span class="n">evaluate</span><span class="p">)</span>              <span class="c1"># evaluate 与 9.3 相同</span>
+<span class="n">builder</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="s2">"generate_report"</span><span class="p">,</span> <span class="n">generate_report</span><span class="p">)</span>  <span class="c1"># 注册的是包装函数</span>
+<span class="n">builder</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="n">START</span><span class="p">,</span> <span class="s2">"evaluate"</span><span class="p">)</span>
+<span class="n">builder</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="s2">"evaluate"</span><span class="p">,</span> <span class="s2">"generate_report"</span><span class="p">)</span>
+<span class="n">builder</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="s2">"generate_report"</span><span class="p">,</span> <span class="n">END</span><span class="p">)</span>
+<span class="n">main_graph</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">compile</span><span class="p">()</span>
+
+<span class="n">result</span> <span class="o">=</span> <span class="n">main_graph</span><span class="o">.</span><span class="n">invoke</span><span class="p">({</span>
+    <span class="s2">"resume_text"</span><span class="p">:</span> <span class="s2">"..."</span><span class="p">,</span>
+    <span class="s2">"candidate"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"name"</span><span class="p">:</span> <span class="s2">"李思远"</span><span class="p">,</span> <span class="s2">"skills"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"Python"</span><span class="p">,</span> <span class="s2">"FastAPI"</span><span class="p">,</span> <span class="s2">"PostgreSQL"</span><span class="p">],</span> <span class="s2">"years"</span><span class="p">:</span> <span class="mi">6</span><span class="p">},</span>
+<span class="p">})</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s2">"report"</span><span class="p">])</span>
+<span class="c1"># 李思远 总分 68：技能匹配良好</span>
+</code></pre></div>
+<p>包装函数内部就是一次普通的 <code>invoke</code>——子图从头到尾只是一个 Runnable。两个方向的映射（父→子的入参构造、子→父的补丁构造）都显式写在包装函数里，一眼可见。</p>
+<p>这个模式的威力在于<strong>子图彻底解耦</strong>：<code>ReportState</code> 是子图的私事，父图根本不知道 <code>highlights</code> 的存在。团队可以把报告子图发布成独立包，任何项目拿来就嵌。</p>
+<p>两种模式的取舍总结：</p>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>模式一：状态共享</th>
+<th>模式二：状态转换</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>状态关系</td>
+<td>同一块黑板</td>
+<td>各自独立 + 翻译层</td>
+</tr>
+<tr>
+<td>胶水代码</td>
+<td>零</td>
+<td>包装函数两个方向的映射</td>
+</tr>
+<tr>
+<td>耦合度</td>
+<td>高（schema 绑定）</td>
+<td>低（黑盒）</td>
+</tr>
+<tr>
+<td>复用范围</td>
+<td>同 schema 的图</td>
+<td>任意项目</td>
+</tr>
+<tr>
+<td>适用</td>
+<td>流程内部分阶段</td>
+<td>沉淀公共组件</td>
+</tr>
+</tbody>
+</table>
+<h2 id="95-子图与持久化一层一个账本">9.5 子图与持久化：一层一个账本</h2>
+<p>先埋一个伏笔（第 12 章展开）：启用 Checkpointer 后，父图与子图<strong>各自维护自己的检查点历史</strong>。子图作为节点运行时，父图记录"子图节点完成"，子图内部则有自己的逐节点记录。这带来一个实际问题：父图状态里看不到子图内部的中间字段（模式二下尤其如此——子图状态根本不进父图）。</p>
+<p>由此推出一条设计纪律：<strong>父子边界上放"最终产物"，子图内部细节留在子图里</strong>。模式一的共享状态下，子图往共享状态写的每个字段都会漏到父图层面——如果这让父图状态变得嘈杂，说明该考虑模式二了。</p>
+<h2 id="96-子图的流向逃逸commandgraphcommandparent进阶">9.6 子图的流向逃逸：Command(graph=Command.PARENT)（进阶）</h2>
+<p>第 6 章预告过 <code>Command(graph=Command.PARENT)</code>，现在有了上下文可以讲清楚。</p>
+<p>默认情况下，子图节点返回的 <code>Command(goto=...)</code> 只在<strong>子图内部</strong>跳转——子图的边界像一堵墙，goto 出不去。但某些架构（第 10 章多 Agent 的"子图抢过控制权"模式）需要子图直接改写父图的流向：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langgraph.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">Command</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">subgraph_node</span><span class="p">(</span><span class="n">state</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Command</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">Command</span><span class="p">(</span>
+        <span class="n">update</span><span class="o">=</span><span class="p">{</span><span class="s2">"report"</span><span class="p">:</span> <span class="s2">"..."</span><span class="p">},</span>
+        <span class="n">goto</span><span class="o">=</span><span class="s2">"next_main_node"</span><span class="p">,</span>              <span class="c1"># 目标是父图的节点名</span>
+        <span class="n">graph</span><span class="o">=</span><span class="n">Command</span><span class="o">.</span><span class="n">PARENT</span><span class="p">,</span>               <span class="c1"># 关键：跳转作用于父图层</span>
+    <span class="p">)</span>
+</code></pre></div>
+<p><code>graph=Command.PARENT</code> 声明"这条 goto 逃出当前层，作用于父图"。用得极少，但一旦读到别人的多 Agent 代码里出现它，要知道它在解决什么问题——<strong>层级间的控制权移交</strong>。</p>
+<h2 id="常见坑与排错">常见坑与排错</h2>
+<ol>
+<li>
+<p><strong>模式一忘了共享 schema 的前提</strong>。子图 schema 与父图不一致却按模式一嵌入（无包装函数），运行时会因为字段缺失而炸。症状：子图节点里 <code>KeyError</code>，而且父图状态里明明有这个字段——那是父图 schema 里有、子图 schema 里没有。模式一的前提是"子图 schema ⊆ 父图 schema"。</p>
+</li>
+<li>
+<p><strong>模式二里把子图直接 add_node 而忘了包装</strong>。子图有自己的 schema，直接注册会导致父图状态原样传给子图——字段对不上，炸在子图入口。独立 schema 的子图必须经过包装函数翻译。</p>
+</li>
+<li>
+<p><strong>子图里改了 reducer 字段，父图却没感知</strong>。模式一下这其实是正常特性（共享黑板），但如果你以为子图是黑盒、没意识到 breakdown 被追加了，排查时会困惑"这个字段怎么多了一条"。共享模式下，子图的每次写入都是父图可见的全局副作用——这既是特性也是风险。</p>
+</li>
+<li>
+<p><strong>子图编译产物每次调用重新 compile</strong>。包装函数里写 <code>StateGraph(...).compile()</code>（每次 invoke 都编译）是性能黑洞。正确姿势：模块级编译一次（9.4 的 <code>report_graph</code> 定义在函数外），包装函数只做映射和调用。</p>
+</li>
+<li>
+<p><strong>子图与 Send 组合时的状态想象</strong>。Send 的载荷是"私有输入"，如果 Send 的目标是子图节点，子图拿到的是载荷（而非全局状态）——模式一的共享黑板前提被 Send 打破。Send + 子图几乎总是应当走模式二（子图本来就是输入/输出式的黑盒，天然适配 Send 的载荷语义）。</p>
+</li>
+<li>
+<p><strong>调试时忘记子图有独立边界</strong>。<code>stream</code> 的事件默认以"父图节点"粒度吐出，子图内部像被折叠了。要看子图内部明细，用 <code>subgraphs=True</code>（第 11 章会讲到）。</p>
+</li>
+</ol>
+<h2 id="动手练习">动手练习</h2>
+<ol>
+<li>
+<p>把第 8 章的 ReAct 评估图整体改造成子图，嵌入"批次评估"主图（第 7 章的结构：prepare → Send 扇出 → 汇总）。子图用哪种模式？写出你的选择理由再动手（提示：Send 载荷语义）。</p>
+</li>
+<li>
+<p>用模式一实现"复核子图"：内部两个节点（抽查关键字段、二次打分），被主图在 <code>evaluate</code> 之后调用。复核节点向 <code>breakdown</code> 追加"复核记录"。运行后检查父图最终状态里 breakdown 的完整内容，体会共享黑板的副作用。</p>
+</li>
+<li>
+<p>把 9.4 的报告子图改成异步版：包装函数 <code>async def</code>，内部 <code>await report_graph.ainvoke(...)</code>。验证父图整体用 <code>ainvoke</code> 调用时行为一致。思考：异步包装给第 5 章的"物理并行"带来了什么机会？</p>
+</li>
+</ol>
+<h2 id="本章速查">本章速查</h2>
+<table>
+<thead>
+<tr>
+<th>API / 概念</th>
+<th>一句话</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>子图的本质</td>
+<td>编译产物是 Runnable，因此可直接 <code>add_node</code> 注册</td>
+</tr>
+<tr>
+<td>模式一：状态共享</td>
+<td>父子共用一块状态黑板，零胶水、高耦合</td>
+</tr>
+<tr>
+<td>模式一前提</td>
+<td>子图 schema ⊆ 父图 schema</td>
+</tr>
+<tr>
+<td>模式二：状态转换</td>
+<td>子图独立 schema + 包装函数做双向映射，黑盒低耦合</td>
+</tr>
+<tr>
+<td>包装函数职责</td>
+<td>父状态→子输入的构造；子输出→父补丁的构造</td>
+</tr>
+<tr>
+<td>持久化边界</td>
+<td>父子各自记账，父图状态只放子图最终产物</td>
+</tr>
+<tr>
+<td><code>Command(graph=Command.PARENT)</code></td>
+<td>子图节点直接改写父图流向（层级控制权移交）</td>
+</tr>
+<tr>
+<td>选型口诀</td>
+<td>透明协作选共享，独立封装选转换</td>
+</tr>
+</tbody>
+</table></div>
+
+      </article>
+<nav class="pager"><a class="pg-card pg-prev" href="../langgraph/08-di-8-zhang-gei-tu-zhuang-shang-shou-jiao-gong.html"><span class="pg-label">← 上一篇</span><span class="pg-title">第 8 章 给图装上手脚：工具调用</span><span class="pg-mod">LangGraph 框架指南</span></a><a class="pg-card pg-next" href="../langgraph/10-di-10-zhang-cong-dan-tu-dao-tuan-dui-duo.html"><span class="pg-label">下一篇 →</span><span class="pg-title">第 10 章 从单图到团队：多 Agent 架构</span><span class="pg-mod">LangGraph 框架指南</span></a></nav>
+    </div>
+    <footer class="foot">
+      <span>深栈 DeepStack · AI Agent 工程师转型训练营配套文档</span>
+    </footer>
+  </main>
+<nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#91-当同样的流程要用第二次">9.1 当同样的流程要用第二次</a><a class="toc-link toc-h2" href="#92-两种嵌入模式总览">9.2 两种嵌入模式总览</a><a class="toc-link toc-h2" href="#93-模式一状态共享子图">9.3 模式一：状态共享子图</a><a class="toc-link toc-h2" href="#94-模式二状态转换子图黑盒封装">9.4 模式二：状态转换子图（黑盒封装）</a><a class="toc-link toc-h2" href="#95-子图与持久化一层一个账本">9.5 子图与持久化：一层一个账本</a><a class="toc-link toc-h2" href="#96-子图的流向逃逸commandgraphcommandparent进阶">9.6 子图的流向逃逸：Command(graph=Command.PARENT)（进阶）</a><a class="toc-link toc-h2" href="#常见坑与排错">常见坑与排错</a><a class="toc-link toc-h2" href="#动手练习">动手练习</a><a class="toc-link toc-h2" href="#本章速查">本章速查</a></nav>
+</div>
+<div class="sb-mask" id="sbMask"></div>
+<script src="../assets/app.js"></script>
+</body>
+</html>

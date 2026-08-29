@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>12 · 回调与调试（全课程收官章） · 深栈 DeepStack 课程文档</title>
+<meta name="description" content="本章配套可运行示例：demo/democallback.py。demo 里写了两个自定义回调——控制台计时器 + 文件日志器——一次挂到同一条荐书链上；Ollama 在线用真模型，离线自动换成内置假模型，钩子触发完全相同…">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%23d9c39a' text-anchor='middle'%3EDS%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+<div class="progress" id="progress"></div>
+
+<div class="layout">
+<aside class="sidebar" id="sidebar">
+  <div class="sb-head">
+    <a class="brand" href="../index.html">
+      <span class="brand-mark">DS</span>
+      <span class="brand-text"><b>深栈 DeepStack</b><i>AI Agent 工程师转型训练营</i></span>
+    </a>
+    <button class="sb-close" id="sbClose" aria-label="关闭目录">✕</button>
+  </div>
+  <div class="sb-search"><input type="search" id="searchInput" placeholder="搜索 123 篇文档… ( / )" autocomplete="off">
+    <div class="sb-results" id="searchResults"></div></div>
+  <nav class="sb-nav">
+    <section class="sb-group" data-mod="python">
+      <a class="sb-group-title" href="../modules/python.html" data-toggle="python">
+        <span class="sb-num">01</span>
+        <span class="sb-group-text"><b>Python 与数据实践</b><i>31 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../python/01-huan-jing-da-jian-yu-ban-ben-guan-li.html"><span class="sb-item-num">01</span><span class="sb-item-title">环境搭建与版本管理</span></a>
+        <a class="sb-item" href="../python/02-bian-liang-biao-da-shi-yu-liu-cheng-kong-zhi.html"><span class="sb-item-num">02</span><span class="sb-item-title">变量、表达式与流程控制</span></a>
+        <a class="sb-item" href="../python/03-xu-lie-zi-dian-yu-ji-he.html"><span class="sb-item-num">03</span><span class="sb-item-title">序列、字典与集合</span></a>
+        <a class="sb-item" href="../python/04-han-shu-she-ji-yu-lambda.html"><span class="sb-item-num">04</span><span class="sb-item-title">函数设计与 lambda</span></a>
+        <a class="sb-item" href="../python/05-zuo-yong-yu-gui-ze-yu-bi-bao.html"><span class="sb-item-num">05</span><span class="sb-item-title">作用域规则与闭包</span></a>
+        <a class="sb-item" href="../python/06-lei-de-ding-yi-yu-shi-li-hua.html"><span class="sb-item-num">06</span><span class="sb-item-title">类的定义与实例化</span></a>
+        <a class="sb-item" href="../python/07-lei-xing-pan-ding-yu-chou-xiang-ji-lei.html"><span class="sb-item-num">07</span><span class="sb-item-title">类型判定与抽象基类</span></a>
+        <a class="sb-item" href="../python/08-mo-shu-fang-fa-quan-jing.html"><span class="sb-item-num">08</span><span class="sb-item-title">魔术方法全景</span></a>
+        <a class="sb-item" href="../python/09-miao-shu-fu-yu-yuan-lei.html"><span class="sb-item-num">09</span><span class="sb-item-title">描述符与元类</span></a>
+        <a class="sb-item" href="../python/10-zhuang-shi-qi.html"><span class="sb-item-num">10</span><span class="sb-item-title">装饰器</span></a>
+        <a class="sb-item" href="../python/11-die-dai-xie-yi-yu-sheng-cheng-qi.html"><span class="sb-item-num">11</span><span class="sb-item-title">迭代协议与生成器</span></a>
+        <a class="sb-item" href="../python/12-with-yu-shang-xia-wen-xie-yi.html"><span class="sb-item-num">12</span><span class="sb-item-title">with 与上下文协议</span></a>
+        <a class="sb-item" href="../python/13-yi-chang-ti-xi-yu-chu-li.html"><span class="sb-item-num">13</span><span class="sb-item-title">异常体系与处理</span></a>
+        <a class="sb-item" href="../python/14-lei-xing-biao-zhu.html"><span class="sb-item-num">14</span><span class="sb-item-title">类型标注</span></a>
+        <a class="sb-item" href="../python/15-mo-kuai-yu-bao-de-zu-zhi.html"><span class="sb-item-num">15</span><span class="sb-item-title">模块与包的组织</span></a>
+        <a class="sb-item" href="../python/16-biao-zhun-ku-xun-li.html"><span class="sb-item-num">16</span><span class="sb-item-title">标准库巡礼</span></a>
+        <a class="sb-item" href="../python/17-yi-lai-guan-li-yu-di-san-fang-ku.html"><span class="sb-item-num">17</span><span class="sb-item-title">依赖管理与第三方库</span></a>
+        <a class="sb-item" href="../python/18-xian-cheng-yu-jin-cheng.html"><span class="sb-item-num">18</span><span class="sb-item-title">线程与进程</span></a>
+        <a class="sb-item" href="../python/19-shi-jian-xun-huan.html"><span class="sb-item-num">19</span><span class="sb-item-title">事件循环</span></a>
+        <a class="sb-item" href="../python/20-future-yu-xie-cheng.html"><span class="sb-item-num">20</span><span class="sb-item-title">Future 与协程</span></a>
+        <a class="sb-item" href="../python/21-asyncio-shi-zhan.html"><span class="sb-item-num">21</span><span class="sb-item-title">asyncio 实战</span></a>
+        <a class="sb-item" href="../python/22-gou-jian-yu-fa-bu.html"><span class="sb-item-num">22</span><span class="sb-item-title">构建与发布</span></a>
+        <a class="sb-item" href="../python/23-gong-cheng-hua-gong-ju-lian.html"><span class="sb-item-num">23</span><span class="sb-item-title">工程化工具链</span></a>
+        <a class="sb-item" href="../python/24-monorepo-yu-tiao-shi.html"><span class="sb-item-num">24</span><span class="sb-item-title">monorepo 与调试</span></a>
+        <a class="sb-item" href="../python/25-jupyter-jiao-hu-huan-jing.html"><span class="sb-item-num">25</span><span class="sb-item-title">Jupyter 交互环境</span></a>
+        <a class="sb-item" href="../python/26-numpy-shu-zu-yu-xiang-liang-hua.html"><span class="sb-item-num">26</span><span class="sb-item-title">NumPy 数组与向量化</span></a>
+        <a class="sb-item" href="../python/27-pandas-shu-ju-jie-gou.html"><span class="sb-item-num">27</span><span class="sb-item-title">Pandas 数据结构</span></a>
+        <a class="sb-item" href="../python/28-pandas-shu-ju-qing-xi.html"><span class="sb-item-num">28</span><span class="sb-item-title">Pandas 数据清洗</span></a>
+        <a class="sb-item" href="../python/29-matplotlib-hui-tu-ti-xi.html"><span class="sb-item-num">29</span><span class="sb-item-title">Matplotlib 绘图体系</span></a>
+        <a class="sb-item" href="../python/30-matplotlib-dong-hua-yu-jiao-hu.html"><span class="sb-item-num">30</span><span class="sb-item-title">Matplotlib 动画与交互</span></a>
+        <a class="sb-item" href="../python/31-seaborn-tong-ji-ke-shi-hua.html"><span class="sb-item-num">31</span><span class="sb-item-title">Seaborn 统计可视化</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="agent">
+      <a class="sb-group-title" href="../modules/agent.html" data-toggle="agent">
+        <span class="sb-num">02</span>
+        <span class="sb-group-text"><b>Agent 核心</b><i>15 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../agent/01-token-yu-ci-qian-ru.html"><span class="sb-item-num">01</span><span class="sb-item-title">Token 与词嵌入</span></a>
+        <a class="sb-item" href="../agent/02-qian-xiang-chuan-bo-yu-fan-xiang-chuan-bo.html"><span class="sb-item-num">02</span><span class="sb-item-title">前向传播与反向传播</span></a>
+        <a class="sb-item" href="../agent/03-zhu-yi-li-ji-zhi-yu-transformer-jia-gou.html"><span class="sb-item-num">03</span><span class="sb-item-title">注意力机制与 Transformer 架构</span></a>
+        <a class="sb-item" href="../agent/04-yu-xun-lian-rlhf-yu-cai-yang-kv-cache.html"><span class="sb-item-num">04</span><span class="sb-item-title">预训练、RLHF 与采样（KV Cache）</span></a>
+        <a class="sb-item" href="../agent/05-ben-di-mo-xing-yu-xiao-xi-jie-gou.html"><span class="sb-item-num">05</span><span class="sb-item-title">本地模型与消息结构</span></a>
+        <a class="sb-item" href="../agent/06-hui-hua-guan-li-yu-json-shu-chu.html"><span class="sb-item-num">06</span><span class="sb-item-title">会话管理与 JSON 输出</span></a>
+        <a class="sb-item" href="../agent/07-tool-calling-xie-yi-yu-feng-zhuang.html"><span class="sb-item-num">07</span><span class="sb-item-title">Tool Calling：协议与封装</span></a>
+        <a class="sb-item" href="../agent/08-react-mo-shi-yu-zhu-xun-huan.html"><span class="sb-item-num">08</span><span class="sb-item-title">ReAct 模式与主循环</span></a>
+        <a class="sb-item" href="../agent/09-shi-zhan-deep-research-agent.html"><span class="sb-item-num">09</span><span class="sb-item-title">实战：Deep Research Agent</span></a>
+        <a class="sb-item" href="../agent/10-skill-yu-jian-jin-shi-pi-lu.html"><span class="sb-item-num">10</span><span class="sb-item-title">Skill 与渐进式披露</span></a>
+        <a class="sb-item" href="../agent/11-mcp-quan-jing.html"><span class="sb-item-num">11</span><span class="sb-item-title">MCP 全景</span></a>
+        <a class="sb-item" href="../agent/12-duo-agent-yu-xuan-xing-ce-lve.html"><span class="sb-item-num">12</span><span class="sb-item-title">多 Agent 与选型策略</span></a>
+        <a class="sb-item" href="../agent/13-ti-shi-ci-gong-cheng-yu-shang-xia-wen-gong.html"><span class="sb-item-num">13</span><span class="sb-item-title">提示词工程与上下文工程</span></a>
+        <a class="sb-item" href="../agent/14-xun-huan-tu-yu-gu-jia-gong-cheng.html"><span class="sb-item-num">14</span><span class="sb-item-title">循环、图与骨架工程</span></a>
+        <a class="sb-item" href="../agent/15-ji-yi-quan-xian-yu-ping-ce.html"><span class="sb-item-num">15</span><span class="sb-item-title">记忆、权限与评测</span></a>
+      </div>
+    </section>
+    <section class="sb-group open" data-mod="langchain">
+      <a class="sb-group-title" href="../modules/langchain.html" data-toggle="langchain">
+        <span class="sb-num">03</span>
+        <span class="sb-group-text"><b>LangChain 指南</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langchain/01-ren-shi-langchain.html"><span class="sb-item-num">01</span><span class="sb-item-title">认识 LangChain</span></a>
+        <a class="sb-item" href="../langchain/02-ti-shi-ci-mu-ban-yu-xiao-xi.html"><span class="sb-item-num">02</span><span class="sb-item-title">提示词模板与消息</span></a>
+        <a class="sb-item" href="../langchain/03-lcel-yu-runnable.html"><span class="sb-item-num">03</span><span class="sb-item-title">LCEL 与 Runnable</span></a>
+        <a class="sb-item" href="../langchain/04-liu-shi-yu-bing-fa.html"><span class="sb-item-num">04</span><span class="sb-item-title">流式与并发</span></a>
+        <a class="sb-item" href="../langchain/05-shu-chu-jie-xi-qi.html"><span class="sb-item-num">05</span><span class="sb-item-title">输出解析器</span></a>
+        <a class="sb-item" href="../langchain/06-wen-dang-jia-zai-yu-qie-ge.html"><span class="sb-item-num">06</span><span class="sb-item-title">文档加载与切割</span></a>
+        <a class="sb-item" href="../langchain/07-qian-ru-yu-xiang-liang-ku.html"><span class="sb-item-num">07</span><span class="sb-item-title">嵌入与向量库</span></a>
+        <a class="sb-item" href="../langchain/08-jian-suo-yu-rag.html"><span class="sb-item-num">08</span><span class="sb-item-title">检索与RAG</span></a>
+        <a class="sb-item" href="../langchain/09-dui-hua-ji-yi.html"><span class="sb-item-num">09</span><span class="sb-item-title">对话记忆</span></a>
+        <a class="sb-item" href="../langchain/10-gong-ju-diao-yong.html"><span class="sb-item-num">10</span><span class="sb-item-title">工具调用</span></a>
+        <a class="sb-item" href="../langchain/11-agent.html"><span class="sb-item-num">11</span><span class="sb-item-title">Agent</span></a>
+        <a class="sb-item current" href="../langchain/12-hui-diao-yu-tiao-shi-quan-ke-cheng-shou-guan.html"><span class="sb-item-num">12</span><span class="sb-item-title">回调与调试（全课程收官章）</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="langgraph">
+      <a class="sb-group-title" href="../modules/langgraph.html" data-toggle="langgraph">
+        <span class="sb-num">04</span>
+        <span class="sb-group-text"><b>LangGraph 框架指南</b><i>17 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langgraph/01-di-1-zhang-cong-yi-ge-shi-kong-de-jiao.html"><span class="sb-item-num">01</span><span class="sb-item-title">第 1 章 从一个失控的脚本说起</span></a>
+        <a class="sb-item" href="../langgraph/02-di-2-zhang-zui-xiao-ke-yun-xing-tu.html"><span class="sb-item-num">02</span><span class="sb-item-title">第 2 章 最小可运行图</span></a>
+        <a class="sb-item" href="../langgraph/03-di-3-zhang-zhuang-tai-tu-de-shu-ju-xin.html"><span class="sb-item-num">03</span><span class="sb-item-title">第 3 章 状态：图的数据心脏</span></a>
+        <a class="sb-item" href="../langgraph/04-di-4-zhang-rang-liu-cheng-xue-hui-jue-ce.html"><span class="sb-item-num">04</span><span class="sb-item-title">第 4 章 让流程学会决策</span></a>
+        <a class="sb-item" href="../langgraph/05-di-5-zhang-bing-xing-shi-jie-chao-bu-zhi.html"><span class="sb-item-num">05</span><span class="sb-item-title">第 5 章 并行世界：超步执行模型</span></a>
+        <a class="sb-item" href="../langgraph/06-di-6-zhang-command-ba-kong-zhi-quan-jiao-jin.html"><span class="sb-item-num">06</span><span class="sb-item-title">第 6 章 Command：把控制权交进节点</span></a>
+        <a class="sb-item" href="../langgraph/07-di-7-zhang-dong-tai-bing-xing-send-yu-mapreduce.html"><span class="sb-item-num">07</span><span class="sb-item-title">第 7 章 动态并行：Send 与 MapReduce</span></a>
+        <a class="sb-item" href="../langgraph/08-di-8-zhang-gei-tu-zhuang-shang-shou-jiao-gong.html"><span class="sb-item-num">08</span><span class="sb-item-title">第 8 章 给图装上手脚：工具调用</span></a>
+        <a class="sb-item" href="../langgraph/09-di-9-zhang-fu-yong-yu-feng-zhuang-zi-tu.html"><span class="sb-item-num">09</span><span class="sb-item-title">第 9 章 复用与封装：子图</span></a>
+        <a class="sb-item" href="../langgraph/10-di-10-zhang-cong-dan-tu-dao-tuan-dui-duo.html"><span class="sb-item-num">10</span><span class="sb-item-title">第 10 章 从单图到团队：多 Agent 架构</span></a>
+        <a class="sb-item" href="../langgraph/11-di-11-zhang-liu-shi-shu-chu.html"><span class="sb-item-num">11</span><span class="sb-item-title">第 11 章 流式输出</span></a>
+        <a class="sb-item" href="../langgraph/12-di-12-zhang-chi-jiu-hua-checkpointer-yu-xian-cheng.html"><span class="sb-item-num">12</span><span class="sb-item-title">第 12 章 持久化：Checkpointer 与线程</span></a>
+        <a class="sb-item" href="../langgraph/13-di-13-zhang-shi-jian-lv-xing.html"><span class="sb-item-num">13</span><span class="sb-item-title">第 13 章 时间旅行</span></a>
+        <a class="sb-item" href="../langgraph/14-di-14-zhang-zhong-duan-yu-ren-zai-hui-lu.html"><span class="sb-item-num">14</span><span class="sb-item-title">第 14 章 中断与人在回路</span></a>
+        <a class="sb-item" href="../langgraph/15-di-15-zhang-ji-yi-guan-li.html"><span class="sb-item-num">15</span><span class="sb-item-title">第 15 章 记忆管理</span></a>
+        <a class="sb-item" href="../langgraph/16-di-16-zhang-rong-cuo-zhong-shi-chao-shi-yu.html"><span class="sb-item-num">16</span><span class="sb-item-title">第 16 章 容错：重试、超时与兜底</span></a>
+        <a class="sb-item" href="../langgraph/17-di-17-zhang-quan-jing-hui-gu.html"><span class="sb-item-num">17</span><span class="sb-item-title">第 17 章 全景回顾</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="backend">
+      <a class="sb-group-title" href="../modules/backend.html" data-toggle="backend">
+        <span class="sb-num">05</span>
+        <span class="sb-group-text"><b>Python 框架指南</b><i>14 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../backend/01-fastapi-ru-men-yu-asgi.html"><span class="sb-item-num">01</span><span class="sb-item-title">FastAPI 入门与 ASGI</span></a>
+        <a class="sb-item" href="../backend/02-lu-you-yu-qing-qiu-xiang-ying.html"><span class="sb-item-num">02</span><span class="sb-item-title">路由与请求响应</span></a>
+        <a class="sb-item" href="../backend/03-pydantic-shu-ju-jiao-yan-yu-pei-zhi.html"><span class="sb-item-num">03</span><span class="sb-item-title">Pydantic 数据校验与配置</span></a>
+        <a class="sb-item" href="../backend/04-sqlalchemy-yi-bu-yin-qing-yu-hui-hua.html"><span class="sb-item-num">04</span><span class="sb-item-title">SQLAlchemy 异步引擎与会话</span></a>
+        <a class="sb-item" href="../backend/05-orm-jian-mo.html"><span class="sb-item-num">05</span><span class="sb-item-title">ORM 建模</span></a>
+        <a class="sb-item" href="../backend/06-sql-biao-da-shi-yu-shu-ju-cao-zuo.html"><span class="sb-item-num">06</span><span class="sb-item-title">SQL 表达式与数据操作</span></a>
+        <a class="sb-item" href="../backend/07-alembic-shu-ju-qian-yi.html"><span class="sb-item-num">07</span><span class="sb-item-title">Alembic 数据迁移</span></a>
+        <a class="sb-item" href="../backend/08-yi-lai-zhu-ru.html"><span class="sb-item-num">08</span><span class="sb-item-title">依赖注入</span></a>
+        <a class="sb-item" href="../backend/09-tong-yi-yi-chang-chu-li.html"><span class="sb-item-num">09</span><span class="sb-item-title">统一异常处理</span></a>
+        <a class="sb-item" href="../backend/10-zhong-jian-jian.html"><span class="sb-item-num">10</span><span class="sb-item-title">中间件</span></a>
+        <a class="sb-item" href="../backend/11-ren-zheng-yu-jwt.html"><span class="sb-item-num">11</span><span class="sb-item-title">认证与 JWT</span></a>
+        <a class="sb-item" href="../backend/12-pytest-ce-shi.html"><span class="sb-item-num">12</span><span class="sb-item-title">pytest 测试</span></a>
+        <a class="sb-item" href="../backend/13-ri-zhi-loguru.html"><span class="sb-item-num">13</span><span class="sb-item-title">日志 loguru</span></a>
+        <a class="sb-item" href="../backend/14-liu-shi-xiang-ying-sse-yu-websocket.html"><span class="sb-item-num">14</span><span class="sb-item-title">流式响应 SSE 与 WebSocket</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="interview">
+      <a class="sb-group-title" href="../modules/interview.html" data-toggle="interview">
+        <span class="sb-num">06</span>
+        <span class="sb-group-text"><b>面试题库</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../interview/01-llm-yuan-li-pian.html"><span class="sb-item-num">01</span><span class="sb-item-title">LLM 原理篇</span></a>
+        <a class="sb-item" href="../interview/02-rag-yu-jian-suo-pian.html"><span class="sb-item-num">02</span><span class="sb-item-title">RAG 与检索篇</span></a>
+        <a class="sb-item" href="../interview/03-agent-he-xin-pian.html"><span class="sb-item-num">03</span><span class="sb-item-title">Agent 核心篇</span></a>
+        <a class="sb-item" href="../interview/04-langgraph-pian.html"><span class="sb-item-num">04</span><span class="sb-item-title">LangGraph 篇</span></a>
+        <a class="sb-item" href="../interview/05-langchain-pian.html"><span class="sb-item-num">05</span><span class="sb-item-title">LangChain 篇</span></a>
+        <a class="sb-item" href="../interview/06-xi-tong-she-ji-pian.html"><span class="sb-item-num">06</span><span class="sb-item-title">系统设计篇</span></a>
+        <a class="sb-item" href="../interview/07-xiang-mu-shen-wa-pian.html"><span class="sb-item-num">07</span><span class="sb-item-title">项目深挖篇</span></a>
+        <a class="sb-item" href="../interview/08-gu-zhang-pai-cha-pian.html"><span class="sb-item-num">08</span><span class="sb-item-title">故障排查篇</span></a>
+        <a class="sb-item" href="../interview/09-python-ji-chu-pian.html"><span class="sb-item-num">09</span><span class="sb-item-title">Python 基础篇</span></a>
+        <a class="sb-item" href="../interview/10-fastapi-yu-hou-duan-pian.html"><span class="sb-item-num">10</span><span class="sb-item-title">FastAPI 与后端篇</span></a>
+        <a class="sb-item" href="../interview/11-ti-shi-ci-gong-cheng-yu-an-quan-pian.html"><span class="sb-item-num">11</span><span class="sb-item-title">提示词工程与安全篇</span></a>
+        <a class="sb-item" href="../interview/12-mo-xing-xuan-xing-yu-jiang-ben-pian.html"><span class="sb-item-num">12</span><span class="sb-item-title">模型选型与降本篇</span></a>
+      </div>
+    </section>
+  </nav>
+</aside>
+  <main class="main">
+    <header class="topbar">
+      <button class="menu-btn" id="menuBtn" aria-label="目录">☰</button>
+      <div class="crumbs"><a href="../index.html">首页</a><span>/</span><a href="../modules/langchain.html">LangChain 指南</a><span>/</span><span class="cur">回调与调试（全课程收官章）</span></div>
+      <div class="topbar-actions">
+        <button class="icon-btn" id="themeBtn" title="切换深浅色" aria-label="切换深浅色">◐</button>
+      </div>
+    </header>
+    <div class="content">
+      <article class="article">
+
+<header class="page-head">
+  <div class="page-kicker">LangChain 指南 · 第 12 章</div>
+  <h1 class="page-title">回调与调试（全课程收官章）</h1>
+  <p class="page-desc">本章配套可运行示例：demo/democallback.py。demo 里写了两个自定义回调——控制台计时器 + 文件日志器——一次挂到同一条荐书链上；Ollama 在线用真模型，离线自动换成内置假模型，钩子触发完全相同…</p>
+  <div class="page-meta">
+    <span>约 45 分钟</span><span>18,183 字</span><span>14 个代码示例</span>
+  </div>
+</header>
+<div class="md"><blockquote>
+<p>本章配套可运行示例：<a href="../code/langchain/12--hui-diao-yu-tiao-shi/demo/demo_callback.py">demo/demo_callback.py</a>。demo 里写了两个自定义回调——控制台计时器 + 文件日志器——一次挂到同一条荐书链上；Ollama 在线用真模型，离线自动换成内置假模型，<strong>钩子触发完全相同</strong>（回调挂的是「事件」，不是某个具体模型），离线也能完整跑通。运行后还会在 <code>demo/</code> 目录生成 <code>callback_run.log</code>，亲眼看到文件日志回调写了什么。</p>
+<p><strong>本章你将学会</strong></p>
+<ul>
+<li>回调机制：<code>BaseCallbackHandler</code> 的生命周期钩子——<code>on_chain_start</code> / <code>on_chat_model_start</code> / <code>on_llm_new_token</code> / <code>on_llm_end</code> / <code>on_tool_start</code> 等，链上每个环节的一举一动都能被你听见</li>
+<li>一个必踩的坑：<strong>聊天模型触发的是 <code>on_chat_model_start</code>，不是 <code>on_llm_start</code></strong>——只写后者，挂在 <code>ChatOllama</code> 上一个事件都收不到</li>
+<li><code>callbacks</code> 参数挂载：调用时传、构造时传、一次挂多个（多回调并存）</li>
+<li>两个实用回调：控制台计时回调（哪一步慢了一目了然）、文件日志回调（输入输出追加写进日志文件）</li>
+<li><code>run_id</code> / <code>parent_run_id</code>：从一串 UUID 里读出整棵「执行树」</li>
+<li>调试三件套：<code>set_debug(True)</code> 全局开关（顺带说清 <code>verbose</code> 和环境变量在 1.x 的现状）、<code>astream_events</code> 事件流、以及一张「什么时候用哪个」的选择地图</li>
+<li>全课程收官：12 章知识地图、从模板到 Agent 的主线串讲、后续学习方向（LangGraph / LangSmith / 真实项目）</li>
+</ul>
+</blockquote>
+<p>上一章（<a href="../langchain/11-agent.html">11 · Agent</a>）收尾时，拾光书屋的 AI 店员已经全须全尾：会荐书（02-05 章）、懂店里的私货（06-08 章）、记得住聊过什么（09 章）、有手脚能查库存算折扣（10 章）、还能自己排工序（11 章）。然后它上线了。</p>
+<p>上线第三天，你收到两条反馈：<strong>「有时候要干等二十秒」</strong>、<strong>「有次回答纯属胡编」</strong>。你打开代码——<code>prompt | model | parser</code>，或者一整个 Agent——中间发生了什么，一行日志都没有。链是一个黑盒：进去一个问题，出来一个答案，慢在哪一步、错在哪一环，全靠猜。</p>
+<p><a href="../langchain/04-liu-shi-yu-bing-fa.html">第 04 章</a>我们给链上过三张保险单：<code>with_fallbacks</code> 换备胎、<code>with_retry</code> 再敲两下门、超时拔电源。但那些都是「出了事之后怎么办」——<strong>事发现场没有目击者</strong>。本章的回调（callback）补上这块：它是 LangChain 里<strong>最底层的观测机制</strong>——任何一个 Runnable（模型、链、工具、检索器）跑起来的每一步，都会向外广播事件；你只要写一个「接收器」挂上去，就能在现场听见一切。</p>
+<p><strong>比喻</strong>：把链想成一条流水线。04 章的 fallback/retry 是流水线尽头的<strong>保险丝</strong>——炸了知道换备用线；回调是给每个工位装<strong>监控探头</strong>——哪个工位开工了、干了几秒、交出什么货、中途有没有摔东西，实时传到你的监控室。保险丝管善后，探头管现场，一个都不能少。</p>
+<p>顺带一提：本章也是全课程的最后一章。回调这个「旁观一切」的视角，恰好是把前面 11 章串起来复盘的最佳观景台——收官内容放在第 6 节。</p>
+<p><strong>技术基线</strong>：Python + LangChain 1.x（<code>langchain</code> + <code>langchain-ollama</code>），本地 Ollama 跑 <code>qwen3:4b</code>。没装的话回 01 章看环境准备。本章多数示例<strong>不需要模型</strong>也能跑（回调机制与模型无关），demo 离线可运行。</p>
+<hr />
+<h2 id="1-回调是什么给流水线的每个工位装探头">1. 回调是什么：给流水线的每个工位装探头</h2>
+<p><strong>作用</strong>：不改动链的任何一行代码，把「执行过程」变成可观测的。你在 <code>invoke</code> / <code>stream</code> 时往 <code>config</code> 里塞一个回调对象，框架在关键节点上自动调用你的钩子方法。</p>
+<p><strong>核心类</strong>：<code>BaseCallbackHandler</code>（<code>from langchain_core.callbacks import BaseCallbackHandler</code>）。它本身所有钩子都是空方法，你继承它、覆写关心的那几个，其余的保持沉默。</p>
+<p><strong>最小示例</strong>——一个「什么都记」的回调，挂到 03 章的老朋友荐书链上（本例不需要真模型，用一个内置的假模型代替，钩子触发与真模型完全一致）：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">uuid</span><span class="w"> </span><span class="kn">import</span> <span class="n">UUID</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.callbacks</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseCallbackHandler</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.language_models.fake_chat_models</span><span class="w"> </span><span class="kn">import</span> <span class="n">GenericFakeChatModel</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.messages</span><span class="w"> </span><span class="kn">import</span> <span class="n">AIMessage</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.output_parsers</span><span class="w"> </span><span class="kn">import</span> <span class="n">StrOutputParser</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.prompts</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChatPromptTemplate</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">EchoHandler</span><span class="p">(</span><span class="n">BaseCallbackHandler</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""把收到的每个事件原样打印出来。"""</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">on_chain_start</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">serialized</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">inputs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+        <span class="o">*</span><span class="p">,</span> <span class="n">run_id</span><span class="p">:</span> <span class="n">UUID</span><span class="p">,</span> <span class="n">parent_run_id</span><span class="p">:</span> <span class="n">UUID</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="p">(</span><span class="n">serialized</span> <span class="ow">or</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"name"</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">"Runnable"</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"[链开始] </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">，输入：</span><span class="si">{</span><span class="n">inputs</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">on_chain_end</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">outputs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+        <span class="o">*</span><span class="p">,</span> <span class="n">run_id</span><span class="p">:</span> <span class="n">UUID</span><span class="p">,</span> <span class="n">parent_run_id</span><span class="p">:</span> <span class="n">UUID</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"[链结束] 输出：</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">outputs</span><span class="p">)[:</span><span class="mi">50</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">on_chat_model_start</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">serialized</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">messages</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]],</span>
+        <span class="o">*</span><span class="p">,</span> <span class="n">run_id</span><span class="p">:</span> <span class="n">UUID</span><span class="p">,</span> <span class="n">parent_run_id</span><span class="p">:</span> <span class="n">UUID</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"[模型开始] 收到 </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">messages</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="si">}</span><span class="s2"> 条消息"</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">on_llm_new_token</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">token</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">run_id</span><span class="p">:</span> <span class="n">UUID</span><span class="p">,</span>
+        <span class="n">parent_run_id</span><span class="p">:</span> <span class="n">UUID</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"[新token] </span><span class="si">{</span><span class="n">token</span><span class="si">!r}</span><span class="s2">"</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">on_llm_end</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">run_id</span><span class="p">:</span> <span class="n">UUID</span><span class="p">,</span>
+        <span class="n">parent_run_id</span><span class="p">:</span> <span class="n">UUID</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"[模型结束] 生成：</span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">generations</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">text</span><span class="p">[:</span><span class="mi">50</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+
+<span class="n">prompt</span> <span class="o">=</span> <span class="n">ChatPromptTemplate</span><span class="o">.</span><span class="n">from_messages</span><span class="p">([(</span><span class="s2">"human"</span><span class="p">,</span> <span class="s2">"用一句话推荐《</span><span class="si">{book}</span><span class="s2">》"</span><span class="p">)])</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">GenericFakeChatModel</span><span class="p">(</span><span class="n">messages</span><span class="o">=</span><span class="nb">iter</span><span class="p">([</span><span class="n">AIMessage</span><span class="p">(</span><span class="n">content</span><span class="o">=</span><span class="s2">"《夜航船》：夜航人的掌灯。"</span><span class="p">)]))</span>
+<span class="n">chain</span> <span class="o">=</span> <span class="n">prompt</span> <span class="o">|</span> <span class="n">model</span> <span class="o">|</span> <span class="n">StrOutputParser</span><span class="p">()</span>
+
+<span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">chain</span><span class="o">.</span><span class="n">stream</span><span class="p">({</span><span class="s2">"book"</span><span class="p">:</span> <span class="s2">"夜航船"</span><span class="p">},</span> <span class="n">config</span><span class="o">=</span><span class="p">{</span><span class="s2">"callbacks"</span><span class="p">:</span> <span class="p">[</span><span class="n">EchoHandler</span><span class="p">()]}):</span>
+    <span class="k">pass</span>
+</code></pre></div>
+<p>运行后你会看到一长串输出（节选、略去 run_id 细节）：</p>
+<div class="highlight"><pre><span></span><code>[链开始] Runnable，输入：{'input': ''}
+[链开始] ChatPromptTemplate，输入：{'book': '夜航船'}
+[链结束] 输出：messages=[HumanMessage(content='用一句话推荐《夜航船》'...
+[模型开始] 收到 1 条消息
+[新token] '《夜航船'
+[新token] '》：夜航'
+[新token] '人的掌灯'
+[新token] '。'
+[模型结束] 生成：《夜航船》：夜航人的掌灯。
+[链结束] 输出：《夜航船》：夜航人的掌灯。
+</code></pre></div>
+<p>注意看事件顺序背后的结构：<strong>整条链是一个 run，链里的每个组件（提示词、模型、解析器）各自是子 run</strong>。每个事件都带着两个身份证号：</p>
+<ul>
+<li><code>run_id</code>：本次 run（一次组件执行）的唯一编号；</li>
+<li><code>parent_run_id</code>：父 run 的编号——组件的 parent 是整条链，整条链的 parent 是 <code>None</code>。</li>
+</ul>
+<p>把这两个号连起来，就是一棵<strong>执行树</strong>：</p>
+<div class="highlight"><pre><span></span><code>RunnableSequence（整条链）          run_id=…981  parent=None
+├── ChatPromptTemplate（提示词）    run_id=…982  parent=…981
+├── 模型                            run_id=…983  parent=…981
+│     └── （流式吐字：每块一个 on_llm_new_token）
+└── StrOutputParser（解析器）       run_id=…984  parent=…981
+</code></pre></div>
+<p>第 3 节的文件日志回调和第 5 节的 <code>astream_events</code>，读的都是这棵树。排查「二十秒到底慢在哪」时，你只要看每个 run 的开始与结束时间差，一目了然。</p>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li><strong>钩子名全是 <code>on_xxx</code>，不是 JS 版的 <code>handleXxx</code></strong>。从 JS 迁移的肌肉记忆要改：<code>handleLLMStart</code> → <code>on_llm_start</code>，<code>handleChainStart</code> → <code>on_chain_start</code>，首字母小写、驼峰变蛇形，详见 1.1 的对照表。</li>
+<li><strong><code>serialized</code> 参数别指望太多</strong>。1.x 里它不再是完整的序列化对象，只剩 <code>name</code> / <code>id</code> 等少量字段（体积和安全考虑）。想拿组件名，写 <code>(serialized or {}).get("name")</code>；拿更多细节走 <code>kwargs</code> 里的 <code>metadata</code> / <code>tags</code>。</li>
+<li><strong>覆写钩子时建议保留 <code>**kwargs</code></strong>。框架往钩子里塞的关键字参数（<code>tags</code>、<code>metadata</code>、<code>invocation_params</code>……）版本间会增减，写死签名容易在新版本上直接 <code>TypeError</code>。</li>
+<li><strong>钩子里抛异常不会炸掉主流程</strong>，但会被框架捕获并打一条告警日志——回调代码还是要自己小心，别让探头冒烟。</li>
+</ul>
+<h3 id="11-js-python-钩子名对照表">1.1 JS → Python 钩子名对照表</h3>
+<table>
+<thead>
+<tr>
+<th>JS 写法（camelCase 风格）</th>
+<th>Python 写法</th>
+<th>触发时机</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>handleLLMStart</code></td>
+<td><code>on_llm_start</code></td>
+<td><strong>补全型</strong> LLM 开始执行前</td>
+</tr>
+<tr>
+<td>（JS 无此区分）</td>
+<td><code>on_chat_model_start</code></td>
+<td><strong>聊天型</strong>模型开始执行前</td>
+</tr>
+<tr>
+<td><code>handleLLMNewToken</code></td>
+<td><code>on_llm_new_token</code></td>
+<td>流式输出每吐一块</td>
+</tr>
+<tr>
+<td><code>handleLLMEnd</code></td>
+<td><code>on_llm_end</code></td>
+<td>模型成功返回</td>
+</tr>
+<tr>
+<td><code>handleLLMError</code></td>
+<td><code>on_llm_error</code></td>
+<td>模型调用出错</td>
+</tr>
+<tr>
+<td><code>handleChainStart</code></td>
+<td><code>on_chain_start</code></td>
+<td>链 / Runnable 开始</td>
+</tr>
+<tr>
+<td><code>handleChainEnd</code></td>
+<td><code>on_chain_end</code></td>
+<td>链 / Runnable 结束</td>
+</tr>
+<tr>
+<td><code>handleToolStart</code></td>
+<td><code>on_tool_start</code></td>
+<td>工具被调用前</td>
+</tr>
+<tr>
+<td><code>handleToolEnd</code></td>
+<td><code>on_tool_end</code></td>
+<td>工具返回结果</td>
+</tr>
+</tbody>
+</table>
+<p>Python 版比 JS 版多出一类钩子值得单独认识：<code>on_chat_model_start</code>——这是 Python 版最容易踩的坑，1.2 节展开。</p>
+<h3 id="12-最大的坑on_llm_start-收不到聊天模型的事件">1.2 最大的坑：<code>on_llm_start</code> 收不到聊天模型的事件</h3>
+<p>LangChain 的「模型」分两种血统，开场的钩子不一样：</p>
+<table>
+<thead>
+<tr>
+<th>模型类型</th>
+<th>本课程用到的例子</th>
+<th>开始时触发的钩子</th>
+<th>收到的参数</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>补全型 LLM</td>
+<td><code>OllamaLLM</code>（字符串进字符串出）</td>
+<td><code>on_llm_start</code></td>
+<td><code>prompts: list[str]</code></td>
+</tr>
+<tr>
+<td>聊天型模型</td>
+<td><code>ChatOllama</code>（消息进消息出）</td>
+<td><code>on_chat_model_start</code></td>
+<td><code>messages: list[list[BaseMessage]]</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>ChatOllama</code> 是聊天模型——<strong>只触发 <code>on_chat_model_start</code>，不触发 <code>on_llm_start</code></strong>。你若只覆写了 <code>on_llm_start</code>，挂在荐书链上会一个事件都收不到，还以为回调坏了。稳妥的写法是两个都覆写，或者在 <code>on_chat_model_start</code> 里干活。</p>
+<p>钩子参数的形状也不同：<code>on_llm_start</code> 拿到的是拼好的字符串列表 <code>prompts</code>；<code>on_chat_model_start</code> 拿到的是「双层列表」<code>messages</code>——外层对应一次批量调用里的每个请求（通常长度为 1），内层才是这个请求的消息列表（system / human / ……）。取当前请求的消息写 <code>messages[0]</code>，每条消息的正文在 <code>msg.content</code>、角色在 <code>msg.type</code>。</p>
+<hr />
+<h2 id="2-挂载方式callbacks-参数的三个姿势">2. 挂载方式：<code>callbacks</code> 参数的三个姿势</h2>
+<p><strong>作用</strong>：把回调接到链上。有三种接法，覆盖从「临时调试」到「生产常驻」的场景。</p>
+<h3 id="21-调用时传最常用">2.1 调用时传（最常用）</h3>
+<p><code>invoke</code> / <code>stream</code> / <code>batch</code> 的 <code>config</code> 参数里塞 <code>callbacks</code>，只对这一次调用生效：</p>
+<div class="highlight"><pre><span></span><code><span class="n">chain</span><span class="o">.</span><span class="n">invoke</span><span class="p">({</span><span class="s2">"book"</span><span class="p">:</span> <span class="s2">"夜航船"</span><span class="p">},</span> <span class="n">config</span><span class="o">=</span><span class="p">{</span><span class="s2">"callbacks"</span><span class="p">:</span> <span class="p">[</span><span class="n">EchoHandler</span><span class="p">()]})</span>
+</code></pre></div>
+<p><strong>注意 <code>callbacks</code> 的值是列表</strong>——这直接引出多回调并存：一次挂几个都行，事件会广播给每一个：</p>
+<div class="highlight"><pre><span></span><code><span class="n">result</span> <span class="o">=</span> <span class="n">chain</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span>
+    <span class="p">{</span><span class="s2">"book"</span><span class="p">:</span> <span class="s2">"夜航船"</span><span class="p">},</span>
+    <span class="n">config</span><span class="o">=</span><span class="p">{</span><span class="s2">"callbacks"</span><span class="p">:</span> <span class="p">[</span><span class="n">EchoHandler</span><span class="p">(),</span> <span class="n">ConsoleTimingHandler</span><span class="p">(),</span> <span class="n">FileLogHandler</span><span class="p">()]},</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>控制台要计时、文件要留档、屏幕要回显——互不干扰，各干各的。第 3 节会把「计时 + 文件日志」这对组合写成完整代码。</p>
+<h3 id="22-挂在整条链上还是挂在某个组件上">2.2 挂在整条链上，还是挂在某个组件上？</h3>
+<p>挂在最外层（整条链）时，<strong>事件会向下继承</strong>：链上的每个组件执行时，你的 handler 都能收到对应事件——第 1 节的执行树就是这么看到的（你只挂了一次，却看见了提示词、模型、解析器各自的 start/end）。</p>
+<p>想只盯某一个环节，就把回调挂在那个组件上；或者调用时给 run 打上 <code>tags</code>、命名 <code>run_name</code>，在回调里按这些标记挑着看（5.2 节的过滤参数同理）。</p>
+<h3 id="23-构造时传常驻">2.3 构造时传（常驻）</h3>
+<p>模型/链构造时就绑上，之后每次调用自动生效，适合生产环境的日志回调：</p>
+<div class="highlight"><pre><span></span><code><span class="n">model</span> <span class="o">=</span> <span class="n">ChatOllama</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="s2">"qwen3:4b"</span><span class="p">,</span> <span class="n">callbacks</span><span class="o">=</span><span class="p">[</span><span class="n">FileLogHandler</span><span class="p">()])</span>
+</code></pre></div>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li><strong><code>config</code> 是第几个参数别搞混</strong>。<code>chain.invoke(input, config)</code> 里 <code>config</code> 是第二个位置参数；写成关键字 <code>config={...}</code> 最稳。</li>
+<li><strong>构造时传的回调会常驻</strong>。调试用的 <code>EchoHandler</code> 挂在构造参数里，等你上线了它会一直刷屏——临时观测用 2.1 的调用时传法，用完即走。</li>
+<li><strong><code>callbacks</code> 里放的是实例，不是类</strong>。<code>[EchoHandler()]</code> 对，<code>[EchoHandler]</code> 错——后者不会报错但也永远不会触发，静默失败最坑人。</li>
+</ul>
+<hr />
+<h2 id="3-两个实用回调计时器与文件日志">3. 两个实用回调：计时器与文件日志</h2>
+<p>光会打印不够，本节写两个真的能上生产的回调。场景还是那个：<strong>用户说等了二十秒，到底慢在哪？</strong> 控制台计时回调负责现场看，文件日志回调负责留档查。</p>
+<h3 id="31-控制台计时回调每个-run-掐一块表">3.1 控制台计时回调：每个 run 掐一块表</h3>
+<p>思路：<code>on_chain_start</code> / <code>on_chat_model_start</code> 时按下秒表（记下 <code>run_id → 开始时刻</code>），对应的 end 钩子里查表算差值。<code>run_id</code> 是天然的字典键——每个 run 一块表，互不串线。</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">uuid</span><span class="w"> </span><span class="kn">import</span> <span class="n">UUID</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.callbacks</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseCallbackHandler</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">ConsoleTimingHandler</span><span class="p">(</span><span class="n">BaseCallbackHandler</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""控制台计时回调：每个 run 开始掐表，结束报耗时。"""</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_starts</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">UUID</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">on_chain_start</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">serialized</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">inputs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+        <span class="o">*</span><span class="p">,</span> <span class="n">run_id</span><span class="p">:</span> <span class="n">UUID</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_starts</span><span class="p">[</span><span class="n">run_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="p">(</span><span class="n">serialized</span> <span class="ow">or</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"name"</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">"链"</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"[计时] ▶ </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> 开工"</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">on_chain_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outputs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="o">*</span><span class="p">,</span> <span class="n">run_id</span><span class="p">:</span> <span class="n">UUID</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">elapsed</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_starts</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">run_id</span><span class="p">,</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">())</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"[计时] ■ 结束，耗时 </span><span class="si">{</span><span class="n">elapsed</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">s"</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">on_chat_model_start</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">serialized</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">messages</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]],</span>
+        <span class="o">*</span><span class="p">,</span> <span class="n">run_id</span><span class="p">:</span> <span class="n">UUID</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_starts</span><span class="p">[</span><span class="n">run_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"[计时] ▶ 模型开工（</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">messages</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="si">}</span><span class="s2"> 条消息进来）"</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">on_llm_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">run_id</span><span class="p">:</span> <span class="n">UUID</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">elapsed</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_starts</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">run_id</span><span class="p">,</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">())</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"[计时] ■ 模型收工，耗时 </span><span class="si">{</span><span class="n">elapsed</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">s"</span><span class="p">)</span>
+</code></pre></div>
+<p>用 <code>time.perf_counter()</code> 而不是 <code>time.time()</code>——前者是单调高精度计时器，不受系统改时间影响，掐表就该用它。</p>
+<h3 id="32-文件日志回调把现场写进档案">3.2 文件日志回调：把现场写进档案</h3>
+<p>思路：追加模式（<code>"a"</code>）打开日志文件，模型开始时记输入、结束时记输出、出错时记异常。工具调用也顺手记上——排查「胡编」类问题，先看它到底调了什么工具、拿到了什么数据。</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">uuid</span><span class="w"> </span><span class="kn">import</span> <span class="n">UUID</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.callbacks</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseCallbackHandler</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">FileLogHandler</span><span class="p">(</span><span class="n">BaseCallbackHandler</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""文件日志回调：模型的输入输出、工具调用、错误，追加写进日志文件。"""</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_path</span> <span class="o">=</span> <span class="n">path</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">"a"</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">on_chat_model_start</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">serialized</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">messages</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]],</span>
+        <span class="o">*</span><span class="p">,</span> <span class="n">run_id</span><span class="p">:</span> <span class="n">UUID</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">model_name</span> <span class="o">=</span> <span class="p">(</span><span class="n">serialized</span> <span class="ow">or</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"name"</span><span class="p">,</span> <span class="s2">"未知模型"</span><span class="p">)</span>
+        <span class="n">lines</span> <span class="o">=</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  [</span><span class="si">{</span><span class="n">m</span><span class="o">.</span><span class="n">type</span><span class="si">}</span><span class="s2">] </span><span class="si">{</span><span class="n">m</span><span class="o">.</span><span class="n">content</span><span class="si">}</span><span class="s2">"</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">messages</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_write</span><span class="p">(</span><span class="sa">f</span><span class="s2">"[模型开始] </span><span class="si">{</span><span class="n">model_name</span><span class="si">}</span><span class="s2">（run </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">run_id</span><span class="p">)[:</span><span class="mi">8</span><span class="p">]</span><span class="si">}</span><span class="s2">）</span><span class="se">\n</span><span class="si">{</span><span class="n">lines</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">on_llm_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">run_id</span><span class="p">:</span> <span class="n">UUID</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">generations</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">text</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_write</span><span class="p">(</span><span class="sa">f</span><span class="s2">"[模型结束] 生成：</span><span class="si">{</span><span class="n">text</span><span class="si">}</span><span class="se">\n\n</span><span class="s2">"</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">on_llm_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">error</span><span class="p">:</span> <span class="ne">BaseException</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">run_id</span><span class="p">:</span> <span class="n">UUID</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_write</span><span class="p">(</span><span class="sa">f</span><span class="s2">"[模型出错] </span><span class="si">{</span><span class="n">error</span><span class="si">!r}</span><span class="se">\n\n</span><span class="s2">"</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">on_tool_start</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">serialized</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">input_str</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span> <span class="n">run_id</span><span class="p">:</span> <span class="n">UUID</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="p">(</span><span class="n">serialized</span> <span class="ow">or</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"name"</span><span class="p">,</span> <span class="s2">"未知工具"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_write</span><span class="p">(</span><span class="sa">f</span><span class="s2">"[工具开始] </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="n">input_str</span><span class="si">}</span><span class="s2">)</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">on_tool_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">run_id</span><span class="p">:</span> <span class="n">UUID</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_write</span><span class="p">(</span><span class="sa">f</span><span class="s2">"[工具结束] 返回：</span><span class="si">{</span><span class="n">output</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+</code></pre></div>
+<p>两个要点：</p>
+<ul>
+<li><strong><code>on_llm_end</code> 里取文本</strong>：<code>response.generations[0][0].text</code>。<code>generations</code> 是「双层列表」（外层对应批量请求，内层对应每个候选生成），日常取 <code>generations[0][0]</code> 就是那个 <code>ChatGeneration</code>，它的 <code>.text</code> 属性会把 <code>AIMessage.content</code> 拎出来。</li>
+<li><strong>每条消息的角色</strong>：<code>msg.type</code> 是 <code>'system'</code> / <code>'human'</code> / <code>'ai'</code> 这样的字符串，日志里标上它，回放时才知道这段话是谁说的。</li>
+</ul>
+<h3 id="33-多回调并存一次挂两个">3.3 多回调并存：一次挂两个</h3>
+<p>把 3.1 和 3.2 一起挂上，控制台实时看耗时、文件悄悄留档——这就是 demo 的核心段落：</p>
+<div class="highlight"><pre><span></span><code><span class="n">timing</span> <span class="o">=</span> <span class="n">ConsoleTimingHandler</span><span class="p">()</span>
+<span class="n">file_log</span> <span class="o">=</span> <span class="n">FileLogHandler</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="s2">"callback_run.log"</span><span class="p">))</span>
+
+<span class="n">result</span> <span class="o">=</span> <span class="n">chain</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span>
+    <span class="p">{</span><span class="s2">"reader"</span><span class="p">:</span> <span class="s2">"通勤族"</span><span class="p">,</span> <span class="s2">"book"</span><span class="p">:</span> <span class="s2">"夜航船"</span><span class="p">},</span>
+    <span class="n">config</span><span class="o">=</span><span class="p">{</span><span class="s2">"callbacks"</span><span class="p">:</span> <span class="p">[</span><span class="n">timing</span><span class="p">,</span> <span class="n">file_log</span><span class="p">]},</span>
+<span class="p">)</span>
+</code></pre></div>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li><strong>文件回调记得处理编码和并发</strong>。<code>open(..., encoding="utf-8")</code> 在中文环境不是可选项；多线程场景（<code>batch</code> 并发）下每条日志独立 open-write-close 是最朴素的线程安全写法，追求性能再考虑加锁或队列。</li>
+<li><strong>别在回调里干重活</strong>。钩子是同步等在现场的：你在 <code>on_llm_new_token</code> 里 sleep 一秒，流式输出就慢一秒。推送监控、写库这类操作，回调里只扔进队列，真正干活放到别处。</li>
+<li><strong><code>on_llm_new_token</code> 只在流式时逐块触发</strong>。<code>invoke</code> 一次性等完整结果，通常不吐 token 事件——想统计 token 得走 <code>stream</code>，或者到 <code>on_llm_end</code> 里读统计字段。</li>
+</ul>
+<hr />
+<h2 id="4-钩子速查表一网打尽">4. 钩子速查表：一网打尽</h2>
+<p>前文按需零散用了不少钩子，这里给一张全表。四组钩子按「被观测的对象」分类，全部都带 <code>run_id</code> / <code>parent_run_id</code>（下表省略）：</p>
+<table>
+<thead>
+<tr>
+<th>分组</th>
+<th>钩子</th>
+<th>触发时机</th>
+<th>典型用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>模型</td>
+<td><code>on_llm_start(serialized, prompts)</code></td>
+<td>补全型 LLM 开始</td>
+<td>记提示、启动计时</td>
+</tr>
+<tr>
+<td>模型</td>
+<td><code>on_chat_model_start(serialized, messages)</code></td>
+<td>聊天型模型开始</td>
+<td>记消息、启动计时</td>
+</tr>
+<tr>
+<td>模型</td>
+<td><code>on_llm_new_token(token, *, chunk)</code></td>
+<td>流式每吐一块</td>
+<td>打字机指示、实时统计</td>
+</tr>
+<tr>
+<td>模型</td>
+<td><code>on_llm_end(response)</code></td>
+<td>模型成功返回</td>
+<td>记输出、算耗时/token</td>
+</tr>
+<tr>
+<td>模型</td>
+<td><code>on_llm_error(error)</code></td>
+<td>模型调用出错</td>
+<td>告警、记错误日志</td>
+</tr>
+<tr>
+<td>链</td>
+<td><code>on_chain_start(serialized, inputs)</code></td>
+<td>任何 Runnable 开始</td>
+<td>记入口、建执行树</td>
+</tr>
+<tr>
+<td>链</td>
+<td><code>on_chain_end(outputs)</code></td>
+<td>Runnable 结束</td>
+<td>记出口、算总耗时</td>
+</tr>
+<tr>
+<td>链</td>
+<td><code>on_chain_error(error)</code></td>
+<td>Runnable 抛错</td>
+<td>定位「断在哪一环」</td>
+</tr>
+<tr>
+<td>工具</td>
+<td><code>on_tool_start(serialized, input_str)</code></td>
+<td>工具被调用前</td>
+<td>审计参数、记录调用链</td>
+</tr>
+<tr>
+<td>工具</td>
+<td><code>on_tool_end(output)</code></td>
+<td>工具返回</td>
+<td>记结果</td>
+</tr>
+<tr>
+<td>工具</td>
+<td><code>on_tool_error(error)</code></td>
+<td>工具抛错</td>
+<td>排查 Agent 翻车现场</td>
+</tr>
+<tr>
+<td>其他</td>
+<td><code>on_text(text)</code></td>
+<td>通用文本事件（Agent 输出思考过程时）</td>
+<td>观察 Agent 内心戏</td>
+</tr>
+<tr>
+<td>其他</td>
+<td><code>on_agent_action(action)</code></td>
+<td>Agent 决定下一步动作</td>
+<td>记录决策链</td>
+</tr>
+<tr>
+<td>其他</td>
+<td><code>on_agent_finish(finish)</code></td>
+<td>Agent 收尾</td>
+<td>记最终答案</td>
+</tr>
+<tr>
+<td>其他</td>
+<td><code>on_retriever_start</code> / <code>on_retriever_end</code></td>
+<td>检索器开始/返回（08 章）</td>
+<td>记召回内容</td>
+</tr>
+</tbody>
+</table>
+<p>几个补充说明：</p>
+<ul>
+<li><strong>链钩子的覆盖面最广</strong>。模型、工具、检索器在框架里也都是 Runnable，你自定义的 <code>RunnableLambda</code> 更是——它们至少会触发 <code>on_chain_start</code> / <code>on_chain_end</code>。也就是说：<strong>一个只覆写了链钩子的 handler，挂在任何链上都有事件可看</strong>，这是最小可行的观测方案。</li>
+<li><strong>错误钩子是「断在哪一环」的答案</strong>。链上任何一环抛错，那一环的 <code>on_xxx_error</code> 会先响，然后异常继续向上传播（一路上每层的 error 钩子依次响）。04 章的 <code>with_fallbacks</code> 换备胎时，主链的 error 事件照样会被回调看见——失败和回退的全过程都在监控里（demo 第 3 段演示了这个组合）。</li>
+<li><strong>Agent 场景四组全用得上</strong>：<code>on_chat_model_start</code> 看模型每次思考的输入、<code>on_agent_action</code> 看它决定调哪个工具、<code>on_tool_start/end</code> 看工具拿了什么返回什么、<code>on_agent_finish</code> 看最终交付——一章 Agent 的执行轨迹就拼出来了。</li>
+</ul>
+<hr />
+<h2 id="5-调试技巧三件套">5. 调试技巧：三件套</h2>
+<p>本章的观测工具凑成三件：<strong>自定义回调</strong>（第 3 节已讲，自己写探头）、<strong><code>set_debug</code> 全局开关</strong>、<strong><code>astream_events</code> 事件流</strong>。后两件是框架现成的，本节上。定位一句话：<strong><code>set_debug</code> 是全店大喇叭，<code>astream_events</code> 是跟拍镜头，自定义回调是常驻探头</strong>。</p>
+<h3 id="51-set_debugtrue一行代码打开全量日志">5.1 <code>set_debug(True)</code>：一行代码打开全量日志</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.globals</span><span class="w"> </span><span class="kn">import</span> <span class="n">set_debug</span>
+
+<span class="n">set_debug</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>          <span class="c1"># 开</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">chain</span><span class="o">.</span><span class="n">invoke</span><span class="p">({</span><span class="s2">"book"</span><span class="p">:</span> <span class="s2">"夜航船"</span><span class="p">})</span>
+<span class="n">set_debug</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>         <span class="c1"># 用完关掉，别让它一直刷</span>
+</code></pre></div>
+<p>打开后每次调用都会打印完整的事件流——每个 run 的进出、输入输出的 JSON、耗时，控制台直接变成监控室：</p>
+<div class="highlight"><pre><span></span><code>[chain/start] [chain:RunnableSequence] Entering Chain run with input:
+{
+  "book": "夜航船"
+}
+[chain/start] [chain:RunnableSequence &gt; prompt:ChatPromptTemplate] Entering Prompt run with input:
+...
+[llm/start] [chain:RunnableSequence &gt; llm:ChatOllama] Entering LLM run with input:
+{
+  "prompts": [
+    "Human: 用一句话推荐《夜航船》"
+  ]
+}
+[llm/end] [chain:RunnableSequence &gt; llm:ChatOllama] [1247ms] Exiting LLM run with output:
+...
+</code></pre></div>
+<p>方括号里的 <code>chain:RunnableSequence &gt; prompt:ChatPromptTemplate</code> 就是执行树的「路径表示法」——从根到当前节点；<code>[1247ms]</code> 直接告诉你模型这一环花了多久。</p>
+<p><strong>两个历史遗留问题说清楚</strong>（老教程和新版本对不上号的根源）：</p>
+<ul>
+<li><strong><code>verbose</code> 基本退休了</strong>。老版本里链和模型构造参数有 <code>verbose=True</code>，会打印「Entering new chain...」。1.x 里 LCEL 链上它几乎不再产生输出（它服务的旧版 Chain 类已整体移除）——别在它身上浪费时间，直接用 <code>set_debug</code>。</li>
+<li><strong>环境变量 <code>LANGCHAIN_DEBUG</code> / <code>LANGCHAIN_VERBOSE</code> 在 1.x 已被收回</strong>。老教程里 <code>export LANGCHAIN_DEBUG=true</code> 的写法现在不生效——框架不再自动读这俩变量，开关收编为代码里的 <code>set_debug()</code> / <code>set_verbose()</code>（从 <code>langchain_core.globals</code> 导入）。从 JS 版迁移要特别注意：JS 版传环境变量，Python 1.x 传函数调用。</li>
+</ul>
+<h3 id="52-astream_events事件流方式看链内部">5.2 <code>astream_events</code>：事件流方式看链内部</h3>
+<p>回调要写一个类，<code>astream_events</code> 是<strong>零成本</strong>的观测方式——不用写任何 handler，直接把链的执行过程当成一个事件流来消费：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
+
+
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">async</span> <span class="k">for</span> <span class="n">ev</span> <span class="ow">in</span> <span class="n">chain</span><span class="o">.</span><span class="n">astream_events</span><span class="p">({</span><span class="s2">"book"</span><span class="p">:</span> <span class="s2">"夜航船"</span><span class="p">},</span> <span class="n">version</span><span class="o">=</span><span class="s2">"v2"</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">ev</span><span class="p">[</span><span class="s1">'event'</span><span class="p">]</span><span class="si">:</span><span class="s2">24s</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">ev</span><span class="p">[</span><span class="s1">'name'</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+
+<span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">main</span><span class="p">())</span>
+</code></pre></div>
+<p>每个事件 <code>ev</code> 是一个字典，关键字段：<code>event</code>（事件名）、<code>name</code>（组件名）、<code>run_id</code>、<code>data</code>（输入输出或流式块）、<code>tags</code>、<code>metadata</code>、<code>parent_ids</code>（整条祖先链——执行树直接给你排好了）。运行输出长这样：</p>
+<div class="highlight"><pre><span></span><code>on_chain_start          RunnableSequence
+on_prompt_start         ChatPromptTemplate
+on_prompt_end           ChatPromptTemplate
+on_chat_model_start     ChatOllama
+on_chat_model_stream    ChatOllama
+on_parser_start         StrOutputParser
+on_parser_stream        StrOutputParser
+on_chain_stream         RunnableSequence
+on_chat_model_end       ChatOllama
+on_parser_end           StrOutputParser
+on_chain_end            RunnableSequence
+</code></pre></div>
+<p>事件名比回调钩子更细一层：提示词环节有专属的 <code>on_prompt_start</code> / <code>on_prompt_end</code>，解析器有 <code>on_parser_start</code> / <code>on_parser_end</code>，流式有 <code>on_chat_model_stream</code> / <code>on_parser_stream</code>——<strong>链上每种组件的进出都有专属事件</strong>。</p>
+<p>只想盯某个环节？用过滤参数，别的事件直接不产生：</p>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">for</span> <span class="n">ev</span> <span class="ow">in</span> <span class="n">chain</span><span class="o">.</span><span class="n">astream_events</span><span class="p">(</span>
+    <span class="p">{</span><span class="s2">"book"</span><span class="p">:</span> <span class="s2">"夜航船"</span><span class="p">},</span>
+    <span class="n">version</span><span class="o">=</span><span class="s2">"v2"</span><span class="p">,</span>
+    <span class="n">include_names</span><span class="o">=</span><span class="p">[</span><span class="s2">"ChatOllama"</span><span class="p">],</span>      <span class="c1"># 只看名字叫 ChatOllama 的组件</span>
+<span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">ev</span><span class="p">[</span><span class="s2">"event"</span><span class="p">],</span> <span class="n">ev</span><span class="p">[</span><span class="s2">"data"</span><span class="p">])</span>
+</code></pre></div>
+<p><code>include_types</code>（按类型过滤，如 <code>["chat_model"]</code>）、<code>include_tags</code>、以及对应的 <code>exclude_*</code> 一家人，用法相同。</p>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li><strong><code>version="v2"</code> 参数别漏</strong>。<code>astream_events</code> 有 v1/v2 事件格式之分，v1 是历史包袱，不传 version 会收到弃用警告。</li>
+<li><strong>它是异步接口</strong>。得在 <code>async def</code> 里 <code>async for</code>，脚本要 <code>asyncio.run(main())</code>；同步代码里想看事件流，用 5.1 的 <code>set_debug</code>。</li>
+<li><strong><code>ev["data"]</code> 的内容随事件类型变</strong>：<code>on_chain_start</code> 里是 <code>{"input": ...}</code>，<code>on_chain_end</code> 里是 <code>{"output": ...}</code>，<code>on_chat_model_stream</code> 里是 <code>{"chunk": ...}</code>——取值前先看事件名，别硬取。</li>
+</ul>
+<h3 id="53-调试工具选择地图">5.3 调试工具选择地图</h3>
+<table>
+<thead>
+<tr>
+<th>你的处境</th>
+<th>用什么</th>
+<th>一句话理由</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>开发时想知道「这条链到底干了什么」</td>
+<td><code>set_debug(True)</code></td>
+<td>一行代码，全量倾倒，看完就关</td>
+</tr>
+<tr>
+<td>只想盯链里某一个环节</td>
+<td><code>astream_events</code> + <code>include_names</code></td>
+<td>跟拍镜头，指哪打哪</td>
+</tr>
+<tr>
+<td>要计时、要指标、要自定义格式</td>
+<td>继承 <code>BaseCallbackHandler</code></td>
+<td>探头自己装，想听什么自己定</td>
+</tr>
+<tr>
+<td>生产环境留档审计</td>
+<td>文件日志回调（构造时挂）</td>
+<td>常驻探头，写盘留证</td>
+</tr>
+<tr>
+<td>要可视化界面、要团队共享</td>
+<td>LangSmith（<code>LANGCHAIN_TRACING_V2=true</code>）</td>
+<td>官方托管平台，第 6 节收官部分细说</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="6-全课程收官一张地图一条主线几条岔路">6. 全课程收官：一张地图，一条主线，几条岔路</h2>
+<p>回调是「旁观一切」的机制，用它收官正好——现在你站在监控室里，回头看这 12 章搭起来的整条流水线。</p>
+<h3 id="61-12-章知识地图">6.1 12 章知识地图</h3>
+<table>
+<thead>
+<tr>
+<th>章</th>
+<th>解决的问题</th>
+<th>关键 API / 概念</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="../langchain/01-ren-shi-langchain.html">01 认识 LangChain</a></td>
+<td>跑通第一次对话，看懂返回值</td>
+<td><code>ChatOllama</code>、<code>AIMessage</code>、流式初体验、模型缓存</td>
+</tr>
+<tr>
+<td><a href="../langchain/02-ti-shi-ci-mu-ban-yu-xiao-xi.html">02 提示词模板与消息</a></td>
+<td>提示词别再手拼字符串</td>
+<td><code>ChatPromptTemplate</code>、消息类型、<code>MessagesPlaceholder</code></td>
+</tr>
+<tr>
+<td><a href="../langchain/03-lcel-yu-runnable.html">03 LCEL 与 Runnable</a></td>
+<td>组件像积木一样拼</td>
+<td><code>\|</code> 管道、<code>RunnableLambda</code> / <code>RunnableParallel</code> / <code>RunnablePassthrough</code></td>
+</tr>
+<tr>
+<td><a href="../langchain/04-liu-shi-yu-bing-fa.html">04 流式与并发</a></td>
+<td>等得久、一批活儿排队</td>
+<td><code>stream</code> / <code>batch</code>、<code>max_concurrency</code>、<code>wait_for</code>、<code>with_fallbacks</code> / <code>with_retry</code></td>
+</tr>
+<tr>
+<td><a href="../langchain/05-shu-chu-jie-xi-qi.html">05 输出解析器</a></td>
+<td>模型吐的是字符串，代码要的是数据</td>
+<td><code>StrOutputParser</code>、<code>with_structured_output</code>、<code>JsonOutputParser</code></td>
+</tr>
+<tr>
+<td><a href="../langchain/06-wen-dang-jia-zai-yu-qie-ge.html">06 文档加载与切割</a></td>
+<td>把本地资料喂给模型</td>
+<td><code>Document</code>、各种 Loader、<code>RecursiveCharacterTextSplitter</code></td>
+</tr>
+<tr>
+<td><a href="../langchain/07-qian-ru-yu-xiang-liang-ku.html">07 嵌入与向量库</a></td>
+<td>让「意思」可计算</td>
+<td><code>OllamaEmbeddings</code>、<code>InMemoryVectorStore</code>、余弦相似度</td>
+</tr>
+<tr>
+<td><a href="../langchain/08-jian-suo-yu-rag.html">08 检索与 RAG</a></td>
+<td>模型不知道书屋的私货</td>
+<td><code>as_retriever</code>、k / MMR / filter、RAG 链、来源溯源</td>
+</tr>
+<tr>
+<td><a href="../langchain/09-dui-hua-ji-yi.html">09 对话记忆</a></td>
+<td>店员记不住聊过什么</td>
+<td><code>ChatMessageHistory</code>、<code>RunnableWithMessageHistory</code>、会话隔离</td>
+</tr>
+<tr>
+<td><a href="../langchain/10-gong-ju-diao-yong.html">10 工具调用</a></td>
+<td>让模型使唤真代码</td>
+<td><code>@tool</code>、<code>tool_calls</code>、参数 schema、结果回填</td>
+</tr>
+<tr>
+<td><a href="../langchain/11-agent.html">11 Agent</a></td>
+<td>让模型自己排工序</td>
+<td>ReAct 循环、<code>create_agent</code>、多工具编排</td>
+</tr>
+<tr>
+<td><a href="../langchain/12-hui-diao-yu-tiao-shi-quan-ke-cheng-shou-guan.html">12 回调与调试</a></td>
+<td>黑盒变透明</td>
+<td><code>BaseCallbackHandler</code>、<code>callbacks</code>、<code>set_debug</code>、<code>astream_events</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="62-主线串讲从一句话到一个店员">6.2 主线串讲：从一句话到一个店员</h3>
+<p>回头看，这 12 章其实是在回答一个不断升级的问题。</p>
+<p>第 01 章，问题只是「<strong>能不能说上话</strong>」——第一次 <code>invoke</code>，等来 <code>qwen3:4b</code> 的一句介绍，你看懂了 <code>AIMessage</code> 里除了正文还有一坨元数据。第 02 章马上发现提示词开始重复：欢迎语、荐书规则、语气要求——于是模板和消息接管了「怎么说话」。</p>
+<p>第 03 章是把乐高摊开的章节：提示词、模型、解析器都是 Runnable，<code>|</code> 一接就是一条流水线。第 04 章解决体验——流式让用户一秒见字，并发让书单不用排队，fallback/retry 给链上保险。第 05 章解决出口：模型吐的字符串被拆箱成 <code>str</code> / <code>dict</code> / 对象，业务代码终于拿到能直接用的东西。</p>
+<p>第 06-08 章是一整段「给店员喂私货」的旅程：本地文件变成 <code>Document</code>、切成小块、算成向量、存进向量库、按问题检索、塞进提示词——RAG 让店员答得上「我们店的借阅规则」，而不是靠模型的出厂记忆瞎编。</p>
+<p>第 09 章给店员装了记性——多轮对话里它记得你上一句说了什么；第 10 章给了它手脚——查库存、算折扣这些事交给真代码去干，模型只负责决定和解释；第 11 章松开了缰绳——Agent 自己决定这一轮先查库存还是先写荐语。</p>
+<p>然后就是本章：店员上岗了，你回到监控室。计时回调盯着每一环的耗时，文件日志记着每一次模型输入输出和工具调用，<code>astream_events</code> 随时可以跟拍任何一环。<strong>从「说上一句话」到「一个可观测的员工」，这就是全部的主线。</strong></p>
+<h3 id="63-我们没讲什么以及接下来去哪">6.3 我们没讲什么，以及接下来去哪</h3>
+<p>诚实地列一下这门课<strong>没</strong>覆盖的（也是你接下来可以去的方向）：</p>
+<ol>
+<li><strong>LangGraph——把「循环决策」升级成「图」</strong>。11 章的 Agent 本质是一个「想-做-看-再想」的循环；当流程复杂到需要多角色协作、条件分支、人工审批、断点续跑，就该把循环画成显式的状态图。LangChain 官方当前的发力重心也在这里。</li>
+<li><strong>LangSmith——把本章的监控室换成指挥中心</strong>。回调/<code>set_debug</code> 是往控制台倾倒日志；LangSmith 把同样的 trace 信息（就是本章那棵执行树）送到网页上可视化，外加数据集评测、回归测试、团队共享。开启方式就是一个环境变量：<code>LANGCHAIN_TRACING_V2=true</code>。</li>
+<li><strong>真实项目</strong>：换掉内存向量库（FAISS / Chroma / 云托管）、把链包进 FastAPI 上线、给 RAG 加重排（rerank）、做输出评测、管成本和 token 预算——工程世界的下半场，从你自己的项目开始。</li>
+<li><strong>本课程刻意绕开的</strong>：多模态（图片/音频）、语音、微调、各家云端模型的差异细节——都不难，等你需要时它们自然会进入射程。</li>
+</ol>
+<p>最后一条建议：<strong>别把这 12 章当「学完了」，当成「工具箱满了」</strong>。挑一个你身边真实的场景——你的笔记、你的文档、你的业务数据——用 RAG 加几个工具搭一个小 Agent，再用本章的回调观察它。第一次看着自己的 Agent 在监控室里一步步决策、调用、交付时，你会真正感觉到：这些东西是你的了。</p>
+<hr />
+<h2 id="7-本章小结">7. 本章小结</h2>
+<p>一张表带走本章：</p>
+<table>
+<thead>
+<tr>
+<th>你的需求</th>
+<th>用什么</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>观察链上每个环节的执行过程</td>
+<td>继承 <code>BaseCallbackHandler</code>，覆写钩子</td>
+</tr>
+<tr>
+<td>挂载回调（临时）</td>
+<td><code>invoke(..., config={"callbacks": [handler]})</code></td>
+</tr>
+<tr>
+<td>挂载回调（常驻）</td>
+<td>构造时传 <code>callbacks=[...]</code></td>
+</tr>
+<tr>
+<td>控制台 + 文件双路观测</td>
+<td>多回调并存：<code>[ConsoleTimingHandler(), FileLogHandler()]</code></td>
+</tr>
+<tr>
+<td>聊天模型的事件收不到</td>
+<td>覆写 <code>on_chat_model_start</code>（不是 <code>on_llm_start</code>）</td>
+</tr>
+<tr>
+<td>理解嵌套结构</td>
+<td><code>run_id</code> / <code>parent_run_id</code> 连成执行树</td>
+</tr>
+<tr>
+<td>快速看全量执行日志</td>
+<td><code>set_debug(True)</code>（1.x 里环境变量已收回，用代码开关）</td>
+</tr>
+<tr>
+<td>临时盯某个环节</td>
+<td><code>astream_events(..., version="v2", include_names=[...])</code></td>
+</tr>
+<tr>
+<td>可视化 trace / 团队共享</td>
+<td>LangSmith（<code>LANGCHAIN_TRACING_V2=true</code>）</td>
+</tr>
+</tbody>
+</table>
+<p>配套 demo（在本章 <code>demo/</code> 目录）：</p>
+<ul>
+<li><code>demo_callback.py</code>：两个自定义回调（控制台计时 + 文件日志）挂到荐书链上流式跑、工具钩子、错误与 <code>with_fallbacks</code> 回退的全程观测、<code>astream_events</code> 事件流、<code>set_debug</code> 截选展示——<strong>Ollama 离线也能完整跑</strong>（自动换内置假模型，钩子触发一致），运行产物 <code>callback_run.log</code> 当场可查。</li>
+</ul>
+<hr />
+<p><strong>全课程完</strong> · 返回 <a href="../modules/langchain.html">00 · 使用指南</a></p>
+<p>收官寄语——</p>
+<p>还记得第 01 章的那个下午吗？五行代码，<code>model.invoke("用一句话向新会员介绍「拾光书屋」。")</code>，然后对着屏幕等 <code>qwen3:4b</code> 慢吞吞吐出第一句话。那时候「AI 店员」四个字听起来像个遥远的工程。</p>
+<p>十二个章节走完，你已经亲手做过这些事：用模板和消息规范它的谈吐，用 LCEL 把它拼成流水线，用流式和并发守住体验底线，用解析器把它的话拆成数据，用加载器、切割器、嵌入和向量库把书屋的私货喂给它，用 RAG 让它答得上有据，用记忆让它记得住你，用工具和 Agent 让它自己动起来——而今天，你给这一切装上了探头。</p>
+<p>更重要的是，这十二个章节教你的从来不是「背 API」：每次遇到问题——等太久、格式乱、答非所问、记不住、不会动手——你学会的都是先看清机制，再挑对工具。这个习惯比任何一行的代码都值钱。</p>
+<p>拾光书屋打烊了，灯还亮着。带着你的工具箱，去做点真东西吧。下一本书，你自己写。</p></div>
+
+      </article>
+<nav class="pager"><a class="pg-card pg-prev" href="../langchain/11-agent.html"><span class="pg-label">← 上一篇</span><span class="pg-title">Agent</span><span class="pg-mod">LangChain 指南</span></a><a class="pg-card pg-next" href="../modules/langgraph.html"><span class="pg-label">下一篇 →</span><span class="pg-title">LangGraph 框架指南 · 使用指南</span><span class="pg-mod">LangGraph 框架指南</span></a></nav>
+    </div>
+    <footer class="foot">
+      <span>深栈 DeepStack · AI Agent 工程师转型训练营配套文档</span>
+    </footer>
+  </main>
+<nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#1-回调是什么给流水线的每个工位装探头">1. 回调是什么：给流水线的每个工位装探头</a><a class="toc-link toc-h3" href="#11-js-python-钩子名对照表">1.1 JS → Python 钩子名对照表</a><a class="toc-link toc-h3" href="#12-最大的坑on_llm_start-收不到聊天模型的事件">1.2 最大的坑：on_llm_start 收不到聊天模型的事件</a><a class="toc-link toc-h2" href="#2-挂载方式callbacks-参数的三个姿势">2. 挂载方式：callbacks 参数的三个姿势</a><a class="toc-link toc-h3" href="#21-调用时传最常用">2.1 调用时传（最常用）</a><a class="toc-link toc-h3" href="#22-挂在整条链上还是挂在某个组件上">2.2 挂在整条链上，还是挂在某个组件上？</a><a class="toc-link toc-h3" href="#23-构造时传常驻">2.3 构造时传（常驻）</a><a class="toc-link toc-h2" href="#3-两个实用回调计时器与文件日志">3. 两个实用回调：计时器与文件日志</a><a class="toc-link toc-h3" href="#31-控制台计时回调每个-run-掐一块表">3.1 控制台计时回调：每个 run 掐一块表</a><a class="toc-link toc-h3" href="#32-文件日志回调把现场写进档案">3.2 文件日志回调：把现场写进档案</a><a class="toc-link toc-h3" href="#33-多回调并存一次挂两个">3.3 多回调并存：一次挂两个</a><a class="toc-link toc-h2" href="#4-钩子速查表一网打尽">4. 钩子速查表：一网打尽</a><a class="toc-link toc-h2" href="#5-调试技巧三件套">5. 调试技巧：三件套</a><a class="toc-link toc-h3" href="#51-set_debugtrue一行代码打开全量日志">5.1 set_debug(True)：一行代码打开全量日志</a><a class="toc-link toc-h3" href="#52-astream_events事件流方式看链内部">5.2 astream_events：事件流方式看链内部</a><a class="toc-link toc-h3" href="#53-调试工具选择地图">5.3 调试工具选择地图</a><a class="toc-link toc-h2" href="#6-全课程收官一张地图一条主线几条岔路">6. 全课程收官：一张地图，一条主线，几条岔路</a><a class="toc-link toc-h3" href="#61-12-章知识地图">6.1 12 章知识地图</a><a class="toc-link toc-h3" href="#62-主线串讲从一句话到一个店员">6.2 主线串讲：从一句话到一个店员</a><a class="toc-link toc-h3" href="#63-我们没讲什么以及接下来去哪">6.3 我们没讲什么，以及接下来去哪</a><a class="toc-link toc-h2" href="#7-本章小结">7. 本章小结</a></nav>
+</div>
+<div class="sb-mask" id="sbMask"></div>
+<script src="../assets/app.js"></script>
+</body>
+</html>

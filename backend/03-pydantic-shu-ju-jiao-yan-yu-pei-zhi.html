@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>03 · Pydantic 数据校验与配置 · 深栈 DeepStack 课程文档</title>
+<meta name="description" content="本章定位：把 Pydantic v2 的常用&quot;零件&quot;一个个拆开讲——怎么定义模型、怎么加约束、怎么写自定义校验、怎么导出数据、怎么读配置、怎么组织 DTO。不搞贯穿工程，目标是学完之后，任何 FastAPI 项目 sch…">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%23d9c39a' text-anchor='middle'%3EDS%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+<div class="progress" id="progress"></div>
+
+<div class="layout">
+<aside class="sidebar" id="sidebar">
+  <div class="sb-head">
+    <a class="brand" href="../index.html">
+      <span class="brand-mark">DS</span>
+      <span class="brand-text"><b>深栈 DeepStack</b><i>AI Agent 工程师转型训练营</i></span>
+    </a>
+    <button class="sb-close" id="sbClose" aria-label="关闭目录">✕</button>
+  </div>
+  <div class="sb-search"><input type="search" id="searchInput" placeholder="搜索 123 篇文档… ( / )" autocomplete="off">
+    <div class="sb-results" id="searchResults"></div></div>
+  <nav class="sb-nav">
+    <section class="sb-group" data-mod="python">
+      <a class="sb-group-title" href="../modules/python.html" data-toggle="python">
+        <span class="sb-num">01</span>
+        <span class="sb-group-text"><b>Python 与数据实践</b><i>31 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../python/01-huan-jing-da-jian-yu-ban-ben-guan-li.html"><span class="sb-item-num">01</span><span class="sb-item-title">环境搭建与版本管理</span></a>
+        <a class="sb-item" href="../python/02-bian-liang-biao-da-shi-yu-liu-cheng-kong-zhi.html"><span class="sb-item-num">02</span><span class="sb-item-title">变量、表达式与流程控制</span></a>
+        <a class="sb-item" href="../python/03-xu-lie-zi-dian-yu-ji-he.html"><span class="sb-item-num">03</span><span class="sb-item-title">序列、字典与集合</span></a>
+        <a class="sb-item" href="../python/04-han-shu-she-ji-yu-lambda.html"><span class="sb-item-num">04</span><span class="sb-item-title">函数设计与 lambda</span></a>
+        <a class="sb-item" href="../python/05-zuo-yong-yu-gui-ze-yu-bi-bao.html"><span class="sb-item-num">05</span><span class="sb-item-title">作用域规则与闭包</span></a>
+        <a class="sb-item" href="../python/06-lei-de-ding-yi-yu-shi-li-hua.html"><span class="sb-item-num">06</span><span class="sb-item-title">类的定义与实例化</span></a>
+        <a class="sb-item" href="../python/07-lei-xing-pan-ding-yu-chou-xiang-ji-lei.html"><span class="sb-item-num">07</span><span class="sb-item-title">类型判定与抽象基类</span></a>
+        <a class="sb-item" href="../python/08-mo-shu-fang-fa-quan-jing.html"><span class="sb-item-num">08</span><span class="sb-item-title">魔术方法全景</span></a>
+        <a class="sb-item" href="../python/09-miao-shu-fu-yu-yuan-lei.html"><span class="sb-item-num">09</span><span class="sb-item-title">描述符与元类</span></a>
+        <a class="sb-item" href="../python/10-zhuang-shi-qi.html"><span class="sb-item-num">10</span><span class="sb-item-title">装饰器</span></a>
+        <a class="sb-item" href="../python/11-die-dai-xie-yi-yu-sheng-cheng-qi.html"><span class="sb-item-num">11</span><span class="sb-item-title">迭代协议与生成器</span></a>
+        <a class="sb-item" href="../python/12-with-yu-shang-xia-wen-xie-yi.html"><span class="sb-item-num">12</span><span class="sb-item-title">with 与上下文协议</span></a>
+        <a class="sb-item" href="../python/13-yi-chang-ti-xi-yu-chu-li.html"><span class="sb-item-num">13</span><span class="sb-item-title">异常体系与处理</span></a>
+        <a class="sb-item" href="../python/14-lei-xing-biao-zhu.html"><span class="sb-item-num">14</span><span class="sb-item-title">类型标注</span></a>
+        <a class="sb-item" href="../python/15-mo-kuai-yu-bao-de-zu-zhi.html"><span class="sb-item-num">15</span><span class="sb-item-title">模块与包的组织</span></a>
+        <a class="sb-item" href="../python/16-biao-zhun-ku-xun-li.html"><span class="sb-item-num">16</span><span class="sb-item-title">标准库巡礼</span></a>
+        <a class="sb-item" href="../python/17-yi-lai-guan-li-yu-di-san-fang-ku.html"><span class="sb-item-num">17</span><span class="sb-item-title">依赖管理与第三方库</span></a>
+        <a class="sb-item" href="../python/18-xian-cheng-yu-jin-cheng.html"><span class="sb-item-num">18</span><span class="sb-item-title">线程与进程</span></a>
+        <a class="sb-item" href="../python/19-shi-jian-xun-huan.html"><span class="sb-item-num">19</span><span class="sb-item-title">事件循环</span></a>
+        <a class="sb-item" href="../python/20-future-yu-xie-cheng.html"><span class="sb-item-num">20</span><span class="sb-item-title">Future 与协程</span></a>
+        <a class="sb-item" href="../python/21-asyncio-shi-zhan.html"><span class="sb-item-num">21</span><span class="sb-item-title">asyncio 实战</span></a>
+        <a class="sb-item" href="../python/22-gou-jian-yu-fa-bu.html"><span class="sb-item-num">22</span><span class="sb-item-title">构建与发布</span></a>
+        <a class="sb-item" href="../python/23-gong-cheng-hua-gong-ju-lian.html"><span class="sb-item-num">23</span><span class="sb-item-title">工程化工具链</span></a>
+        <a class="sb-item" href="../python/24-monorepo-yu-tiao-shi.html"><span class="sb-item-num">24</span><span class="sb-item-title">monorepo 与调试</span></a>
+        <a class="sb-item" href="../python/25-jupyter-jiao-hu-huan-jing.html"><span class="sb-item-num">25</span><span class="sb-item-title">Jupyter 交互环境</span></a>
+        <a class="sb-item" href="../python/26-numpy-shu-zu-yu-xiang-liang-hua.html"><span class="sb-item-num">26</span><span class="sb-item-title">NumPy 数组与向量化</span></a>
+        <a class="sb-item" href="../python/27-pandas-shu-ju-jie-gou.html"><span class="sb-item-num">27</span><span class="sb-item-title">Pandas 数据结构</span></a>
+        <a class="sb-item" href="../python/28-pandas-shu-ju-qing-xi.html"><span class="sb-item-num">28</span><span class="sb-item-title">Pandas 数据清洗</span></a>
+        <a class="sb-item" href="../python/29-matplotlib-hui-tu-ti-xi.html"><span class="sb-item-num">29</span><span class="sb-item-title">Matplotlib 绘图体系</span></a>
+        <a class="sb-item" href="../python/30-matplotlib-dong-hua-yu-jiao-hu.html"><span class="sb-item-num">30</span><span class="sb-item-title">Matplotlib 动画与交互</span></a>
+        <a class="sb-item" href="../python/31-seaborn-tong-ji-ke-shi-hua.html"><span class="sb-item-num">31</span><span class="sb-item-title">Seaborn 统计可视化</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="agent">
+      <a class="sb-group-title" href="../modules/agent.html" data-toggle="agent">
+        <span class="sb-num">02</span>
+        <span class="sb-group-text"><b>Agent 核心</b><i>15 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../agent/01-token-yu-ci-qian-ru.html"><span class="sb-item-num">01</span><span class="sb-item-title">Token 与词嵌入</span></a>
+        <a class="sb-item" href="../agent/02-qian-xiang-chuan-bo-yu-fan-xiang-chuan-bo.html"><span class="sb-item-num">02</span><span class="sb-item-title">前向传播与反向传播</span></a>
+        <a class="sb-item" href="../agent/03-zhu-yi-li-ji-zhi-yu-transformer-jia-gou.html"><span class="sb-item-num">03</span><span class="sb-item-title">注意力机制与 Transformer 架构</span></a>
+        <a class="sb-item" href="../agent/04-yu-xun-lian-rlhf-yu-cai-yang-kv-cache.html"><span class="sb-item-num">04</span><span class="sb-item-title">预训练、RLHF 与采样（KV Cache）</span></a>
+        <a class="sb-item" href="../agent/05-ben-di-mo-xing-yu-xiao-xi-jie-gou.html"><span class="sb-item-num">05</span><span class="sb-item-title">本地模型与消息结构</span></a>
+        <a class="sb-item" href="../agent/06-hui-hua-guan-li-yu-json-shu-chu.html"><span class="sb-item-num">06</span><span class="sb-item-title">会话管理与 JSON 输出</span></a>
+        <a class="sb-item" href="../agent/07-tool-calling-xie-yi-yu-feng-zhuang.html"><span class="sb-item-num">07</span><span class="sb-item-title">Tool Calling：协议与封装</span></a>
+        <a class="sb-item" href="../agent/08-react-mo-shi-yu-zhu-xun-huan.html"><span class="sb-item-num">08</span><span class="sb-item-title">ReAct 模式与主循环</span></a>
+        <a class="sb-item" href="../agent/09-shi-zhan-deep-research-agent.html"><span class="sb-item-num">09</span><span class="sb-item-title">实战：Deep Research Agent</span></a>
+        <a class="sb-item" href="../agent/10-skill-yu-jian-jin-shi-pi-lu.html"><span class="sb-item-num">10</span><span class="sb-item-title">Skill 与渐进式披露</span></a>
+        <a class="sb-item" href="../agent/11-mcp-quan-jing.html"><span class="sb-item-num">11</span><span class="sb-item-title">MCP 全景</span></a>
+        <a class="sb-item" href="../agent/12-duo-agent-yu-xuan-xing-ce-lve.html"><span class="sb-item-num">12</span><span class="sb-item-title">多 Agent 与选型策略</span></a>
+        <a class="sb-item" href="../agent/13-ti-shi-ci-gong-cheng-yu-shang-xia-wen-gong.html"><span class="sb-item-num">13</span><span class="sb-item-title">提示词工程与上下文工程</span></a>
+        <a class="sb-item" href="../agent/14-xun-huan-tu-yu-gu-jia-gong-cheng.html"><span class="sb-item-num">14</span><span class="sb-item-title">循环、图与骨架工程</span></a>
+        <a class="sb-item" href="../agent/15-ji-yi-quan-xian-yu-ping-ce.html"><span class="sb-item-num">15</span><span class="sb-item-title">记忆、权限与评测</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="langchain">
+      <a class="sb-group-title" href="../modules/langchain.html" data-toggle="langchain">
+        <span class="sb-num">03</span>
+        <span class="sb-group-text"><b>LangChain 指南</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langchain/01-ren-shi-langchain.html"><span class="sb-item-num">01</span><span class="sb-item-title">认识 LangChain</span></a>
+        <a class="sb-item" href="../langchain/02-ti-shi-ci-mu-ban-yu-xiao-xi.html"><span class="sb-item-num">02</span><span class="sb-item-title">提示词模板与消息</span></a>
+        <a class="sb-item" href="../langchain/03-lcel-yu-runnable.html"><span class="sb-item-num">03</span><span class="sb-item-title">LCEL 与 Runnable</span></a>
+        <a class="sb-item" href="../langchain/04-liu-shi-yu-bing-fa.html"><span class="sb-item-num">04</span><span class="sb-item-title">流式与并发</span></a>
+        <a class="sb-item" href="../langchain/05-shu-chu-jie-xi-qi.html"><span class="sb-item-num">05</span><span class="sb-item-title">输出解析器</span></a>
+        <a class="sb-item" href="../langchain/06-wen-dang-jia-zai-yu-qie-ge.html"><span class="sb-item-num">06</span><span class="sb-item-title">文档加载与切割</span></a>
+        <a class="sb-item" href="../langchain/07-qian-ru-yu-xiang-liang-ku.html"><span class="sb-item-num">07</span><span class="sb-item-title">嵌入与向量库</span></a>
+        <a class="sb-item" href="../langchain/08-jian-suo-yu-rag.html"><span class="sb-item-num">08</span><span class="sb-item-title">检索与RAG</span></a>
+        <a class="sb-item" href="../langchain/09-dui-hua-ji-yi.html"><span class="sb-item-num">09</span><span class="sb-item-title">对话记忆</span></a>
+        <a class="sb-item" href="../langchain/10-gong-ju-diao-yong.html"><span class="sb-item-num">10</span><span class="sb-item-title">工具调用</span></a>
+        <a class="sb-item" href="../langchain/11-agent.html"><span class="sb-item-num">11</span><span class="sb-item-title">Agent</span></a>
+        <a class="sb-item" href="../langchain/12-hui-diao-yu-tiao-shi-quan-ke-cheng-shou-guan.html"><span class="sb-item-num">12</span><span class="sb-item-title">回调与调试（全课程收官章）</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="langgraph">
+      <a class="sb-group-title" href="../modules/langgraph.html" data-toggle="langgraph">
+        <span class="sb-num">04</span>
+        <span class="sb-group-text"><b>LangGraph 框架指南</b><i>17 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langgraph/01-di-1-zhang-cong-yi-ge-shi-kong-de-jiao.html"><span class="sb-item-num">01</span><span class="sb-item-title">第 1 章 从一个失控的脚本说起</span></a>
+        <a class="sb-item" href="../langgraph/02-di-2-zhang-zui-xiao-ke-yun-xing-tu.html"><span class="sb-item-num">02</span><span class="sb-item-title">第 2 章 最小可运行图</span></a>
+        <a class="sb-item" href="../langgraph/03-di-3-zhang-zhuang-tai-tu-de-shu-ju-xin.html"><span class="sb-item-num">03</span><span class="sb-item-title">第 3 章 状态：图的数据心脏</span></a>
+        <a class="sb-item" href="../langgraph/04-di-4-zhang-rang-liu-cheng-xue-hui-jue-ce.html"><span class="sb-item-num">04</span><span class="sb-item-title">第 4 章 让流程学会决策</span></a>
+        <a class="sb-item" href="../langgraph/05-di-5-zhang-bing-xing-shi-jie-chao-bu-zhi.html"><span class="sb-item-num">05</span><span class="sb-item-title">第 5 章 并行世界：超步执行模型</span></a>
+        <a class="sb-item" href="../langgraph/06-di-6-zhang-command-ba-kong-zhi-quan-jiao-jin.html"><span class="sb-item-num">06</span><span class="sb-item-title">第 6 章 Command：把控制权交进节点</span></a>
+        <a class="sb-item" href="../langgraph/07-di-7-zhang-dong-tai-bing-xing-send-yu-mapreduce.html"><span class="sb-item-num">07</span><span class="sb-item-title">第 7 章 动态并行：Send 与 MapReduce</span></a>
+        <a class="sb-item" href="../langgraph/08-di-8-zhang-gei-tu-zhuang-shang-shou-jiao-gong.html"><span class="sb-item-num">08</span><span class="sb-item-title">第 8 章 给图装上手脚：工具调用</span></a>
+        <a class="sb-item" href="../langgraph/09-di-9-zhang-fu-yong-yu-feng-zhuang-zi-tu.html"><span class="sb-item-num">09</span><span class="sb-item-title">第 9 章 复用与封装：子图</span></a>
+        <a class="sb-item" href="../langgraph/10-di-10-zhang-cong-dan-tu-dao-tuan-dui-duo.html"><span class="sb-item-num">10</span><span class="sb-item-title">第 10 章 从单图到团队：多 Agent 架构</span></a>
+        <a class="sb-item" href="../langgraph/11-di-11-zhang-liu-shi-shu-chu.html"><span class="sb-item-num">11</span><span class="sb-item-title">第 11 章 流式输出</span></a>
+        <a class="sb-item" href="../langgraph/12-di-12-zhang-chi-jiu-hua-checkpointer-yu-xian-cheng.html"><span class="sb-item-num">12</span><span class="sb-item-title">第 12 章 持久化：Checkpointer 与线程</span></a>
+        <a class="sb-item" href="../langgraph/13-di-13-zhang-shi-jian-lv-xing.html"><span class="sb-item-num">13</span><span class="sb-item-title">第 13 章 时间旅行</span></a>
+        <a class="sb-item" href="../langgraph/14-di-14-zhang-zhong-duan-yu-ren-zai-hui-lu.html"><span class="sb-item-num">14</span><span class="sb-item-title">第 14 章 中断与人在回路</span></a>
+        <a class="sb-item" href="../langgraph/15-di-15-zhang-ji-yi-guan-li.html"><span class="sb-item-num">15</span><span class="sb-item-title">第 15 章 记忆管理</span></a>
+        <a class="sb-item" href="../langgraph/16-di-16-zhang-rong-cuo-zhong-shi-chao-shi-yu.html"><span class="sb-item-num">16</span><span class="sb-item-title">第 16 章 容错：重试、超时与兜底</span></a>
+        <a class="sb-item" href="../langgraph/17-di-17-zhang-quan-jing-hui-gu.html"><span class="sb-item-num">17</span><span class="sb-item-title">第 17 章 全景回顾</span></a>
+      </div>
+    </section>
+    <section class="sb-group open" data-mod="backend">
+      <a class="sb-group-title" href="../modules/backend.html" data-toggle="backend">
+        <span class="sb-num">05</span>
+        <span class="sb-group-text"><b>Python 框架指南</b><i>14 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../backend/01-fastapi-ru-men-yu-asgi.html"><span class="sb-item-num">01</span><span class="sb-item-title">FastAPI 入门与 ASGI</span></a>
+        <a class="sb-item" href="../backend/02-lu-you-yu-qing-qiu-xiang-ying.html"><span class="sb-item-num">02</span><span class="sb-item-title">路由与请求响应</span></a>
+        <a class="sb-item current" href="../backend/03-pydantic-shu-ju-jiao-yan-yu-pei-zhi.html"><span class="sb-item-num">03</span><span class="sb-item-title">Pydantic 数据校验与配置</span></a>
+        <a class="sb-item" href="../backend/04-sqlalchemy-yi-bu-yin-qing-yu-hui-hua.html"><span class="sb-item-num">04</span><span class="sb-item-title">SQLAlchemy 异步引擎与会话</span></a>
+        <a class="sb-item" href="../backend/05-orm-jian-mo.html"><span class="sb-item-num">05</span><span class="sb-item-title">ORM 建模</span></a>
+        <a class="sb-item" href="../backend/06-sql-biao-da-shi-yu-shu-ju-cao-zuo.html"><span class="sb-item-num">06</span><span class="sb-item-title">SQL 表达式与数据操作</span></a>
+        <a class="sb-item" href="../backend/07-alembic-shu-ju-qian-yi.html"><span class="sb-item-num">07</span><span class="sb-item-title">Alembic 数据迁移</span></a>
+        <a class="sb-item" href="../backend/08-yi-lai-zhu-ru.html"><span class="sb-item-num">08</span><span class="sb-item-title">依赖注入</span></a>
+        <a class="sb-item" href="../backend/09-tong-yi-yi-chang-chu-li.html"><span class="sb-item-num">09</span><span class="sb-item-title">统一异常处理</span></a>
+        <a class="sb-item" href="../backend/10-zhong-jian-jian.html"><span class="sb-item-num">10</span><span class="sb-item-title">中间件</span></a>
+        <a class="sb-item" href="../backend/11-ren-zheng-yu-jwt.html"><span class="sb-item-num">11</span><span class="sb-item-title">认证与 JWT</span></a>
+        <a class="sb-item" href="../backend/12-pytest-ce-shi.html"><span class="sb-item-num">12</span><span class="sb-item-title">pytest 测试</span></a>
+        <a class="sb-item" href="../backend/13-ri-zhi-loguru.html"><span class="sb-item-num">13</span><span class="sb-item-title">日志 loguru</span></a>
+        <a class="sb-item" href="../backend/14-liu-shi-xiang-ying-sse-yu-websocket.html"><span class="sb-item-num">14</span><span class="sb-item-title">流式响应 SSE 与 WebSocket</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="interview">
+      <a class="sb-group-title" href="../modules/interview.html" data-toggle="interview">
+        <span class="sb-num">06</span>
+        <span class="sb-group-text"><b>面试题库</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../interview/01-llm-yuan-li-pian.html"><span class="sb-item-num">01</span><span class="sb-item-title">LLM 原理篇</span></a>
+        <a class="sb-item" href="../interview/02-rag-yu-jian-suo-pian.html"><span class="sb-item-num">02</span><span class="sb-item-title">RAG 与检索篇</span></a>
+        <a class="sb-item" href="../interview/03-agent-he-xin-pian.html"><span class="sb-item-num">03</span><span class="sb-item-title">Agent 核心篇</span></a>
+        <a class="sb-item" href="../interview/04-langgraph-pian.html"><span class="sb-item-num">04</span><span class="sb-item-title">LangGraph 篇</span></a>
+        <a class="sb-item" href="../interview/05-langchain-pian.html"><span class="sb-item-num">05</span><span class="sb-item-title">LangChain 篇</span></a>
+        <a class="sb-item" href="../interview/06-xi-tong-she-ji-pian.html"><span class="sb-item-num">06</span><span class="sb-item-title">系统设计篇</span></a>
+        <a class="sb-item" href="../interview/07-xiang-mu-shen-wa-pian.html"><span class="sb-item-num">07</span><span class="sb-item-title">项目深挖篇</span></a>
+        <a class="sb-item" href="../interview/08-gu-zhang-pai-cha-pian.html"><span class="sb-item-num">08</span><span class="sb-item-title">故障排查篇</span></a>
+        <a class="sb-item" href="../interview/09-python-ji-chu-pian.html"><span class="sb-item-num">09</span><span class="sb-item-title">Python 基础篇</span></a>
+        <a class="sb-item" href="../interview/10-fastapi-yu-hou-duan-pian.html"><span class="sb-item-num">10</span><span class="sb-item-title">FastAPI 与后端篇</span></a>
+        <a class="sb-item" href="../interview/11-ti-shi-ci-gong-cheng-yu-an-quan-pian.html"><span class="sb-item-num">11</span><span class="sb-item-title">提示词工程与安全篇</span></a>
+        <a class="sb-item" href="../interview/12-mo-xing-xuan-xing-yu-jiang-ben-pian.html"><span class="sb-item-num">12</span><span class="sb-item-title">模型选型与降本篇</span></a>
+      </div>
+    </section>
+  </nav>
+</aside>
+  <main class="main">
+    <header class="topbar">
+      <button class="menu-btn" id="menuBtn" aria-label="目录">☰</button>
+      <div class="crumbs"><a href="../index.html">首页</a><span>/</span><a href="../modules/backend.html">Python 框架指南</a><span>/</span><span class="cur">Pydantic 数据校验与配置</span></div>
+      <div class="topbar-actions">
+        <button class="icon-btn" id="themeBtn" title="切换深浅色" aria-label="切换深浅色">◐</button>
+      </div>
+    </header>
+    <div class="content">
+      <article class="article">
+
+<header class="page-head">
+  <div class="page-kicker">Python 框架指南 · 第 03 章</div>
+  <h1 class="page-title">Pydantic 数据校验与配置</h1>
+  <p class="page-desc">本章定位：把 Pydantic v2 的常用&quot;零件&quot;一个个拆开讲——怎么定义模型、怎么加约束、怎么写自定义校验、怎么导出数据、怎么读配置、怎么组织 DTO。不搞贯穿工程，目标是学完之后，任何 FastAPI 项目 sch…</p>
+  <div class="page-meta">
+    <span>约 28 分钟</span><span>11,343 字</span><span>23 个代码示例</span>
+  </div>
+</header>
+<div class="md"><blockquote>
+<p>本章定位：把 Pydantic v2 的常用"零件"一个个拆开讲——怎么定义模型、怎么加约束、怎么写自定义校验、怎么导出数据、怎么读配置、怎么组织 DTO。不搞贯穿工程，目标是学完之后，任何 FastAPI 项目 schema 目录里那堆模型，你都能一眼看懂、上手就改。</p>
+</blockquote>
+<p>Pydantic 是 FastAPI 的御用校验库：你声明的请求体、响应体、查询参数、应用配置，背后全是它在干活。这一章的所有示例，都围绕虚构的内容平台「墨集 inkhub」展开——文章（<code>Article</code>）、作者（<code>Author</code>）、栏目（<code>Column</code>）。</p>
+<hr />
+<h2 id="1-basemodel给数据做个模具">1. BaseModel：给数据做个模具</h2>
+<p><strong>作用</strong>：<code>BaseModel</code> 是一切的地基。继承它、用类型标注声明字段，一个"自带质检的数据类"就诞生了——数据进来先过安检，不合格直接弹出去。</p>
+<p>最小示例：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Author</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">author_id</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">email</span><span class="p">:</span> <span class="nb">str</span>
+</code></pre></div>
+<p>实例化时数据被自动检查：</p>
+<div class="highlight"><pre><span></span><code><span class="n">a</span> <span class="o">=</span> <span class="n">Author</span><span class="p">(</span><span class="n">author_id</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">"林墨"</span><span class="p">,</span> <span class="n">email</span><span class="o">=</span><span class="s2">"linmo@inkhub.cn"</span><span class="p">)</span>
+
+<span class="c1"># 这两个都会抛 ValidationError：</span>
+<span class="c1"># Author(author_id="abc", name="林墨", email="x@inkhub.cn")  # "abc" 转不成 int</span>
+<span class="c1"># Author(author_id=1, name="林墨")                          # 缺 email</span>
+</code></pre></div>
+<p><strong>比喻</strong>：BaseModel 就像月饼模具——面团（原始数据）按进去，出来的一定是模具规定的形状；形状不对的面团，当场弹回给你，绝不带病出厂。</p>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li>多传了模型里没有的字段，v2 默认<strong>静默忽略</strong>。想让"多传字段"也报错：</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">ConfigDict</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Author</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span><span class="n">extra</span><span class="o">=</span><span class="s2">"forbid"</span><span class="p">)</span>
+    <span class="n">author_id</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+</code></pre></div>
+<ul>
+<li><code>ValidationError</code> 不会自动变成 HTTP 422。只有在 FastAPI 的请求链路里（声明为参数类型时）才自动转换；自己脚本里调用，得自己 <code>try/except</code>。</li>
+</ul>
+<hr />
+<h2 id="2-field给字段挂一块规则标牌">2. Field：给字段挂一块规则标牌</h2>
+<p><strong>作用</strong>：类型标注只管"大类型对不对"；细粒度规则交给 <code>Field</code>——必填与否、数值范围、字符串长度、文档元信息，一个全管。</p>
+<p><strong>常用参数速查</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>...</code>（第一个位置参数）</td>
+<td>必填标记，表示没有默认值</td>
+</tr>
+<tr>
+<td><code>default</code></td>
+<td>默认值</td>
+</tr>
+<tr>
+<td><code>default_factory</code></td>
+<td>可变默认值的工厂函数</td>
+</tr>
+<tr>
+<td><code>gt</code> / <code>ge</code> / <code>lt</code> / <code>le</code></td>
+<td>数值边界：大于 / 大于等于 / 小于 / 小于等于</td>
+</tr>
+<tr>
+<td><code>min_length</code> / <code>max_length</code></td>
+<td>长度约束（字符串、列表）</td>
+</tr>
+<tr>
+<td><code>pattern</code></td>
+<td>正则约束（字符串）</td>
+</tr>
+<tr>
+<td><code>alias</code></td>
+<td>字段别名（接收/导出时用别的名字）</td>
+</tr>
+<tr>
+<td><code>title</code> / <code>description</code></td>
+<td>文档标题与说明（给 OpenAPI 文档看）</td>
+</tr>
+<tr>
+<td><code>examples</code></td>
+<td>示例值列表（展示在 API 文档里）</td>
+</tr>
+<tr>
+<td><code>repr</code></td>
+<td>是否出现在 repr 输出中（密码类字段设 <code>False</code>）</td>
+</tr>
+</tbody>
+</table>
+<p>最小示例（墨集的文章字段）：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">Field</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Article</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">article_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">title</span><span class="o">=</span><span class="s2">"文章ID"</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">"文章唯一标识，创建时可不传，由服务端生成。"</span><span class="p">,</span>
+        <span class="n">ge</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">examples</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">42</span><span class="p">],</span>
+    <span class="p">)</span>
+    <span class="n">title</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="o">...</span><span class="p">,</span>
+        <span class="n">title</span><span class="o">=</span><span class="s2">"标题"</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">"文章标题，长度 2 到 50 个字符。"</span><span class="p">,</span>
+        <span class="n">min_length</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
+        <span class="n">examples</span><span class="o">=</span><span class="p">[</span><span class="s2">"凌晨四点的墨尔本"</span><span class="p">],</span>
+    <span class="p">)</span>
+    <span class="n">read_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ge</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">"阅读量，不能为负"</span><span class="p">)</span>
+    <span class="n">tags</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">,</span> <span class="n">examples</span><span class="o">=</span><span class="p">[</span><span class="s2">"散文"</span><span class="p">,</span> <span class="s2">"旅记"</span><span class="p">])</span>
+</code></pre></div>
+<p><strong><code>...</code> 到底是什么</strong>：Python 内置单例 <code>Ellipsis</code>。放在 Field 的第一个位置参数，意思就是"此字段必填、没有默认值"。写 <code>title: str = Field(...)</code> 等价于 <code>title: str</code>，但可以接着塞 <code>min_length</code> 这些参数。</p>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li><code>title</code> / <code>description</code> / <code>examples</code> <strong>不参与校验</strong>，只影响 <code>/docs</code> 页面的展示，别指望它们拦截脏数据。</li>
+<li>可变默认值禁止直接给：<code>tags: list[str] = Field(default=[])</code> 会让所有实例共享同一个列表，必须 <code>default_factory=list</code>。</li>
+<li><code>ge / le</code> 只管数值；字符串长度是 <code>min_length / max_length</code>；正则是 <code>pattern</code>。别拿 <code>ge</code> 去约束字符串长度。</li>
+</ul>
+<hr />
+<h2 id="3-类型转换一位宽松的翻译官">3. 类型转换：一位宽松的翻译官</h2>
+<p><strong>作用</strong>：Pydantic 默认是"宽松模式"（lax/smart 模式）——能安全转的值自动帮你转。Web 世界里表单和查询参数天生全是字符串，全靠这个行为兜底。</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Follow</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">follower_id</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">remark</span><span class="p">:</span> <span class="nb">str</span>
+
+
+<span class="n">f</span> <span class="o">=</span> <span class="n">Follow</span><span class="p">(</span><span class="n">follower_id</span><span class="o">=</span><span class="s2">"8"</span><span class="p">,</span> <span class="n">remark</span><span class="o">=</span><span class="s2">"三年老读者"</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">follower_id</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">follower_id</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>  <span class="c1"># 8  int</span>
+
+<span class="c1"># Follow(follower_id=1, remark=42)  # ValidationError！v2 不做 int → str</span>
+</code></pre></div>
+<p>数字字符串 <code>"8"</code> → <code>int 8</code> 自动完成；字符串里混空格（<code>" 8 "</code>）也会先 strip 再转。</p>
+<p>但注意这个转换是"偏科"的：<strong>数字字符串能转数值，数值不能转字符串</strong>（<code>remark=42</code> 直接报错）。v1 老项目里 <code>int → str</code> 是放行的，这是迁移到 v2 的高频翻车点。</p>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li>bool 的转换规则要背：<code>"true" / "false" / "1" / "0" / "on" / "off" / "yes" / "no"</code>（大小写不敏感）都能转；其余（<code>"大概吧"</code>）直接报错。别用字符串玩"薛定谔的布尔"。</li>
+<li>想要"严丝合缝"模式，两种写法：</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">ConfigDict</span><span class="p">,</span> <span class="n">StrictInt</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Stats</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span><span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># 整个模型严格模式</span>
+    <span class="n">read_count</span><span class="p">:</span> <span class="nb">int</span>          <span class="c1"># 传 "8" 直接报错</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Stats2</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">read_count</span><span class="p">:</span> <span class="n">StrictInt</span>    <span class="c1"># 只对单个字段严格</span>
+</code></pre></div>
+<ul>
+<li>依赖宽松转换时要心里有数：<code>"1.9"</code> 能转 float，<code>"abc"</code> 转任何数值类型都报错；日期类（<code>datetime</code>）接受 <code>"2026-08-27T10:00:00"</code> 这类 ISO 字符串。</li>
+</ul>
+<hr />
+<h2 id="4-optional-与默认值字段可以缺席吗">4. Optional 与默认值：字段可以缺席吗</h2>
+<p><strong>作用</strong>：一个字段能不能"不传"，看两点：类型是否 <code>X | None</code>、有没有默认值。二者缺一不可（想要可缺省的话）。</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">Field</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Author</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">author_id</span><span class="p">:</span> <span class="nb">int</span>                          <span class="c1"># 必填：缺了就报错</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>                               <span class="c1"># 必填</span>
+    <span class="n">bio</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>                  <span class="c1"># 可缺省：不传就是 None</span>
+    <span class="n">pen_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"佚名"</span>                   <span class="c1"># 可缺省：不传就是 "佚名"</span>
+    <span class="n">tags</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>  <span class="c1"># 可缺省 + 工厂默认值</span>
+</code></pre></div>
+<p><strong>比喻</strong>：必填字段像飞机上的安全带——登机（实例化）时少一条都不放行；默认值像座椅靠背上的毯子，你自己带了用你的，没带就发一条标准款。</p>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li><code>bio: str | None</code>（不带 <code>= None</code>）<strong>仍然是必填</strong>！调用方必须显式传 <code>bio=None</code> 才行。想"可不传"，默认值不能省。</li>
+<li><code>Optional[str]</code> 和 <code>str | None</code> 是一回事；新代码推荐 <code>X | None</code> 写法（Python 3.10+ 原生支持）。</li>
+<li>默认值写成 <code>bio: str | None = None</code> 还是 <code>Field(default=None)</code>，效果一样，前者更简洁。</li>
+</ul>
+<hr />
+<h2 id="5-嵌套模型大箱套小盒">5. 嵌套模型：大箱套小盒</h2>
+<p><strong>作用</strong>：字段类型可以是另一个 <code>BaseModel</code>，也可以是它们的列表/字典。嵌套校验自动递归执行，错误信息带完整路径。</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">Field</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Author</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">author_id</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Column</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">column_id</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Article</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">title</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">min_length</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
+    <span class="n">author</span><span class="p">:</span> <span class="n">Author</span>                                       <span class="c1"># 嵌套单个</span>
+    <span class="n">columns</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Column</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>  <span class="c1"># 嵌套列表</span>
+
+
+<span class="n">article</span> <span class="o">=</span> <span class="n">Article</span><span class="p">(</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">"凌晨四点的墨尔本"</span><span class="p">,</span>
+    <span class="n">author</span><span class="o">=</span><span class="p">{</span><span class="s2">"author_id"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"林墨"</span><span class="p">},</span>      <span class="c1"># 直接塞 dict 也可以</span>
+    <span class="n">columns</span><span class="o">=</span><span class="p">[{</span><span class="s2">"column_id"</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"旅记"</span><span class="p">}],</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">article</span><span class="o">.</span><span class="n">author</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>      <span class="c1"># 林墨 —— 已经是 Author 实例</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">article</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>  <span class="c1"># 旅记</span>
+</code></pre></div>
+<p><strong>比喻</strong>：嵌套模型是快递大箱套小盒——过安检时外箱扫一遍，里面每个小盒还会单独开箱检查。</p>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li>嵌套字段传字典即可，Pydantic 自动转成子模型实例，访问用点号链。</li>
+<li>定位错误看 <code>loc</code>：<code>("author", "name")</code> 表示问题出在嵌套字段 <code>author</code> 的 <code>name</code> 里。</li>
+<li>嵌套列表默认值的老问题：<code>Field(default_factory=list)</code>，永远别裸写 <code>= []</code>。</li>
+</ul>
+<hr />
+<h2 id="6-自定义校验器内置规则不够用了">6. 自定义校验器：内置规则不够用了</h2>
+<p>类型和数值范围管不住的业务规则（比如"标题不许是标题党"），用校验器自己写。</p>
+<h3 id="61-field_validator管一个字段">6.1 @field_validator：管一个字段</h3>
+<p><strong>作用</strong>：对单个字段做自定义检查或数据清洗。</p>
+<p><strong>签名</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="nd">@field_validator</span><span class="p">(</span><span class="s2">"字段名"</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">"after"</span><span class="p">)</span>
+<span class="nd">@classmethod</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">check</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="n">字段类型</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">字段类型</span><span class="p">:</span> <span class="o">...</span>
+</code></pre></div>
+<ul>
+<li><code>mode="after"</code>（默认）：在类型转换<strong>之后</strong>执行，拿到的是转换后的值（<code>str</code> 就是 <code>str</code>）。</li>
+<li><code>mode="before"</code>：在类型转换<strong>之前</strong>执行，拿到的是原始值（可能是任意类型），适合做预处理。</li>
+</ul>
+<p>最小示例：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">field_validator</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Article</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">title</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">slug</span><span class="p">:</span> <span class="nb">str</span>  <span class="c1"># URL 片段，如 "melbourne-at-4am"</span>
+
+    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">"title"</span><span class="p">)</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">strip_title</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">v</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>  <span class="c1"># 清洗：去首尾空格</span>
+
+    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">"title"</span><span class="p">)</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">reject_clickbait</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s2">"震惊"</span> <span class="ow">in</span> <span class="n">v</span> <span class="ow">or</span> <span class="s2">"惊呆"</span> <span class="ow">in</span> <span class="n">v</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"墨集禁止标题党"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">v</span>
+
+    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">"slug"</span><span class="p">)</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">slug_format</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">v</span><span class="o">.</span><span class="n">islower</span><span class="p">()</span> <span class="ow">or</span> <span class="s2">" "</span> <span class="ow">in</span> <span class="n">v</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"slug 必须全小写且不含空格"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">v</span>
+</code></pre></div>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li><strong>必须 return</strong>！校验器忘了返回值，字段值会静默变成 <code>None</code>——新手重灾区，出问题了先查这个。</li>
+<li>抛 <code>ValueError</code> / <code>AssertionError</code> 即可，Pydantic 会自动包装成漂亮的 <code>ValidationError</code>；不要自己抛 ValidationError。</li>
+<li>同一字段的多个校验器按<strong>定义顺序</strong>执行，前一个的输出是后一个的输入。</li>
+<li>v2 中校验器要求第一个参数是 <code>cls</code>，记得配 <code>@classmethod</code>。</li>
+</ul>
+<h3 id="62-model_validator字段之间要联动">6.2 @model_validator：字段之间要联动</h3>
+<p><strong>作用</strong>：校验逻辑需要同时看多个字段时用模型级校验。典型场景："status 是 published 时，published_at 必填"。</p>
+<p><strong>签名</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="nd">@model_validator</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">"after"</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">check</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">"Self"</span><span class="p">:</span> <span class="o">...</span>
+</code></pre></div>
+<p>最小示例：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">model_validator</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Article</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">title</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">status</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"draft"</span>                <span class="c1"># draft / published</span>
+    <span class="n">published_at</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="nd">@model_validator</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">"after"</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">publish_needs_time</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">"Article"</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="s2">"published"</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">published_at</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"已发布的文章必须有发布时间"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span>
+</code></pre></div>
+<ul>
+<li><code>mode="after"</code>：拿到的是已构造好的 <code>self</code>，返回 <code>self</code>。</li>
+<li><code>mode="before"</code>：拿到的是原始输入 dict（参数习惯命名 <code>data</code>），处理完返回 dict，适合"字段改名/补默认值"这类预处理。</li>
+</ul>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li>after 模式下别忘了 <code>return self</code>，否则模型直接变成 <code>None</code>。</li>
+<li>字段级校验先跑、after 模型的 model_validator 后跑，所以 <code>self.status</code> 一定是已通过校验的值。</li>
+</ul>
+<hr />
+<h2 id="7-导出model_dump-exclude_unset-from_attributes">7. 导出：model_dump / exclude_unset / from_attributes</h2>
+<p>数据进得来，还得出得去。这三个 API 是 DTO 层的三大主力。</p>
+<h3 id="71-model_dump模型-字典">7.1 model_dump：模型 → 字典</h3>
+<p><strong>作用</strong>：把模型导出为 Python 字典；<code>model_dump_json()</code> 直接导出 JSON 字符串。</p>
+<div class="highlight"><pre><span></span><code><span class="n">article</span><span class="o">.</span><span class="n">model_dump</span><span class="p">()</span>                      <span class="c1"># 全量导出</span>
+<span class="n">article</span><span class="o">.</span><span class="n">model_dump</span><span class="p">(</span><span class="n">exclude</span><span class="o">=</span><span class="p">{</span><span class="s2">"read_count"</span><span class="p">})</span>  <span class="c1"># 排除指定字段</span>
+<span class="n">article</span><span class="o">.</span><span class="n">model_dump</span><span class="p">(</span><span class="n">exclude_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>     <span class="c1"># 跳过值为 None 的字段</span>
+<span class="n">article</span><span class="o">.</span><span class="n">model_dump</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">"json"</span><span class="p">)</span>           <span class="c1"># datetime 等转成 JSON 兼容类型</span>
+</code></pre></div>
+<p><strong>常见坑</strong>：<code>model_dump()</code> 里的 <code>datetime</code>、<code>UUID</code> 还是 Python 对象，直接 <code>json.dumps</code> 会炸；要么 <code>mode="json"</code>，要么用 <code>model_dump_json()</code>。</p>
+<h3 id="72-exclude_unsetpatch-接口的灵魂">7.2 exclude_unset：PATCH 接口的灵魂</h3>
+<p><strong>作用</strong>：只导出"用户这次<strong>明确传了</strong>"的字段，没传的一律不出现在结果里。</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">ArticleUpdate</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">title</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">summary</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+
+
+<span class="n">patch</span> <span class="o">=</span> <span class="n">ArticleUpdate</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">"新标题"</span><span class="p">)</span>
+
+<span class="n">patch</span><span class="o">.</span><span class="n">model_dump</span><span class="p">(</span><span class="n">exclude_unset</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># {'title': '新标题'}      ← 只含传了的</span>
+<span class="n">patch</span><span class="o">.</span><span class="n">model_dump</span><span class="p">()</span>                    <span class="c1"># {'title': '新标题', 'summary': None} ← 惨案</span>
+</code></pre></div>
+<p>第二种导出方式拿去更新数据库，会把用户压根没提的 <code>summary</code> 直接覆盖成 <code>None</code>——数据丢了都没处哭。所以 PATCH 更新永远配 <code>exclude_unset=True</code>。</p>
+<h3 id="73-from_attributes从-orm-对象直接吸数据">7.3 from_attributes：从 ORM 对象直接"吸"数据</h3>
+<p><strong>作用</strong>：让模型可以直接从任意对象身上按属性名取值（典型对象：SQLAlchemy 的 ORM 实例）。Response 模型标配。</p>
+<p>两种写法：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">ConfigDict</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">ArticleResponse</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span><span class="n">from_attributes</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># 写法一：模型级开关</span>
+    <span class="n">article_id</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">title</span><span class="p">:</span> <span class="nb">str</span>
+
+
+<span class="c1"># 写法二：单次调用时指定</span>
+<span class="c1"># resp = ArticleResponse.model_validate(orm_article, from_attributes=True)</span>
+</code></pre></div>
+<p><strong>常见坑</strong>：模型字段名和 ORM 属性名对不上时"吸"不到值，校验报"字段缺失"。要么改字段名对齐，要么给 ORM 实例加同名 property。</p>
+<hr />
+<h2 id="8-pydantic-settings把配置也交给-pydantic-管">8. pydantic-settings：把配置也交给 Pydantic 管</h2>
+<p><strong>作用</strong>：<code>BaseSettings</code> 能自动从<strong>环境变量</strong>和 <strong>.env 文件</strong>读取配置，并且照常走类型校验。配置值写错，应用启动那一刻就报错，而不是运行到一半突然崩。</p>
+<p>安装（它不在 fastapi 的默认依赖里）：</p>
+<div class="highlight"><pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span>pydantic-settings
+<span class="c1"># uv 项目则是：uv add pydantic-settings</span>
+</code></pre></div>
+<p>最小示例：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">pydantic_settings</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseSettings</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Settings</span><span class="p">(</span><span class="n">BaseSettings</span><span class="p">):</span>
+    <span class="n">app_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"墨集 API"</span>
+    <span class="n">debug</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+
+
+<span class="n">settings</span> <span class="o">=</span> <span class="n">Settings</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">app_name</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>读取优先级</strong>（高 → 低）：<strong>环境变量 &gt; .env 文件 &gt; 字段默认值</strong>。同一个键，环境变量永远赢。</p>
+<h3 id="81-读-env-文件">8.1 读 .env 文件</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">pydantic_settings</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseSettings</span><span class="p">,</span> <span class="n">SettingsConfigDict</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Settings</span><span class="p">(</span><span class="n">BaseSettings</span><span class="p">):</span>
+    <span class="n">app_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"墨集 API"</span>
+
+    <span class="n">model_config</span> <span class="o">=</span> <span class="n">SettingsConfigDict</span><span class="p">(</span><span class="n">env_file</span><span class="o">=</span><span class="s2">".env"</span><span class="p">)</span>
+</code></pre></div>
+<p>对应的 <code>.env</code>：</p>
+<div class="highlight"><pre><span></span><code>INKHUB_APP_NAME=墨集 inkhub 内容平台
+</code></pre></div>
+<p><strong>比喻</strong>：BaseSettings 像个贴身管家——你出门前只说一句"按惯例准备"（默认值），它先翻你留在桌上的便签（.env），再听你当面吼的那句（环境变量），当面的话永远最优先。</p>
+<h3 id="82-env_prefix多项目共处一室">8.2 env_prefix：多项目共处一室</h3>
+<p><strong>作用</strong>：给本类的所有字段名统一加前缀，避免环境变量撞名。同一台机器上跑多个服务时必备。</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">pydantic_settings</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseSettings</span><span class="p">,</span> <span class="n">SettingsConfigDict</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Settings</span><span class="p">(</span><span class="n">BaseSettings</span><span class="p">):</span>
+    <span class="n">app_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"墨集 API"</span>    <span class="c1"># 实际读取 INKHUB_APP_NAME</span>
+
+    <span class="n">model_config</span> <span class="o">=</span> <span class="n">SettingsConfigDict</span><span class="p">(</span>
+        <span class="n">env_file</span><span class="o">=</span><span class="s2">".env"</span><span class="p">,</span>
+        <span class="n">env_prefix</span><span class="o">=</span><span class="s2">"INKHUB_"</span><span class="p">,</span>
+    <span class="p">)</span>
+</code></pre></div>
+<h3 id="83-嵌套配置分组管理">8.3 嵌套配置：分组管理</h3>
+<p>配置项一多，全平铺会很乱。用嵌套模型分组，配合 <code>env_nested_delimiter</code>：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydantic_settings</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseSettings</span><span class="p">,</span> <span class="n">SettingsConfigDict</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Database</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>           <span class="c1"># 内层是普通 BaseModel，不是 BaseSettings</span>
+    <span class="n">host</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"127.0.0.1"</span>
+    <span class="n">port</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3306</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Settings</span><span class="p">(</span><span class="n">BaseSettings</span><span class="p">):</span>
+    <span class="n">db</span><span class="p">:</span> <span class="n">Database</span> <span class="o">=</span> <span class="n">Database</span><span class="p">()</span>
+
+    <span class="n">model_config</span> <span class="o">=</span> <span class="n">SettingsConfigDict</span><span class="p">(</span>
+        <span class="n">env_file</span><span class="o">=</span><span class="s2">".env"</span><span class="p">,</span>
+        <span class="n">env_prefix</span><span class="o">=</span><span class="s2">"INKHUB_"</span><span class="p">,</span>
+        <span class="n">env_nested_delimiter</span><span class="o">=</span><span class="s2">"__"</span><span class="p">,</span>   <span class="c1"># INKHUB_DB__HOST=10.0.0.8</span>
+    <span class="p">)</span>
+</code></pre></div>
+<p><code>.env</code> 里写 <code>INKHUB_DB__HOST=10.0.0.8</code>，就会精准命中 <code>settings.db.host</code>。</p>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li>环境变量优先级<strong>高于</strong> .env。CI/容器里导出的变量会悄悄覆盖本地 .env，排查配置问题先怀疑这个。</li>
+<li><code>env_file=".env"</code> 的路径相对<strong>运行目录</strong>（你在哪儿执行命令），不是相对 py 文件所在目录。从项目根启动、文件在子目录时，要写相对根目录的路径。</li>
+<li><code>.env</code> 通常含敏感信息，记得进 <code>.gitignore</code>；仓库里提交一份去掉敏感值的 <code>.env.example</code> 当模板。</li>
+<li>环境变量本质全是字符串，bool 字段靠 Pydantic 转换：<code>true / 1 / on / yes</code> 都行，<code>maybe</code> 不行。</li>
+</ul>
+<hr />
+<h2 id="9-dto-设计模式create-update-response-三兄弟">9. DTO 设计模式：Create / Update / Response 三兄弟</h2>
+<p><strong>作用</strong>：同一个"文章"在生命周期的不同阶段长得不一样——创建时没有 article_id、更新时全部字段可缺省、返回时不该带内部字段。硬用一个模型通吃，校验规则会互相打架。解法：按用途拆成模型家族。</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">ConfigDict</span><span class="p">,</span> <span class="n">Field</span>
+
+
+<span class="c1"># —— 入参：创建文章 ——</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ArticleCreate</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">title</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">min_length</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
+    <span class="n">summary</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+    <span class="n">author_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">ge</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+
+<span class="c1"># —— 入参：更新文章（PATCH：全部可缺省）——</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ArticleUpdate</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">title</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">min_length</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
+    <span class="n">summary</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+    <span class="n">status</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+
+
+<span class="c1"># —— 出参：响应模型（吸 ORM 属性）——</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ArticleResponse</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span><span class="n">from_attributes</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">article_id</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">title</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">status</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">author_id</span><span class="p">:</span> <span class="nb">int</span>
+</code></pre></div>
+<p>配套的路由用法（示意，FastAPI 部分第 2 章已讲）：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">fastapi</span><span class="w"> </span><span class="kn">import</span> <span class="n">FastAPI</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">FastAPI</span><span class="p">()</span>
+
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">"/articles"</span><span class="p">,</span> <span class="n">response_model</span><span class="o">=</span><span class="n">ArticleResponse</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">create_article</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">ArticleCreate</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ArticleResponse</span><span class="p">:</span>
+    <span class="o">...</span>  <span class="c1"># 入库后返回 ORM 对象，FastAPI 用 response_model 自动序列化+过滤</span>
+
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="s2">"/articles/</span><span class="si">{article_id}</span><span class="s2">"</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">update_article</span><span class="p">(</span><span class="n">article_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">ArticleUpdate</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="n">updates</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">model_dump</span><span class="p">(</span><span class="n">exclude_unset</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># 只取用户传的字段</span>
+    <span class="o">...</span>  <span class="c1"># 按字段精确更新</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">"updated"</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">updates</span><span class="p">)}</span>
+</code></pre></div>
+<p>分工一览：</p>
+<table>
+<thead>
+<tr>
+<th>模型</th>
+<th>职责</th>
+<th>关键手段</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Create</code></td>
+<td>创建入参，必填字段齐全</td>
+<td><code>Field(...)</code> + 约束</td>
+</tr>
+<tr>
+<td><code>Update</code></td>
+<td>更新入参，字段全部可缺省</td>
+<td><code>X \| None = None</code> + <code>exclude_unset</code></td>
+</tr>
+<tr>
+<td><code>Response</code></td>
+<td>出参，控制暴露哪些字段</td>
+<td><code>from_attributes</code> + 路由 <code>response_model</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li>别图省事让接口直接返回 ORM 对象而不配 <code>response_model</code>——等于把内部字段全裸奔给前端。</li>
+<li>Update 模型"全员可缺省"和"用 <code>model_dump()</code> 全量导出"组合起来会误清数据，记住：<strong>PATCH 更新必配 <code>exclude_unset=True</code></strong>。</li>
+<li>家族三兄弟可以共享一个基类，再用继承裁剪字段，避免三处复制粘贴。</li>
+</ul>
+<hr />
+<h2 id="10-小结">10. 小结</h2>
+<p>这一章的 API 手册浓缩成一张表：</p>
+<table>
+<thead>
+<tr>
+<th>场景</th>
+<th>用什么</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>定义数据结构</td>
+<td><code>BaseModel</code> + 类型标注</td>
+</tr>
+<tr>
+<td>字段级规则</td>
+<td><code>Field</code>（<code>...</code> / <code>ge</code> / <code>le</code> / <code>min_length</code> / <code>max_length</code> / <code>default_factory</code>）</td>
+</tr>
+<tr>
+<td>字段可缺省</td>
+<td><code>X \| None = None</code>（类型 + 默认值，缺一不可）</td>
+</tr>
+<tr>
+<td>复杂结构</td>
+<td>嵌套模型 + <code>list[子模型]</code></td>
+</tr>
+<tr>
+<td>单字段自定义规则</td>
+<td><code>@field_validator</code>（记得 return）</td>
+</tr>
+<tr>
+<td>多字段联动规则</td>
+<td><code>@model_validator(mode="after")</code></td>
+</tr>
+<tr>
+<td>模型导出</td>
+<td><code>model_dump</code> / <code>model_dump_json</code></td>
+</tr>
+<tr>
+<td>PATCH 局部更新</td>
+<td><code>model_dump(exclude_unset=True)</code></td>
+</tr>
+<tr>
+<td>ORM → 响应</td>
+<td><code>ConfigDict(from_attributes=True)</code></td>
+</tr>
+<tr>
+<td>读取配置</td>
+<td><code>BaseSettings</code> + <code>env_file</code> / <code>env_prefix</code> / <code>env_nested_delimiter</code></td>
+</tr>
+<tr>
+<td>请求/响应分家</td>
+<td>Create / Update / Response 模型家族</td>
+</tr>
+</tbody>
+</table>
+<p>配套演示脚本在 <code>demo/</code> 目录：<code>demo_model.py</code>（校验器与导出全家桶）、<code>demo_settings.py</code>（配置读取），都能直接运行看输出。</p>
+<p><strong>下一章</strong>：<a href="../backend/04-sqlalchemy-yi-bu-yin-qing-yu-hui-hua.html">04 · SQLAlchemy 异步引擎与会话</a></p></div>
+
+      </article>
+<nav class="pager"><a class="pg-card pg-prev" href="../backend/02-lu-you-yu-qing-qiu-xiang-ying.html"><span class="pg-label">← 上一篇</span><span class="pg-title">路由与请求响应</span><span class="pg-mod">Python 框架指南</span></a><a class="pg-card pg-next" href="../backend/04-sqlalchemy-yi-bu-yin-qing-yu-hui-hua.html"><span class="pg-label">下一篇 →</span><span class="pg-title">SQLAlchemy 异步引擎与会话</span><span class="pg-mod">Python 框架指南</span></a></nav>
+    </div>
+    <footer class="foot">
+      <span>深栈 DeepStack · AI Agent 工程师转型训练营配套文档</span>
+    </footer>
+  </main>
+<nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#1-basemodel给数据做个模具">1. BaseModel：给数据做个模具</a><a class="toc-link toc-h2" href="#2-field给字段挂一块规则标牌">2. Field：给字段挂一块规则标牌</a><a class="toc-link toc-h2" href="#3-类型转换一位宽松的翻译官">3. 类型转换：一位宽松的翻译官</a><a class="toc-link toc-h2" href="#4-optional-与默认值字段可以缺席吗">4. Optional 与默认值：字段可以缺席吗</a><a class="toc-link toc-h2" href="#5-嵌套模型大箱套小盒">5. 嵌套模型：大箱套小盒</a><a class="toc-link toc-h2" href="#6-自定义校验器内置规则不够用了">6. 自定义校验器：内置规则不够用了</a><a class="toc-link toc-h3" href="#61-field_validator管一个字段">6.1 @field_validator：管一个字段</a><a class="toc-link toc-h3" href="#62-model_validator字段之间要联动">6.2 @model_validator：字段之间要联动</a><a class="toc-link toc-h2" href="#7-导出model_dump-exclude_unset-from_attributes">7. 导出：model_dump / exclude_unset / from_attributes</a><a class="toc-link toc-h3" href="#71-model_dump模型-字典">7.1 model_dump：模型 → 字典</a><a class="toc-link toc-h3" href="#72-exclude_unsetpatch-接口的灵魂">7.2 exclude_unset：PATCH 接口的灵魂</a><a class="toc-link toc-h3" href="#73-from_attributes从-orm-对象直接吸数据">7.3 from_attributes：从 ORM 对象直接&quot;吸&quot;数据</a><a class="toc-link toc-h2" href="#8-pydantic-settings把配置也交给-pydantic-管">8. pydantic-settings：把配置也交给 Pydantic 管</a><a class="toc-link toc-h3" href="#81-读-env-文件">8.1 读 .env 文件</a><a class="toc-link toc-h3" href="#82-env_prefix多项目共处一室">8.2 env_prefix：多项目共处一室</a><a class="toc-link toc-h3" href="#83-嵌套配置分组管理">8.3 嵌套配置：分组管理</a><a class="toc-link toc-h2" href="#9-dto-设计模式create-update-response-三兄弟">9. DTO 设计模式：Create / Update / Response 三兄弟</a><a class="toc-link toc-h2" href="#10-小结">10. 小结</a></nav>
+</div>
+<div class="sb-mask" id="sbMask"></div>
+<script src="../assets/app.js"></script>
+</body>
+</html>

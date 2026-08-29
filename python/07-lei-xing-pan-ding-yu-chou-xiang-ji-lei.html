@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>07 · 类型判定与抽象基类 · 深栈 DeepStack 课程文档</title>
+<meta name="description" content="前面我们已经会造类、会造对象了。这一章往上再走一层，回答几个更本质的问题：对象的&quot;类型&quot;到底由什么决定？类自己又是谁造出来的？ 把这条&quot;制造链&quot;弄清楚之后，我们再学一个工程里非常值钱的工具——抽象基类（Abstract …">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%23d9c39a' text-anchor='middle'%3EDS%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+<div class="progress" id="progress"></div>
+
+<div class="layout">
+<aside class="sidebar" id="sidebar">
+  <div class="sb-head">
+    <a class="brand" href="../index.html">
+      <span class="brand-mark">DS</span>
+      <span class="brand-text"><b>深栈 DeepStack</b><i>AI Agent 工程师转型训练营</i></span>
+    </a>
+    <button class="sb-close" id="sbClose" aria-label="关闭目录">✕</button>
+  </div>
+  <div class="sb-search"><input type="search" id="searchInput" placeholder="搜索 123 篇文档… ( / )" autocomplete="off">
+    <div class="sb-results" id="searchResults"></div></div>
+  <nav class="sb-nav">
+    <section class="sb-group open" data-mod="python">
+      <a class="sb-group-title" href="../modules/python.html" data-toggle="python">
+        <span class="sb-num">01</span>
+        <span class="sb-group-text"><b>Python 与数据实践</b><i>31 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../python/01-huan-jing-da-jian-yu-ban-ben-guan-li.html"><span class="sb-item-num">01</span><span class="sb-item-title">环境搭建与版本管理</span></a>
+        <a class="sb-item" href="../python/02-bian-liang-biao-da-shi-yu-liu-cheng-kong-zhi.html"><span class="sb-item-num">02</span><span class="sb-item-title">变量、表达式与流程控制</span></a>
+        <a class="sb-item" href="../python/03-xu-lie-zi-dian-yu-ji-he.html"><span class="sb-item-num">03</span><span class="sb-item-title">序列、字典与集合</span></a>
+        <a class="sb-item" href="../python/04-han-shu-she-ji-yu-lambda.html"><span class="sb-item-num">04</span><span class="sb-item-title">函数设计与 lambda</span></a>
+        <a class="sb-item" href="../python/05-zuo-yong-yu-gui-ze-yu-bi-bao.html"><span class="sb-item-num">05</span><span class="sb-item-title">作用域规则与闭包</span></a>
+        <a class="sb-item" href="../python/06-lei-de-ding-yi-yu-shi-li-hua.html"><span class="sb-item-num">06</span><span class="sb-item-title">类的定义与实例化</span></a>
+        <a class="sb-item current" href="../python/07-lei-xing-pan-ding-yu-chou-xiang-ji-lei.html"><span class="sb-item-num">07</span><span class="sb-item-title">类型判定与抽象基类</span></a>
+        <a class="sb-item" href="../python/08-mo-shu-fang-fa-quan-jing.html"><span class="sb-item-num">08</span><span class="sb-item-title">魔术方法全景</span></a>
+        <a class="sb-item" href="../python/09-miao-shu-fu-yu-yuan-lei.html"><span class="sb-item-num">09</span><span class="sb-item-title">描述符与元类</span></a>
+        <a class="sb-item" href="../python/10-zhuang-shi-qi.html"><span class="sb-item-num">10</span><span class="sb-item-title">装饰器</span></a>
+        <a class="sb-item" href="../python/11-die-dai-xie-yi-yu-sheng-cheng-qi.html"><span class="sb-item-num">11</span><span class="sb-item-title">迭代协议与生成器</span></a>
+        <a class="sb-item" href="../python/12-with-yu-shang-xia-wen-xie-yi.html"><span class="sb-item-num">12</span><span class="sb-item-title">with 与上下文协议</span></a>
+        <a class="sb-item" href="../python/13-yi-chang-ti-xi-yu-chu-li.html"><span class="sb-item-num">13</span><span class="sb-item-title">异常体系与处理</span></a>
+        <a class="sb-item" href="../python/14-lei-xing-biao-zhu.html"><span class="sb-item-num">14</span><span class="sb-item-title">类型标注</span></a>
+        <a class="sb-item" href="../python/15-mo-kuai-yu-bao-de-zu-zhi.html"><span class="sb-item-num">15</span><span class="sb-item-title">模块与包的组织</span></a>
+        <a class="sb-item" href="../python/16-biao-zhun-ku-xun-li.html"><span class="sb-item-num">16</span><span class="sb-item-title">标准库巡礼</span></a>
+        <a class="sb-item" href="../python/17-yi-lai-guan-li-yu-di-san-fang-ku.html"><span class="sb-item-num">17</span><span class="sb-item-title">依赖管理与第三方库</span></a>
+        <a class="sb-item" href="../python/18-xian-cheng-yu-jin-cheng.html"><span class="sb-item-num">18</span><span class="sb-item-title">线程与进程</span></a>
+        <a class="sb-item" href="../python/19-shi-jian-xun-huan.html"><span class="sb-item-num">19</span><span class="sb-item-title">事件循环</span></a>
+        <a class="sb-item" href="../python/20-future-yu-xie-cheng.html"><span class="sb-item-num">20</span><span class="sb-item-title">Future 与协程</span></a>
+        <a class="sb-item" href="../python/21-asyncio-shi-zhan.html"><span class="sb-item-num">21</span><span class="sb-item-title">asyncio 实战</span></a>
+        <a class="sb-item" href="../python/22-gou-jian-yu-fa-bu.html"><span class="sb-item-num">22</span><span class="sb-item-title">构建与发布</span></a>
+        <a class="sb-item" href="../python/23-gong-cheng-hua-gong-ju-lian.html"><span class="sb-item-num">23</span><span class="sb-item-title">工程化工具链</span></a>
+        <a class="sb-item" href="../python/24-monorepo-yu-tiao-shi.html"><span class="sb-item-num">24</span><span class="sb-item-title">monorepo 与调试</span></a>
+        <a class="sb-item" href="../python/25-jupyter-jiao-hu-huan-jing.html"><span class="sb-item-num">25</span><span class="sb-item-title">Jupyter 交互环境</span></a>
+        <a class="sb-item" href="../python/26-numpy-shu-zu-yu-xiang-liang-hua.html"><span class="sb-item-num">26</span><span class="sb-item-title">NumPy 数组与向量化</span></a>
+        <a class="sb-item" href="../python/27-pandas-shu-ju-jie-gou.html"><span class="sb-item-num">27</span><span class="sb-item-title">Pandas 数据结构</span></a>
+        <a class="sb-item" href="../python/28-pandas-shu-ju-qing-xi.html"><span class="sb-item-num">28</span><span class="sb-item-title">Pandas 数据清洗</span></a>
+        <a class="sb-item" href="../python/29-matplotlib-hui-tu-ti-xi.html"><span class="sb-item-num">29</span><span class="sb-item-title">Matplotlib 绘图体系</span></a>
+        <a class="sb-item" href="../python/30-matplotlib-dong-hua-yu-jiao-hu.html"><span class="sb-item-num">30</span><span class="sb-item-title">Matplotlib 动画与交互</span></a>
+        <a class="sb-item" href="../python/31-seaborn-tong-ji-ke-shi-hua.html"><span class="sb-item-num">31</span><span class="sb-item-title">Seaborn 统计可视化</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="agent">
+      <a class="sb-group-title" href="../modules/agent.html" data-toggle="agent">
+        <span class="sb-num">02</span>
+        <span class="sb-group-text"><b>Agent 核心</b><i>15 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../agent/01-token-yu-ci-qian-ru.html"><span class="sb-item-num">01</span><span class="sb-item-title">Token 与词嵌入</span></a>
+        <a class="sb-item" href="../agent/02-qian-xiang-chuan-bo-yu-fan-xiang-chuan-bo.html"><span class="sb-item-num">02</span><span class="sb-item-title">前向传播与反向传播</span></a>
+        <a class="sb-item" href="../agent/03-zhu-yi-li-ji-zhi-yu-transformer-jia-gou.html"><span class="sb-item-num">03</span><span class="sb-item-title">注意力机制与 Transformer 架构</span></a>
+        <a class="sb-item" href="../agent/04-yu-xun-lian-rlhf-yu-cai-yang-kv-cache.html"><span class="sb-item-num">04</span><span class="sb-item-title">预训练、RLHF 与采样（KV Cache）</span></a>
+        <a class="sb-item" href="../agent/05-ben-di-mo-xing-yu-xiao-xi-jie-gou.html"><span class="sb-item-num">05</span><span class="sb-item-title">本地模型与消息结构</span></a>
+        <a class="sb-item" href="../agent/06-hui-hua-guan-li-yu-json-shu-chu.html"><span class="sb-item-num">06</span><span class="sb-item-title">会话管理与 JSON 输出</span></a>
+        <a class="sb-item" href="../agent/07-tool-calling-xie-yi-yu-feng-zhuang.html"><span class="sb-item-num">07</span><span class="sb-item-title">Tool Calling：协议与封装</span></a>
+        <a class="sb-item" href="../agent/08-react-mo-shi-yu-zhu-xun-huan.html"><span class="sb-item-num">08</span><span class="sb-item-title">ReAct 模式与主循环</span></a>
+        <a class="sb-item" href="../agent/09-shi-zhan-deep-research-agent.html"><span class="sb-item-num">09</span><span class="sb-item-title">实战：Deep Research Agent</span></a>
+        <a class="sb-item" href="../agent/10-skill-yu-jian-jin-shi-pi-lu.html"><span class="sb-item-num">10</span><span class="sb-item-title">Skill 与渐进式披露</span></a>
+        <a class="sb-item" href="../agent/11-mcp-quan-jing.html"><span class="sb-item-num">11</span><span class="sb-item-title">MCP 全景</span></a>
+        <a class="sb-item" href="../agent/12-duo-agent-yu-xuan-xing-ce-lve.html"><span class="sb-item-num">12</span><span class="sb-item-title">多 Agent 与选型策略</span></a>
+        <a class="sb-item" href="../agent/13-ti-shi-ci-gong-cheng-yu-shang-xia-wen-gong.html"><span class="sb-item-num">13</span><span class="sb-item-title">提示词工程与上下文工程</span></a>
+        <a class="sb-item" href="../agent/14-xun-huan-tu-yu-gu-jia-gong-cheng.html"><span class="sb-item-num">14</span><span class="sb-item-title">循环、图与骨架工程</span></a>
+        <a class="sb-item" href="../agent/15-ji-yi-quan-xian-yu-ping-ce.html"><span class="sb-item-num">15</span><span class="sb-item-title">记忆、权限与评测</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="langchain">
+      <a class="sb-group-title" href="../modules/langchain.html" data-toggle="langchain">
+        <span class="sb-num">03</span>
+        <span class="sb-group-text"><b>LangChain 指南</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langchain/01-ren-shi-langchain.html"><span class="sb-item-num">01</span><span class="sb-item-title">认识 LangChain</span></a>
+        <a class="sb-item" href="../langchain/02-ti-shi-ci-mu-ban-yu-xiao-xi.html"><span class="sb-item-num">02</span><span class="sb-item-title">提示词模板与消息</span></a>
+        <a class="sb-item" href="../langchain/03-lcel-yu-runnable.html"><span class="sb-item-num">03</span><span class="sb-item-title">LCEL 与 Runnable</span></a>
+        <a class="sb-item" href="../langchain/04-liu-shi-yu-bing-fa.html"><span class="sb-item-num">04</span><span class="sb-item-title">流式与并发</span></a>
+        <a class="sb-item" href="../langchain/05-shu-chu-jie-xi-qi.html"><span class="sb-item-num">05</span><span class="sb-item-title">输出解析器</span></a>
+        <a class="sb-item" href="../langchain/06-wen-dang-jia-zai-yu-qie-ge.html"><span class="sb-item-num">06</span><span class="sb-item-title">文档加载与切割</span></a>
+        <a class="sb-item" href="../langchain/07-qian-ru-yu-xiang-liang-ku.html"><span class="sb-item-num">07</span><span class="sb-item-title">嵌入与向量库</span></a>
+        <a class="sb-item" href="../langchain/08-jian-suo-yu-rag.html"><span class="sb-item-num">08</span><span class="sb-item-title">检索与RAG</span></a>
+        <a class="sb-item" href="../langchain/09-dui-hua-ji-yi.html"><span class="sb-item-num">09</span><span class="sb-item-title">对话记忆</span></a>
+        <a class="sb-item" href="../langchain/10-gong-ju-diao-yong.html"><span class="sb-item-num">10</span><span class="sb-item-title">工具调用</span></a>
+        <a class="sb-item" href="../langchain/11-agent.html"><span class="sb-item-num">11</span><span class="sb-item-title">Agent</span></a>
+        <a class="sb-item" href="../langchain/12-hui-diao-yu-tiao-shi-quan-ke-cheng-shou-guan.html"><span class="sb-item-num">12</span><span class="sb-item-title">回调与调试（全课程收官章）</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="langgraph">
+      <a class="sb-group-title" href="../modules/langgraph.html" data-toggle="langgraph">
+        <span class="sb-num">04</span>
+        <span class="sb-group-text"><b>LangGraph 框架指南</b><i>17 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langgraph/01-di-1-zhang-cong-yi-ge-shi-kong-de-jiao.html"><span class="sb-item-num">01</span><span class="sb-item-title">第 1 章 从一个失控的脚本说起</span></a>
+        <a class="sb-item" href="../langgraph/02-di-2-zhang-zui-xiao-ke-yun-xing-tu.html"><span class="sb-item-num">02</span><span class="sb-item-title">第 2 章 最小可运行图</span></a>
+        <a class="sb-item" href="../langgraph/03-di-3-zhang-zhuang-tai-tu-de-shu-ju-xin.html"><span class="sb-item-num">03</span><span class="sb-item-title">第 3 章 状态：图的数据心脏</span></a>
+        <a class="sb-item" href="../langgraph/04-di-4-zhang-rang-liu-cheng-xue-hui-jue-ce.html"><span class="sb-item-num">04</span><span class="sb-item-title">第 4 章 让流程学会决策</span></a>
+        <a class="sb-item" href="../langgraph/05-di-5-zhang-bing-xing-shi-jie-chao-bu-zhi.html"><span class="sb-item-num">05</span><span class="sb-item-title">第 5 章 并行世界：超步执行模型</span></a>
+        <a class="sb-item" href="../langgraph/06-di-6-zhang-command-ba-kong-zhi-quan-jiao-jin.html"><span class="sb-item-num">06</span><span class="sb-item-title">第 6 章 Command：把控制权交进节点</span></a>
+        <a class="sb-item" href="../langgraph/07-di-7-zhang-dong-tai-bing-xing-send-yu-mapreduce.html"><span class="sb-item-num">07</span><span class="sb-item-title">第 7 章 动态并行：Send 与 MapReduce</span></a>
+        <a class="sb-item" href="../langgraph/08-di-8-zhang-gei-tu-zhuang-shang-shou-jiao-gong.html"><span class="sb-item-num">08</span><span class="sb-item-title">第 8 章 给图装上手脚：工具调用</span></a>
+        <a class="sb-item" href="../langgraph/09-di-9-zhang-fu-yong-yu-feng-zhuang-zi-tu.html"><span class="sb-item-num">09</span><span class="sb-item-title">第 9 章 复用与封装：子图</span></a>
+        <a class="sb-item" href="../langgraph/10-di-10-zhang-cong-dan-tu-dao-tuan-dui-duo.html"><span class="sb-item-num">10</span><span class="sb-item-title">第 10 章 从单图到团队：多 Agent 架构</span></a>
+        <a class="sb-item" href="../langgraph/11-di-11-zhang-liu-shi-shu-chu.html"><span class="sb-item-num">11</span><span class="sb-item-title">第 11 章 流式输出</span></a>
+        <a class="sb-item" href="../langgraph/12-di-12-zhang-chi-jiu-hua-checkpointer-yu-xian-cheng.html"><span class="sb-item-num">12</span><span class="sb-item-title">第 12 章 持久化：Checkpointer 与线程</span></a>
+        <a class="sb-item" href="../langgraph/13-di-13-zhang-shi-jian-lv-xing.html"><span class="sb-item-num">13</span><span class="sb-item-title">第 13 章 时间旅行</span></a>
+        <a class="sb-item" href="../langgraph/14-di-14-zhang-zhong-duan-yu-ren-zai-hui-lu.html"><span class="sb-item-num">14</span><span class="sb-item-title">第 14 章 中断与人在回路</span></a>
+        <a class="sb-item" href="../langgraph/15-di-15-zhang-ji-yi-guan-li.html"><span class="sb-item-num">15</span><span class="sb-item-title">第 15 章 记忆管理</span></a>
+        <a class="sb-item" href="../langgraph/16-di-16-zhang-rong-cuo-zhong-shi-chao-shi-yu.html"><span class="sb-item-num">16</span><span class="sb-item-title">第 16 章 容错：重试、超时与兜底</span></a>
+        <a class="sb-item" href="../langgraph/17-di-17-zhang-quan-jing-hui-gu.html"><span class="sb-item-num">17</span><span class="sb-item-title">第 17 章 全景回顾</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="backend">
+      <a class="sb-group-title" href="../modules/backend.html" data-toggle="backend">
+        <span class="sb-num">05</span>
+        <span class="sb-group-text"><b>Python 框架指南</b><i>14 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../backend/01-fastapi-ru-men-yu-asgi.html"><span class="sb-item-num">01</span><span class="sb-item-title">FastAPI 入门与 ASGI</span></a>
+        <a class="sb-item" href="../backend/02-lu-you-yu-qing-qiu-xiang-ying.html"><span class="sb-item-num">02</span><span class="sb-item-title">路由与请求响应</span></a>
+        <a class="sb-item" href="../backend/03-pydantic-shu-ju-jiao-yan-yu-pei-zhi.html"><span class="sb-item-num">03</span><span class="sb-item-title">Pydantic 数据校验与配置</span></a>
+        <a class="sb-item" href="../backend/04-sqlalchemy-yi-bu-yin-qing-yu-hui-hua.html"><span class="sb-item-num">04</span><span class="sb-item-title">SQLAlchemy 异步引擎与会话</span></a>
+        <a class="sb-item" href="../backend/05-orm-jian-mo.html"><span class="sb-item-num">05</span><span class="sb-item-title">ORM 建模</span></a>
+        <a class="sb-item" href="../backend/06-sql-biao-da-shi-yu-shu-ju-cao-zuo.html"><span class="sb-item-num">06</span><span class="sb-item-title">SQL 表达式与数据操作</span></a>
+        <a class="sb-item" href="../backend/07-alembic-shu-ju-qian-yi.html"><span class="sb-item-num">07</span><span class="sb-item-title">Alembic 数据迁移</span></a>
+        <a class="sb-item" href="../backend/08-yi-lai-zhu-ru.html"><span class="sb-item-num">08</span><span class="sb-item-title">依赖注入</span></a>
+        <a class="sb-item" href="../backend/09-tong-yi-yi-chang-chu-li.html"><span class="sb-item-num">09</span><span class="sb-item-title">统一异常处理</span></a>
+        <a class="sb-item" href="../backend/10-zhong-jian-jian.html"><span class="sb-item-num">10</span><span class="sb-item-title">中间件</span></a>
+        <a class="sb-item" href="../backend/11-ren-zheng-yu-jwt.html"><span class="sb-item-num">11</span><span class="sb-item-title">认证与 JWT</span></a>
+        <a class="sb-item" href="../backend/12-pytest-ce-shi.html"><span class="sb-item-num">12</span><span class="sb-item-title">pytest 测试</span></a>
+        <a class="sb-item" href="../backend/13-ri-zhi-loguru.html"><span class="sb-item-num">13</span><span class="sb-item-title">日志 loguru</span></a>
+        <a class="sb-item" href="../backend/14-liu-shi-xiang-ying-sse-yu-websocket.html"><span class="sb-item-num">14</span><span class="sb-item-title">流式响应 SSE 与 WebSocket</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="interview">
+      <a class="sb-group-title" href="../modules/interview.html" data-toggle="interview">
+        <span class="sb-num">06</span>
+        <span class="sb-group-text"><b>面试题库</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../interview/01-llm-yuan-li-pian.html"><span class="sb-item-num">01</span><span class="sb-item-title">LLM 原理篇</span></a>
+        <a class="sb-item" href="../interview/02-rag-yu-jian-suo-pian.html"><span class="sb-item-num">02</span><span class="sb-item-title">RAG 与检索篇</span></a>
+        <a class="sb-item" href="../interview/03-agent-he-xin-pian.html"><span class="sb-item-num">03</span><span class="sb-item-title">Agent 核心篇</span></a>
+        <a class="sb-item" href="../interview/04-langgraph-pian.html"><span class="sb-item-num">04</span><span class="sb-item-title">LangGraph 篇</span></a>
+        <a class="sb-item" href="../interview/05-langchain-pian.html"><span class="sb-item-num">05</span><span class="sb-item-title">LangChain 篇</span></a>
+        <a class="sb-item" href="../interview/06-xi-tong-she-ji-pian.html"><span class="sb-item-num">06</span><span class="sb-item-title">系统设计篇</span></a>
+        <a class="sb-item" href="../interview/07-xiang-mu-shen-wa-pian.html"><span class="sb-item-num">07</span><span class="sb-item-title">项目深挖篇</span></a>
+        <a class="sb-item" href="../interview/08-gu-zhang-pai-cha-pian.html"><span class="sb-item-num">08</span><span class="sb-item-title">故障排查篇</span></a>
+        <a class="sb-item" href="../interview/09-python-ji-chu-pian.html"><span class="sb-item-num">09</span><span class="sb-item-title">Python 基础篇</span></a>
+        <a class="sb-item" href="../interview/10-fastapi-yu-hou-duan-pian.html"><span class="sb-item-num">10</span><span class="sb-item-title">FastAPI 与后端篇</span></a>
+        <a class="sb-item" href="../interview/11-ti-shi-ci-gong-cheng-yu-an-quan-pian.html"><span class="sb-item-num">11</span><span class="sb-item-title">提示词工程与安全篇</span></a>
+        <a class="sb-item" href="../interview/12-mo-xing-xuan-xing-yu-jiang-ben-pian.html"><span class="sb-item-num">12</span><span class="sb-item-title">模型选型与降本篇</span></a>
+      </div>
+    </section>
+  </nav>
+</aside>
+  <main class="main">
+    <header class="topbar">
+      <button class="menu-btn" id="menuBtn" aria-label="目录">☰</button>
+      <div class="crumbs"><a href="../index.html">首页</a><span>/</span><a href="../modules/python.html">Python 与数据实践</a><span>/</span><span class="cur">类型判定与抽象基类</span></div>
+      <div class="topbar-actions">
+        <button class="icon-btn" id="themeBtn" title="切换深浅色" aria-label="切换深浅色">◐</button>
+      </div>
+    </header>
+    <div class="content">
+      <article class="article">
+
+<header class="page-head">
+  <div class="page-kicker">Python 与数据实践 · 第 07 章</div>
+  <h1 class="page-title">类型判定与抽象基类</h1>
+  <p class="page-desc">前面我们已经会造类、会造对象了。这一章往上再走一层，回答几个更本质的问题：对象的&quot;类型&quot;到底由什么决定？类自己又是谁造出来的？ 把这条&quot;制造链&quot;弄清楚之后，我们再学一个工程里非常值钱的工具——抽象基类（Abstract …</p>
+  <div class="page-meta">
+    <span>约 16 分钟</span><span>6,551 字</span><span>17 个代码示例</span>
+  </div>
+</header>
+<div class="md"><p>前面我们已经会造类、会造对象了。这一章往上再走一层，回答几个更本质的问题：<strong>对象的"类型"到底由什么决定？类自己又是谁造出来的？</strong> 把这条"制造链"弄清楚之后，我们再学一个工程里非常值钱的工具——<strong>抽象基类</strong>（Abstract Base Class，简称 ABC）：它专门用来给一族类"立规矩"。</p>
+<hr />
+<h2 id="一万物皆有出处类型从哪来">一、万物皆有出处：类型从哪来</h2>
+<p>在 Python 的世界里，<strong>任何对象都是被某个类造出来的</strong>，造出它的那个类，就叫它的<strong>类型</strong>。用 <code>type(对象)</code> 就能看到：</p>
+<div class="highlight"><pre><span></span><code><span class="n">book</span> <span class="o">=</span> <span class="n">EBook</span><span class="p">(</span><span class="s2">"Python 从入门到实践"</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">book</span><span class="p">))</span>    <span class="c1"># &lt;class '__main__.EBook'&gt;，book 由 EBook 造出</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="mi">123</span><span class="p">))</span>     <span class="c1"># &lt;class 'int'&gt;</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="nb">len</span><span class="p">))</span>     <span class="c1"># &lt;class 'builtin_function_or_method'&gt;</span>
+</code></pre></div>
+<p>把这条规则往上追，会得到一张很有意思的"族谱"：</p>
+<ul>
+<li>所有<strong>函数</strong>的类型是 <code>function</code></li>
+<li>所有<strong>类</strong>的类型是 <code>type</code></li>
+<li><code>type</code> 自己的类型还是 <code>type</code>（自己造自己）</li>
+</ul>
+<p><strong>给"造类的类"起了个名字：元类（metaclass）。</strong> <code>type</code> 就是 Python 里默认的元类——类是对象的图纸，而元类是图纸的图纸。</p>
+<p>可以用下面几行验证这张族谱（完整版见本章 demo.py 第一部分）：</p>
+<div class="highlight"><pre><span></span><code><span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">EBook</span><span class="p">))</span>    <span class="c1"># &lt;class 'type'&gt;   类是 type 造的</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="nb">type</span><span class="p">))</span>     <span class="c1"># &lt;class 'type'&gt;   type 也是 type 造的</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="nb">len</span><span class="p">))</span>      <span class="c1"># &lt;class 'builtin_function_or_method'&gt;</span>
+</code></pre></div>
+<p>几个容易绕晕、但面试常考的结论（<code>A</code> 是一个普通类，<code>a = A()</code>）：</p>
+<ul>
+<li><code>isinstance(A, type)</code> 是 <code>True</code>：类是 type 的实例</li>
+<li><code>isinstance(A, A)</code> 是 <code>False</code>：类不是自己造出来的对象</li>
+<li><code>isinstance(a, object)</code> 是 <code>True</code>：一切对象都源自 object</li>
+<li><code>isinstance(A, object)</code> 也是 <code>True</code>：类本身也是对象</li>
+</ul>
+<hr />
+<h2 id="二type-的另一副面孔现场造类">二、type() 的另一副面孔：现场造类</h2>
+<p>上一章我们用过 <code>type()</code> 的三参数形式，这里再巩固一遍——它不仅能"查"类型，还能"造"类：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># type(类名, (父类元组,), {名字字典})</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">intro</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"《</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">title</span><span class="si">}</span><span class="s2">》正在上架"</span><span class="p">)</span>
+
+<span class="n">Book</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="s2">"Book"</span><span class="p">,</span> <span class="p">(),</span> <span class="p">{</span><span class="s2">"title"</span><span class="p">:</span> <span class="s2">"数据实践"</span><span class="p">,</span> <span class="s2">"intro"</span><span class="p">:</span> <span class="n">intro</span><span class="p">})</span>
+
+<span class="n">b</span> <span class="o">=</span> <span class="n">Book</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">title</span><span class="p">)</span>  <span class="c1"># 数据实践</span>
+<span class="n">b</span><span class="o">.</span><span class="n">intro</span><span class="p">()</span>       <span class="c1"># 《数据实践》正在上架</span>
+</code></pre></div>
+<p>三个参数：类名字符串、父类元组、装着属性和方法的字典。ORM 框架根据数据库表配置批量生成模型类，用的就是这一手。</p>
+<hr />
+<h2 id="三成员查找顺序属性到底从哪来">三、成员查找顺序：属性到底从哪来</h2>
+<p><strong>实例找成员（属性或方法）的顺序：</strong></p>
+<ol>
+<li>先看实例自己身上（实例的 <code>__dict__</code>）</li>
+<li>再沿着它所属类及父类构成的 MRO 链一路向上</li>
+</ol>
+<p><strong>类找成员的顺序：</strong></p>
+<ol>
+<li>先查自身的 MRO 链</li>
+<li>再查元类的 MRO 链</li>
+</ol>
+<p>下面这个实验能直观说明"方法沿着 MRO 向上找"。<code>A</code> 自己没有定义 <code>__repr__</code>，可它依然能用——因为最终找到的是 <code>object</code> 里那份，两个名字指向<strong>同一个对象</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">A</span><span class="p">:</span>
+    <span class="k">pass</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="nb">id</span><span class="p">(</span><span class="nb">object</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">))</span>   <span class="c1"># 例如 43521... </span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">id</span><span class="p">(</span><span class="n">A</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">))</span>       <span class="c1"># 与上面完全相同：A 沿 MRO 借用了 object 的 __repr__</span>
+</code></pre></div>
+<h3 id="查看-mro-的几种姿势">查看 MRO 的几种姿势</h3>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">Base</span><span class="p">:</span>
+    <span class="k">pass</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Left</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Right</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Child</span><span class="p">(</span><span class="n">Left</span><span class="p">,</span> <span class="n">Right</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">Child</span><span class="o">.</span><span class="vm">__mro__</span><span class="p">)</span>    <span class="c1"># (Child, Left, Right, Base, object)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">Child</span><span class="o">.</span><span class="n">mro</span><span class="p">())</span>      <span class="c1"># 结果同上，返回列表形式</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">Child</span><span class="o">.</span><span class="vm">__bases__</span><span class="p">)</span>  <span class="c1"># (Left, Right)：所有直接父类</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">Child</span><span class="o">.</span><span class="n">__base__</span><span class="p">)</span>   <span class="c1"># Left：__bases__ 的第一个</span>
+</code></pre></div>
+<h3 id="绑定方法-vs-类里的普通函数">绑定方法 vs 类里的普通函数</h3>
+<p>一个有意思的细节：同一个方法，通过<strong>实例</strong>取和通过<strong>类</strong>取，类型不一样：</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">A</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">foo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">A</span><span class="p">()</span><span class="o">.</span><span class="n">foo</span><span class="p">))</span>   <span class="c1"># &lt;class 'method'&gt;：绑定方法（已经绑定了具体实例）</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">A</span><span class="o">.</span><span class="n">foo</span><span class="p">))</span>     <span class="c1"># &lt;class 'function'&gt;：类里存的其实是个普通函数</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">issubclass</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">A</span><span class="p">()</span><span class="o">.</span><span class="n">foo</span><span class="p">),</span> <span class="nb">type</span><span class="p">(</span><span class="n">A</span><span class="o">.</span><span class="n">foo</span><span class="p">)))</span>  <span class="c1"># False：method 并不是 function 的子类</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">A</span><span class="p">()</span><span class="o">.</span><span class="n">foo</span> <span class="ow">is</span> <span class="n">A</span><span class="o">.</span><span class="n">foo</span><span class="p">)</span>  <span class="c1"># False：每次取绑定方法，都是新造的对象</span>
+</code></pre></div>
+<hr />
+<h2 id="四类成员的三种下划线写法">四、类成员的三种下划线写法</h2>
+<p>类体里的名字，按前缀分成三档（规则对属性和方法都适用）：</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">Config</span><span class="p">:</span>
+    <span class="n">_env</span> <span class="o">=</span> <span class="s2">"dev"</span>        <span class="c1"># 单下划线开头：约定俗成的"内部使用"，外部仍可访问，日常开发用它</span>
+    <span class="n">__key</span> <span class="o">=</span> <span class="s2">"abc123"</span>    <span class="c1"># 双下划线开头：触发名称改写，外部无法直接访问</span>
+    <span class="n">__version__</span> <span class="o">=</span> <span class="mi">3</span>     <span class="c1"># 前后双下划线：特殊用途，多为系统预留</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="c1"># 类内部三个都能访问，畅通无阻</span>
+        <span class="nb">print</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">_env</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">__key</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">__version__</span><span class="p">)</span>
+
+
+<span class="n">Config</span><span class="o">.</span><span class="n">check</span><span class="p">()</span>              <span class="c1"># dev abc123 3</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">Config</span><span class="o">.</span><span class="n">_env</span><span class="p">)</span>          <span class="c1"># dev（可以访问，但不建议）</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">Config</span><span class="o">.</span><span class="n">__version__</span><span class="p">)</span>   <span class="c1"># 3</span>
+<span class="c1"># print(Config.__key)      # AttributeError！外部拿不到 __key</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">Config</span><span class="o">.</span><span class="n">_Config__key</span><span class="p">)</span>  <span class="c1"># abc123（知道名称改写规则就能强行访问）</span>
+</code></pre></div>
+<hr />
+<h2 id="五抽象基类只立规矩不出活">五、抽象基类：只立规矩，不出活</h2>
+<p>前面讲的都是"类怎么用"。现在换个视角：如果我们在写一个<strong>框架</strong>，希望所有接入方都遵守同一套接口，该怎么强制约束？答案是抽象基类。</p>
+<p>抽象类是<strong>不许直接实例化</strong>的类，存在的意义就是给子类<strong>立规矩</strong>：这几个方法你必须实现。Python 靠标准库 <code>abc</code> 模块提供支持：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Reporter</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>        <span class="c1"># 继承 ABC，表明这是个抽象类</span>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""子类必须给出自己的实现"""</span>
+        <span class="k">pass</span>
+
+<span class="c1"># r = Reporter()  # TypeError：抽象类不能实例化</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">TableReporter</span><span class="p">(</span><span class="n">Reporter</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>       <span class="c1"># 老老实实实现抽象方法</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"渲染成表格"</span><span class="p">)</span>
+
+<span class="n">reporter</span> <span class="o">=</span> <span class="n">TableReporter</span><span class="p">()</span>
+<span class="n">reporter</span><span class="o">.</span><span class="n">render</span><span class="p">()</span>  <span class="c1"># 渲染成表格</span>
+</code></pre></div>
+<blockquote>
+<p>建议在 VS Code 里打开 <code>python.analysis.typeCheckingMode</code>，编辑器会帮你做更严格的类型检查。</p>
+</blockquote>
+<p><strong>四条要点：</strong></p>
+<ul>
+<li>继承 <code>ABC</code>，才算抽象类</li>
+<li>被 <code>@abstractmethod</code> 标记的方法，子类<strong>必须</strong>实现</li>
+<li>抽象类里也可以写普通方法（带现成实现，子类直接白拿）</li>
+<li>抽象类<strong>不能</strong>实例化</li>
+</ul>
+<h3 id="抽象类里可以夹带现成品">抽象类里可以夹带"现成品"</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Staff</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">weekly_hours</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""每周工时，子类自己算"""</span>
+        <span class="k">pass</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">hourly_rate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""时薪，子类自己定"""</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">monthly_pay</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""普通方法：直接用子类实现的两个抽象方法拼出月薪"""</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">weekly_hours</span><span class="p">()</span> <span class="o">*</span> <span class="mi">4</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">hourly_rate</span><span class="p">()</span>
+</code></pre></div>
+<h3 id="抽象属性">抽象属性</h3>
+<p>除了方法，属性也能立成抽象的：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Machine</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+    <span class="nd">@property</span>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">capacity</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""子类必须实现 capacity 属性"""</span>
+        <span class="k">pass</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">ServerMachine</span><span class="p">(</span><span class="n">Machine</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">slots</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_slots</span> <span class="o">=</span> <span class="n">slots</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">capacity</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_slots</span>
+
+<span class="n">server</span> <span class="o">=</span> <span class="n">ServerMachine</span><span class="p">(</span><span class="mi">16</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">server</span><span class="o">.</span><span class="n">capacity</span><span class="p">)</span>  <span class="c1"># 16</span>
+</code></pre></div>
+<p><strong>注意：</strong> <code>@property</code> 在上、<code>@abstractmethod</code> 在下，两个装饰器的顺序<strong>不能颠倒</strong>。</p>
+<h3 id="少实现一个就还是抽象类">少实现一个，就还是抽象类</h3>
+<p>子类只要漏掉任何一个抽象方法，它自己也会"继承"抽象身份，照样不能实例化：</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">FixedStaff</span><span class="p">(</span><span class="n">Staff</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hours</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hours</span> <span class="o">=</span> <span class="n">hours</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">weekly_hours</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hours</span>
+
+    <span class="c1"># 忘了实现 hourly_rate</span>
+
+<span class="c1"># s = FixedStaff(40)  # TypeError：FixedStaff 仍是抽象类，不能实例化</span>
+</code></pre></div>
+<hr />
+<h2 id="六工程实战用抽象类统一接口">六、工程实战：用抽象类统一接口</h2>
+<p>抽象类最常见的用武之地是<strong>插件体系</strong>和<strong>框架扩展点</strong>——框架只认接口，不关心具体实现：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Exporter</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""导出器抽象基类：所有导出器必须实现这三个方法"""</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">export</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rows</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">teardown</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">CsvExporter</span><span class="p">(</span><span class="n">Exporter</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"准备 CSV 环境"</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">export</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rows</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">"CSV 内容: "</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">teardown</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"清理 CSV 环境"</span><span class="p">)</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">JsonExporter</span><span class="p">(</span><span class="n">Exporter</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"准备 JSON 环境"</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">export</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rows</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">"JSON 内容: "</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">teardown</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"清理 JSON 环境"</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">run_export</span><span class="p">(</span><span class="n">exporter</span><span class="p">:</span> <span class="n">Exporter</span><span class="p">,</span> <span class="n">rows</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""统一的导出流程，不关心底层格式"""</span>
+    <span class="n">exporter</span><span class="o">.</span><span class="n">setup</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">exporter</span><span class="o">.</span><span class="n">export</span><span class="p">(</span><span class="n">rows</span><span class="p">))</span>
+    <span class="n">exporter</span><span class="o">.</span><span class="n">teardown</span><span class="p">()</span>
+
+<span class="n">run_export</span><span class="p">(</span><span class="n">CsvExporter</span><span class="p">(),</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+<span class="n">run_export</span><span class="p">(</span><span class="n">JsonExporter</span><span class="p">(),</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+</code></pre></div>
+<p>以后要加 Excel 导出、PDF 导出，只要照着接口写新的子类，<code>run_export</code> 一行都不用动——这就是抽象类换来的扩展性。</p>
+<hr />
+<h2 id="作业">作业</h2>
+<h3 id="作业一费曼复述">作业一：费曼复述</h3>
+<p>合上课件，用自己的话把本章内容讲给同事（或想象中的初学者）听，重点覆盖：type 与元类的关系、实例和类各自的成员查找顺序、三种下划线成员、抽象基类的价值。</p>
+<h3 id="作业二预测输出">作业二：预测输出</h3>
+<p>不运行代码，逐行写出打印结果，再用本章知识解释每一行为什么：</p>
+<div class="highlight"><pre><span></span><code><span class="n">function</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="kc">None</span><span class="p">)</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">A</span><span class="p">:</span>
+    <span class="k">pass</span>
+
+<span class="n">a</span> <span class="o">=</span> <span class="n">A</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">A</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="nb">type</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="nb">type</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">A</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="nb">object</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">A</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="nb">type</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="nb">type</span><span class="p">,</span> <span class="nb">type</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="nb">type</span><span class="p">,</span> <span class="nb">object</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="nb">object</span><span class="p">,</span> <span class="nb">type</span><span class="p">))</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">func</span><span class="p">():</span>
+    <span class="k">pass</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">func</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">function</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="nb">type</span><span class="p">))</span>
+</code></pre></div>
+<h3 id="作业三会话存储抽象类">作业三：会话存储抽象类</h3>
+<p>编写抽象基类 <code>SessionStore</code>，定义会话存储的通用接口，然后实现 <code>MemorySessionStore</code>（字典存储）和 <code>FileSessionStore</code>（文件存储）：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">SessionStore</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fetch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">session_id</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">session_id</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">discard</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">session_id</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+<span class="c1"># 实现 MemorySessionStore（数据放字典里）</span>
+<span class="c1"># 实现 FileSessionStore（每个会话存成一个 JSON 文件）</span>
+</code></pre></div>
+<h3 id="作业四观影清单抽象类">作业四：观影清单抽象类</h3>
+<p>编写抽象基类 <code>WatchList</code>，然后实现 <code>ArrayWatchList</code>（基于 Python 列表）和 <code>LinkedWatchList</code>（基于链表）：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">WatchList</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">at</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">total</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_empty</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">total</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span>
+
+<span class="c1"># 实现 ArrayWatchList（内部用 list）</span>
+<span class="c1"># 实现 LinkedWatchList（内部用单链表，需要自己写节点类）</span>
+</code></pre></div>
+<h3 id="作业五思考题">作业五：思考题</h3>
+<p>下面代码的输出是什么？为什么？</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Payment</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">charge</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">refund</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"原路退回"</span><span class="p">)</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Alipay</span><span class="p">(</span><span class="n">Payment</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">charge</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"支付宝收款"</span><span class="p">)</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">WechatPay</span><span class="p">(</span><span class="n">Alipay</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+<span class="n">w</span> <span class="o">=</span> <span class="n">WechatPay</span><span class="p">()</span>
+<span class="n">w</span><span class="o">.</span><span class="n">charge</span><span class="p">()</span>
+<span class="n">w</span><span class="o">.</span><span class="n">refund</span><span class="p">()</span>
+</code></pre></div>
+<p>如果把结尾换成下面的代码，会发生什么？</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">BankCard</span><span class="p">(</span><span class="n">Payment</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+<span class="n">b</span> <span class="o">=</span> <span class="n">BankCard</span><span class="p">()</span>
+</code></pre></div>
+<hr />
+<p><strong>下一章</strong>：<a href="../python/08-mo-shu-fang-fa-quan-jing.html">08 · 魔术方法全景</a></p></div>
+
+      </article>
+<nav class="pager"><a class="pg-card pg-prev" href="../python/06-lei-de-ding-yi-yu-shi-li-hua.html"><span class="pg-label">← 上一篇</span><span class="pg-title">类的定义与实例化</span><span class="pg-mod">Python 与数据实践</span></a><a class="pg-card pg-next" href="../python/08-mo-shu-fang-fa-quan-jing.html"><span class="pg-label">下一篇 →</span><span class="pg-title">魔术方法全景</span><span class="pg-mod">Python 与数据实践</span></a></nav>
+    </div>
+    <footer class="foot">
+      <span>深栈 DeepStack · AI Agent 工程师转型训练营配套文档</span>
+    </footer>
+  </main>
+<nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#一万物皆有出处类型从哪来">一、万物皆有出处：类型从哪来</a><a class="toc-link toc-h2" href="#二type-的另一副面孔现场造类">二、type() 的另一副面孔：现场造类</a><a class="toc-link toc-h2" href="#三成员查找顺序属性到底从哪来">三、成员查找顺序：属性到底从哪来</a><a class="toc-link toc-h3" href="#查看-mro-的几种姿势">查看 MRO 的几种姿势</a><a class="toc-link toc-h3" href="#绑定方法-vs-类里的普通函数">绑定方法 vs 类里的普通函数</a><a class="toc-link toc-h2" href="#四类成员的三种下划线写法">四、类成员的三种下划线写法</a><a class="toc-link toc-h2" href="#五抽象基类只立规矩不出活">五、抽象基类：只立规矩，不出活</a><a class="toc-link toc-h3" href="#抽象类里可以夹带现成品">抽象类里可以夹带&quot;现成品&quot;</a><a class="toc-link toc-h3" href="#抽象属性">抽象属性</a><a class="toc-link toc-h3" href="#少实现一个就还是抽象类">少实现一个，就还是抽象类</a><a class="toc-link toc-h2" href="#六工程实战用抽象类统一接口">六、工程实战：用抽象类统一接口</a><a class="toc-link toc-h2" href="#作业">作业</a><a class="toc-link toc-h3" href="#作业一费曼复述">作业一：费曼复述</a><a class="toc-link toc-h3" href="#作业二预测输出">作业二：预测输出</a><a class="toc-link toc-h3" href="#作业三会话存储抽象类">作业三：会话存储抽象类</a><a class="toc-link toc-h3" href="#作业四观影清单抽象类">作业四：观影清单抽象类</a><a class="toc-link toc-h3" href="#作业五思考题">作业五：思考题</a></nav>
+</div>
+<div class="sb-mask" id="sbMask"></div>
+<script src="../assets/app.js"></script>
+</body>
+</html>

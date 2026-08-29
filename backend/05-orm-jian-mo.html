@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>05 · ORM 建模 · 深栈 DeepStack 课程文档</title>
+<meta name="description" content="本章你将学会
+
+ - 用 DeclarativeBase + Mapped + mappedcolumn 三件套声明模型
+ - 主键 / 自增 / 可空 / 默认值 / 唯一 / 索引的每一种写法
+ - 外键 Forei…">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%23d9c39a' text-anchor='middle'%3EDS%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+<div class="progress" id="progress"></div>
+
+<div class="layout">
+<aside class="sidebar" id="sidebar">
+  <div class="sb-head">
+    <a class="brand" href="../index.html">
+      <span class="brand-mark">DS</span>
+      <span class="brand-text"><b>深栈 DeepStack</b><i>AI Agent 工程师转型训练营</i></span>
+    </a>
+    <button class="sb-close" id="sbClose" aria-label="关闭目录">✕</button>
+  </div>
+  <div class="sb-search"><input type="search" id="searchInput" placeholder="搜索 123 篇文档… ( / )" autocomplete="off">
+    <div class="sb-results" id="searchResults"></div></div>
+  <nav class="sb-nav">
+    <section class="sb-group" data-mod="python">
+      <a class="sb-group-title" href="../modules/python.html" data-toggle="python">
+        <span class="sb-num">01</span>
+        <span class="sb-group-text"><b>Python 与数据实践</b><i>31 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../python/01-huan-jing-da-jian-yu-ban-ben-guan-li.html"><span class="sb-item-num">01</span><span class="sb-item-title">环境搭建与版本管理</span></a>
+        <a class="sb-item" href="../python/02-bian-liang-biao-da-shi-yu-liu-cheng-kong-zhi.html"><span class="sb-item-num">02</span><span class="sb-item-title">变量、表达式与流程控制</span></a>
+        <a class="sb-item" href="../python/03-xu-lie-zi-dian-yu-ji-he.html"><span class="sb-item-num">03</span><span class="sb-item-title">序列、字典与集合</span></a>
+        <a class="sb-item" href="../python/04-han-shu-she-ji-yu-lambda.html"><span class="sb-item-num">04</span><span class="sb-item-title">函数设计与 lambda</span></a>
+        <a class="sb-item" href="../python/05-zuo-yong-yu-gui-ze-yu-bi-bao.html"><span class="sb-item-num">05</span><span class="sb-item-title">作用域规则与闭包</span></a>
+        <a class="sb-item" href="../python/06-lei-de-ding-yi-yu-shi-li-hua.html"><span class="sb-item-num">06</span><span class="sb-item-title">类的定义与实例化</span></a>
+        <a class="sb-item" href="../python/07-lei-xing-pan-ding-yu-chou-xiang-ji-lei.html"><span class="sb-item-num">07</span><span class="sb-item-title">类型判定与抽象基类</span></a>
+        <a class="sb-item" href="../python/08-mo-shu-fang-fa-quan-jing.html"><span class="sb-item-num">08</span><span class="sb-item-title">魔术方法全景</span></a>
+        <a class="sb-item" href="../python/09-miao-shu-fu-yu-yuan-lei.html"><span class="sb-item-num">09</span><span class="sb-item-title">描述符与元类</span></a>
+        <a class="sb-item" href="../python/10-zhuang-shi-qi.html"><span class="sb-item-num">10</span><span class="sb-item-title">装饰器</span></a>
+        <a class="sb-item" href="../python/11-die-dai-xie-yi-yu-sheng-cheng-qi.html"><span class="sb-item-num">11</span><span class="sb-item-title">迭代协议与生成器</span></a>
+        <a class="sb-item" href="../python/12-with-yu-shang-xia-wen-xie-yi.html"><span class="sb-item-num">12</span><span class="sb-item-title">with 与上下文协议</span></a>
+        <a class="sb-item" href="../python/13-yi-chang-ti-xi-yu-chu-li.html"><span class="sb-item-num">13</span><span class="sb-item-title">异常体系与处理</span></a>
+        <a class="sb-item" href="../python/14-lei-xing-biao-zhu.html"><span class="sb-item-num">14</span><span class="sb-item-title">类型标注</span></a>
+        <a class="sb-item" href="../python/15-mo-kuai-yu-bao-de-zu-zhi.html"><span class="sb-item-num">15</span><span class="sb-item-title">模块与包的组织</span></a>
+        <a class="sb-item" href="../python/16-biao-zhun-ku-xun-li.html"><span class="sb-item-num">16</span><span class="sb-item-title">标准库巡礼</span></a>
+        <a class="sb-item" href="../python/17-yi-lai-guan-li-yu-di-san-fang-ku.html"><span class="sb-item-num">17</span><span class="sb-item-title">依赖管理与第三方库</span></a>
+        <a class="sb-item" href="../python/18-xian-cheng-yu-jin-cheng.html"><span class="sb-item-num">18</span><span class="sb-item-title">线程与进程</span></a>
+        <a class="sb-item" href="../python/19-shi-jian-xun-huan.html"><span class="sb-item-num">19</span><span class="sb-item-title">事件循环</span></a>
+        <a class="sb-item" href="../python/20-future-yu-xie-cheng.html"><span class="sb-item-num">20</span><span class="sb-item-title">Future 与协程</span></a>
+        <a class="sb-item" href="../python/21-asyncio-shi-zhan.html"><span class="sb-item-num">21</span><span class="sb-item-title">asyncio 实战</span></a>
+        <a class="sb-item" href="../python/22-gou-jian-yu-fa-bu.html"><span class="sb-item-num">22</span><span class="sb-item-title">构建与发布</span></a>
+        <a class="sb-item" href="../python/23-gong-cheng-hua-gong-ju-lian.html"><span class="sb-item-num">23</span><span class="sb-item-title">工程化工具链</span></a>
+        <a class="sb-item" href="../python/24-monorepo-yu-tiao-shi.html"><span class="sb-item-num">24</span><span class="sb-item-title">monorepo 与调试</span></a>
+        <a class="sb-item" href="../python/25-jupyter-jiao-hu-huan-jing.html"><span class="sb-item-num">25</span><span class="sb-item-title">Jupyter 交互环境</span></a>
+        <a class="sb-item" href="../python/26-numpy-shu-zu-yu-xiang-liang-hua.html"><span class="sb-item-num">26</span><span class="sb-item-title">NumPy 数组与向量化</span></a>
+        <a class="sb-item" href="../python/27-pandas-shu-ju-jie-gou.html"><span class="sb-item-num">27</span><span class="sb-item-title">Pandas 数据结构</span></a>
+        <a class="sb-item" href="../python/28-pandas-shu-ju-qing-xi.html"><span class="sb-item-num">28</span><span class="sb-item-title">Pandas 数据清洗</span></a>
+        <a class="sb-item" href="../python/29-matplotlib-hui-tu-ti-xi.html"><span class="sb-item-num">29</span><span class="sb-item-title">Matplotlib 绘图体系</span></a>
+        <a class="sb-item" href="../python/30-matplotlib-dong-hua-yu-jiao-hu.html"><span class="sb-item-num">30</span><span class="sb-item-title">Matplotlib 动画与交互</span></a>
+        <a class="sb-item" href="../python/31-seaborn-tong-ji-ke-shi-hua.html"><span class="sb-item-num">31</span><span class="sb-item-title">Seaborn 统计可视化</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="agent">
+      <a class="sb-group-title" href="../modules/agent.html" data-toggle="agent">
+        <span class="sb-num">02</span>
+        <span class="sb-group-text"><b>Agent 核心</b><i>15 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../agent/01-token-yu-ci-qian-ru.html"><span class="sb-item-num">01</span><span class="sb-item-title">Token 与词嵌入</span></a>
+        <a class="sb-item" href="../agent/02-qian-xiang-chuan-bo-yu-fan-xiang-chuan-bo.html"><span class="sb-item-num">02</span><span class="sb-item-title">前向传播与反向传播</span></a>
+        <a class="sb-item" href="../agent/03-zhu-yi-li-ji-zhi-yu-transformer-jia-gou.html"><span class="sb-item-num">03</span><span class="sb-item-title">注意力机制与 Transformer 架构</span></a>
+        <a class="sb-item" href="../agent/04-yu-xun-lian-rlhf-yu-cai-yang-kv-cache.html"><span class="sb-item-num">04</span><span class="sb-item-title">预训练、RLHF 与采样（KV Cache）</span></a>
+        <a class="sb-item" href="../agent/05-ben-di-mo-xing-yu-xiao-xi-jie-gou.html"><span class="sb-item-num">05</span><span class="sb-item-title">本地模型与消息结构</span></a>
+        <a class="sb-item" href="../agent/06-hui-hua-guan-li-yu-json-shu-chu.html"><span class="sb-item-num">06</span><span class="sb-item-title">会话管理与 JSON 输出</span></a>
+        <a class="sb-item" href="../agent/07-tool-calling-xie-yi-yu-feng-zhuang.html"><span class="sb-item-num">07</span><span class="sb-item-title">Tool Calling：协议与封装</span></a>
+        <a class="sb-item" href="../agent/08-react-mo-shi-yu-zhu-xun-huan.html"><span class="sb-item-num">08</span><span class="sb-item-title">ReAct 模式与主循环</span></a>
+        <a class="sb-item" href="../agent/09-shi-zhan-deep-research-agent.html"><span class="sb-item-num">09</span><span class="sb-item-title">实战：Deep Research Agent</span></a>
+        <a class="sb-item" href="../agent/10-skill-yu-jian-jin-shi-pi-lu.html"><span class="sb-item-num">10</span><span class="sb-item-title">Skill 与渐进式披露</span></a>
+        <a class="sb-item" href="../agent/11-mcp-quan-jing.html"><span class="sb-item-num">11</span><span class="sb-item-title">MCP 全景</span></a>
+        <a class="sb-item" href="../agent/12-duo-agent-yu-xuan-xing-ce-lve.html"><span class="sb-item-num">12</span><span class="sb-item-title">多 Agent 与选型策略</span></a>
+        <a class="sb-item" href="../agent/13-ti-shi-ci-gong-cheng-yu-shang-xia-wen-gong.html"><span class="sb-item-num">13</span><span class="sb-item-title">提示词工程与上下文工程</span></a>
+        <a class="sb-item" href="../agent/14-xun-huan-tu-yu-gu-jia-gong-cheng.html"><span class="sb-item-num">14</span><span class="sb-item-title">循环、图与骨架工程</span></a>
+        <a class="sb-item" href="../agent/15-ji-yi-quan-xian-yu-ping-ce.html"><span class="sb-item-num">15</span><span class="sb-item-title">记忆、权限与评测</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="langchain">
+      <a class="sb-group-title" href="../modules/langchain.html" data-toggle="langchain">
+        <span class="sb-num">03</span>
+        <span class="sb-group-text"><b>LangChain 指南</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langchain/01-ren-shi-langchain.html"><span class="sb-item-num">01</span><span class="sb-item-title">认识 LangChain</span></a>
+        <a class="sb-item" href="../langchain/02-ti-shi-ci-mu-ban-yu-xiao-xi.html"><span class="sb-item-num">02</span><span class="sb-item-title">提示词模板与消息</span></a>
+        <a class="sb-item" href="../langchain/03-lcel-yu-runnable.html"><span class="sb-item-num">03</span><span class="sb-item-title">LCEL 与 Runnable</span></a>
+        <a class="sb-item" href="../langchain/04-liu-shi-yu-bing-fa.html"><span class="sb-item-num">04</span><span class="sb-item-title">流式与并发</span></a>
+        <a class="sb-item" href="../langchain/05-shu-chu-jie-xi-qi.html"><span class="sb-item-num">05</span><span class="sb-item-title">输出解析器</span></a>
+        <a class="sb-item" href="../langchain/06-wen-dang-jia-zai-yu-qie-ge.html"><span class="sb-item-num">06</span><span class="sb-item-title">文档加载与切割</span></a>
+        <a class="sb-item" href="../langchain/07-qian-ru-yu-xiang-liang-ku.html"><span class="sb-item-num">07</span><span class="sb-item-title">嵌入与向量库</span></a>
+        <a class="sb-item" href="../langchain/08-jian-suo-yu-rag.html"><span class="sb-item-num">08</span><span class="sb-item-title">检索与RAG</span></a>
+        <a class="sb-item" href="../langchain/09-dui-hua-ji-yi.html"><span class="sb-item-num">09</span><span class="sb-item-title">对话记忆</span></a>
+        <a class="sb-item" href="../langchain/10-gong-ju-diao-yong.html"><span class="sb-item-num">10</span><span class="sb-item-title">工具调用</span></a>
+        <a class="sb-item" href="../langchain/11-agent.html"><span class="sb-item-num">11</span><span class="sb-item-title">Agent</span></a>
+        <a class="sb-item" href="../langchain/12-hui-diao-yu-tiao-shi-quan-ke-cheng-shou-guan.html"><span class="sb-item-num">12</span><span class="sb-item-title">回调与调试（全课程收官章）</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="langgraph">
+      <a class="sb-group-title" href="../modules/langgraph.html" data-toggle="langgraph">
+        <span class="sb-num">04</span>
+        <span class="sb-group-text"><b>LangGraph 框架指南</b><i>17 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langgraph/01-di-1-zhang-cong-yi-ge-shi-kong-de-jiao.html"><span class="sb-item-num">01</span><span class="sb-item-title">第 1 章 从一个失控的脚本说起</span></a>
+        <a class="sb-item" href="../langgraph/02-di-2-zhang-zui-xiao-ke-yun-xing-tu.html"><span class="sb-item-num">02</span><span class="sb-item-title">第 2 章 最小可运行图</span></a>
+        <a class="sb-item" href="../langgraph/03-di-3-zhang-zhuang-tai-tu-de-shu-ju-xin.html"><span class="sb-item-num">03</span><span class="sb-item-title">第 3 章 状态：图的数据心脏</span></a>
+        <a class="sb-item" href="../langgraph/04-di-4-zhang-rang-liu-cheng-xue-hui-jue-ce.html"><span class="sb-item-num">04</span><span class="sb-item-title">第 4 章 让流程学会决策</span></a>
+        <a class="sb-item" href="../langgraph/05-di-5-zhang-bing-xing-shi-jie-chao-bu-zhi.html"><span class="sb-item-num">05</span><span class="sb-item-title">第 5 章 并行世界：超步执行模型</span></a>
+        <a class="sb-item" href="../langgraph/06-di-6-zhang-command-ba-kong-zhi-quan-jiao-jin.html"><span class="sb-item-num">06</span><span class="sb-item-title">第 6 章 Command：把控制权交进节点</span></a>
+        <a class="sb-item" href="../langgraph/07-di-7-zhang-dong-tai-bing-xing-send-yu-mapreduce.html"><span class="sb-item-num">07</span><span class="sb-item-title">第 7 章 动态并行：Send 与 MapReduce</span></a>
+        <a class="sb-item" href="../langgraph/08-di-8-zhang-gei-tu-zhuang-shang-shou-jiao-gong.html"><span class="sb-item-num">08</span><span class="sb-item-title">第 8 章 给图装上手脚：工具调用</span></a>
+        <a class="sb-item" href="../langgraph/09-di-9-zhang-fu-yong-yu-feng-zhuang-zi-tu.html"><span class="sb-item-num">09</span><span class="sb-item-title">第 9 章 复用与封装：子图</span></a>
+        <a class="sb-item" href="../langgraph/10-di-10-zhang-cong-dan-tu-dao-tuan-dui-duo.html"><span class="sb-item-num">10</span><span class="sb-item-title">第 10 章 从单图到团队：多 Agent 架构</span></a>
+        <a class="sb-item" href="../langgraph/11-di-11-zhang-liu-shi-shu-chu.html"><span class="sb-item-num">11</span><span class="sb-item-title">第 11 章 流式输出</span></a>
+        <a class="sb-item" href="../langgraph/12-di-12-zhang-chi-jiu-hua-checkpointer-yu-xian-cheng.html"><span class="sb-item-num">12</span><span class="sb-item-title">第 12 章 持久化：Checkpointer 与线程</span></a>
+        <a class="sb-item" href="../langgraph/13-di-13-zhang-shi-jian-lv-xing.html"><span class="sb-item-num">13</span><span class="sb-item-title">第 13 章 时间旅行</span></a>
+        <a class="sb-item" href="../langgraph/14-di-14-zhang-zhong-duan-yu-ren-zai-hui-lu.html"><span class="sb-item-num">14</span><span class="sb-item-title">第 14 章 中断与人在回路</span></a>
+        <a class="sb-item" href="../langgraph/15-di-15-zhang-ji-yi-guan-li.html"><span class="sb-item-num">15</span><span class="sb-item-title">第 15 章 记忆管理</span></a>
+        <a class="sb-item" href="../langgraph/16-di-16-zhang-rong-cuo-zhong-shi-chao-shi-yu.html"><span class="sb-item-num">16</span><span class="sb-item-title">第 16 章 容错：重试、超时与兜底</span></a>
+        <a class="sb-item" href="../langgraph/17-di-17-zhang-quan-jing-hui-gu.html"><span class="sb-item-num">17</span><span class="sb-item-title">第 17 章 全景回顾</span></a>
+      </div>
+    </section>
+    <section class="sb-group open" data-mod="backend">
+      <a class="sb-group-title" href="../modules/backend.html" data-toggle="backend">
+        <span class="sb-num">05</span>
+        <span class="sb-group-text"><b>Python 框架指南</b><i>14 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../backend/01-fastapi-ru-men-yu-asgi.html"><span class="sb-item-num">01</span><span class="sb-item-title">FastAPI 入门与 ASGI</span></a>
+        <a class="sb-item" href="../backend/02-lu-you-yu-qing-qiu-xiang-ying.html"><span class="sb-item-num">02</span><span class="sb-item-title">路由与请求响应</span></a>
+        <a class="sb-item" href="../backend/03-pydantic-shu-ju-jiao-yan-yu-pei-zhi.html"><span class="sb-item-num">03</span><span class="sb-item-title">Pydantic 数据校验与配置</span></a>
+        <a class="sb-item" href="../backend/04-sqlalchemy-yi-bu-yin-qing-yu-hui-hua.html"><span class="sb-item-num">04</span><span class="sb-item-title">SQLAlchemy 异步引擎与会话</span></a>
+        <a class="sb-item current" href="../backend/05-orm-jian-mo.html"><span class="sb-item-num">05</span><span class="sb-item-title">ORM 建模</span></a>
+        <a class="sb-item" href="../backend/06-sql-biao-da-shi-yu-shu-ju-cao-zuo.html"><span class="sb-item-num">06</span><span class="sb-item-title">SQL 表达式与数据操作</span></a>
+        <a class="sb-item" href="../backend/07-alembic-shu-ju-qian-yi.html"><span class="sb-item-num">07</span><span class="sb-item-title">Alembic 数据迁移</span></a>
+        <a class="sb-item" href="../backend/08-yi-lai-zhu-ru.html"><span class="sb-item-num">08</span><span class="sb-item-title">依赖注入</span></a>
+        <a class="sb-item" href="../backend/09-tong-yi-yi-chang-chu-li.html"><span class="sb-item-num">09</span><span class="sb-item-title">统一异常处理</span></a>
+        <a class="sb-item" href="../backend/10-zhong-jian-jian.html"><span class="sb-item-num">10</span><span class="sb-item-title">中间件</span></a>
+        <a class="sb-item" href="../backend/11-ren-zheng-yu-jwt.html"><span class="sb-item-num">11</span><span class="sb-item-title">认证与 JWT</span></a>
+        <a class="sb-item" href="../backend/12-pytest-ce-shi.html"><span class="sb-item-num">12</span><span class="sb-item-title">pytest 测试</span></a>
+        <a class="sb-item" href="../backend/13-ri-zhi-loguru.html"><span class="sb-item-num">13</span><span class="sb-item-title">日志 loguru</span></a>
+        <a class="sb-item" href="../backend/14-liu-shi-xiang-ying-sse-yu-websocket.html"><span class="sb-item-num">14</span><span class="sb-item-title">流式响应 SSE 与 WebSocket</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="interview">
+      <a class="sb-group-title" href="../modules/interview.html" data-toggle="interview">
+        <span class="sb-num">06</span>
+        <span class="sb-group-text"><b>面试题库</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../interview/01-llm-yuan-li-pian.html"><span class="sb-item-num">01</span><span class="sb-item-title">LLM 原理篇</span></a>
+        <a class="sb-item" href="../interview/02-rag-yu-jian-suo-pian.html"><span class="sb-item-num">02</span><span class="sb-item-title">RAG 与检索篇</span></a>
+        <a class="sb-item" href="../interview/03-agent-he-xin-pian.html"><span class="sb-item-num">03</span><span class="sb-item-title">Agent 核心篇</span></a>
+        <a class="sb-item" href="../interview/04-langgraph-pian.html"><span class="sb-item-num">04</span><span class="sb-item-title">LangGraph 篇</span></a>
+        <a class="sb-item" href="../interview/05-langchain-pian.html"><span class="sb-item-num">05</span><span class="sb-item-title">LangChain 篇</span></a>
+        <a class="sb-item" href="../interview/06-xi-tong-she-ji-pian.html"><span class="sb-item-num">06</span><span class="sb-item-title">系统设计篇</span></a>
+        <a class="sb-item" href="../interview/07-xiang-mu-shen-wa-pian.html"><span class="sb-item-num">07</span><span class="sb-item-title">项目深挖篇</span></a>
+        <a class="sb-item" href="../interview/08-gu-zhang-pai-cha-pian.html"><span class="sb-item-num">08</span><span class="sb-item-title">故障排查篇</span></a>
+        <a class="sb-item" href="../interview/09-python-ji-chu-pian.html"><span class="sb-item-num">09</span><span class="sb-item-title">Python 基础篇</span></a>
+        <a class="sb-item" href="../interview/10-fastapi-yu-hou-duan-pian.html"><span class="sb-item-num">10</span><span class="sb-item-title">FastAPI 与后端篇</span></a>
+        <a class="sb-item" href="../interview/11-ti-shi-ci-gong-cheng-yu-an-quan-pian.html"><span class="sb-item-num">11</span><span class="sb-item-title">提示词工程与安全篇</span></a>
+        <a class="sb-item" href="../interview/12-mo-xing-xuan-xing-yu-jiang-ben-pian.html"><span class="sb-item-num">12</span><span class="sb-item-title">模型选型与降本篇</span></a>
+      </div>
+    </section>
+  </nav>
+</aside>
+  <main class="main">
+    <header class="topbar">
+      <button class="menu-btn" id="menuBtn" aria-label="目录">☰</button>
+      <div class="crumbs"><a href="../index.html">首页</a><span>/</span><a href="../modules/backend.html">Python 框架指南</a><span>/</span><span class="cur">ORM 建模</span></div>
+      <div class="topbar-actions">
+        <button class="icon-btn" id="themeBtn" title="切换深浅色" aria-label="切换深浅色">◐</button>
+      </div>
+    </header>
+    <div class="content">
+      <article class="article">
+
+<header class="page-head">
+  <div class="page-kicker">Python 框架指南 · 第 05 章</div>
+  <h1 class="page-title">ORM 建模</h1>
+  <p class="page-desc">本章你将学会
+
+ - 用 DeclarativeBase + Mapped + mappedcolumn 三件套声明模型
+ - 主键 / 自增 / 可空 / 默认值 / 唯一 / 索引的每一种写法
+ - 外键 Forei…</p>
+  <div class="page-meta">
+    <span>约 45 分钟</span><span>17,818 字</span><span>34 个代码示例</span>
+  </div>
+</header>
+<div class="md"><blockquote>
+<p><strong>本章你将学会</strong></p>
+<ul>
+<li>用 <code>DeclarativeBase</code> + <code>Mapped</code> + <code>mapped_column</code> 三件套声明模型</li>
+<li>主键 / 自增 / 可空 / 默认值 / 唯一 / 索引的每一种写法</li>
+<li>外键 <code>ForeignKey</code> 与 <code>ondelete</code> 删除策略</li>
+<li>一对多、多对多：<code>relationship</code>、<code>back_populates</code>、<code>secondary</code></li>
+<li>用 Mixin 复用公共字段，用 <code>TYPE_CHECKING</code> 防循环导入</li>
+<li>JSONB 等 PG 特有类型，以及 <code>create_all</code> 的真实定位</li>
+</ul>
+</blockquote>
+<p>上一章我们把"路"修好了：引擎管连接池，会话管事务。这一章开始"盖房子"——用 Python 类把表结构写出来，SQLAlchemy 负责翻译成 <code>CREATE TABLE</code>。本章自始至终围绕一个内容平台的小案例：<strong>栏目（Channel）、文章（Article）、标签（Tag）、文章版本（ArticleVersion）</strong>，它们刚好把常用的建模姿势全用上了。</p>
+<hr />
+<h2 id="1-心智模型类是图纸实例是砖">1. 心智模型：类是图纸，实例是砖</h2>
+<p>ORM 建模只有一句话要记：</p>
+<blockquote>
+<p><strong>类 ↔ 表；类属性 ↔ 列；类实例 ↔ 一行数据。</strong></p>
+</blockquote>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">Article</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>        <span class="c1"># 对应表 article</span>
+    <span class="n">title</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>      <span class="c1"># 对应列 title</span>
+    <span class="o">...</span>
+
+<span class="c1"># 查出来的每个对象，就是表里的一行</span>
+<span class="n">article</span> <span class="o">=</span> <span class="n">Article</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">"第一篇文章"</span><span class="p">)</span>   <span class="c1"># 还没入库，只是图纸上的规划</span>
+</code></pre></div>
+<p>打个比方：模型类是<strong>图纸</strong>，<code>Base.metadata</code> 是<strong>市政局的档案柜</strong>——每定义一个模型类，SQLAlchemy 就自动把这张图纸登记进档案柜。后面不管是一键建表（<code>create_all</code>）还是跑迁移（第 07 章的 Alembic），都是照着档案柜里的图纸开工。图纸没登记，就没人为你施工。</p>
+<hr />
+<h2 id="2-declarativebase所有模型的户籍管理处">2. DeclarativeBase：所有模型的"户籍管理处"</h2>
+<p><strong>作用</strong>：所有模型类的共同祖先。继承它，SQLAlchemy 才知道"这是一个表模型"，才会把表登记进 <code>metadata</code> 档案柜。</p>
+<p><strong>签名</strong>（无参数，按继承使用）：</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">DeclarativeBase</span><span class="p">:</span>
+    <span class="c1"># 可在子类中定制的类属性：metadata、registry、type_annotation_map</span>
+</code></pre></div>
+<p><strong>最小示例</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.orm</span><span class="w"> </span><span class="kn">import</span> <span class="n">DeclarativeBase</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Base</span><span class="p">(</span><span class="n">DeclarativeBase</span><span class="p">):</span>
+    <span class="k">pass</span>
+</code></pre></div>
+<p>项目里的第一个模型文件，一般就长这样。需要定制时再传类属性，比如全局类型映射：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy</span><span class="w"> </span><span class="kn">import</span> <span class="n">MetaData</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.orm</span><span class="w"> </span><span class="kn">import</span> <span class="n">DeclarativeBase</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Base</span><span class="p">(</span><span class="n">DeclarativeBase</span><span class="p">):</span>
+    <span class="n">metadata</span> <span class="o">=</span> <span class="n">MetaData</span><span class="p">(</span><span class="n">naming_convention</span><span class="o">=</span><span class="p">{</span>   <span class="c1"># 统一约束命名，生产环境推荐</span>
+        <span class="s2">"ix"</span><span class="p">:</span> <span class="s2">"ix_</span><span class="si">%(column_0_label)s</span><span class="s2">"</span><span class="p">,</span>
+        <span class="s2">"uq"</span><span class="p">:</span> <span class="s2">"uq_</span><span class="si">%(table_name)s</span><span class="s2">_</span><span class="si">%(column_0_name)s</span><span class="s2">"</span><span class="p">,</span>
+    <span class="p">})</span>
+</code></pre></div>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li><strong>一个项目只建一个 <code>Base</code>。</strong><code>Base</code> 可以建多个，但每个 <code>Base</code> 各有一个独立档案柜（<code>metadata</code>），<code>create_all</code> 和 Alembic 都只认自己那个柜子——模型挂错了户口，表就"失踪"了。</li>
+<li><strong>模型必须被 import 过才存在于档案柜。</strong>定义了 <code>Article</code> 类但没被任何代码导入，<code>create_all</code> 根本不知道它存在（第 14 节细说）。</li>
+<li><strong>普通的工具基类不要继承 <code>Base</code>。</strong>只有"确实要映射成表"的类才继承；复用公共字段用 Mixin（第 12 节），Mixin 自己是普通类。</li>
+</ul>
+<hr />
+<h2 id="3-__tablename__给表起名字">3. <code>__tablename__</code>：给表起名字</h2>
+<p><strong>作用</strong>：指定模型对应的表名。不写也行——SQLAlchemy 会拿类名当表名，但显式控制更稳。</p>
+<p><strong>签名</strong>（declarative 指令式属性）：</p>
+<div class="highlight"><pre><span></span><code><span class="n">__tablename__</span><span class="p">:</span> <span class="nb">str</span>                    <span class="c1"># 手动指定</span>
+<span class="c1"># 或用 declared_attr.directive 做自动生成</span>
+</code></pre></div>
+<p><strong>最小示例</strong>——手动写：</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">Channel</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+    <span class="n">__tablename__</span> <span class="o">=</span> <span class="s2">"channel"</span>
+</code></pre></div>
+<p>自动生成（推荐做法，全项目统一风格）：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.orm</span><span class="w"> </span><span class="kn">import</span> <span class="n">DeclarativeBase</span><span class="p">,</span> <span class="n">declared_attr</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Base</span><span class="p">(</span><span class="n">DeclarativeBase</span><span class="p">):</span>
+    <span class="nd">@declared_attr</span><span class="o">.</span><span class="n">directive</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">__tablename__</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>   <span class="c1"># Channel -&gt; "channel"</span>
+</code></pre></div>
+<p>写成 <code>declared_attr.directive</code> 的意思是："这是个给 declarative 机制看的指令属性，不是要映射成列的属性"。子类继承时它都会重新执行一次，各自算各自的表名。</p>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li>自动小写对 <code>ArticleVersion</code> 这种驼峰名会得到 <code>articleversion</code>（没有下划线）。嫌丑就在子类里<strong>手动覆盖</strong>：<code>__tablename__ = "article_version"</code>，覆盖优先级高于自动生成。</li>
+<li>别用数据库保留字当表名：<code>user</code>、<code>order</code> 这类词在 PG 里是关键字，直接建表会翻车，起名 <code>users</code>、<code>orders</code> 绕开。</li>
+<li>表名会出现在 <code>ForeignKey("表名.列名")</code> 的字符串里，改表名时记得全局搜一遍这些字符串引用。</li>
+</ul>
+<hr />
+<h2 id="4-mapped-mapped_column类型标注驱动的列定义">4. <code>Mapped</code> + <code>mapped_column</code>：类型标注驱动的列定义</h2>
+<p><strong>作用</strong>：这是 SQLAlchemy 2.0 的核心建模姿势。<code>Mapped[类型]</code> 注解决定列的"基础类型和可空性"，<code>mapped_column()</code> 补充细节（长度、唯一、索引、默认值……）。相当于<strong>看身份证定工种，再按岗位细则派活</strong>。</p>
+<p><strong>签名</strong>（手册式精简版，只列高频参数）：</p>
+<div class="highlight"><pre><span></span><code><span class="n">mapped_column</span><span class="p">(</span>
+    <span class="n">类型</span> <span class="n">或</span> <span class="n">ForeignKey</span><span class="p">(</span><span class="o">...</span><span class="p">),</span>   <span class="c1"># 第一个位置参数：显式指定列类型或外键</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">primary_key</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>          <span class="c1"># 是否主键</span>
+    <span class="n">nullable</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>             <span class="c1"># 是否可空（默认由注解推断）</span>
+    <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>               <span class="c1"># Python 端默认值（flush 时填充）</span>
+    <span class="n">server_default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>        <span class="c1"># 数据库端默认值（写进 DDL 的 DEFAULT）</span>
+    <span class="n">onupdate</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>              <span class="c1"># UPDATE 时自动刷新的值</span>
+    <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>                <span class="c1"># 建普通索引</span>
+    <span class="n">unique</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>               <span class="c1"># 建唯一约束</span>
+<span class="p">)</span>
+</code></pre></div>
+<p><strong>最小示例</strong>——三种写法，从简到繁：</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">Tag</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+    <span class="c1"># 写法一：只要注解，零配置（str -&gt; String，非空）</span>
+    <span class="n">name</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapped_column</span><span class="p">(</span><span class="n">String</span><span class="p">(</span><span class="mi">50</span><span class="p">),</span> <span class="n">unique</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># 写法二：注解 + 空 mapped_column()，纯占位，将来加参数方便</span>
+    <span class="n">note</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapped_column</span><span class="p">()</span>
+
+    <span class="c1"># 写法三：可空列——Optional 注解自动推导 nullable=True</span>
+    <span class="n">remark</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapped_column</span><span class="p">(</span><span class="n">String</span><span class="p">(</span><span class="mi">200</span><span class="p">))</span>
+</code></pre></div>
+<p>类型注解和列类型的对应关系（默认映射表）：</p>
+<table>
+<thead>
+<tr>
+<th>Python 类型注解</th>
+<th>默认列类型</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Mapped[int]</code></td>
+<td><code>Integer</code></td>
+</tr>
+<tr>
+<td><code>Mapped[float]</code></td>
+<td><code>Float</code></td>
+</tr>
+<tr>
+<td><code>Mapped[bool]</code></td>
+<td><code>Boolean</code></td>
+</tr>
+<tr>
+<td><code>Mapped[str]</code></td>
+<td><code>String</code>（无长度限制）</td>
+</tr>
+<tr>
+<td><code>Mapped[bytes]</code></td>
+<td><code>LargeBinary</code></td>
+</tr>
+<tr>
+<td><code>Mapped[datetime]</code></td>
+<td><code>DateTime</code></td>
+</tr>
+<tr>
+<td><code>Mapped[date]</code> / <code>Mapped[time]</code></td>
+<td><code>Date</code> / <code>Time</code></td>
+</tr>
+<tr>
+<td><code>Mapped[timedelta]</code></td>
+<td><code>Interval</code></td>
+</tr>
+<tr>
+<td><code>Mapped[Decimal]</code></td>
+<td><code>Numeric</code></td>
+</tr>
+<tr>
+<td><code>Mapped[uuid.UUID]</code></td>
+<td><code>Uuid</code></td>
+</tr>
+<tr>
+<td><code>Mapped[dict]</code> / <code>Mapped[list]</code></td>
+<td><code>JSON</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li><code>Mapped[str]</code> 默认映射成<strong>不带长度的 String</strong>：PG、SQLite 无所谓，<strong>MySQL 会直接报错</strong>（VARCHAR 必须给长度）。跨库项目养成习惯：字符串列显式写 <code>String(50)</code>。</li>
+<li><strong>可空性由注解推断，别两边打架</strong>：<code>Mapped[str | None]</code> 自动 <code>nullable=True</code>；这时再手写 <code>nullable=False</code> 是自相矛盾，以显式参数为准，但读代码的人会懵。一个原则：<strong>注解管可空，参数管细节</strong>。</li>
+<li>注解必须真的写在类型里：<code>Mapped[str]</code> 和 <code>Mapped[str | None]</code> 是两种列，写错一个 <code>| None</code>，数据库约束就完全变了。</li>
+<li>想让自定义类型也自动映射？在 <code>DeclarativeBase</code> 子类上传 <code>type_annotation_map</code> 扩展映射表，本章不展开。</li>
+</ul>
+<hr />
+<h2 id="5-主键与自增">5. 主键与自增</h2>
+<p><strong>作用</strong>：<code>primary_key=True</code> 声明主键；整型主键默认自增，插入时不用手动给值。</p>
+<p><strong>签名</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="n">mapped_column</span><span class="p">(</span><span class="n">Identity</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">increment</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">always</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+              <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">autoincrement</span><span class="o">=</span><span class="s2">"auto"</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>最小示例</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">Channel</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+    <span class="c1"># 最常见：整型自增主键（整型主键默认自增，不用额外参数）</span>
+    <span class="nb">id</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapped_column</span><span class="p">(</span><span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># PG / Oracle 风格：标准 IDENTITY 子句（与上面二选一）</span>
+<span class="c1"># id: Mapped[int] = mapped_column(Identity(), primary_key=True)</span>
+</code></pre></div>
+<p><code>Identity()</code> 生成的是 <code>GENERATED BY DEFAULT AS IDENTITY</code>——PG 10+、Oracle、MariaDB 10.3+ 都认；SQLite 这类不支持的库会<strong>安静地忽略它</strong>，退回普通的整型主键自增（本章 demo 在 aiosqlite 上就是这么跑的，行为完全正常）。</p>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li>整型单列主键<strong>默认就是自增</strong>（<code>autoincrement="auto"</code>），不写 <code>Identity()</code> 也行。写它的意义是"声明式地表达我要数据库端自增"，在 PG 上更标准。</li>
+<li><code>autoincrement=False</code> 可以关掉自增——比如 id 由外部系统发号时。</li>
+<li>想用 UUID 主键：<code>Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True, default=uuid.uuid4)</code>（Python 端生成），或 PG 13+ 上 <code>server_default=func.gen_random_uuid()</code>（数据库端生成）。</li>
+<li>复合主键（多列联合主键）见第 10 节，写法不一样。</li>
+</ul>
+<hr />
+<h2 id="6-可空与默认值default-和-server_default-是两套机制">6. 可空与默认值：<code>default</code> 和 <code>server_default</code> 是两套机制</h2>
+<p><strong>作用</strong>：给列配默认值。名字看着像兄弟，其实是两家人：</p>
+<ul>
+<li><code>default=...</code>：<strong>Python 端</strong>默认值。ORM 在 flush 生成 INSERT 语句时替你补上，<strong>不会出现在 DDL 里</strong>。</li>
+<li><code>server_default=...</code>：<strong>数据库端</strong>默认值。翻译成 <code>CREATE TABLE</code> 里的 <code>DEFAULT ...</code> 子句，谁来插行都生效。</li>
+</ul>
+<p>打个比方：<code>default</code> 是<strong>发货员（ORM）发货时顺手塞进包裹的赠品</strong>——绕过这个发货员（直接用 psql 手写 INSERT）就没有了；<code>server_default</code> 是<strong>写进仓库规章制度的赠品规则</strong>——不管谁来发货，仓库都照章办事。</p>
+<p><strong>签名</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="n">mapped_column</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">Python值或可调用对象</span><span class="p">,</span>
+              <span class="n">server_default</span><span class="o">=</span><span class="n">SQL表达式或字符串</span><span class="p">,</span>
+              <span class="n">onupdate</span><span class="o">=</span><span class="n">Python值或SQL表达式</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>最小示例</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy</span><span class="w"> </span><span class="kn">import</span> <span class="n">DateTime</span><span class="p">,</span> <span class="n">String</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="n">func</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Article</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+    <span class="c1"># Python 端默认值：默认空字符串</span>
+    <span class="n">content</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapped_column</span><span class="p">(</span><span class="n">Text</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">""</span><span class="p">)</span>
+
+    <span class="c1"># 可空列：不写摘要就不写，数据库里存 NULL</span>
+    <span class="n">summary</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapped_column</span><span class="p">(</span><span class="n">String</span><span class="p">(</span><span class="mi">500</span><span class="p">))</span>
+
+    <span class="c1"># 数据库端默认值：DDL 里会有 DEFAULT CURRENT_TIMESTAMP</span>
+    <span class="n">created_at</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="n">datetime</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapped_column</span><span class="p">(</span><span class="n">DateTime</span><span class="p">,</span> <span class="n">server_default</span><span class="o">=</span><span class="n">func</span><span class="o">.</span><span class="n">now</span><span class="p">())</span>
+
+    <span class="c1"># 版本号：Python 端默认 1</span>
+    <span class="n">version_no</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapped_column</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</code></pre></div>
+<p><code>onupdate</code> 是 <code>default</code> 的"更新版"：ORM 执行 UPDATE 时自动把列刷新成新值（常配 <code>func.now()</code> 做 <code>updated_at</code>，第 12 节的 TimestampMixin 就是这么写的）。</p>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li><strong>类型限制</strong>：<code>server_default</code> 只接受 SQL 表达式（<code>func.now()</code>、<code>text("''")</code>）或字符串字面量，直接塞 Python 对象（如 <code>datetime.now()</code>）会报错。Python 对象是给 <code>default=</code> 用的。</li>
+<li>传可调用对象时<strong>别加括号</strong>：<code>default=datetime.now</code> 传的是函数本身，每次插入时才调用、各自拿时间；<code>default=datetime.now()</code> 带括号传的是"模块加载那一刻"的固定结果——所有行共用一个时间戳，新手重灾区。</li>
+<li><strong>改 <code>default</code> 不影响已有数据</strong>：它只作用于之后的 INSERT。想让老数据也补上默认值，得跑一次 UPDATE（第 06 章）。</li>
+<li><code>onupdate</code> 只在 ORM 更新时触发。别人直接 <code>UPDATE ... WHERE ...</code> 的裸 SQL 不会刷新它，别指望它 100% 可靠。</li>
+</ul>
+<hr />
+<h2 id="7-唯一与索引uniqueindex__table_args__">7. 唯一与索引：<code>unique</code>、<code>index</code>、<code>__table_args__</code></h2>
+<p><strong>作用</strong>：给列加约束或索引。<code>unique=True</code> 唯一约束（数据库层面拦截重复），<code>index=True</code> 普通索引（加速查询，不约束数据）。</p>
+<p><strong>签名</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="n">mapped_column</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">unique</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="c1"># 类级别：多列组合约束</span>
+<span class="n">__table_args__</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">UniqueConstraint</span><span class="p">(</span><span class="s2">"列1"</span><span class="p">,</span> <span class="s2">"列2"</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">"约束名"</span><span class="p">),</span>
+    <span class="n">Index</span><span class="p">(</span><span class="s2">"索引名"</span><span class="p">,</span> <span class="s2">"列1"</span><span class="p">,</span> <span class="s2">"列2"</span><span class="p">),</span>
+<span class="p">)</span>
+</code></pre></div>
+<p><strong>最小示例</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy</span><span class="w"> </span><span class="kn">import</span> <span class="n">Index</span><span class="p">,</span> <span class="n">String</span><span class="p">,</span> <span class="n">UniqueConstraint</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Tag</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+    <span class="n">name</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapped_column</span><span class="p">(</span><span class="n">String</span><span class="p">(</span><span class="mi">50</span><span class="p">),</span> <span class="n">unique</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>   <span class="c1"># 单列唯一</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">ArticleVersion</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+    <span class="n">__tablename__</span> <span class="o">=</span> <span class="s2">"article_version"</span>
+    <span class="c1"># 组合唯一：同一篇文章里，版本号不能重复</span>
+    <span class="n">__table_args__</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">UniqueConstraint</span><span class="p">(</span><span class="s2">"article_id"</span><span class="p">,</span> <span class="s2">"version_no"</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">"uq_article_version_no"</span><span class="p">),</span>
+        <span class="n">Index</span><span class="p">(</span><span class="s2">"ix_version_article"</span><span class="p">,</span> <span class="s2">"article_id"</span><span class="p">),</span>   <span class="c1"># 显式命名的普通索引</span>
+    <span class="p">)</span>
+    <span class="n">article_id</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapped_column</span><span class="p">(</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s2">"article.id"</span><span class="p">))</span>
+    <span class="n">version_no</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapped_column</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</code></pre></div>
+<p>建出来的 DDL 长这样（demo 实测）：</p>
+<div class="highlight"><pre><span></span><code><span class="k">CONSTRAINT</span><span class="w"> </span><span class="n">uq_article_version_no</span><span class="w"> </span><span class="k">UNIQUE</span><span class="w"> </span><span class="p">(</span><span class="n">article_id</span><span class="p">,</span><span class="w"> </span><span class="n">version_no</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li><strong>外键列在 PG 上不会自动建索引</strong>（MySQL 会）。按外键查询是常态，建议外键列加 <code>index=True</code>。</li>
+<li><code>index=True</code> 自动生成的索引名各库有各的规则，生产环境想统一管理，用 <code>__table_args__</code> 里的 <code>Index("ix_名字", "列")</code> 显式命名。</li>
+<li>唯一约束撞上可空列：PG 里 <code>NULL</code> 不参与唯一比较，多行 <code>NULL</code> 是合法的。想"最多一个 NULL"得用部分索引（<code>Index(..., postgresql_where=...)</code>），进阶话题，先知道有这回事。</li>
+<li>唯一约束在<strong>插入重复时抛 <code>IntegrityError</code></strong>，这不是 bug，是约束在干活。怎么优雅地接住它，第 09 章统一异常处理见。</li>
+</ul>
+<hr />
+<h2 id="8-foreignkey-与-ondelete外键及其应急预案">8. <code>ForeignKey</code> 与 <code>ondelete</code>：外键及其"应急预案"</h2>
+<p><strong>作用</strong>：<code>ForeignKey("表.列")</code> 声明外键，把两张表焊在一起；<code>ondelete</code> 指定<strong>父行被删除时，子行怎么办</strong>。</p>
+<p><strong>签名</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="n">ForeignKey</span><span class="p">(</span><span class="s2">"表名.列名"</span><span class="p">,</span> <span class="n">ondelete</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>   <span class="c1"># ondelete: CASCADE / RESTRICT / SET NULL / SET DEFAULT</span>
+</code></pre></div>
+<p><strong>最小示例</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">Article</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+    <span class="c1"># 文章必须挂在一个栏目下；栏目还有文章时，栏目不许删（RESTRICT 拦截）</span>
+    <span class="n">channel_id</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapped_column</span><span class="p">(</span>
+        <span class="n">ForeignKey</span><span class="p">(</span><span class="s2">"channel.id"</span><span class="p">,</span> <span class="n">ondelete</span><span class="o">=</span><span class="s2">"RESTRICT"</span><span class="p">)</span>
+    <span class="p">)</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">ArticleVersion</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+    <span class="n">__tablename__</span> <span class="o">=</span> <span class="s2">"article_version"</span>
+    <span class="c1"># 文章删了，它的历史版本没存在意义，跟着删</span>
+    <span class="n">article_id</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapped_column</span><span class="p">(</span>
+        <span class="n">ForeignKey</span><span class="p">(</span><span class="s2">"article.id"</span><span class="p">,</span> <span class="n">ondelete</span><span class="o">=</span><span class="s2">"CASCADE"</span><span class="p">)</span>
+    <span class="p">)</span>
+</code></pre></div>
+<p>四种删除策略，用人话翻译：</p>
+<table>
+<thead>
+<tr>
+<th>策略</th>
+<th>含义</th>
+<th>适用场景</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>CASCADE</code></td>
+<td>父删，子陪葬</td>
+<td>版本记录、日志这种附属数据</td>
+</tr>
+<tr>
+<td><code>RESTRICT</code></td>
+<td>有子在，父别想走</td>
+<td>栏目下还有文章 → 拦住删除</td>
+</tr>
+<tr>
+<td><code>SET NULL</code></td>
+<td>父删，子断联（列必须可空）</td>
+<td>可有可无的关联</td>
+</tr>
+<tr>
+<td><code>SET DEFAULT</code></td>
+<td>父删，子回默认值</td>
+<td>少见</td>
+</tr>
+</tbody>
+</table>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li>参数是<strong>字符串 <code>"表名.列名"</code></strong>，不是 Python 类或属性——因为定义 <code>Article</code> 时，<code>channel</code> 表可能还没被声明。字符串引用让 SQLAlchemy 事后解析。</li>
+<li><code>ondelete</code> 是<strong>数据库端</strong>行为，生效前提是数据库真的执行外键约束：PG 默认执行；<strong>SQLite 默认不执行</strong>（要开 <code>PRAGMA foreign_keys=ON</code>），demo 里不深究，生产上 PG 无此烦恼。</li>
+<li>还有另一套删除语义在 ORM 层：<code>relationship(cascade=...)</code>（下一节）。<strong>新手最容易混</strong>：<code>ondelete</code> 管数据库，<code>relationship</code> 的 <code>cascade</code> 管 ORM 内存操作。生产建议两层配套：外键 <code>ondelete="CASCADE"</code> + relationship <code>passive_deletes=True</code>，让数据库干脏活，ORM 少发 SQL。</li>
+</ul>
+<hr />
+<h2 id="9-一对多relationship-back_populates">9. 一对多：<code>relationship</code> + <code>back_populates</code></h2>
+<p><strong>作用</strong>：<code>relationship</code> 在两个模型之间架一座<strong>内存中的桥</strong>——让你用 <code>article.channel</code>、<code>channel.articles</code> 这种属性访问代替手写 JOIN。注意：<strong>它只声明对象关系，不产生任何列</strong>。建表时数据库只认 <code>mapped_column</code>。</p>
+<p><strong>签名</strong>（高频参数）：</p>
+<div class="highlight"><pre><span></span><code><span class="n">relationship</span><span class="p">(</span>
+    <span class="s2">"目标类名"</span><span class="p">,</span>              <span class="c1"># 也可省略，由注解推断</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">back_populates</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>     <span class="c1"># 对方模型里"回指"的属性名</span>
+    <span class="n">secondary</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>          <span class="c1"># 多对多专用，见第 10 节</span>
+    <span class="n">cascade</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>            <span class="c1"># ORM 级联："all, delete-orphan" 等</span>
+    <span class="n">lazy</span><span class="o">=</span><span class="s2">"select"</span><span class="p">,</span>           <span class="c1"># 加载策略，第 06 章细讲</span>
+    <span class="n">passive_deletes</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>   <span class="c1"># 把删除交给数据库的 ondelete</span>
+<span class="p">)</span>
+</code></pre></div>
+<p><strong>最小示例</strong>——栏目与文章，一对多（多对一是同一个关系的两面）：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy</span><span class="w"> </span><span class="kn">import</span> <span class="n">ForeignKey</span><span class="p">,</span> <span class="n">String</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.orm</span><span class="w"> </span><span class="kn">import</span> <span class="n">Mapped</span><span class="p">,</span> <span class="n">mapped_column</span><span class="p">,</span> <span class="n">relationship</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Channel</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+    <span class="o">...</span>
+    <span class="c1"># 一个栏目 → 多篇文章：list["Article"]</span>
+    <span class="n">articles</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="s2">"Article"</span><span class="p">]]</span> <span class="o">=</span> <span class="n">relationship</span><span class="p">(</span><span class="n">back_populates</span><span class="o">=</span><span class="s2">"channel"</span><span class="p">)</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Article</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+    <span class="o">...</span>
+    <span class="n">channel_id</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapped_column</span><span class="p">(</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s2">"channel.id"</span><span class="p">,</span> <span class="n">ondelete</span><span class="o">=</span><span class="s2">"RESTRICT"</span><span class="p">))</span>
+    <span class="c1"># 一篇文章 → 一个栏目：单对象</span>
+    <span class="n">channel</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="s2">"Channel"</span><span class="p">]</span> <span class="o">=</span> <span class="n">relationship</span><span class="p">(</span><span class="n">back_populates</span><span class="o">=</span><span class="s2">"articles"</span><span class="p">)</span>
+</code></pre></div>
+<p>用起来是什么体验：</p>
+<div class="highlight"><pre><span></span><code><span class="n">article</span> <span class="o">=</span> <span class="n">Article</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">"第一篇"</span><span class="p">,</span> <span class="n">channel</span><span class="o">=</span><span class="n">Channel</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">"后端"</span><span class="p">))</span>
+<span class="c1">#                          ↑ 给了对象，channel_id 由 ORM 在 flush 时自动补上</span>
+
+<span class="n">channel</span><span class="o">.</span><span class="n">articles</span>        <span class="c1"># 直接拿到这个栏目下的所有文章对象</span>
+</code></pre></div>
+<p><code>back_populates</code> 是<strong>双向对讲机</strong>：两边必须互相指认（<code>"channel"</code> ↔ <code>"articles"</code>），任何一边改了，另一边内存里同步更新。</p>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li>注解方向别写反：<strong>"多"的一方拿单对象</strong>（<code>Mapped["Channel"]</code>），<strong>"一"的一方拿列表</strong>（<code>Mapped[list["Article"]]</code>）。写反了语义就崩了。</li>
+<li>引号别省：<code>Mapped[list["Article"]]</code> 里目标类是字符串（前向引用）；类定义有先后，字符串让 SQLAlchemy 事后解析。</li>
+<li><code>back_populates</code> 指的属性名必须真实存在且互相指认，拼错会在启动时直接报 mapper 配置错误——这反而是好事，早失败早发现。</li>
+<li>老代码里常见的 <code>backref=</code>（单向声明自动生成反向）是隐式风格，2.0 官方更推荐 <code>back_populates</code> 显式双向，两边一眼看清。</li>
+<li><strong>异步会话里不能懒加载</strong>：默认 <code>lazy="select"</code> 意味着访问属性时才发 SQL，而 asyncio 里这个隐式 IO 会抛 <code>MissingGreenlet</code>。查询时用 <code>selectinload</code> / <code>joinedload</code> 预加载，第 06 章展开。</li>
+</ul>
+<hr />
+<h2 id="10-多对多secondary-关联表与复合主键">10. 多对多：<code>secondary</code> 关联表与复合主键</h2>
+<p><strong>作用</strong>：文章和标签是多对多——一篇文章多个标签，一个标签贴多篇文章。关系数据库表达不了"直接多对多"，必须<strong>拆出一个中间表</strong>，把一个 M:N 拆成两个 1:N。</p>
+<p>中间表用 Core 风格的 <code>Table</code> 定义（它没有自己的业务行为，不需要映射成类）：</p>
+<p><strong>签名</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="n">Table</span><span class="p">(</span>
+    <span class="s2">"表名"</span><span class="p">,</span>
+    <span class="n">Base</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span>        <span class="c1"># 挂到 Base 的档案柜</span>
+    <span class="n">Column</span><span class="p">(</span><span class="s2">"article_id"</span><span class="p">,</span> <span class="n">ForeignKey</span><span class="p">(</span><span class="s2">"article.id"</span><span class="p">),</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+    <span class="n">Column</span><span class="p">(</span><span class="s2">"tag_id"</span><span class="p">,</span>      <span class="n">ForeignKey</span><span class="p">(</span><span class="s2">"tag.id"</span><span class="p">),</span>      <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+<span class="p">)</span>
+<span class="c1"># 两列同时 primary_key=True → 复合主键：(article_id, tag_id) 组合唯一</span>
+</code></pre></div>
+<p><strong>最小示例</strong>——完整的"文章 × 标签"：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy</span><span class="w"> </span><span class="kn">import</span> <span class="n">Column</span><span class="p">,</span> <span class="n">ForeignKey</span><span class="p">,</span> <span class="n">String</span><span class="p">,</span> <span class="n">Table</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.orm</span><span class="w"> </span><span class="kn">import</span> <span class="n">Mapped</span><span class="p">,</span> <span class="n">mapped_column</span><span class="p">,</span> <span class="n">relationship</span>
+
+<span class="n">article_tag</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span>
+    <span class="s2">"article_tag"</span><span class="p">,</span>
+    <span class="n">Base</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span>
+    <span class="n">Column</span><span class="p">(</span><span class="s2">"article_id"</span><span class="p">,</span> <span class="n">ForeignKey</span><span class="p">(</span><span class="s2">"article.id"</span><span class="p">,</span> <span class="n">ondelete</span><span class="o">=</span><span class="s2">"CASCADE"</span><span class="p">),</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+    <span class="n">Column</span><span class="p">(</span><span class="s2">"tag_id"</span><span class="p">,</span> <span class="n">ForeignKey</span><span class="p">(</span><span class="s2">"tag.id"</span><span class="p">,</span> <span class="n">ondelete</span><span class="o">=</span><span class="s2">"CASCADE"</span><span class="p">),</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+<span class="p">)</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Article</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+    <span class="o">...</span>
+    <span class="n">tags</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="s2">"Tag"</span><span class="p">]]</span> <span class="o">=</span> <span class="n">relationship</span><span class="p">(</span>
+        <span class="n">secondary</span><span class="o">=</span><span class="n">article_tag</span><span class="p">,</span> <span class="n">back_populates</span><span class="o">=</span><span class="s2">"articles"</span>
+    <span class="p">)</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Tag</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+    <span class="o">...</span>
+    <span class="n">articles</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="s2">"Article"</span><span class="p">]]</span> <span class="o">=</span> <span class="n">relationship</span><span class="p">(</span>
+        <span class="n">secondary</span><span class="o">=</span><span class="n">article_tag</span><span class="p">,</span> <span class="n">back_populates</span><span class="o">=</span><span class="s2">"tags"</span>
+    <span class="p">)</span>
+</code></pre></div>
+<p>中间表像一张<strong>群聊成员表</strong>：<code>article_tag</code> 每一行就是"某文章加入了某标签群"。建表 DDL（demo 实测）：</p>
+<div class="highlight"><pre><span></span><code><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">article_tag</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="n">article_id</span><span class="w"> </span><span class="nb">INTEGER</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="p">,</span>
+<span class="w">    </span><span class="n">tag_id</span><span class="w"> </span><span class="nb">INTEGER</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="p">,</span>
+<span class="w">    </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="w"> </span><span class="p">(</span><span class="n">article_id</span><span class="p">,</span><span class="w"> </span><span class="n">tag_id</span><span class="p">),</span><span class="w">          </span><span class="c1">-- 复合主键</span>
+<span class="w">    </span><span class="k">FOREIGN</span><span class="w"> </span><span class="k">KEY</span><span class="p">(</span><span class="n">article_id</span><span class="p">)</span><span class="w"> </span><span class="k">REFERENCES</span><span class="w"> </span><span class="n">article</span><span class="w"> </span><span class="p">(</span><span class="n">id</span><span class="p">)</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="k">DELETE</span><span class="w"> </span><span class="k">CASCADE</span><span class="p">,</span>
+<span class="w">    </span><span class="k">FOREIGN</span><span class="w"> </span><span class="k">KEY</span><span class="p">(</span><span class="n">tag_id</span><span class="p">)</span><span class="w"> </span><span class="k">REFERENCES</span><span class="w"> </span><span class="n">tag</span><span class="w"> </span><span class="p">(</span><span class="n">id</span><span class="p">)</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="k">DELETE</span><span class="w"> </span><span class="k">CASCADE</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>用起来：</p>
+<div class="highlight"><pre><span></span><code><span class="n">article</span><span class="o">.</span><span class="n">tags</span> <span class="o">=</span> <span class="p">[</span><span class="n">Tag</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">"Python"</span><span class="p">),</span> <span class="n">Tag</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">"SQLAlchemy"</span><span class="p">)]</span>
+<span class="k">await</span> <span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+<span class="c1"># ORM 自动往 article_tag 里写两行，不用你管</span>
+</code></pre></div>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li><strong>关联表行由 ORM 自动维护</strong>：给 <code>article.tags</code> 赋列表，flush 时自动 INSERT 中间表行；从列表里移除，自动 DELETE。别自己手动往 <code>article_tag</code> 插数据，两条管理路线会打架。</li>
+<li>复合主键的写法就是<strong>多个 <code>Column(..., primary_key=True)</code></strong>。它天然保证"同一对 (article_id, tag_id) 只出现一次"，重复贴标签会撞唯一约束。</li>
+<li><strong>什么时候中间表要升级成模型类？</strong>当关联行自己要带字段时（比如"什么时候打的标签"）。这时放弃 <code>secondary</code>，把中间表定义成普通模型类，两边各写一个一对多——这叫 association object 模式。判据一句话：<strong>关联本身有没有属性</strong>。</li>
+<li>中间表也记得挂 <code>Base.metadata</code>，挂了才会被 <code>create_all</code> 建出来。</li>
+</ul>
+<hr />
+<h2 id="11-模型拆文件时type_checking-防循环导入">11. 模型拆文件时：<code>TYPE_CHECKING</code> 防循环导入</h2>
+<p>模型多了一个文件塞不下，自然会按"一表一文件"拆开。问题来了：<code>article.py</code> 要用 <code>Channel</code>，<code>channel.py</code> 要用 <code>Article</code>——你 import 我，我 import 你，Python 直接抛 <code>ImportError</code>（循环导入）。</p>
+<p>解法是<strong>注解用字符串、导入放条件块</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># model/article.py</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy</span><span class="w"> </span><span class="kn">import</span> <span class="n">ForeignKey</span><span class="p">,</span> <span class="n">String</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.orm</span><span class="w"> </span><span class="kn">import</span> <span class="n">Mapped</span><span class="p">,</span> <span class="n">mapped_column</span><span class="p">,</span> <span class="n">relationship</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">model.association</span><span class="w"> </span><span class="kn">import</span> <span class="n">article_tag</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">model.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">Base</span><span class="p">,</span> <span class="n">IDMixin</span><span class="p">,</span> <span class="n">TimestampMixin</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="c1"># 这个块只在类型检查器（mypy / IDE）里执行，运行时不会导入</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">model.channel</span><span class="w"> </span><span class="kn">import</span> <span class="n">Channel</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">model.tag</span><span class="w"> </span><span class="kn">import</span> <span class="n">Tag</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Article</span><span class="p">(</span><span class="n">Base</span><span class="p">,</span> <span class="n">IDMixin</span><span class="p">,</span> <span class="n">TimestampMixin</span><span class="p">):</span>
+    <span class="n">title</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapped_column</span><span class="p">(</span><span class="n">String</span><span class="p">(</span><span class="mi">200</span><span class="p">),</span> <span class="n">index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">channel_id</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapped_column</span><span class="p">(</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s2">"channel.id"</span><span class="p">,</span> <span class="n">ondelete</span><span class="o">=</span><span class="s2">"RESTRICT"</span><span class="p">))</span>
+
+    <span class="c1"># 引号字符串 = 前向引用，SQLAlchemy 运行时自己解析，不需要真 import</span>
+    <span class="n">channel</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="s2">"Channel"</span><span class="p">]</span> <span class="o">=</span> <span class="n">relationship</span><span class="p">(</span><span class="n">back_populates</span><span class="o">=</span><span class="s2">"articles"</span><span class="p">)</span>
+    <span class="n">tags</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="s2">"Tag"</span><span class="p">]]</span> <span class="o">=</span> <span class="n">relationship</span><span class="p">(</span><span class="n">secondary</span><span class="o">=</span><span class="n">article_tag</span><span class="p">,</span> <span class="n">back_populates</span><span class="o">=</span><span class="s2">"articles"</span><span class="p">)</span>
+</code></pre></div>
+<p>打个比方：<code>if TYPE_CHECKING:</code> 块相当于<strong>只在编辑器里递名片</strong>——IDE 拿着名片能帮你补全、查类型；运行时大家互不串门，循环导入自然解除。SQLAlchemy 解析关系靠的是字符串名，不靠 import。</p>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li>只需要<strong>类型出现在注解里</strong>的，放 <code>TYPE_CHECKING</code>；<strong>运行时真要用类本身</strong>的（比如继承、<code>secondary=</code> 传表对象），必须正常导入。<code>secondary=article_tag</code> 传的是表对象，所以要真导入。</li>
+<li>字符串前向引用别忘引号：<code>Mapped["Channel"]</code>，不带引号运行时就找不到名字了。</li>
+<li><strong>建表入口必须把所有模型 import 一遍</strong>（哪怕只是 <code># noqa: F401</code> 占位），否则档案柜缺图纸，<code>create_all</code> 建不全表。第 14 节再强调。</li>
+</ul>
+<hr />
+<h2 id="12-mixin公共字段的预制件">12. Mixin：公共字段的"预制件"</h2>
+<p><strong>作用</strong>：<code>id</code>、<code>created_at</code>、<code>updated_at</code> 这种字段每张表都要，每张表抄一遍就是重复劳动。Mixin 把它们做成<strong>预制墙板</strong>——浇筑到每栋楼（每个模型）里各自成型，改一处，全楼受益。</p>
+<p><strong>最小示例</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># model/base.py</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy</span><span class="w"> </span><span class="kn">import</span> <span class="n">DateTime</span><span class="p">,</span> <span class="n">Identity</span><span class="p">,</span> <span class="n">func</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.orm</span><span class="w"> </span><span class="kn">import</span> <span class="n">DeclarativeBase</span><span class="p">,</span> <span class="n">Mapped</span><span class="p">,</span> <span class="n">declared_attr</span><span class="p">,</span> <span class="n">mapped_column</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Base</span><span class="p">(</span><span class="n">DeclarativeBase</span><span class="p">):</span>
+    <span class="nd">@declared_attr</span><span class="o">.</span><span class="n">directive</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">__tablename__</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">IDMixin</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""自增主键，全模型通用。"""</span>
+    <span class="nb">id</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapped_column</span><span class="p">(</span><span class="n">Identity</span><span class="p">(),</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">TimestampMixin</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""创建/更新时间。"""</span>
+    <span class="n">created_at</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="n">datetime</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapped_column</span><span class="p">(</span><span class="n">DateTime</span><span class="p">,</span> <span class="n">server_default</span><span class="o">=</span><span class="n">func</span><span class="o">.</span><span class="n">now</span><span class="p">())</span>
+    <span class="n">updated_at</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="n">datetime</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapped_column</span><span class="p">(</span>
+        <span class="n">DateTime</span><span class="p">,</span> <span class="n">server_default</span><span class="o">=</span><span class="n">func</span><span class="o">.</span><span class="n">now</span><span class="p">(),</span> <span class="n">onupdate</span><span class="o">=</span><span class="n">func</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+    <span class="p">)</span>
+</code></pre></div>
+<p>继承时多继承组合即可：</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">Article</span><span class="p">(</span><span class="n">Base</span><span class="p">,</span> <span class="n">IDMixin</span><span class="p">,</span> <span class="n">TimestampMixin</span><span class="p">):</span>   <span class="c1"># id + created_at + updated_at 全有了</span>
+    <span class="n">title</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapped_column</span><span class="p">(</span><span class="n">String</span><span class="p">(</span><span class="mi">200</span><span class="p">))</span>
+    <span class="o">...</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Tag</span><span class="p">(</span><span class="n">Base</span><span class="p">,</span> <span class="n">IDMixin</span><span class="p">):</span>                        <span class="c1"># 轻量表，只要 id</span>
+    <span class="n">name</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapped_column</span><span class="p">(</span><span class="n">String</span><span class="p">(</span><span class="mi">50</span><span class="p">),</span> <span class="n">unique</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li>Mixin 是<strong>普通类</strong>，不继承 <code>Base</code>——它是字段模板，不是表模型。只有最终组合出的子类才登记进档案柜。</li>
+<li>SQLAlchemy 2.0 允许把 <code>mapped_column</code> 直接写在 Mixin 上，每个子类会自动拿到<strong>独立的列副本</strong>（不是共享同一个 Column 对象）。</li>
+<li>需要按子类动态计算的东西（比如 <code>__tablename__</code>、引用别的类的 relationship）才需要 <code>declared_attr</code> 包一层——第 3 节的 <code>__tablename__</code> 就是这么写的。</li>
+<li><code>TimestampMixin</code> 里的 <code>server_default=func.now()</code> 是数据库端默认值（DDL 里有 <code>DEFAULT CURRENT_TIMESTAMP</code>），<code>onupdate=func.now()</code> 是 ORM 更新时刷新——两者的边界在第 6 节讲过了。</li>
+</ul>
+<hr />
+<h2 id="13-pg-特有类型以-jsonb-为代表">13. PG 特有类型：以 JSONB 为代表</h2>
+<p><strong>作用</strong>：PG 有一批"别人家没有"的类型，最常用的是 <code>JSONB</code>（二进制存储的 JSON，可索引、可用运算符查询）。存半结构化数据（文章的 meta 信息）时比普通 <code>JSON</code> 强一档。</p>
+<p><strong>最小示例</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.dialects.postgresql</span><span class="w"> </span><span class="kn">import</span> <span class="n">JSONB</span><span class="p">,</span> <span class="n">ARRAY</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy</span><span class="w"> </span><span class="kn">import</span> <span class="n">DateTime</span><span class="p">,</span> <span class="n">String</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Article</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+    <span class="c1"># PG 原生 JSONB</span>
+    <span class="n">meta</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapped_column</span><span class="p">(</span><span class="n">JSONB</span><span class="p">)</span>
+
+    <span class="c1"># 带时区的时间戳（PG 的 TIMESTAMPTZ）</span>
+    <span class="n">published_at</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="n">datetime</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapped_column</span><span class="p">(</span><span class="n">DateTime</span><span class="p">(</span><span class="n">timezone</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+
+    <span class="c1"># PG 原生数组类型</span>
+    <span class="n">keywords</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="n">mapped_column</span><span class="p">(</span><span class="n">ARRAY</span><span class="p">(</span><span class="n">String</span><span class="p">(</span><span class="mi">30</span><span class="p">)))</span>
+</code></pre></div>
+<p><strong>跨库兼容技巧——<code>with_variant</code></strong>：demo 要在 SQLite 上跑，但生产用 PG，怎么办？让类型<strong>按方言变形</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># PG 上用 JSONB，其它库退化为通用 JSON</span>
+<span class="n">meta</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapped_column</span><span class="p">(</span><span class="n">JSON</span><span class="p">()</span><span class="o">.</span><span class="n">with_variant</span><span class="p">(</span><span class="n">JSONB</span><span class="p">(),</span> <span class="s2">"postgresql"</span><span class="p">))</span>
+</code></pre></div>
+<p>意思是"默认按 JSON 处理，遇到 postgresql 方言就换成 JSONB"。一行代码，两边通吃。</p>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li><code>JSON</code> 和 <code>JSONB</code> 的区别：<code>JSON</code> 存文本原样（快进慢出），<code>JSONB</code> 存解析后的二进制（稍慢进，可索引可查询）。生产基本无脑 <code>JSONB</code>。</li>
+<li><strong>ORM 不追踪 JSON 内部变更</strong>：<code>article.meta["views"] += 1</code> 之后直接 commit，数据库可能纹丝不动。要么整体重新赋值 <code>article.meta = {...}</code>，要么用 <code>flag_modified(article, "meta")</code> 标脏。</li>
+<li>这些类型从 <code>sqlalchemy.dialects.postgresql</code> 导入，<strong>换数据库时记得同步改</strong>——除非用了上面的 <code>with_variant</code>。</li>
+</ul>
+<hr />
+<h2 id="14-create_all一键建表但它不是迁移工具">14. <code>create_all</code>：一键建表，但它不是迁移工具</h2>
+<p><strong>作用</strong>：扫一遍 <code>Base.metadata</code> 档案柜里登记的所有表，<strong>不存在的建出来</strong>。开发期的效率神器。</p>
+<p><strong>签名</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="n">Base</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">create_all</span><span class="p">(</span><span class="n">bind</span><span class="p">,</span> <span class="n">checkfirst</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>   <span class="c1"># checkfirst=True：已存在的表跳过</span>
+</code></pre></div>
+<p>异步姿势（第 04 章的引擎直接接上）：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">model.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">Base</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">model.article</span>   <span class="c1"># noqa: F401  ← 只 import 不到位，表就进不了档案柜！</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">model.tag</span>       <span class="c1"># noqa: F401</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.ext.asyncio</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_async_engine</span>
+
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">init_db</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">engine</span> <span class="o">=</span> <span class="n">create_async_engine</span><span class="p">(</span><span class="s2">"postgresql+asyncpg://user:pwd@localhost/db"</span><span class="p">)</span>
+    <span class="k">async</span> <span class="k">with</span> <span class="n">engine</span><span class="o">.</span><span class="n">begin</span><span class="p">()</span> <span class="k">as</span> <span class="n">conn</span><span class="p">:</span>
+        <span class="k">await</span> <span class="n">conn</span><span class="o">.</span><span class="n">run_sync</span><span class="p">(</span><span class="n">Base</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">create_all</span><span class="p">)</span>
+    <span class="k">await</span> <span class="n">engine</span><span class="o">.</span><span class="n">dispose</span><span class="p">()</span>
+
+<span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">init_db</span><span class="p">())</span>
+</code></pre></div>
+<p><code>run_sync</code> 是异步引擎的固定用法：<code>create_all</code> 本身是同步 API，包在 <code>run_sync</code> 里让它在连接上安全执行。</p>
+<p><strong>它的定位，必须说清楚</strong>：</p>
+<ul>
+<li><code>create_all</code> 是<strong>活动板房</strong>——快速搭起能用的表结构，适合开发、原型、测试环境。</li>
+<li>它<strong>只建新表，绝不改旧表</strong>：<code>checkfirst=True</code> 的意思是"存在就跳过"，不是"对比差异后更新"。你给 <code>Article</code> 加了一列，<code>create_all</code> 看一眼：表在，跳过。新列<strong>永远不会出现</strong>。</li>
+<li>生产环境的表结构演进要靠 <strong>Alembic</strong>（第 07 章）：它像一支<strong>带施工日志的正规施工队</strong>——每次改结构生成一个版本化的迁移脚本，升级、回滚、多环境同步都有据可查。</li>
+</ul>
+<p>所以本章 demo 用 <code>create_all</code> 快速起跑，第 07 章马上换正规军。</p>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li><strong>最经典的坑</strong>：建了模型忘了 import，<code>create_all</code> 建出的库里就是少那几张表，而且不报错。</li>
+<li>在异步引擎上直接 <code>await Base.metadata.create_all(...)</code> 会失败——它是同步函数，必须走 <code>conn.run_sync(...)</code>。</li>
+<li>每次改了模型列结构，指望重跑 <code>create_all</code> 生效？不会生效（见上）。开发期土办法是删库重建，正经办法是第 07 章的 Alembic。</li>
+</ul>
+<hr />
+<h2 id="15-跑一下本章-demo">15. 跑一下本章 demo</h2>
+<p>完整代码在 <code>demo/demo_models.py</code>，单文件自足：五个模型 + 建表 + 插入 + 回读验证。</p>
+<div class="highlight"><pre><span></span><code>uv<span class="w"> </span>add<span class="w"> </span>sqlalchemy<span class="w"> </span>aiosqlite<span class="w">     </span><span class="c1"># 装依赖（greenlet 会随 SQLAlchemy 自动装上）</span>
+python<span class="w"> </span>demo_models.py
+</code></pre></div>
+<p>实际运行输出（真实验证过）：</p>
+<div class="highlight"><pre><span></span><code>[1] 建表完成: article, article_tag, article_version, channel, tag
+[2] 插入完成: article.id=1（自增主键）, channel=Channel(id=1, name='后端进阶'), tags=['SQLAlchemy', 'Python']
+[3] 回读验证: 《SQLAlchemy 2.0 建模入门》
+    栏目 slug : backend（外键 channel_id=1）
+    标签     : ['SQLAlchemy', 'Python']（article_tag 关联表自动落行）
+    版本     : [(1, '（草稿）建模入门'), (2, 'SQLAlchemy 2.0 建模入门')]
+    创建时间 : 2026-08-27 15:16:52（server_default=func.now() 由数据库填充）
+</code></pre></div>
+<p>注意 demo 里两个值得回头看一眼的细节：</p>
+<ul>
+<li>查询回读用了 <code>selectinload</code> 预加载关系——异步会话里不能懒加载（第 9 节的坑）；</li>
+<li><code>meta</code> 列用了 <code>JSON().with_variant(JSONB(), "postgresql")</code>——SQLite 上跑 demo，PG 上生产，一套代码两用。</li>
+</ul>
+<hr />
+<h2 id="16-小结速查">16. 小结速查</h2>
+<table>
+<thead>
+<tr>
+<th>需求</th>
+<th>用法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>声明模型基类</td>
+<td><code>class Base(DeclarativeBase)</code>，一个项目一个</td>
+</tr>
+<tr>
+<td>自动表名</td>
+<td><code>@declared_attr.directive</code> 返回 <code>cls.__name__.lower()</code></td>
+</tr>
+<tr>
+<td>定义列</td>
+<td><code>Mapped[类型] = mapped_column(...)</code></td>
+</tr>
+<tr>
+<td>可空列</td>
+<td>注解写 <code>X \| None</code></td>
+</tr>
+<tr>
+<td>Python 端默认值</td>
+<td><code>default=值</code> / <code>default=可调用</code></td>
+</tr>
+<tr>
+<td>数据库端默认值</td>
+<td><code>server_default=func.now()</code></td>
+</tr>
+<tr>
+<td>唯一 / 索引</td>
+<td><code>unique=True</code> / <code>index=True</code>，组合用 <code>__table_args__</code></td>
+</tr>
+<tr>
+<td>外键</td>
+<td><code>ForeignKey("表.列", ondelete="CASCADE")</code></td>
+</tr>
+<tr>
+<td>一对多</td>
+<td>双向 <code>relationship(back_populates=...)</code></td>
+</tr>
+<tr>
+<td>多对多</td>
+<td><code>Table(...)</code> 复合主键关联表 + <code>secondary=</code></td>
+</tr>
+<tr>
+<td>公共字段</td>
+<td><code>IDMixin</code> / <code>TimestampMixin</code> 多继承</td>
+</tr>
+<tr>
+<td>防循环导入</td>
+<td><code>if TYPE_CHECKING:</code> + 字符串注解</td>
+</tr>
+<tr>
+<td>PG JSON</td>
+<td><code>JSONB</code>，跨库用 <code>with_variant</code></td>
+</tr>
+<tr>
+<td>一键建表</td>
+<td><code>await conn.run_sync(Base.metadata.create_all)</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>自测三问</strong>：</p>
+<ol>
+<li><code>default</code> 和 <code>server_default</code> 各在什么环节生效？绕过 ORM 手写 INSERT 时，哪个还有效？</li>
+<li>多对多的关联表，什么时候用 <code>Table</code> + <code>secondary</code>，什么时候要升级成模型类？</li>
+<li>为什么说 <code>create_all</code> 不能替代 Alembic？它对"已存在的表"做什么？</li>
+</ol>
+<p>表已经建好，数据怎么进去、怎么查出来、怎么改——下一章把 SQL 表达式的十八般武艺过一遍。</p>
+<hr />
+<p><strong>下一章</strong>：<a href="../backend/06-sql-biao-da-shi-yu-shu-ju-cao-zuo.html">06 · SQL 表达式与数据操作</a></p></div>
+
+      </article>
+<nav class="pager"><a class="pg-card pg-prev" href="../backend/04-sqlalchemy-yi-bu-yin-qing-yu-hui-hua.html"><span class="pg-label">← 上一篇</span><span class="pg-title">SQLAlchemy 异步引擎与会话</span><span class="pg-mod">Python 框架指南</span></a><a class="pg-card pg-next" href="../backend/06-sql-biao-da-shi-yu-shu-ju-cao-zuo.html"><span class="pg-label">下一篇 →</span><span class="pg-title">SQL 表达式与数据操作</span><span class="pg-mod">Python 框架指南</span></a></nav>
+    </div>
+    <footer class="foot">
+      <span>深栈 DeepStack · AI Agent 工程师转型训练营配套文档</span>
+    </footer>
+  </main>
+<nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#1-心智模型类是图纸实例是砖">1. 心智模型：类是图纸，实例是砖</a><a class="toc-link toc-h2" href="#2-declarativebase所有模型的户籍管理处">2. DeclarativeBase：所有模型的&quot;户籍管理处&quot;</a><a class="toc-link toc-h2" href="#3-__tablename__给表起名字">3. __tablename__：给表起名字</a><a class="toc-link toc-h2" href="#4-mapped-mapped_column类型标注驱动的列定义">4. Mapped + mapped_column：类型标注驱动的列定义</a><a class="toc-link toc-h2" href="#5-主键与自增">5. 主键与自增</a><a class="toc-link toc-h2" href="#6-可空与默认值default-和-server_default-是两套机制">6. 可空与默认值：default 和 server_default 是两套机制</a><a class="toc-link toc-h2" href="#7-唯一与索引uniqueindex__table_args__">7. 唯一与索引：unique、index、__table_args__</a><a class="toc-link toc-h2" href="#8-foreignkey-与-ondelete外键及其应急预案">8. ForeignKey 与 ondelete：外键及其&quot;应急预案&quot;</a><a class="toc-link toc-h2" href="#9-一对多relationship-back_populates">9. 一对多：relationship + back_populates</a><a class="toc-link toc-h2" href="#10-多对多secondary-关联表与复合主键">10. 多对多：secondary 关联表与复合主键</a><a class="toc-link toc-h2" href="#11-模型拆文件时type_checking-防循环导入">11. 模型拆文件时：TYPE_CHECKING 防循环导入</a><a class="toc-link toc-h2" href="#12-mixin公共字段的预制件">12. Mixin：公共字段的&quot;预制件&quot;</a><a class="toc-link toc-h2" href="#13-pg-特有类型以-jsonb-为代表">13. PG 特有类型：以 JSONB 为代表</a><a class="toc-link toc-h2" href="#14-create_all一键建表但它不是迁移工具">14. create_all：一键建表，但它不是迁移工具</a><a class="toc-link toc-h2" href="#15-跑一下本章-demo">15. 跑一下本章 demo</a><a class="toc-link toc-h2" href="#16-小结速查">16. 小结速查</a></nav>
+</div>
+<div class="sb-mask" id="sbMask"></div>
+<script src="../assets/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>02 · 前向传播与反向传播 · 深栈 DeepStack 课程文档</title>
+<meta name="description" content="上一章的结尾，文字已经变成了向量——但一组固定的向量还谈不上&quot;智能&quot;。机器怎么从数据中自己学到规律？这一章回答这个问题，顺便完成一次彻底的祛魅：所谓深度学习模型，就是一连串嵌套的矩阵运算加非线性函数，没有魔法、没有神秘主…">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%23d9c39a' text-anchor='middle'%3EDS%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+<div class="progress" id="progress"></div>
+
+<div class="layout">
+<aside class="sidebar" id="sidebar">
+  <div class="sb-head">
+    <a class="brand" href="../index.html">
+      <span class="brand-mark">DS</span>
+      <span class="brand-text"><b>深栈 DeepStack</b><i>AI Agent 工程师转型训练营</i></span>
+    </a>
+    <button class="sb-close" id="sbClose" aria-label="关闭目录">✕</button>
+  </div>
+  <div class="sb-search"><input type="search" id="searchInput" placeholder="搜索 123 篇文档… ( / )" autocomplete="off">
+    <div class="sb-results" id="searchResults"></div></div>
+  <nav class="sb-nav">
+    <section class="sb-group" data-mod="python">
+      <a class="sb-group-title" href="../modules/python.html" data-toggle="python">
+        <span class="sb-num">01</span>
+        <span class="sb-group-text"><b>Python 与数据实践</b><i>31 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../python/01-huan-jing-da-jian-yu-ban-ben-guan-li.html"><span class="sb-item-num">01</span><span class="sb-item-title">环境搭建与版本管理</span></a>
+        <a class="sb-item" href="../python/02-bian-liang-biao-da-shi-yu-liu-cheng-kong-zhi.html"><span class="sb-item-num">02</span><span class="sb-item-title">变量、表达式与流程控制</span></a>
+        <a class="sb-item" href="../python/03-xu-lie-zi-dian-yu-ji-he.html"><span class="sb-item-num">03</span><span class="sb-item-title">序列、字典与集合</span></a>
+        <a class="sb-item" href="../python/04-han-shu-she-ji-yu-lambda.html"><span class="sb-item-num">04</span><span class="sb-item-title">函数设计与 lambda</span></a>
+        <a class="sb-item" href="../python/05-zuo-yong-yu-gui-ze-yu-bi-bao.html"><span class="sb-item-num">05</span><span class="sb-item-title">作用域规则与闭包</span></a>
+        <a class="sb-item" href="../python/06-lei-de-ding-yi-yu-shi-li-hua.html"><span class="sb-item-num">06</span><span class="sb-item-title">类的定义与实例化</span></a>
+        <a class="sb-item" href="../python/07-lei-xing-pan-ding-yu-chou-xiang-ji-lei.html"><span class="sb-item-num">07</span><span class="sb-item-title">类型判定与抽象基类</span></a>
+        <a class="sb-item" href="../python/08-mo-shu-fang-fa-quan-jing.html"><span class="sb-item-num">08</span><span class="sb-item-title">魔术方法全景</span></a>
+        <a class="sb-item" href="../python/09-miao-shu-fu-yu-yuan-lei.html"><span class="sb-item-num">09</span><span class="sb-item-title">描述符与元类</span></a>
+        <a class="sb-item" href="../python/10-zhuang-shi-qi.html"><span class="sb-item-num">10</span><span class="sb-item-title">装饰器</span></a>
+        <a class="sb-item" href="../python/11-die-dai-xie-yi-yu-sheng-cheng-qi.html"><span class="sb-item-num">11</span><span class="sb-item-title">迭代协议与生成器</span></a>
+        <a class="sb-item" href="../python/12-with-yu-shang-xia-wen-xie-yi.html"><span class="sb-item-num">12</span><span class="sb-item-title">with 与上下文协议</span></a>
+        <a class="sb-item" href="../python/13-yi-chang-ti-xi-yu-chu-li.html"><span class="sb-item-num">13</span><span class="sb-item-title">异常体系与处理</span></a>
+        <a class="sb-item" href="../python/14-lei-xing-biao-zhu.html"><span class="sb-item-num">14</span><span class="sb-item-title">类型标注</span></a>
+        <a class="sb-item" href="../python/15-mo-kuai-yu-bao-de-zu-zhi.html"><span class="sb-item-num">15</span><span class="sb-item-title">模块与包的组织</span></a>
+        <a class="sb-item" href="../python/16-biao-zhun-ku-xun-li.html"><span class="sb-item-num">16</span><span class="sb-item-title">标准库巡礼</span></a>
+        <a class="sb-item" href="../python/17-yi-lai-guan-li-yu-di-san-fang-ku.html"><span class="sb-item-num">17</span><span class="sb-item-title">依赖管理与第三方库</span></a>
+        <a class="sb-item" href="../python/18-xian-cheng-yu-jin-cheng.html"><span class="sb-item-num">18</span><span class="sb-item-title">线程与进程</span></a>
+        <a class="sb-item" href="../python/19-shi-jian-xun-huan.html"><span class="sb-item-num">19</span><span class="sb-item-title">事件循环</span></a>
+        <a class="sb-item" href="../python/20-future-yu-xie-cheng.html"><span class="sb-item-num">20</span><span class="sb-item-title">Future 与协程</span></a>
+        <a class="sb-item" href="../python/21-asyncio-shi-zhan.html"><span class="sb-item-num">21</span><span class="sb-item-title">asyncio 实战</span></a>
+        <a class="sb-item" href="../python/22-gou-jian-yu-fa-bu.html"><span class="sb-item-num">22</span><span class="sb-item-title">构建与发布</span></a>
+        <a class="sb-item" href="../python/23-gong-cheng-hua-gong-ju-lian.html"><span class="sb-item-num">23</span><span class="sb-item-title">工程化工具链</span></a>
+        <a class="sb-item" href="../python/24-monorepo-yu-tiao-shi.html"><span class="sb-item-num">24</span><span class="sb-item-title">monorepo 与调试</span></a>
+        <a class="sb-item" href="../python/25-jupyter-jiao-hu-huan-jing.html"><span class="sb-item-num">25</span><span class="sb-item-title">Jupyter 交互环境</span></a>
+        <a class="sb-item" href="../python/26-numpy-shu-zu-yu-xiang-liang-hua.html"><span class="sb-item-num">26</span><span class="sb-item-title">NumPy 数组与向量化</span></a>
+        <a class="sb-item" href="../python/27-pandas-shu-ju-jie-gou.html"><span class="sb-item-num">27</span><span class="sb-item-title">Pandas 数据结构</span></a>
+        <a class="sb-item" href="../python/28-pandas-shu-ju-qing-xi.html"><span class="sb-item-num">28</span><span class="sb-item-title">Pandas 数据清洗</span></a>
+        <a class="sb-item" href="../python/29-matplotlib-hui-tu-ti-xi.html"><span class="sb-item-num">29</span><span class="sb-item-title">Matplotlib 绘图体系</span></a>
+        <a class="sb-item" href="../python/30-matplotlib-dong-hua-yu-jiao-hu.html"><span class="sb-item-num">30</span><span class="sb-item-title">Matplotlib 动画与交互</span></a>
+        <a class="sb-item" href="../python/31-seaborn-tong-ji-ke-shi-hua.html"><span class="sb-item-num">31</span><span class="sb-item-title">Seaborn 统计可视化</span></a>
+      </div>
+    </section>
+    <section class="sb-group open" data-mod="agent">
+      <a class="sb-group-title" href="../modules/agent.html" data-toggle="agent">
+        <span class="sb-num">02</span>
+        <span class="sb-group-text"><b>Agent 核心</b><i>15 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../agent/01-token-yu-ci-qian-ru.html"><span class="sb-item-num">01</span><span class="sb-item-title">Token 与词嵌入</span></a>
+        <a class="sb-item current" href="../agent/02-qian-xiang-chuan-bo-yu-fan-xiang-chuan-bo.html"><span class="sb-item-num">02</span><span class="sb-item-title">前向传播与反向传播</span></a>
+        <a class="sb-item" href="../agent/03-zhu-yi-li-ji-zhi-yu-transformer-jia-gou.html"><span class="sb-item-num">03</span><span class="sb-item-title">注意力机制与 Transformer 架构</span></a>
+        <a class="sb-item" href="../agent/04-yu-xun-lian-rlhf-yu-cai-yang-kv-cache.html"><span class="sb-item-num">04</span><span class="sb-item-title">预训练、RLHF 与采样（KV Cache）</span></a>
+        <a class="sb-item" href="../agent/05-ben-di-mo-xing-yu-xiao-xi-jie-gou.html"><span class="sb-item-num">05</span><span class="sb-item-title">本地模型与消息结构</span></a>
+        <a class="sb-item" href="../agent/06-hui-hua-guan-li-yu-json-shu-chu.html"><span class="sb-item-num">06</span><span class="sb-item-title">会话管理与 JSON 输出</span></a>
+        <a class="sb-item" href="../agent/07-tool-calling-xie-yi-yu-feng-zhuang.html"><span class="sb-item-num">07</span><span class="sb-item-title">Tool Calling：协议与封装</span></a>
+        <a class="sb-item" href="../agent/08-react-mo-shi-yu-zhu-xun-huan.html"><span class="sb-item-num">08</span><span class="sb-item-title">ReAct 模式与主循环</span></a>
+        <a class="sb-item" href="../agent/09-shi-zhan-deep-research-agent.html"><span class="sb-item-num">09</span><span class="sb-item-title">实战：Deep Research Agent</span></a>
+        <a class="sb-item" href="../agent/10-skill-yu-jian-jin-shi-pi-lu.html"><span class="sb-item-num">10</span><span class="sb-item-title">Skill 与渐进式披露</span></a>
+        <a class="sb-item" href="../agent/11-mcp-quan-jing.html"><span class="sb-item-num">11</span><span class="sb-item-title">MCP 全景</span></a>
+        <a class="sb-item" href="../agent/12-duo-agent-yu-xuan-xing-ce-lve.html"><span class="sb-item-num">12</span><span class="sb-item-title">多 Agent 与选型策略</span></a>
+        <a class="sb-item" href="../agent/13-ti-shi-ci-gong-cheng-yu-shang-xia-wen-gong.html"><span class="sb-item-num">13</span><span class="sb-item-title">提示词工程与上下文工程</span></a>
+        <a class="sb-item" href="../agent/14-xun-huan-tu-yu-gu-jia-gong-cheng.html"><span class="sb-item-num">14</span><span class="sb-item-title">循环、图与骨架工程</span></a>
+        <a class="sb-item" href="../agent/15-ji-yi-quan-xian-yu-ping-ce.html"><span class="sb-item-num">15</span><span class="sb-item-title">记忆、权限与评测</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="langchain">
+      <a class="sb-group-title" href="../modules/langchain.html" data-toggle="langchain">
+        <span class="sb-num">03</span>
+        <span class="sb-group-text"><b>LangChain 指南</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langchain/01-ren-shi-langchain.html"><span class="sb-item-num">01</span><span class="sb-item-title">认识 LangChain</span></a>
+        <a class="sb-item" href="../langchain/02-ti-shi-ci-mu-ban-yu-xiao-xi.html"><span class="sb-item-num">02</span><span class="sb-item-title">提示词模板与消息</span></a>
+        <a class="sb-item" href="../langchain/03-lcel-yu-runnable.html"><span class="sb-item-num">03</span><span class="sb-item-title">LCEL 与 Runnable</span></a>
+        <a class="sb-item" href="../langchain/04-liu-shi-yu-bing-fa.html"><span class="sb-item-num">04</span><span class="sb-item-title">流式与并发</span></a>
+        <a class="sb-item" href="../langchain/05-shu-chu-jie-xi-qi.html"><span class="sb-item-num">05</span><span class="sb-item-title">输出解析器</span></a>
+        <a class="sb-item" href="../langchain/06-wen-dang-jia-zai-yu-qie-ge.html"><span class="sb-item-num">06</span><span class="sb-item-title">文档加载与切割</span></a>
+        <a class="sb-item" href="../langchain/07-qian-ru-yu-xiang-liang-ku.html"><span class="sb-item-num">07</span><span class="sb-item-title">嵌入与向量库</span></a>
+        <a class="sb-item" href="../langchain/08-jian-suo-yu-rag.html"><span class="sb-item-num">08</span><span class="sb-item-title">检索与RAG</span></a>
+        <a class="sb-item" href="../langchain/09-dui-hua-ji-yi.html"><span class="sb-item-num">09</span><span class="sb-item-title">对话记忆</span></a>
+        <a class="sb-item" href="../langchain/10-gong-ju-diao-yong.html"><span class="sb-item-num">10</span><span class="sb-item-title">工具调用</span></a>
+        <a class="sb-item" href="../langchain/11-agent.html"><span class="sb-item-num">11</span><span class="sb-item-title">Agent</span></a>
+        <a class="sb-item" href="../langchain/12-hui-diao-yu-tiao-shi-quan-ke-cheng-shou-guan.html"><span class="sb-item-num">12</span><span class="sb-item-title">回调与调试（全课程收官章）</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="langgraph">
+      <a class="sb-group-title" href="../modules/langgraph.html" data-toggle="langgraph">
+        <span class="sb-num">04</span>
+        <span class="sb-group-text"><b>LangGraph 框架指南</b><i>17 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langgraph/01-di-1-zhang-cong-yi-ge-shi-kong-de-jiao.html"><span class="sb-item-num">01</span><span class="sb-item-title">第 1 章 从一个失控的脚本说起</span></a>
+        <a class="sb-item" href="../langgraph/02-di-2-zhang-zui-xiao-ke-yun-xing-tu.html"><span class="sb-item-num">02</span><span class="sb-item-title">第 2 章 最小可运行图</span></a>
+        <a class="sb-item" href="../langgraph/03-di-3-zhang-zhuang-tai-tu-de-shu-ju-xin.html"><span class="sb-item-num">03</span><span class="sb-item-title">第 3 章 状态：图的数据心脏</span></a>
+        <a class="sb-item" href="../langgraph/04-di-4-zhang-rang-liu-cheng-xue-hui-jue-ce.html"><span class="sb-item-num">04</span><span class="sb-item-title">第 4 章 让流程学会决策</span></a>
+        <a class="sb-item" href="../langgraph/05-di-5-zhang-bing-xing-shi-jie-chao-bu-zhi.html"><span class="sb-item-num">05</span><span class="sb-item-title">第 5 章 并行世界：超步执行模型</span></a>
+        <a class="sb-item" href="../langgraph/06-di-6-zhang-command-ba-kong-zhi-quan-jiao-jin.html"><span class="sb-item-num">06</span><span class="sb-item-title">第 6 章 Command：把控制权交进节点</span></a>
+        <a class="sb-item" href="../langgraph/07-di-7-zhang-dong-tai-bing-xing-send-yu-mapreduce.html"><span class="sb-item-num">07</span><span class="sb-item-title">第 7 章 动态并行：Send 与 MapReduce</span></a>
+        <a class="sb-item" href="../langgraph/08-di-8-zhang-gei-tu-zhuang-shang-shou-jiao-gong.html"><span class="sb-item-num">08</span><span class="sb-item-title">第 8 章 给图装上手脚：工具调用</span></a>
+        <a class="sb-item" href="../langgraph/09-di-9-zhang-fu-yong-yu-feng-zhuang-zi-tu.html"><span class="sb-item-num">09</span><span class="sb-item-title">第 9 章 复用与封装：子图</span></a>
+        <a class="sb-item" href="../langgraph/10-di-10-zhang-cong-dan-tu-dao-tuan-dui-duo.html"><span class="sb-item-num">10</span><span class="sb-item-title">第 10 章 从单图到团队：多 Agent 架构</span></a>
+        <a class="sb-item" href="../langgraph/11-di-11-zhang-liu-shi-shu-chu.html"><span class="sb-item-num">11</span><span class="sb-item-title">第 11 章 流式输出</span></a>
+        <a class="sb-item" href="../langgraph/12-di-12-zhang-chi-jiu-hua-checkpointer-yu-xian-cheng.html"><span class="sb-item-num">12</span><span class="sb-item-title">第 12 章 持久化：Checkpointer 与线程</span></a>
+        <a class="sb-item" href="../langgraph/13-di-13-zhang-shi-jian-lv-xing.html"><span class="sb-item-num">13</span><span class="sb-item-title">第 13 章 时间旅行</span></a>
+        <a class="sb-item" href="../langgraph/14-di-14-zhang-zhong-duan-yu-ren-zai-hui-lu.html"><span class="sb-item-num">14</span><span class="sb-item-title">第 14 章 中断与人在回路</span></a>
+        <a class="sb-item" href="../langgraph/15-di-15-zhang-ji-yi-guan-li.html"><span class="sb-item-num">15</span><span class="sb-item-title">第 15 章 记忆管理</span></a>
+        <a class="sb-item" href="../langgraph/16-di-16-zhang-rong-cuo-zhong-shi-chao-shi-yu.html"><span class="sb-item-num">16</span><span class="sb-item-title">第 16 章 容错：重试、超时与兜底</span></a>
+        <a class="sb-item" href="../langgraph/17-di-17-zhang-quan-jing-hui-gu.html"><span class="sb-item-num">17</span><span class="sb-item-title">第 17 章 全景回顾</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="backend">
+      <a class="sb-group-title" href="../modules/backend.html" data-toggle="backend">
+        <span class="sb-num">05</span>
+        <span class="sb-group-text"><b>Python 框架指南</b><i>14 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../backend/01-fastapi-ru-men-yu-asgi.html"><span class="sb-item-num">01</span><span class="sb-item-title">FastAPI 入门与 ASGI</span></a>
+        <a class="sb-item" href="../backend/02-lu-you-yu-qing-qiu-xiang-ying.html"><span class="sb-item-num">02</span><span class="sb-item-title">路由与请求响应</span></a>
+        <a class="sb-item" href="../backend/03-pydantic-shu-ju-jiao-yan-yu-pei-zhi.html"><span class="sb-item-num">03</span><span class="sb-item-title">Pydantic 数据校验与配置</span></a>
+        <a class="sb-item" href="../backend/04-sqlalchemy-yi-bu-yin-qing-yu-hui-hua.html"><span class="sb-item-num">04</span><span class="sb-item-title">SQLAlchemy 异步引擎与会话</span></a>
+        <a class="sb-item" href="../backend/05-orm-jian-mo.html"><span class="sb-item-num">05</span><span class="sb-item-title">ORM 建模</span></a>
+        <a class="sb-item" href="../backend/06-sql-biao-da-shi-yu-shu-ju-cao-zuo.html"><span class="sb-item-num">06</span><span class="sb-item-title">SQL 表达式与数据操作</span></a>
+        <a class="sb-item" href="../backend/07-alembic-shu-ju-qian-yi.html"><span class="sb-item-num">07</span><span class="sb-item-title">Alembic 数据迁移</span></a>
+        <a class="sb-item" href="../backend/08-yi-lai-zhu-ru.html"><span class="sb-item-num">08</span><span class="sb-item-title">依赖注入</span></a>
+        <a class="sb-item" href="../backend/09-tong-yi-yi-chang-chu-li.html"><span class="sb-item-num">09</span><span class="sb-item-title">统一异常处理</span></a>
+        <a class="sb-item" href="../backend/10-zhong-jian-jian.html"><span class="sb-item-num">10</span><span class="sb-item-title">中间件</span></a>
+        <a class="sb-item" href="../backend/11-ren-zheng-yu-jwt.html"><span class="sb-item-num">11</span><span class="sb-item-title">认证与 JWT</span></a>
+        <a class="sb-item" href="../backend/12-pytest-ce-shi.html"><span class="sb-item-num">12</span><span class="sb-item-title">pytest 测试</span></a>
+        <a class="sb-item" href="../backend/13-ri-zhi-loguru.html"><span class="sb-item-num">13</span><span class="sb-item-title">日志 loguru</span></a>
+        <a class="sb-item" href="../backend/14-liu-shi-xiang-ying-sse-yu-websocket.html"><span class="sb-item-num">14</span><span class="sb-item-title">流式响应 SSE 与 WebSocket</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="interview">
+      <a class="sb-group-title" href="../modules/interview.html" data-toggle="interview">
+        <span class="sb-num">06</span>
+        <span class="sb-group-text"><b>面试题库</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../interview/01-llm-yuan-li-pian.html"><span class="sb-item-num">01</span><span class="sb-item-title">LLM 原理篇</span></a>
+        <a class="sb-item" href="../interview/02-rag-yu-jian-suo-pian.html"><span class="sb-item-num">02</span><span class="sb-item-title">RAG 与检索篇</span></a>
+        <a class="sb-item" href="../interview/03-agent-he-xin-pian.html"><span class="sb-item-num">03</span><span class="sb-item-title">Agent 核心篇</span></a>
+        <a class="sb-item" href="../interview/04-langgraph-pian.html"><span class="sb-item-num">04</span><span class="sb-item-title">LangGraph 篇</span></a>
+        <a class="sb-item" href="../interview/05-langchain-pian.html"><span class="sb-item-num">05</span><span class="sb-item-title">LangChain 篇</span></a>
+        <a class="sb-item" href="../interview/06-xi-tong-she-ji-pian.html"><span class="sb-item-num">06</span><span class="sb-item-title">系统设计篇</span></a>
+        <a class="sb-item" href="../interview/07-xiang-mu-shen-wa-pian.html"><span class="sb-item-num">07</span><span class="sb-item-title">项目深挖篇</span></a>
+        <a class="sb-item" href="../interview/08-gu-zhang-pai-cha-pian.html"><span class="sb-item-num">08</span><span class="sb-item-title">故障排查篇</span></a>
+        <a class="sb-item" href="../interview/09-python-ji-chu-pian.html"><span class="sb-item-num">09</span><span class="sb-item-title">Python 基础篇</span></a>
+        <a class="sb-item" href="../interview/10-fastapi-yu-hou-duan-pian.html"><span class="sb-item-num">10</span><span class="sb-item-title">FastAPI 与后端篇</span></a>
+        <a class="sb-item" href="../interview/11-ti-shi-ci-gong-cheng-yu-an-quan-pian.html"><span class="sb-item-num">11</span><span class="sb-item-title">提示词工程与安全篇</span></a>
+        <a class="sb-item" href="../interview/12-mo-xing-xuan-xing-yu-jiang-ben-pian.html"><span class="sb-item-num">12</span><span class="sb-item-title">模型选型与降本篇</span></a>
+      </div>
+    </section>
+  </nav>
+</aside>
+  <main class="main">
+    <header class="topbar">
+      <button class="menu-btn" id="menuBtn" aria-label="目录">☰</button>
+      <div class="crumbs"><a href="../index.html">首页</a><span>/</span><a href="../modules/agent.html">Agent 核心</a><span>/</span><span class="cur">前向传播与反向传播</span></div>
+      <div class="topbar-actions">
+        <button class="icon-btn" id="themeBtn" title="切换深浅色" aria-label="切换深浅色">◐</button>
+      </div>
+    </header>
+    <div class="content">
+      <article class="article">
+
+<header class="page-head">
+  <div class="page-kicker">Agent 核心 · 第 02 章</div>
+  <h1 class="page-title">前向传播与反向传播</h1>
+  <p class="page-desc">上一章的结尾，文字已经变成了向量——但一组固定的向量还谈不上&quot;智能&quot;。机器怎么从数据中自己学到规律？这一章回答这个问题，顺便完成一次彻底的祛魅：所谓深度学习模型，就是一连串嵌套的矩阵运算加非线性函数，没有魔法、没有神秘主…</p>
+  <div class="page-meta">
+    <span>约 24 分钟</span><span>9,507 字</span><span>14 个代码示例</span>
+  </div>
+</header>
+<div class="md"><blockquote>
+<p>上一章的结尾，文字已经变成了向量——但一组固定的向量还谈不上"智能"。机器怎么从数据中自己学到规律？这一章回答这个问题，顺便完成一次彻底的祛魅：所谓深度学习模型，就是一连串嵌套的矩阵运算加非线性函数，没有魔法、没有神秘主义。</p>
+<p>本章分两步走：前半讲<strong>结构</strong>——从神经元讲到前向传播，你将亲手写出一个能跑的神经网络；后半讲<strong>学习</strong>——损失函数给"错得多离谱"定价，梯度下降决定"往哪边调、调多少"，反向传播把责任分摊到每一个参数头上，最后我们亲手把这个网络训练到学会 XOR——深度学习的"Hello World"。带着这套认知，后面理解 Transformer（第 3 章）时你会发现它依然是同一套东西。</p>
+</blockquote>
+<h2 id="1-从生物神经元到数学模型">1. 从生物神经元到数学模型</h2>
+<p>1943 年，神经科学家 McCulloch 和 Pitts 提出了神经元的数学模型，思路惊人地简单：模仿生物神经元的"加权聚合 + 阈值触发"。</p>
+<p>生物神经元的工作方式：</p>
+<div class="highlight"><pre><span></span><code>树突(接收多路信号) → 细胞体(汇总) → 超过阈值则放电 → 轴突(输出)
+</code></pre></div>
+<p>数学翻译，一个<strong>人工神经元</strong>接收 $n$ 个输入，做三件事：</p>
+<ol>
+<li><strong>加权求和</strong>：每个输入乘以自己的权重 $w_i$，再加上偏置 $b$</li>
+<li><strong>激活</strong>：把结果丢进一个非线性函数 $\sigma$</li>
+<li><strong>输出</strong>：作为下一层的输入</li>
+</ol>
+<p>$$
+z = w_1 x_1 + w_2 x_2 + \cdots + w_n x_n + b = \mathbf{w}^T \mathbf{x} + b
+$$</p>
+<p>$$
+a = \sigma(z)
+$$</p>
+<p>各符号的直觉含义：</p>
+<table>
+<thead>
+<tr>
+<th>符号</th>
+<th>含义</th>
+<th>直觉</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$x_i$</td>
+<td>输入</td>
+<td>上一层传来的信号</td>
+</tr>
+<tr>
+<td>$w_i$</td>
+<td>权重</td>
+<td>这个输入"多重要"，可正可负</td>
+</tr>
+<tr>
+<td>$b$</td>
+<td>偏置</td>
+<td>触发的难易度，类似阈值</td>
+</tr>
+<tr>
+<td>$\sigma$</td>
+<td>激活函数</td>
+<td>汇总后做一次非线性"审判"</td>
+</tr>
+<tr>
+<td>$a$</td>
+<td>输出</td>
+<td>传给下一层的信号</td>
+</tr>
+</tbody>
+</table>
+<p><strong>训练调的就是 $w$ 和 $b$</strong>。一个 GPT 级别的模型里有几千亿个这样的数字——数量变化，本质不变。</p>
+<h2 id="2-激活函数为什么必须有非线性">2. 激活函数：为什么必须有非线性</h2>
+<p>如果去掉激活函数（或用恒等函数），会发生灾难：多层网络<strong>塌缩成一层</strong>。</p>
+<p>推导只需两行。若每层只做 $\mathbf{a} = \mathbf{W}\mathbf{x} + \mathbf{b}$（纯线性），则两层叠加：</p>
+<p>$$
+\mathbf{h} = \mathbf{W}_1\mathbf{x} + \mathbf{b}_1
+$$</p>
+<p>$$
+\mathbf{y} = \mathbf{W}<em _text_一个新的矩阵="\text{一个新的矩阵">2\mathbf{h} + \mathbf{b}_2 = \mathbf{W}_2(\mathbf{W}_1\mathbf{x} + \mathbf{b}_1) + \mathbf{b}_2 = \underbrace{(\mathbf{W}_2\mathbf{W}_1)}</em>}}\mathbf{x} + \underbrace{(\mathbf{W<em _text_一个新的偏置="\text{一个新的偏置">2\mathbf{b}_1 + \mathbf{b}_2)}</em>
+$$}</p>
+<p>两个矩阵相乘还是矩阵——<strong>一百层线性网络等价于一层</strong>。深度就失去了意义。激活函数的存在打断这种塌缩，让每层都有"自己的发言权"。</p>
+<p>常见激活函数：</p>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>公式</th>
+<th>特点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Sigmoid</td>
+<td>$\frac{1}{1+e^{-z}}$</td>
+<td>压到 (0,1)，可当概率；两端梯度消失</td>
+</tr>
+<tr>
+<td>Tanh</td>
+<td>$\tanh(z)$</td>
+<td>压到 (-1,1)，零中心</td>
+</tr>
+<tr>
+<td>ReLU</td>
+<td>$\max(0, z)$</td>
+<td>简单粗暴，现代网络主力；负区直接归零</td>
+</tr>
+<tr>
+<td>GELU</td>
+<td>平滑版 ReLU</td>
+<td>Transformer 的默认选择（第 3 章会见到）</td>
+</tr>
+</tbody>
+</table>
+<p>用代码看看它们长什么样：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">3.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">])</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">sigmoid</span><span class="p">(</span><span class="n">x</span><span class="p">):</span> <span class="k">return</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">x</span><span class="p">))</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">relu</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">gelu</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>     <span class="k">return</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">x</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">tanh</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="mf">0.044715</span> <span class="o">*</span> <span class="n">x</span><span class="o">**</span><span class="mi">3</span><span class="p">)))</span>
+
+<span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">fn</span> <span class="ow">in</span> <span class="p">[(</span><span class="s2">"sigmoid"</span><span class="p">,</span> <span class="n">sigmoid</span><span class="p">),</span> <span class="p">(</span><span class="s2">"relu"</span><span class="p">,</span> <span class="n">relu</span><span class="p">),</span> <span class="p">(</span><span class="s2">"gelu"</span><span class="p">,</span> <span class="n">gelu</span><span class="p">)]:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">name</span><span class="si">:</span><span class="s2">&gt;8</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">fn</span><span class="p">(</span><span class="n">z</span><span class="p">),</span><span class="w"> </span><span class="mi">3</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</code></pre></div>
+<p>输出（注意观察：sigmoid 永远在 0~1 之间；relu 把负数全部斩为 0）：</p>
+<div class="highlight"><pre><span></span><code>  sigmoid: [0.047 0.269 0.5   0.731 0.953]
+     relu: [0.  0.  0.  1.  3. ]
+    gelu: [-0.004 -0.159  0.    0.841 2.996]
+</code></pre></div>
+<h2 id="3-一层网络-一次矩阵变换">3. 一层网络 = 一次矩阵变换</h2>
+<p>把多个神经元<strong>并排放在一起</strong>，就得到一层网络。关键洞察：既然每个神经元都在做 $\mathbf{w}^T\mathbf{x}+b$，只是 $\mathbf{w}$ 不同，那么这一层就是：</p>
+<p>$$
+\mathbf{a} = \sigma(\mathbf{W}\mathbf{x} + \mathbf{b})
+$$</p>
+<ul>
+<li>$\mathbf{x}$：输入向量，形状 <code>(m, 1)</code></li>
+<li>$\mathbf{W}$：权重矩阵，形状 <code>(n, m)</code> —— <strong>一行就是一个神经元的权重</strong></li>
+<li>$\mathbf{b}$：偏置向量，形状 <code>(n, 1)</code></li>
+<li>$\mathbf{a}$：输出向量，形状 <code>(n, 1)</code></li>
+</ul>
+<p>也就是说：<strong>"层"不是神经元的手工集合，它本身就是一个矩阵</strong>。所谓"这个网络每层有 768 个神经元"，翻译成数学就是"每层乘一个 <code>(768, m)</code> 的矩阵"。<strong>神经网络里根本没有一个个独立的"神经元"，只有矩阵的行</strong>——这是很多初学者没有意识到的事实。</p>
+<p>矩阵形状的变化规律（务必记住，读源码和论文时天天用）：</p>
+<p>$$
+\underbrace{(n, m)}<em _mathbf_x="\mathbf{x">{\mathbf{W}} \cdot \underbrace{(m, 1)}</em>
+$$}} = \underbrace{(n, 1)}_{\mathbf{y}</p>
+<p>矩阵第二维必须等于输入维度，输出维度由矩阵第一维决定。你以后看任何一个模型的架构图，都可以在脑中翻译成"一串形状各异的矩阵依次相乘"。</p>
+<h2 id="4-多层-复合函数">4. 多层 = 复合函数</h2>
+<p>把单层串起来，就是深度学习里"深度"的含义：</p>
+<p>$$
+\mathbf{y} = \sigma_3(\mathbf{W}_3 \cdot \sigma_2(\mathbf{W}_2 \cdot \sigma_1(\mathbf{W}_1 \mathbf{x} + \mathbf{b}_1) + \mathbf{b}_2) + \mathbf{b}_3)
+$$</p>
+<p>从右往左读：原始输入 $\mathbf{x}$ 被逐层变换，每经过一层，先做一次线性变换（旋转/拉伸/平移空间），再过一次非线性（弯折空间）。层层叠加后，网络可以在输入空间里切出任意复杂的决策边界。</p>
+<p><strong>万能近似定理</strong>（不证明，记住直觉）：单个隐藏层足够宽的网络，理论上可以逼近任何连续函数。深度学习则用"深"替代"宽"——同样的参数量，深层比宽层能表达更抽象的特征（边缘 → 纹理 → 部件 → 物体，逐层抽象）。</p>
+<h2 id="5-前向传播亲手写一个">5. 前向传播：亲手写一个</h2>
+<p>"前向传播"（Forward Propagation）听起来很玄，实际就是：<strong>按顺序把输入依次过完每一层，得到输出</strong>。下面用 numpy 完整实现一个 <code>2 → 4 → 1</code> 的网络（2 个输入，隐藏层 4 个神经元，1 个输出）：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="c1"># ---------- 定义网络：所有参数都初始化为随机数 ----------</span>
+<span class="c1"># W1: (4, 2)  输入2维 → 隐藏4维</span>
+<span class="c1"># b1: (4,)</span>
+<span class="c1"># W2: (1, 4)  隐藏4维 → 输出1维</span>
+<span class="c1"># b2: (1,)</span>
+<span class="n">W1</span><span class="p">,</span> <span class="n">b1</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">)),</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+<span class="n">W2</span><span class="p">,</span> <span class="n">b2</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">)),</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">relu</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">sigmoid</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">x</span><span class="p">))</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>                    <span class="c1"># x 形状 (2,)</span>
+    <span class="n">h</span> <span class="o">=</span> <span class="n">relu</span><span class="p">(</span><span class="n">W1</span> <span class="o">@</span> <span class="n">x</span> <span class="o">+</span> <span class="n">b1</span><span class="p">)</span>          <span class="c1"># (2,) → (4,)  隐藏层</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">sigmoid</span><span class="p">(</span><span class="n">W2</span> <span class="o">@</span> <span class="n">h</span> <span class="o">+</span> <span class="n">b2</span><span class="p">)</span>       <span class="c1"># (4,) → (1,)  输出层</span>
+    <span class="k">return</span> <span class="n">y</span>
+
+<span class="c1"># ---------- 跑一个样本 ----------</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.5</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.2</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"输出:"</span><span class="p">,</span> <span class="n">forward</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+</code></pre></div>
+<p>运行输出（你的随机数和我的一致，因为固定了种子）：</p>
+<div class="highlight"><pre><span></span><code>输出: [0.4812]
+</code></pre></div>
+<p>这个 0.4812 没有任何意义——因为参数是随机的。<strong>前向传播只是"计算"，还没有"学习"</strong>。学习是本章后半的主题：怎么根据输出"错得有多离谱"，反过来调整 W1/b1/W2/b2。</p>
+<p>加一个逐层形状打印，强化"矩阵流水线"的直觉：</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">forward_verbose</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"输入   形状: </span><span class="si">{</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">z1</span> <span class="o">=</span> <span class="n">W1</span> <span class="o">@</span> <span class="n">x</span> <span class="o">+</span> <span class="n">b1</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"隐藏层 形状: </span><span class="si">{</span><span class="n">z1</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">   ← W1</span><span class="si">{</span><span class="p">(</span><span class="n">W1</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="si">}</span><span class="s2"> @ x</span><span class="si">{</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">h</span> <span class="o">=</span> <span class="n">relu</span><span class="p">(</span><span class="n">z1</span><span class="p">)</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">W2</span> <span class="o">@</span> <span class="n">h</span> <span class="o">+</span> <span class="n">b2</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"输出层 形状: </span><span class="si">{</span><span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">   ← W2</span><span class="si">{</span><span class="p">(</span><span class="n">W2</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="si">}</span><span class="s2"> @ h</span><span class="si">{</span><span class="p">(</span><span class="n">h</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">y</span>
+
+<span class="n">forward_verbose</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</code></pre></div>
+<p>输出：</p>
+<div class="highlight"><pre><span></span><code>输入   形状: (2,)
+隐藏层 形状: (4,)   ← W1(4, 2) @ x(2,)
+输出层 形状: (1,)   ← W2(1, 4) @ h(4,)
+</code></pre></div>
+<p>看清了吗？<strong>数据在网络里流动的过程，就是向量形状被一串矩阵依次改写的过程</strong>。以后你听说某个大模型"有 96 层，隐藏维度 12288"，翻译过来就是：有 96 个 <code>(12288, 12288)</code> 量级的矩阵在流水线上工作。</p>
+<h2 id="6-数一数参数">6. 数一数参数</h2>
+<p>顺便建立"参数量"的概念，这是评价模型大小的通用语言。上面的网络参数量：</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>形状</th>
+<th>数量</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>W1</td>
+<td>(4, 2)</td>
+<td>8</td>
+</tr>
+<tr>
+<td>b1</td>
+<td>(4,)</td>
+<td>4</td>
+</tr>
+<tr>
+<td>W2</td>
+<td>(1, 4)</td>
+<td>4</td>
+</tr>
+<tr>
+<td>b2</td>
+<td>(1,)</td>
+<td>1</td>
+</tr>
+<tr>
+<td><strong>合计</strong></td>
+<td></td>
+<td><strong>17</strong></td>
+</tr>
+</tbody>
+</table>
+<p>代码验证：</p>
+<div class="highlight"><pre><span></span><code><span class="nb">print</span><span class="p">(</span><span class="n">W1</span><span class="o">.</span><span class="n">size</span> <span class="o">+</span> <span class="n">b1</span><span class="o">.</span><span class="n">size</span> <span class="o">+</span> <span class="n">W2</span><span class="o">.</span><span class="n">size</span> <span class="o">+</span> <span class="n">b2</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>   <span class="c1"># 17</span>
+</code></pre></div>
+<p>计算规律：一层 <code>(n, m)</code> 的变换带 <code>(n,)</code> 的偏置，参数量 = $n \times m + n$。大模型动辄"7B 参数"（B = 十亿），就是这个加法的放大版。参数量直接决定显存占用：以 16 位浮点存储，7B 模型仅权重就需要约 14GB 显存——这是部署本地模型时算账的基本功。</p>
+<p>现在你知道了网络的结构，但有个悬而未决的问题：这些 W 和 b 是随机的，怎么把它们变成"有用的"？这就是训练要解决的事——本章后半，我们把学习机制补全。</p>
+<h2 id="7-损失函数给错定价">7. 损失函数：给"错"定价</h2>
+<p>训练的第一步是定义"错"。不能只说"模型输出不对"，要给出一个数字：<strong>损失（Loss）越大，错得越离谱</strong>。训练的目标就是让这个数字变小。</p>
+<p>不同任务用不同的损失函数：</p>
+<table>
+<thead>
+<tr>
+<th>任务</th>
+<th>损失函数</th>
+<th>直觉</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>回归（预测数值）</td>
+<td>均方误差 MSE</td>
+<td>预测值和真值差的平方和</td>
+</tr>
+<tr>
+<td>二分类</td>
+<td>交叉熵 BCE</td>
+<td>预测概率离正确标签有多远</td>
+</tr>
+<tr>
+<td>语言模型</td>
+<td>交叉熵（下一个词）</td>
+<td>模型给"正确下一个词"分配的概率有多低</td>
+</tr>
+</tbody>
+</table>
+<p>以语言模型为例感受一下交叉熵的含义：模型看到"今天天气真"后，给下一个词分配概率：</p>
+<div class="highlight"><pre><span></span><code>好: 0.60   不错: 0.20   差: 0.15   香蕉: 0.0001   ...
+</code></pre></div>
+<p>如果原文的下一个词是"好"，损失就低（模型押对了）；如果是"香蕉"，损失就高（模型完全没料到）。<strong>训练大模型，就是在万亿个这样的位置上，让模型给"真实出现的下一个词"分配越来越高的概率</strong>。你每天使用的"预测输入法"，就是同一个原理。</p>
+<h2 id="8-梯度下降往哪边调">8. 梯度下降：往哪边调</h2>
+<p>现在问题变成：参数空间动辄上亿维，怎么找到让损失最小的那一组值？</p>
+<p>想象你蒙着眼在山上，目标是走到山谷最低处。你唯一能做的是用脚感受<strong>脚下的坡度</strong>：哪个方向往下最陡，就往那个方向迈一小步。不断重复，就能走到（某个）谷底。</p>
+<p>这就是梯度下降：</p>
+<p>$$
+\theta_{new} = \theta_{old} - \eta \nabla L(\theta)
+$$</p>
+<ul>
+<li>$\nabla L(\theta)$：梯度，指向"损失上升最快"的方向 → 反方向就是下山方向</li>
+<li>$\eta$：学习率（learning rate），每步迈多大</li>
+<li>$\theta$：所有参数（就是前文的 W 和 b）</li>
+</ul>
+<p><strong>学习率是最重要的超参数</strong>，两个失败极端：</p>
+<ul>
+<li>太大：步子跨过谷底，在两侧来回震荡甚至发散（损失越训越大）</li>
+<li>太小：一百万步还没走到山脚，训练成本爆炸</li>
+</ul>
+<div class="highlight"><pre><span></span><code>学习率过大:  损失 5.0 → 8.2 → 15.7 → 44.1 → 💥 发散
+学习率过小:  损失 5.0 → 4.99 → 4.98 → ... (一百年后到达)
+学习率合适:  损失 5.0 → 3.1 → 1.8 → 0.9 → 0.4 → 0.2 ✅
+</code></pre></div>
+<h2 id="9-反向传播责任分摊">9. 反向传播：责任分摊</h2>
+<p>梯度下降需要知道"每个参数的梯度"。但参数在多层网络里层层嵌套，最前面的一个 W1 怎么知道自己对最终损失有多少责任？</p>
+<p>答案是大一学过的<strong>链式法则</strong>，加上一次聪明的复用。</p>
+<p>前向传播（本章第 5 节）：</p>
+<p>$$
+\mathbf{z}_1 = \mathbf{W}_1\mathbf{x} + \mathbf{b}_1 \quad\rightarrow\quad \mathbf{h} = \text{ReLU}(\mathbf{z}_1) \quad\rightarrow\quad \mathbf{z}_2 = \mathbf{W}_2\mathbf{h} + \mathbf{b}_2 \quad\rightarrow\quad y = \sigma(\mathbf{z}_2) \quad\rightarrow\quad L
+$$</p>
+<p>反向传播就是沿这条链<strong>从右往左</strong>逐层求导。以"输出层的 z2"为例（sigmoid + BCE 组合的著名结果，推导略）：</p>
+<p>$$
+\frac{\partial L}{\partial \mathbf{z}_2} = y - t \qquad \text{（预测值减真实值）}
+$$</p>
+<p>直觉很漂亮：<strong>预测越自信、错得越离谱，这个信号越强</strong>。有了它，往左逐层传递：</p>
+<p>$$
+\frac{\partial L}{\partial \mathbf{W}_2} = \frac{\partial L}{\partial \mathbf{z}_2} \cdot \mathbf{h}^T \qquad\qquad
+\frac{\partial L}{\partial \mathbf{h}} = \mathbf{W}_2^T \cdot \frac{\partial L}{\partial \mathbf{z}_2}
+$$</p>
+<p>$$
+\frac{\partial L}{\partial \mathbf{z}_1} = \frac{\partial L}{\partial \mathbf{h}} \odot \text{ReLU}'(\mathbf{z}_1) \qquad\qquad
+\frac{\partial L}{\partial \mathbf{W}_1} = \frac{\partial L}{\partial \mathbf{z}_1} \cdot \mathbf{x}^T
+$$</p>
+<p>（$\odot$ 表示逐元素相乘。$\mathbf{W}_2^T$ 出现，是因为信号要"穿过"W2 回到上一层。）</p>
+<p>反向传播的工程价值：<strong>一次从右到左的扫描，同时拿到所有参数的梯度</strong>，计算量和一次前向传播同量级。深度学习框架（PyTorch 的 <code>loss.backward()</code>）干的就是这件事。我们下面手写它，写完你对"框架帮你做了什么"就彻底祛魅了。</p>
+<h2 id="10-实战训练网络学会-xor">10. 实战：训练网络学会 XOR</h2>
+<p>XOR（异或）是神经网络历史上的"名场面"：单层网络（感知机）数学上不可能解决它，多层网络可以——正好验证"深度"的价值。任务：输入两个 0/1，输出它们的异或。</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="c1"># ---------- 数据 ----------</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">],[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>   <span class="c1"># 4 个样本，每个 2 维</span>
+<span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">],[</span><span class="mi">1</span><span class="p">],[</span><span class="mi">1</span><span class="p">],[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>            <span class="c1"># 异或标签</span>
+
+<span class="c1"># ---------- 网络（沿用本章第 5 节的结构） ----------</span>
+<span class="n">W1</span><span class="p">,</span> <span class="n">b1</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span> <span class="o">*</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+<span class="n">W2</span><span class="p">,</span> <span class="n">b2</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span> <span class="o">*</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">relu</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">sigmoid</span><span class="p">(</span><span class="n">x</span><span class="p">):</span> <span class="k">return</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">x</span><span class="p">))</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="n">h</span> <span class="o">=</span> <span class="n">relu</span><span class="p">(</span><span class="n">W1</span> <span class="o">@</span> <span class="n">x</span> <span class="o">+</span> <span class="n">b1</span><span class="p">)</span>          <span class="c1"># (2,) → (4,)</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">sigmoid</span><span class="p">(</span><span class="n">W2</span> <span class="o">@</span> <span class="n">h</span> <span class="o">+</span> <span class="n">b2</span><span class="p">)</span>       <span class="c1"># (4,) → 标量</span>
+    <span class="k">return</span> <span class="n">h</span><span class="p">,</span> <span class="n">y</span>
+
+<span class="c1"># ---------- 训练循环 ----------</span>
+<span class="n">lr</span> <span class="o">=</span> <span class="mf">0.5</span>                                    <span class="c1"># 学习率</span>
+<span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3000</span><span class="p">):</span>
+    <span class="c1"># 全批量：4 个样本一起算（样本间独立，天然支持向量化）</span>
+    <span class="c1"># 逐样本写法更接近推导，这里为了篇幅用循环展开</span>
+    <span class="n">dW1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">W1</span><span class="p">);</span> <span class="n">db1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">b1</span><span class="p">)</span>
+    <span class="n">dW2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">W2</span><span class="p">);</span> <span class="n">db2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">b2</span><span class="p">)</span>
+    <span class="n">loss</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">ti</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>                 <span class="c1"># 逐样本累积梯度</span>
+        <span class="n">h</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">forward</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+        <span class="c1"># 损失：二元交叉熵</span>
+        <span class="n">loss</span> <span class="o">+=</span> <span class="o">-</span><span class="p">(</span><span class="n">ti</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">y</span> <span class="o">+</span> <span class="mf">1e-9</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">ti</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">y</span> <span class="o">+</span> <span class="mf">1e-9</span><span class="p">))</span>
+
+        <span class="c1"># ---- 反向传播（手写） ----</span>
+        <span class="n">dz2</span> <span class="o">=</span> <span class="n">y</span> <span class="o">-</span> <span class="n">ti</span>                        <span class="c1"># sigmoid+BCE 的组合导数</span>
+        <span class="n">dW2</span> <span class="o">+=</span> <span class="n">dz2</span> <span class="o">*</span> <span class="n">h</span>                       <span class="c1"># (1,4)</span>
+        <span class="n">db2</span> <span class="o">+=</span> <span class="n">dz2</span>
+        <span class="n">dh</span>   <span class="o">=</span> <span class="n">W2</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">dz2</span>                    <span class="c1"># (4,)  穿过 W2</span>
+        <span class="n">dz1</span>  <span class="o">=</span> <span class="n">dh</span> <span class="o">*</span> <span class="p">(</span><span class="n">h</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>                  <span class="c1"># ReLU 的导数：正区为 1，负区为 0</span>
+        <span class="n">dW1</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">outer</span><span class="p">(</span><span class="n">dz1</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>              <span class="c1"># (4,2)</span>
+        <span class="n">db1</span> <span class="o">+=</span> <span class="n">dz1</span>
+
+    <span class="c1"># ---- 梯度下降：一次性更新所有参数 ----</span>
+    <span class="n">W1</span> <span class="o">-=</span> <span class="n">lr</span> <span class="o">*</span> <span class="n">dW1</span><span class="p">;</span> <span class="n">b1</span> <span class="o">-=</span> <span class="n">lr</span> <span class="o">*</span> <span class="n">db1</span>
+    <span class="n">W2</span> <span class="o">-=</span> <span class="n">lr</span> <span class="o">*</span> <span class="n">dW2</span><span class="p">;</span> <span class="n">b2</span> <span class="o">-=</span> <span class="n">lr</span> <span class="o">*</span> <span class="n">db2</span>
+
+    <span class="k">if</span> <span class="n">step</span> <span class="o">%</span> <span class="mi">600</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"step </span><span class="si">{</span><span class="n">step</span><span class="si">:</span><span class="s2">&gt;4</span><span class="si">}</span><span class="s2">  loss = </span><span class="si">{</span><span class="n">loss</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+<span class="c1"># ---------- 验收 ----------</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">输入 → 预测 (期望 0,1,1,0):"</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">X</span><span class="p">:</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">forward</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  </span><span class="si">{</span><span class="n">x</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span><span class="si">}</span><span class="s2"> → </span><span class="si">{</span><span class="n">y</span><span class="o">.</span><span class="n">item</span><span class="p">()</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</code></pre></div>
+<p>运行结果：</p>
+<div class="highlight"><pre><span></span><code>step    0  loss = 2.8290
+step  600  loss = 0.5011
+step 1200  loss = 0.0459
+step 1800  loss = 0.0150
+step 2400  loss = 0.0086
+
+输入 → 预测 (期望 0,1,1,0):
+  [0 0] → 0.0082
+  [0 1] → 0.9915
+  [1 0] → 0.9914
+  [1 1] → 0.0085
+</code></pre></div>
+<p><strong>四个数字全部预测正确</strong>。这 23 个参数"学会"了异或——没有一行代码写异或规则，我们只告诉它"哪里错了"，它自己调整到了正确状态。这就是"学习"的全部机制，GPT 训练时和这段代码<strong>没有本质区别</strong>，区别只在规模：参数多十一个数量级、样本多十一个数量级、损失函数面向下一个词预测。</p>
+<h2 id="11-mini-batch样本太多怎么办">11. Mini-Batch：样本太多怎么办</h2>
+<p>上面的循环每个 step 用了全部 4 个样本，这叫<strong>全批量（full batch）</strong>。真实训练的样本动辄上亿，问题来了：</p>
+<ul>
+<li>全批量算一次梯度太贵，还没迈一步就要算几个小时</li>
+<li>单样本（batch=1）虽然便宜，但梯度噪声太大，方向抖得厉害</li>
+</ul>
+<p>折中方案：<strong>Mini-Batch</strong>。每次随机抽一小撮（如 256 个）样本算平均梯度，更新一步。三个概念对齐：</p>
+<table>
+<thead>
+<tr>
+<th>方式</th>
+<th>每步样本数</th>
+<th>特点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>全批量</td>
+<td>全部</td>
+<td>方向准、单步贵</td>
+</tr>
+<tr>
+<td>随机（SGD）</td>
+<td>1</td>
+<td>单步便宜、方向抖</td>
+</tr>
+<tr>
+<td>Mini-Batch</td>
+<td>几十~几百</td>
+<td>工程实践的标准选择</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight"><pre><span></span><code><span class="c1"># mini-batch 版核心（示意）</span>
+<span class="n">idx</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">X</span><span class="p">),</span> <span class="n">size</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>   <span class="c1"># 随机抽 2 个样本</span>
+<span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">ti</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">t</span><span class="p">[</span><span class="n">idx</span><span class="p">]):</span>
+    <span class="o">...</span>  <span class="c1"># 累积梯度后更新</span>
+</code></pre></div>
+<p>顺带建立三个高频术语：一次完整的数据遍历叫一个 <strong>epoch</strong>；一个 batch 跑完更新一次参数，叫一个 <strong>step</strong>；<strong>batch size</strong> 就是每撮样本数。你以后在训练日志里看到的 <code>epoch=3, step=12000, batch_size=256</code> 就是这三件事。</p>
+<h2 id="12-过拟合学得太好也是病">12. 过拟合：学得太好也是病</h2>
+<p>最后一个概念，直接决定你的模型在真实场景能不能用。</p>
+<p>把训练想成背题：一个学生把题库背得滚瓜烂熟（训练损失为 0），考试遇到新题却不会做——这就是<strong>过拟合</strong>：模型记住了训练数据的细节噪声，没学到通用规律，即<strong>泛化（Generalization）能力差</strong>。</p>
+<p>诊断手段是<strong>把数据切成两份</strong>：</p>
+<div class="highlight"><pre><span></span><code>训练集（约80%）── 用来调参数
+验证集（约20%）── 只看不学，用来检查"新题"表现
+</code></pre></div>
+<p>判断依据：</p>
+<table>
+<thead>
+<tr>
+<th>训练损失</th>
+<th>验证损失</th>
+<th>诊断</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>高</td>
+<td>高</td>
+<td>欠拟合：模型还没学会，继续训</td>
+</tr>
+<tr>
+<td>低</td>
+<td>高</td>
+<td>过拟合：背题了，需要正则化/更多数据</td>
+</tr>
+<tr>
+<td>低</td>
+<td>低</td>
+<td>泛化良好 ✅</td>
+</tr>
+</tbody>
+</table>
+<p>常见解药（后面读到 LLM 时会反复遇到思想同源的机制）：更多数据、更简单的模型、Dropout、权重衰减、早停（验证损失开始上升就停止训练）。</p>
+<blockquote>
+<p>Agent 开发者的关联：few-shot 示例太多挤占上下文、Agent 对历史对话的过度依赖，本质上都是"过拟合现场"。理解这个概念，你在调 Agent 时会有完全不同的直觉。</p>
+</blockquote>
+<h2 id="本章小结">本章小结</h2>
+<ul>
+<li>人工神经元 = 加权求和 + 偏置 + 激活：$a = \sigma(\mathbf{w}^T\mathbf{x} + b)$</li>
+<li>激活函数存在的唯一理由：提供非线性，防止多层塌缩成一层</li>
+<li>一层网络就是一个矩阵：$\mathbf{a} = \sigma(\mathbf{W}\mathbf{x} + \mathbf{b})$，"神经元"只是矩阵的行</li>
+<li>前向传播 = 数据依次流过各层 = 向量形状被矩阵逐个改写</li>
+<li>深度学习的"深度" = 复合函数的层数；模型大小 = 参数个数</li>
+<li>损失函数把"错"变成一个数字；训练 = 最小化损失</li>
+<li>梯度下降：沿负梯度方向小步更新；学习率决定步幅，是最重要的超参数</li>
+<li>反向传播用链式法则一次性算出所有参数的梯度，$\mathbf{W}_2^T$ 让责任穿过层间传递</li>
+<li>手写训练循环（XOR）= 深度学习的最小完整样例；大模型训练与此同构，只差规模</li>
+<li>Mini-Batch / epoch / step 是训练工程的通用词汇</li>
+<li>过拟合是"背题"，靠训练/验证集切分诊断</li>
+</ul>
+<p>至此，你已经具备读懂大模型架构所需的全部数学直觉：第 1 章解决了"语言怎么变成数字"，本章解决了"数字怎么学会规律"。下一章，我们进入 Transformer 的心脏——注意力机制，看模型如何读懂上下文。</p>
+<p><strong>下一篇</strong>：<a href="../agent/03-zhu-yi-li-ji-zhi-yu-transformer-jia-gou.html">03 · 注意力机制与 Transformer 架构</a></p></div>
+
+      </article>
+<nav class="pager"><a class="pg-card pg-prev" href="../agent/01-token-yu-ci-qian-ru.html"><span class="pg-label">← 上一篇</span><span class="pg-title">Token 与词嵌入</span><span class="pg-mod">Agent 核心</span></a><a class="pg-card pg-next" href="../agent/03-zhu-yi-li-ji-zhi-yu-transformer-jia-gou.html"><span class="pg-label">下一篇 →</span><span class="pg-title">注意力机制与 Transformer 架构</span><span class="pg-mod">Agent 核心</span></a></nav>
+    </div>
+    <footer class="foot">
+      <span>深栈 DeepStack · AI Agent 工程师转型训练营配套文档</span>
+    </footer>
+  </main>
+<nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#1-从生物神经元到数学模型">1. 从生物神经元到数学模型</a><a class="toc-link toc-h2" href="#2-激活函数为什么必须有非线性">2. 激活函数：为什么必须有非线性</a><a class="toc-link toc-h2" href="#3-一层网络-一次矩阵变换">3. 一层网络 = 一次矩阵变换</a><a class="toc-link toc-h2" href="#4-多层-复合函数">4. 多层 = 复合函数</a><a class="toc-link toc-h2" href="#5-前向传播亲手写一个">5. 前向传播：亲手写一个</a><a class="toc-link toc-h2" href="#6-数一数参数">6. 数一数参数</a><a class="toc-link toc-h2" href="#7-损失函数给错定价">7. 损失函数：给&quot;错&quot;定价</a><a class="toc-link toc-h2" href="#8-梯度下降往哪边调">8. 梯度下降：往哪边调</a><a class="toc-link toc-h2" href="#9-反向传播责任分摊">9. 反向传播：责任分摊</a><a class="toc-link toc-h2" href="#10-实战训练网络学会-xor">10. 实战：训练网络学会 XOR</a><a class="toc-link toc-h2" href="#11-mini-batch样本太多怎么办">11. Mini-Batch：样本太多怎么办</a><a class="toc-link toc-h2" href="#12-过拟合学得太好也是病">12. 过拟合：学得太好也是病</a><a class="toc-link toc-h2" href="#本章小结">本章小结</a></nav>
+</div>
+<div class="sb-mask" id="sbMask"></div>
+<script src="../assets/app.js"></script>
+</body>
+</html>

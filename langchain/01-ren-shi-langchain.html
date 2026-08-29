@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>01 · 认识 LangChain · 深栈 DeepStack 课程文档</title>
+<meta name="description" content="《LangChain指南》是一本轻量 Python 用法手册：不讲玄学，只讲「这个东西怎么用」。
+ 全书示例围绕一个虚构场景——拾光书屋：一个线上阅读社区，有书籍、书评、阅读笔记和会员。你要给它装一个「AI 店员」">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%23d9c39a' text-anchor='middle'%3EDS%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+<div class="progress" id="progress"></div>
+
+<div class="layout">
+<aside class="sidebar" id="sidebar">
+  <div class="sb-head">
+    <a class="brand" href="../index.html">
+      <span class="brand-mark">DS</span>
+      <span class="brand-text"><b>深栈 DeepStack</b><i>AI Agent 工程师转型训练营</i></span>
+    </a>
+    <button class="sb-close" id="sbClose" aria-label="关闭目录">✕</button>
+  </div>
+  <div class="sb-search"><input type="search" id="searchInput" placeholder="搜索 123 篇文档… ( / )" autocomplete="off">
+    <div class="sb-results" id="searchResults"></div></div>
+  <nav class="sb-nav">
+    <section class="sb-group" data-mod="python">
+      <a class="sb-group-title" href="../modules/python.html" data-toggle="python">
+        <span class="sb-num">01</span>
+        <span class="sb-group-text"><b>Python 与数据实践</b><i>31 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../python/01-huan-jing-da-jian-yu-ban-ben-guan-li.html"><span class="sb-item-num">01</span><span class="sb-item-title">环境搭建与版本管理</span></a>
+        <a class="sb-item" href="../python/02-bian-liang-biao-da-shi-yu-liu-cheng-kong-zhi.html"><span class="sb-item-num">02</span><span class="sb-item-title">变量、表达式与流程控制</span></a>
+        <a class="sb-item" href="../python/03-xu-lie-zi-dian-yu-ji-he.html"><span class="sb-item-num">03</span><span class="sb-item-title">序列、字典与集合</span></a>
+        <a class="sb-item" href="../python/04-han-shu-she-ji-yu-lambda.html"><span class="sb-item-num">04</span><span class="sb-item-title">函数设计与 lambda</span></a>
+        <a class="sb-item" href="../python/05-zuo-yong-yu-gui-ze-yu-bi-bao.html"><span class="sb-item-num">05</span><span class="sb-item-title">作用域规则与闭包</span></a>
+        <a class="sb-item" href="../python/06-lei-de-ding-yi-yu-shi-li-hua.html"><span class="sb-item-num">06</span><span class="sb-item-title">类的定义与实例化</span></a>
+        <a class="sb-item" href="../python/07-lei-xing-pan-ding-yu-chou-xiang-ji-lei.html"><span class="sb-item-num">07</span><span class="sb-item-title">类型判定与抽象基类</span></a>
+        <a class="sb-item" href="../python/08-mo-shu-fang-fa-quan-jing.html"><span class="sb-item-num">08</span><span class="sb-item-title">魔术方法全景</span></a>
+        <a class="sb-item" href="../python/09-miao-shu-fu-yu-yuan-lei.html"><span class="sb-item-num">09</span><span class="sb-item-title">描述符与元类</span></a>
+        <a class="sb-item" href="../python/10-zhuang-shi-qi.html"><span class="sb-item-num">10</span><span class="sb-item-title">装饰器</span></a>
+        <a class="sb-item" href="../python/11-die-dai-xie-yi-yu-sheng-cheng-qi.html"><span class="sb-item-num">11</span><span class="sb-item-title">迭代协议与生成器</span></a>
+        <a class="sb-item" href="../python/12-with-yu-shang-xia-wen-xie-yi.html"><span class="sb-item-num">12</span><span class="sb-item-title">with 与上下文协议</span></a>
+        <a class="sb-item" href="../python/13-yi-chang-ti-xi-yu-chu-li.html"><span class="sb-item-num">13</span><span class="sb-item-title">异常体系与处理</span></a>
+        <a class="sb-item" href="../python/14-lei-xing-biao-zhu.html"><span class="sb-item-num">14</span><span class="sb-item-title">类型标注</span></a>
+        <a class="sb-item" href="../python/15-mo-kuai-yu-bao-de-zu-zhi.html"><span class="sb-item-num">15</span><span class="sb-item-title">模块与包的组织</span></a>
+        <a class="sb-item" href="../python/16-biao-zhun-ku-xun-li.html"><span class="sb-item-num">16</span><span class="sb-item-title">标准库巡礼</span></a>
+        <a class="sb-item" href="../python/17-yi-lai-guan-li-yu-di-san-fang-ku.html"><span class="sb-item-num">17</span><span class="sb-item-title">依赖管理与第三方库</span></a>
+        <a class="sb-item" href="../python/18-xian-cheng-yu-jin-cheng.html"><span class="sb-item-num">18</span><span class="sb-item-title">线程与进程</span></a>
+        <a class="sb-item" href="../python/19-shi-jian-xun-huan.html"><span class="sb-item-num">19</span><span class="sb-item-title">事件循环</span></a>
+        <a class="sb-item" href="../python/20-future-yu-xie-cheng.html"><span class="sb-item-num">20</span><span class="sb-item-title">Future 与协程</span></a>
+        <a class="sb-item" href="../python/21-asyncio-shi-zhan.html"><span class="sb-item-num">21</span><span class="sb-item-title">asyncio 实战</span></a>
+        <a class="sb-item" href="../python/22-gou-jian-yu-fa-bu.html"><span class="sb-item-num">22</span><span class="sb-item-title">构建与发布</span></a>
+        <a class="sb-item" href="../python/23-gong-cheng-hua-gong-ju-lian.html"><span class="sb-item-num">23</span><span class="sb-item-title">工程化工具链</span></a>
+        <a class="sb-item" href="../python/24-monorepo-yu-tiao-shi.html"><span class="sb-item-num">24</span><span class="sb-item-title">monorepo 与调试</span></a>
+        <a class="sb-item" href="../python/25-jupyter-jiao-hu-huan-jing.html"><span class="sb-item-num">25</span><span class="sb-item-title">Jupyter 交互环境</span></a>
+        <a class="sb-item" href="../python/26-numpy-shu-zu-yu-xiang-liang-hua.html"><span class="sb-item-num">26</span><span class="sb-item-title">NumPy 数组与向量化</span></a>
+        <a class="sb-item" href="../python/27-pandas-shu-ju-jie-gou.html"><span class="sb-item-num">27</span><span class="sb-item-title">Pandas 数据结构</span></a>
+        <a class="sb-item" href="../python/28-pandas-shu-ju-qing-xi.html"><span class="sb-item-num">28</span><span class="sb-item-title">Pandas 数据清洗</span></a>
+        <a class="sb-item" href="../python/29-matplotlib-hui-tu-ti-xi.html"><span class="sb-item-num">29</span><span class="sb-item-title">Matplotlib 绘图体系</span></a>
+        <a class="sb-item" href="../python/30-matplotlib-dong-hua-yu-jiao-hu.html"><span class="sb-item-num">30</span><span class="sb-item-title">Matplotlib 动画与交互</span></a>
+        <a class="sb-item" href="../python/31-seaborn-tong-ji-ke-shi-hua.html"><span class="sb-item-num">31</span><span class="sb-item-title">Seaborn 统计可视化</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="agent">
+      <a class="sb-group-title" href="../modules/agent.html" data-toggle="agent">
+        <span class="sb-num">02</span>
+        <span class="sb-group-text"><b>Agent 核心</b><i>15 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../agent/01-token-yu-ci-qian-ru.html"><span class="sb-item-num">01</span><span class="sb-item-title">Token 与词嵌入</span></a>
+        <a class="sb-item" href="../agent/02-qian-xiang-chuan-bo-yu-fan-xiang-chuan-bo.html"><span class="sb-item-num">02</span><span class="sb-item-title">前向传播与反向传播</span></a>
+        <a class="sb-item" href="../agent/03-zhu-yi-li-ji-zhi-yu-transformer-jia-gou.html"><span class="sb-item-num">03</span><span class="sb-item-title">注意力机制与 Transformer 架构</span></a>
+        <a class="sb-item" href="../agent/04-yu-xun-lian-rlhf-yu-cai-yang-kv-cache.html"><span class="sb-item-num">04</span><span class="sb-item-title">预训练、RLHF 与采样（KV Cache）</span></a>
+        <a class="sb-item" href="../agent/05-ben-di-mo-xing-yu-xiao-xi-jie-gou.html"><span class="sb-item-num">05</span><span class="sb-item-title">本地模型与消息结构</span></a>
+        <a class="sb-item" href="../agent/06-hui-hua-guan-li-yu-json-shu-chu.html"><span class="sb-item-num">06</span><span class="sb-item-title">会话管理与 JSON 输出</span></a>
+        <a class="sb-item" href="../agent/07-tool-calling-xie-yi-yu-feng-zhuang.html"><span class="sb-item-num">07</span><span class="sb-item-title">Tool Calling：协议与封装</span></a>
+        <a class="sb-item" href="../agent/08-react-mo-shi-yu-zhu-xun-huan.html"><span class="sb-item-num">08</span><span class="sb-item-title">ReAct 模式与主循环</span></a>
+        <a class="sb-item" href="../agent/09-shi-zhan-deep-research-agent.html"><span class="sb-item-num">09</span><span class="sb-item-title">实战：Deep Research Agent</span></a>
+        <a class="sb-item" href="../agent/10-skill-yu-jian-jin-shi-pi-lu.html"><span class="sb-item-num">10</span><span class="sb-item-title">Skill 与渐进式披露</span></a>
+        <a class="sb-item" href="../agent/11-mcp-quan-jing.html"><span class="sb-item-num">11</span><span class="sb-item-title">MCP 全景</span></a>
+        <a class="sb-item" href="../agent/12-duo-agent-yu-xuan-xing-ce-lve.html"><span class="sb-item-num">12</span><span class="sb-item-title">多 Agent 与选型策略</span></a>
+        <a class="sb-item" href="../agent/13-ti-shi-ci-gong-cheng-yu-shang-xia-wen-gong.html"><span class="sb-item-num">13</span><span class="sb-item-title">提示词工程与上下文工程</span></a>
+        <a class="sb-item" href="../agent/14-xun-huan-tu-yu-gu-jia-gong-cheng.html"><span class="sb-item-num">14</span><span class="sb-item-title">循环、图与骨架工程</span></a>
+        <a class="sb-item" href="../agent/15-ji-yi-quan-xian-yu-ping-ce.html"><span class="sb-item-num">15</span><span class="sb-item-title">记忆、权限与评测</span></a>
+      </div>
+    </section>
+    <section class="sb-group open" data-mod="langchain">
+      <a class="sb-group-title" href="../modules/langchain.html" data-toggle="langchain">
+        <span class="sb-num">03</span>
+        <span class="sb-group-text"><b>LangChain 指南</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item current" href="../langchain/01-ren-shi-langchain.html"><span class="sb-item-num">01</span><span class="sb-item-title">认识 LangChain</span></a>
+        <a class="sb-item" href="../langchain/02-ti-shi-ci-mu-ban-yu-xiao-xi.html"><span class="sb-item-num">02</span><span class="sb-item-title">提示词模板与消息</span></a>
+        <a class="sb-item" href="../langchain/03-lcel-yu-runnable.html"><span class="sb-item-num">03</span><span class="sb-item-title">LCEL 与 Runnable</span></a>
+        <a class="sb-item" href="../langchain/04-liu-shi-yu-bing-fa.html"><span class="sb-item-num">04</span><span class="sb-item-title">流式与并发</span></a>
+        <a class="sb-item" href="../langchain/05-shu-chu-jie-xi-qi.html"><span class="sb-item-num">05</span><span class="sb-item-title">输出解析器</span></a>
+        <a class="sb-item" href="../langchain/06-wen-dang-jia-zai-yu-qie-ge.html"><span class="sb-item-num">06</span><span class="sb-item-title">文档加载与切割</span></a>
+        <a class="sb-item" href="../langchain/07-qian-ru-yu-xiang-liang-ku.html"><span class="sb-item-num">07</span><span class="sb-item-title">嵌入与向量库</span></a>
+        <a class="sb-item" href="../langchain/08-jian-suo-yu-rag.html"><span class="sb-item-num">08</span><span class="sb-item-title">检索与RAG</span></a>
+        <a class="sb-item" href="../langchain/09-dui-hua-ji-yi.html"><span class="sb-item-num">09</span><span class="sb-item-title">对话记忆</span></a>
+        <a class="sb-item" href="../langchain/10-gong-ju-diao-yong.html"><span class="sb-item-num">10</span><span class="sb-item-title">工具调用</span></a>
+        <a class="sb-item" href="../langchain/11-agent.html"><span class="sb-item-num">11</span><span class="sb-item-title">Agent</span></a>
+        <a class="sb-item" href="../langchain/12-hui-diao-yu-tiao-shi-quan-ke-cheng-shou-guan.html"><span class="sb-item-num">12</span><span class="sb-item-title">回调与调试（全课程收官章）</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="langgraph">
+      <a class="sb-group-title" href="../modules/langgraph.html" data-toggle="langgraph">
+        <span class="sb-num">04</span>
+        <span class="sb-group-text"><b>LangGraph 框架指南</b><i>17 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langgraph/01-di-1-zhang-cong-yi-ge-shi-kong-de-jiao.html"><span class="sb-item-num">01</span><span class="sb-item-title">第 1 章 从一个失控的脚本说起</span></a>
+        <a class="sb-item" href="../langgraph/02-di-2-zhang-zui-xiao-ke-yun-xing-tu.html"><span class="sb-item-num">02</span><span class="sb-item-title">第 2 章 最小可运行图</span></a>
+        <a class="sb-item" href="../langgraph/03-di-3-zhang-zhuang-tai-tu-de-shu-ju-xin.html"><span class="sb-item-num">03</span><span class="sb-item-title">第 3 章 状态：图的数据心脏</span></a>
+        <a class="sb-item" href="../langgraph/04-di-4-zhang-rang-liu-cheng-xue-hui-jue-ce.html"><span class="sb-item-num">04</span><span class="sb-item-title">第 4 章 让流程学会决策</span></a>
+        <a class="sb-item" href="../langgraph/05-di-5-zhang-bing-xing-shi-jie-chao-bu-zhi.html"><span class="sb-item-num">05</span><span class="sb-item-title">第 5 章 并行世界：超步执行模型</span></a>
+        <a class="sb-item" href="../langgraph/06-di-6-zhang-command-ba-kong-zhi-quan-jiao-jin.html"><span class="sb-item-num">06</span><span class="sb-item-title">第 6 章 Command：把控制权交进节点</span></a>
+        <a class="sb-item" href="../langgraph/07-di-7-zhang-dong-tai-bing-xing-send-yu-mapreduce.html"><span class="sb-item-num">07</span><span class="sb-item-title">第 7 章 动态并行：Send 与 MapReduce</span></a>
+        <a class="sb-item" href="../langgraph/08-di-8-zhang-gei-tu-zhuang-shang-shou-jiao-gong.html"><span class="sb-item-num">08</span><span class="sb-item-title">第 8 章 给图装上手脚：工具调用</span></a>
+        <a class="sb-item" href="../langgraph/09-di-9-zhang-fu-yong-yu-feng-zhuang-zi-tu.html"><span class="sb-item-num">09</span><span class="sb-item-title">第 9 章 复用与封装：子图</span></a>
+        <a class="sb-item" href="../langgraph/10-di-10-zhang-cong-dan-tu-dao-tuan-dui-duo.html"><span class="sb-item-num">10</span><span class="sb-item-title">第 10 章 从单图到团队：多 Agent 架构</span></a>
+        <a class="sb-item" href="../langgraph/11-di-11-zhang-liu-shi-shu-chu.html"><span class="sb-item-num">11</span><span class="sb-item-title">第 11 章 流式输出</span></a>
+        <a class="sb-item" href="../langgraph/12-di-12-zhang-chi-jiu-hua-checkpointer-yu-xian-cheng.html"><span class="sb-item-num">12</span><span class="sb-item-title">第 12 章 持久化：Checkpointer 与线程</span></a>
+        <a class="sb-item" href="../langgraph/13-di-13-zhang-shi-jian-lv-xing.html"><span class="sb-item-num">13</span><span class="sb-item-title">第 13 章 时间旅行</span></a>
+        <a class="sb-item" href="../langgraph/14-di-14-zhang-zhong-duan-yu-ren-zai-hui-lu.html"><span class="sb-item-num">14</span><span class="sb-item-title">第 14 章 中断与人在回路</span></a>
+        <a class="sb-item" href="../langgraph/15-di-15-zhang-ji-yi-guan-li.html"><span class="sb-item-num">15</span><span class="sb-item-title">第 15 章 记忆管理</span></a>
+        <a class="sb-item" href="../langgraph/16-di-16-zhang-rong-cuo-zhong-shi-chao-shi-yu.html"><span class="sb-item-num">16</span><span class="sb-item-title">第 16 章 容错：重试、超时与兜底</span></a>
+        <a class="sb-item" href="../langgraph/17-di-17-zhang-quan-jing-hui-gu.html"><span class="sb-item-num">17</span><span class="sb-item-title">第 17 章 全景回顾</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="backend">
+      <a class="sb-group-title" href="../modules/backend.html" data-toggle="backend">
+        <span class="sb-num">05</span>
+        <span class="sb-group-text"><b>Python 框架指南</b><i>14 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../backend/01-fastapi-ru-men-yu-asgi.html"><span class="sb-item-num">01</span><span class="sb-item-title">FastAPI 入门与 ASGI</span></a>
+        <a class="sb-item" href="../backend/02-lu-you-yu-qing-qiu-xiang-ying.html"><span class="sb-item-num">02</span><span class="sb-item-title">路由与请求响应</span></a>
+        <a class="sb-item" href="../backend/03-pydantic-shu-ju-jiao-yan-yu-pei-zhi.html"><span class="sb-item-num">03</span><span class="sb-item-title">Pydantic 数据校验与配置</span></a>
+        <a class="sb-item" href="../backend/04-sqlalchemy-yi-bu-yin-qing-yu-hui-hua.html"><span class="sb-item-num">04</span><span class="sb-item-title">SQLAlchemy 异步引擎与会话</span></a>
+        <a class="sb-item" href="../backend/05-orm-jian-mo.html"><span class="sb-item-num">05</span><span class="sb-item-title">ORM 建模</span></a>
+        <a class="sb-item" href="../backend/06-sql-biao-da-shi-yu-shu-ju-cao-zuo.html"><span class="sb-item-num">06</span><span class="sb-item-title">SQL 表达式与数据操作</span></a>
+        <a class="sb-item" href="../backend/07-alembic-shu-ju-qian-yi.html"><span class="sb-item-num">07</span><span class="sb-item-title">Alembic 数据迁移</span></a>
+        <a class="sb-item" href="../backend/08-yi-lai-zhu-ru.html"><span class="sb-item-num">08</span><span class="sb-item-title">依赖注入</span></a>
+        <a class="sb-item" href="../backend/09-tong-yi-yi-chang-chu-li.html"><span class="sb-item-num">09</span><span class="sb-item-title">统一异常处理</span></a>
+        <a class="sb-item" href="../backend/10-zhong-jian-jian.html"><span class="sb-item-num">10</span><span class="sb-item-title">中间件</span></a>
+        <a class="sb-item" href="../backend/11-ren-zheng-yu-jwt.html"><span class="sb-item-num">11</span><span class="sb-item-title">认证与 JWT</span></a>
+        <a class="sb-item" href="../backend/12-pytest-ce-shi.html"><span class="sb-item-num">12</span><span class="sb-item-title">pytest 测试</span></a>
+        <a class="sb-item" href="../backend/13-ri-zhi-loguru.html"><span class="sb-item-num">13</span><span class="sb-item-title">日志 loguru</span></a>
+        <a class="sb-item" href="../backend/14-liu-shi-xiang-ying-sse-yu-websocket.html"><span class="sb-item-num">14</span><span class="sb-item-title">流式响应 SSE 与 WebSocket</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="interview">
+      <a class="sb-group-title" href="../modules/interview.html" data-toggle="interview">
+        <span class="sb-num">06</span>
+        <span class="sb-group-text"><b>面试题库</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../interview/01-llm-yuan-li-pian.html"><span class="sb-item-num">01</span><span class="sb-item-title">LLM 原理篇</span></a>
+        <a class="sb-item" href="../interview/02-rag-yu-jian-suo-pian.html"><span class="sb-item-num">02</span><span class="sb-item-title">RAG 与检索篇</span></a>
+        <a class="sb-item" href="../interview/03-agent-he-xin-pian.html"><span class="sb-item-num">03</span><span class="sb-item-title">Agent 核心篇</span></a>
+        <a class="sb-item" href="../interview/04-langgraph-pian.html"><span class="sb-item-num">04</span><span class="sb-item-title">LangGraph 篇</span></a>
+        <a class="sb-item" href="../interview/05-langchain-pian.html"><span class="sb-item-num">05</span><span class="sb-item-title">LangChain 篇</span></a>
+        <a class="sb-item" href="../interview/06-xi-tong-she-ji-pian.html"><span class="sb-item-num">06</span><span class="sb-item-title">系统设计篇</span></a>
+        <a class="sb-item" href="../interview/07-xiang-mu-shen-wa-pian.html"><span class="sb-item-num">07</span><span class="sb-item-title">项目深挖篇</span></a>
+        <a class="sb-item" href="../interview/08-gu-zhang-pai-cha-pian.html"><span class="sb-item-num">08</span><span class="sb-item-title">故障排查篇</span></a>
+        <a class="sb-item" href="../interview/09-python-ji-chu-pian.html"><span class="sb-item-num">09</span><span class="sb-item-title">Python 基础篇</span></a>
+        <a class="sb-item" href="../interview/10-fastapi-yu-hou-duan-pian.html"><span class="sb-item-num">10</span><span class="sb-item-title">FastAPI 与后端篇</span></a>
+        <a class="sb-item" href="../interview/11-ti-shi-ci-gong-cheng-yu-an-quan-pian.html"><span class="sb-item-num">11</span><span class="sb-item-title">提示词工程与安全篇</span></a>
+        <a class="sb-item" href="../interview/12-mo-xing-xuan-xing-yu-jiang-ben-pian.html"><span class="sb-item-num">12</span><span class="sb-item-title">模型选型与降本篇</span></a>
+      </div>
+    </section>
+  </nav>
+</aside>
+  <main class="main">
+    <header class="topbar">
+      <button class="menu-btn" id="menuBtn" aria-label="目录">☰</button>
+      <div class="crumbs"><a href="../index.html">首页</a><span>/</span><a href="../modules/langchain.html">LangChain 指南</a><span>/</span><span class="cur">认识 LangChain</span></div>
+      <div class="topbar-actions">
+        <button class="icon-btn" id="themeBtn" title="切换深浅色" aria-label="切换深浅色">◐</button>
+      </div>
+    </header>
+    <div class="content">
+      <article class="article">
+
+<header class="page-head">
+  <div class="page-kicker">LangChain 指南 · 第 01 章</div>
+  <h1 class="page-title">认识 LangChain</h1>
+  <p class="page-desc">《LangChain指南》是一本轻量 Python 用法手册：不讲玄学，只讲「这个东西怎么用」。
+ 全书示例围绕一个虚构场景——拾光书屋：一个线上阅读社区，有书籍、书评、阅读笔记和会员。你要给它装一个「AI 店员」</p>
+  <div class="page-meta">
+    <span>约 27 分钟</span><span>10,774 字</span><span>12 个代码示例</span>
+  </div>
+</header>
+<div class="md"><blockquote>
+<p>《LangChain指南》是一本<strong>轻量 Python 用法手册</strong>：不讲玄学，只讲「这个东西怎么用」。
+全书示例围绕一个虚构场景——<strong>拾光书屋</strong>：一个线上阅读社区，有书籍、书评、阅读笔记和会员。你要给它装一个「AI 店员」。</p>
+</blockquote>
+<h2 id="本章技术基线">本章技术基线</h2>
+<table>
+<thead>
+<tr>
+<th>项目</th>
+<th>约定</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>语言</td>
+<td>Python 3.10+</td>
+</tr>
+<tr>
+<td>包管理</td>
+<td>uv（<code>uv add</code> / <code>uv run</code>）</td>
+</tr>
+<tr>
+<td>框架</td>
+<td>LangChain 1.x（<code>langchain</code> + <code>langchain-ollama</code> 两个包）</td>
+</tr>
+<tr>
+<td>模型</td>
+<td>本地 Ollama 跑 <code>qwen3:4b</code>（不联网、不花钱）</td>
+</tr>
+<tr>
+<td>场景</td>
+<td>拾光书屋（书籍 / 书评 / 阅读笔记 / 会员）</td>
+</tr>
+</tbody>
+</table>
+<p>学完本章，你能：跑通第一次模型对话、看懂返回值里的每一个字段、让回答一个字一个字蹦出来（流式）、给模型装上缓存让重复提问「秒回」。</p>
+<hr />
+<h2 id="1-环境准备开工前先摆好工具">1. 环境准备：开工前先摆好工具</h2>
+<p><strong>作用</strong>：本章所有代码都依赖三样东西——Python 项目、LangChain 包、本地 Ollama。先把它们摆好，后面 11 章就不用再折腾环境。</p>
+<p><strong>装法</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 1. 安装 uv（一个极快的 Python 包管理器，已装可跳过）</span>
+<span class="c1">#    macOS / Linux：</span>
+curl<span class="w"> </span>-LsSf<span class="w"> </span>https://astral.sh/uv/install.sh<span class="w"> </span><span class="p">|</span><span class="w"> </span>sh
+
+<span class="c1"># 2. 建项目、装依赖（langchain-core 会作为依赖自动带上，不用单独装）</span>
+uv<span class="w"> </span>init<span class="w"> </span>shiguang-ai
+<span class="nb">cd</span><span class="w"> </span>shiguang-ai
+uv<span class="w"> </span>add<span class="w"> </span>langchain<span class="w"> </span>langchain-ollama
+
+<span class="c1"># 3. 安装 Ollama 桌面版（或 brew install ollama），拉模型</span>
+ollama<span class="w"> </span>pull<span class="w"> </span>qwen3:4b
+
+<span class="c1"># 4. 确认服务在跑（默认监听 http://localhost:11434）</span>
+ollama<span class="w"> </span>list
+</code></pre></div>
+<p><strong>最小示例</strong>（全书第一段代码，5 行跑通）：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_ollama</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChatOllama</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">ChatOllama</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="s2">"qwen3:4b"</span><span class="p">)</span>
+
+<span class="n">ai</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span><span class="s2">"用一句话向新会员介绍「拾光书屋」。"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">ai</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+</code></pre></div>
+<p>保存后运行：<code>uv run demo/demo_chat.py</code>（demo 文件在配套的 <code>demo/</code> 目录里）。</p>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li><strong>Python 版本</strong>：LangChain 1.x 要求 Python 3.10+。如果你在 3.9 上 <code>pip install</code>，只会装到老的 0.3.x，很多导入路径都不一样，教程会对不上号。</li>
+<li><strong>ConnectError 报错</strong>：<code>httpx.ConnectError ... localhost:11434</code> 说明 Ollama 服务没启动——打开 Ollama App 或跑 <code>ollama serve</code>。</li>
+<li><strong>404 model not found</strong>：服务在跑但没拉模型，先 <code>ollama pull qwen3:4b</code>。</li>
+<li>别用系统自带的 <code>pip</code> 裸装，容易污染全局环境；跟着 uv 走，省心。</li>
+</ul>
+<hr />
+<h2 id="2-langchain-是什么一块乐高底板">2. LangChain 是什么：一块乐高底板</h2>
+<p><strong>作用</strong>：回答「我为什么需要它」。一句话：LangChain 是搭 AI 应用的<strong>乐高底板</strong>——大模型只是其中一块积木，你还需要工具、记忆、文档检索这些积木；LangChain 把它们做成统一接口，让你「咔哒」一声拼在一起。</p>
+<p>对拾光书屋来说，你想要的「AI 店员」其实是好几种能力的组合：</p>
+<table>
+<thead>
+<tr>
+<th>你想要的效果</th>
+<th>背后需要的能力</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>会员能和店员连续聊</td>
+<td>多轮对话 + 记忆</td>
+</tr>
+<tr>
+<td>店员能查书、算折扣</td>
+<td>工具调用</td>
+</tr>
+<tr>
+<td>店员答得上来书屋自己的规矩</td>
+<td>RAG（检索书屋知识库）</td>
+</tr>
+<tr>
+<td>店员自己决定先查库存还是先写推荐语</td>
+<td>Agent</td>
+</tr>
+<tr>
+<td>店员每句话风格统一</td>
+<td>提示词模板</td>
+</tr>
+</tbody>
+</table>
+<p>这些能力 LangChain 全都预置了「积木」。没有它，你就得自己写胶水代码：拼接请求、管理上下文、解析输出、重试……有了它，你专注拼装。</p>
+<p>顺带澄清一个常见误解：LangChain <strong>不是 Python 专属</strong>，它有 JS/TS 版（还挺能打），Go、Rust 版也在长。但 <strong>Python 是旗舰</strong>：新功能最先落地、集成最全、社区最大。所以这本手册走 Python 线——同样的思路，语言只是外壳。</p>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li>LangChain 不生产模型，也不替你思考。它只是「编排层」，模型行不行，还是看模型本身（qwen3:4b 是个 4B 小模型，别拿它当 GPT-5 用）。</li>
+<li>别一上来就研究「架构图」，先跑起来，再回头理解。</li>
+</ul>
+<hr />
+<h2 id="3-生态对比为什么这本手册选-langchain">3. 生态对比：为什么这本手册选 LangChain</h2>
+<p><strong>作用</strong>：选型不纠结。AI 应用框架不止一家，各有各的地盘：</p>
+<table>
+<thead>
+<tr>
+<th>框架</th>
+<th>一句话定位</th>
+<th>适合谁</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>LangChain</strong></td>
+<td>全场景积木库：RAG / Agent / 记忆 / 工具全覆盖</td>
+<td>想一站式掌握 AI 应用开发的人</td>
+</tr>
+<tr>
+<td><strong>LlamaIndex</strong></td>
+<td>数据索引与检索专精</td>
+<td>只做 RAG、且检索是绝对核心</td>
+</tr>
+<tr>
+<td><strong>Haystack</strong></td>
+<td>企业级搜索问答管线，带评估体系</td>
+<td>偏工程化、要严格评测的团队</td>
+</tr>
+<tr>
+<td><strong>AutoGen / CrewAI 等</strong></td>
+<td>多 Agent 协作编排</td>
+<td>研究「多个 AI 分工合作」</td>
+</tr>
+</tbody>
+</table>
+<p>选 LangChain 的三个理由（很实在）：</p>
+<ol>
+<li><strong>一张全家桶门票</strong>：12 章目录就是它的能力地图——提示词、LCEL、流式、解析器、文档加载、向量库、RAG、记忆、工具、Agent、回调，一路学下去不用换框架。</li>
+<li><strong>生态最厚</strong>：Ollama 这种本地引擎开箱即用；FAISS、Chroma 这些向量库无缝对接；出问题搜一下基本都有人踩过坑。</li>
+<li><strong>对学习者友好</strong>：命名直白（<code>invoke</code>、<code>stream</code> 这类词看名字就懂），模块能拆开单独玩，适合边拆边学。</li>
+</ol>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li>别陷入「框架对比内耗」。这三个框架的核心概念高度相通，学会一个，换别的只是换 API 名字。</li>
+<li>LangChain 不是数据库、不是 Web 框架，也别用它替代你的业务代码——它只管「和模型打交道」这一段。</li>
+</ul>
+<hr />
+<h2 id="4-模块全景拾光书屋的部门分布图">4. 模块全景：拾光书屋的部门分布图</h2>
+<p><strong>作用</strong>：把全书 12 章映射到 LangChain 的模块上，心里有张地图，走到哪都知道自己在哪。</p>
+<table>
+<thead>
+<tr>
+<th>模块</th>
+<th>管什么</th>
+<th>拾光书屋的对应物</th>
+<th>对应章节</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Models（模型）</td>
+<td>跟大模型说话的统一接口</td>
+<td>你雇的驻店作家</td>
+<td>01 / 03</td>
+</tr>
+<tr>
+<td>Prompts（提示词）</td>
+<td>需求单模板，可复用可插变量</td>
+<td>店员话术手册</td>
+<td>02</td>
+</tr>
+<tr>
+<td>LCEL / Runnable</td>
+<td>管道编排</td>
+<td>后厨流水线</td>
+<td>03 / 04</td>
+</tr>
+<tr>
+<td>Output Parsers</td>
+<td>把回答变成 Python 对象</td>
+<td>回答装订成标准表格</td>
+<td>05</td>
+</tr>
+<tr>
+<td>Indexes（文档与检索）</td>
+<td>知识库的入库与查找</td>
+<td>书评库分类上架</td>
+<td>06 / 07 / 08</td>
+</tr>
+<tr>
+<td>Memory（记忆）</td>
+<td>多轮对话的上下文</td>
+<td>会员档案卡</td>
+<td>09</td>
+</tr>
+<tr>
+<td>Tools（工具）</td>
+<td>让模型能调用外部函数</td>
+<td>查库存的计算器</td>
+<td>10</td>
+</tr>
+<tr>
+<td>Agents</td>
+<td>模型自己决定下一步</td>
+<td>值班店经理</td>
+<td>11</td>
+</tr>
+<tr>
+<td>Callbacks（回调）</td>
+<td>观测、日志、调试</td>
+<td>店内监控摄像头</td>
+<td>12</td>
+</tr>
+</tbody>
+</table>
+<p><strong>装法</strong>：Python 侧的包是「四层结构」（这一点和 JS 版的三包结构思路一致，只是拆得更细）：</p>
+<table>
+<thead>
+<tr>
+<th>包</th>
+<th>角色</th>
+<th>你要手动装吗</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>langchain-core</code></td>
+<td>内核抽象：Runnable、消息、缓存等</td>
+<td>不用，自动带上</td>
+</tr>
+<tr>
+<td><code>langchain</code></td>
+<td>高层入口：<code>init_chat_model</code>、通用封装</td>
+<td>要（<code>uv add langchain</code>）</td>
+</tr>
+<tr>
+<td><code>langchain-community</code></td>
+<td>社区集成大杂烩</td>
+<td>按需（本章 SQLite 缓存会用到）</td>
+</tr>
+<tr>
+<td><code>langchain-ollama</code> 等</td>
+<td>每个模型供应商一个专属包</td>
+<td>要（<code>uv add langchain-ollama</code>）</td>
+</tr>
+</tbody>
+</table>
+<p><strong>最小示例</strong>（四层结构在代码里的样子）：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 高层入口（langchain 包）</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain.chat_models</span><span class="w"> </span><span class="kn">import</span> <span class="n">init_chat_model</span>
+
+<span class="c1"># 供应商专属包（langchain-ollama 包）</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain_ollama</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChatOllama</span>
+
+<span class="c1"># 内核抽象（langchain-core 包，自动安装）</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.messages</span><span class="w"> </span><span class="kn">import</span> <span class="n">HumanMessage</span><span class="p">,</span> <span class="n">SystemMessage</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.caches</span><span class="w"> </span><span class="kn">import</span> <span class="n">InMemoryCache</span>
+</code></pre></div>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li>老教程里 <code>from langchain.chat_models import ChatOllama</code> 这种写法在 1.x <strong>已经移除</strong>——供应商类都搬进各自的集成包了。看到报 <code>ImportError</code>，先检查导入路径。</li>
+<li><code>langchain-community</code> 里也有一些和集成包同名的类（历史上搬过家），优先用 <code>langchain-xxx</code> 专属包里的版本。</li>
+<li><code>langchain-core</code> 你几乎永远不需要显式安装，它是所有包的公共地基。</li>
+</ul>
+<hr />
+<h2 id="5-模型接口上chatollama把作家请进店">5. 模型接口（上）：ChatOllama，把作家请进店</h2>
+<p><strong>作用</strong>：模型接口是后面 11 章的「发动机」。在其他教程里你常见到 <code>ChatOpenAI</code>（连 OpenAI 云端 API）；本手册用 <code>ChatOllama</code>——同样的事，只是作家住在自己家（本地），不要钱。</p>
+<p>先补一个背景知识：LangChain 里有两类模型接口——</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>补全模型</th>
+<th>对话模型</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>类</td>
+<td><code>OllamaLLM</code>（继承 <code>BaseLLM</code>）</td>
+<td><code>ChatOllama</code>（继承 <code>BaseChatModel</code>）</td>
+</tr>
+<tr>
+<td>输入</td>
+<td>纯字符串</td>
+<td>消息列表（带角色）</td>
+</tr>
+<tr>
+<td>输出</td>
+<td>纯字符串</td>
+<td><code>AIMessage</code> 对象</td>
+</tr>
+<tr>
+<td>场景</td>
+<td>单轮文本任务：改写、摘要</td>
+<td>聊天、Agent、结构化输出</td>
+</tr>
+</tbody>
+</table>
+<p>如今主流是<strong>对话模型</strong>（OpenAI 官方都停了补全接口），全书只用 <code>ChatOllama</code>。知道 <code>OllamaLLM</code> 存在即可，遇到了别慌。</p>
+<p><strong>装法</strong>：<code>uv add langchain-ollama</code>（第 1 节已装）。</p>
+<p><strong>最小示例</strong>（两种输入写法）：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.messages</span><span class="w"> </span><span class="kn">import</span> <span class="n">HumanMessage</span><span class="p">,</span> <span class="n">SystemMessage</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain_ollama</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChatOllama</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">ChatOllama</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="s2">"qwen3:4b"</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="mf">0.7</span><span class="p">)</span>
+
+<span class="c1"># 写法 A：直接丢一个字符串（LangChain 会自动把它包成一条用户消息）</span>
+<span class="n">ai</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span><span class="s2">"给《夜晚的潜水艇》写一句 30 字以内的推荐语。"</span><span class="p">)</span>
+
+<span class="c1"># 写法 B：消息列表，能带上「角色」——店员的人设就是 SystemMessage 放的</span>
+<span class="n">messages</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">SystemMessage</span><span class="p">(</span><span class="n">content</span><span class="o">=</span><span class="s2">"你是拾光书屋的资深店员，说话简洁、只谈书。"</span><span class="p">),</span>
+    <span class="n">HumanMessage</span><span class="p">(</span><span class="n">content</span><span class="o">=</span><span class="s2">"会员问：有适合通勤时读的短篇集吗？"</span><span class="p">),</span>
+<span class="p">]</span>
+<span class="n">ai</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span><span class="n">messages</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">ai</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>看懂返回值：AIMessage 不是字符串，是快递包裹</strong></p>
+<p><code>invoke</code> 返回的不是 <code>str</code>，而是一个 <code>AIMessage</code> 对象。拆包裹：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.messages</span><span class="w"> </span><span class="kn">import</span> <span class="n">AIMessage</span>
+
+<span class="n">ai</span><span class="p">:</span> <span class="n">AIMessage</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span><span class="s2">"用一句话介绍「拾光书屋」。"</span><span class="p">)</span>
+
+<span class="n">ai</span><span class="o">.</span><span class="n">content</span>              <span class="c1"># 货物：正文本身（多数时候就是 str）</span>
+<span class="n">ai</span><span class="o">.</span><span class="n">response_metadata</span>    <span class="c1"># 面单：模型侧回执，比如 model 名、耗时（字段随供应商变化）</span>
+<span class="n">ai</span><span class="o">.</span><span class="n">usage_metadata</span>       <span class="c1"># 称重单：token 统计 {"input_tokens": …, "output_tokens": …, "total_tokens": …}</span>
+<span class="n">ai</span><span class="o">.</span><span class="n">id</span>                   <span class="c1"># 运单号：本次调用的唯一 ID，形如 "run-xxxx"</span>
+<span class="n">ai</span><span class="o">.</span><span class="n">tool_calls</span>           <span class="c1"># 工具调用记录（第 10 章才用得上，现在是空列表）</span>
+</code></pre></div>
+<p>为什么非要包一层？因为后面链条（LCEL）、工具调用、日志追踪都需要这些元信息。<strong>取正文永远用 <code>ai.content</code></strong>——这是新手最常忘的一步。</p>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li><strong>qwen3 会「思考」</strong>：默认模式下，它会把思考过程用特殊标签混在 <code>content</code> 里输出，正文看起来脏脏的。解法：<code>ChatOllama(model="qwen3:4b", reasoning=False)</code> 直接关；或 <code>reasoning=True</code> 让思考单独放进 <code>ai.additional_kwargs["reasoning_content"]</code>，正文保持干净。本课 demo 统一用 <code>reasoning=False</code>。</li>
+<li><code>ai</code> 是对象不是字符串：<code>print(ai)</code> 会打出一堆结构，<code>print(ai.content)</code> 才是你要的。</li>
+<li>消息别自己拼 dict（<code>{"role": "user"}</code> 那种 OpenAI 原生格式），用 <code>SystemMessage</code> / <code>HumanMessage</code> / <code>AIMessage</code>，LangChain 的组件都认这些。</li>
+<li><code>base_url</code> 默认就是 <code>http://localhost:11434</code>，Ollama 跑在本机时不用写。</li>
+</ul>
+<hr />
+<h2 id="6-模型接口下init_chat_model一行换作家">6. 模型接口（下）：init_chat_model，一行换作家</h2>
+<p><strong>作用</strong>：今天用本地 qwen3:4b 白嫖，明天要上 OpenAI 收费档，你希望<strong>只改一个字符串</strong>，其余代码一行不动。LangChain 1.x 给的答案就是 <code>init_chat_model</code>——像个「作家中介」：你说要谁，它负责把人带进门（自动 import 对应的包）。</p>
+<p><strong>最小示例</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain.chat_models</span><span class="w"> </span><span class="kn">import</span> <span class="n">init_chat_model</span>
+
+<span class="c1"># 「供应商:模型名」写在一根字符串里</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">init_chat_model</span><span class="p">(</span><span class="s2">"ollama:qwen3:4b"</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="c1"># 等价写法：分开传</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">init_chat_model</span><span class="p">(</span><span class="s2">"qwen3:4b"</span><span class="p">,</span> <span class="n">model_provider</span><span class="o">=</span><span class="s2">"ollama"</span><span class="p">)</span>
+
+<span class="c1"># 哪天要换作家（先 uv add langchain-openai）：</span>
+<span class="c1"># model = init_chat_model("openai:gpt-4o-mini")</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span><span class="s2">"用一句话介绍「拾光书屋」。"</span><span class="p">)</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+</code></pre></div>
+<p>拿到的 <code>model</code> 就是一个如假包换的 <code>ChatOllama</code> 实例（可以 <code>type(model)</code> 验证），<code>.invoke</code>、<code>.stream</code>、后面章节的 <code>bind_tools</code> 全部照常用。好处是「换供应商」可以做成配置项：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">init_chat_model</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">"BOOKSTORE_MODEL"</span><span class="p">,</span> <span class="s2">"ollama:qwen3:4b"</span><span class="p">))</span>
+</code></pre></div>
+<p><strong>那到底用哪种？</strong> 简单决策：</p>
+<table>
+<thead>
+<tr>
+<th>场景</th>
+<th>选择</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>学习、demo、单供应商</td>
+<td><code>ChatOllama</code> 直连——IDE 补全友好，参数一目了然</td>
+</tr>
+<tr>
+<td>应用要可配置、多环境切换</td>
+<td><code>init_chat_model</code>——供应商写进配置，代码零改动</td>
+</tr>
+</tbody>
+</table>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li>字符串按<strong>第一个冒号</strong>切分，所以 <code>ollama:qwen3:4b</code> 会被正确切成「ollama」+「qwen3:4b」，模型名里的冒号不会切错。</li>
+<li>没装对应集成包会直接 <code>ImportError</code>，提示你 <code>pip install langchain-xxx</code>——照做即可（用 uv 就是 <code>uv add</code>）。</li>
+<li>供应商名写错（比如 <code>ollama</code> 拼成 <code>olama</code>）报的是「不认识的 provider」，不是「拼写错误」，别被带偏。</li>
+</ul>
+<hr />
+<h2 id="7-参数旋钮temperature-与它的家族">7. 参数旋钮：temperature 与它的家族</h2>
+<p><strong>作用</strong>：控制作家的「发挥程度」。写书评要中规中矩，写活动文案要天马行空——同一模型，一个参数切换。</p>
+<p><strong>最小示例</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_ollama</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChatOllama</span>
+
+<span class="n">稳重派</span> <span class="o">=</span> <span class="n">ChatOllama</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="s2">"qwen3:4b"</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">reasoning</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>   <span class="c1"># 照标准话术办事</span>
+<span class="n">发挥派</span> <span class="o">=</span> <span class="n">ChatOllama</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="s2">"qwen3:4b"</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span> <span class="n">reasoning</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="c1"># 允许自由发挥</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">稳重派</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span><span class="s2">"为「拾光书屋」写一句迎宾语。"</span><span class="p">)</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">发挥派</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span><span class="s2">"为「拾光书屋」写一句迎宾语。"</span><span class="p">)</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+</code></pre></div>
+<p>常用参数速查（Ollama 侧）：</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>管什么</th>
+<th>常用值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>temperature</code></td>
+<td>随机度：0 最稳，越高越发散</td>
+<td>0（严谨）/ 0.7（日常）/ 1.0+（创意）</td>
+</tr>
+<tr>
+<td><code>top_k</code> / <code>top_p</code></td>
+<td>另外两个采样旋钮，和 temperature 配合</td>
+<td>一般不动</td>
+</tr>
+<tr>
+<td><code>num_ctx</code></td>
+<td>上下文窗口（能塞进去多少 token）</td>
+<td>长文档时调大，默认只有几千</td>
+</tr>
+<tr>
+<td><code>num_predict</code></td>
+<td>最多生成多少 token</td>
+<td>限制废话长度时用</td>
+</tr>
+<tr>
+<td><code>seed</code></td>
+<td>随机种子</td>
+<td>想复现同一次输出时设</td>
+</tr>
+<tr>
+<td><code>repeat_penalty</code></td>
+<td>重复惩罚</td>
+<td>模型车轱辘话多时调</td>
+</tr>
+<tr>
+<td><code>keep_alive</code></td>
+<td>模型在内存里驻留多久</td>
+<td>高频调用设 <code>"5m"</code> 省冷启动</td>
+</tr>
+<tr>
+<td><code>base_url</code></td>
+<td>Ollama 服务地址</td>
+<td>默认 <code>http://localhost:11434</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li><code>temperature=0</code> <strong>不等于</strong>逐字复读——本地推理仍有微小浮动，要可复现请配合 <code>seed</code>。</li>
+<li>高 temperature + 缓存 = 白开（见第 9 节的坑 5）。</li>
+<li><code>num_ctx</code> 默认不大（2k~4k 量级，随版本而异），长文档会被「悄悄截断」——这是第 06 章要学「文档切割」的原因之一。</li>
+</ul>
+<hr />
+<h2 id="8-流式输出初见店员边写边递">8. 流式输出初见：店员边写边递</h2>
+<p><strong>作用</strong>：<code>invoke</code> 是「店员写完一整封信再交给你」；<code>stream</code> 是「边写边撕页递给你」。对聊天界面来说，后者体验完全不是一个档次——用户 1 秒内看到第一个字，而不是干等 20 秒。</p>
+<p><strong>最小示例</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_ollama</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChatOllama</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">ChatOllama</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="s2">"qwen3:4b"</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span> <span class="n">reasoning</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="n">pieces</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span><span class="s2">"为《百年孤独》写一段 60 字左右的书评开头。"</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">chunk</span><span class="o">.</span><span class="n">content</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">""</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>   <span class="c1"># 每拿到一片就立刻打印</span>
+    <span class="n">pieces</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">chunk</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">()</span>  <span class="c1"># 换行</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"拼接结果："</span><span class="p">,</span> <span class="s2">""</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">pieces</span><span class="p">))</span>
+</code></pre></div>
+<p><code>for</code> 循环里拿到的 <code>chunk</code> 是 <code>AIMessageChunk</code>——<code>AIMessage</code> 的切片，<code>chunk.content</code> 是<strong>增量片段</strong>，不是完整回答，要自己拼。</p>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li>忘了拼接：把最后一个 chunk 当成完整回答（内容只有尾巴）。</li>
+<li><code>print(chunk.content)</code> 不加 <code>end=""</code>，屏幕上一行一片，乱成一锅粥。</li>
+<li><strong>流式不走缓存</strong>——即使答案已经缓存过，<code>stream</code> 还是会逐字重新生成（第 9 节专门演示这个坑）。</li>
+<li>流式的进阶玩法（异步流、并发、批处理）在第 04 章展开，这里先会「用」就行。</li>
+</ul>
+<hr />
+<h2 id="9-缓存让第二次提问变成白嫖">9. 缓存：让第二次提问变成「白嫖」</h2>
+<p><strong>作用</strong>：书屋会员特别爱问重复问题——「营业时间几点」「怎么积分」。让店员每个问题都现场写一遍答案，又慢又费钱（如果调的是云端 API，那就是真金白银）。缓存的思路：<strong>前台放一个金句卡片盒，同一个问题第二次直接发卡</strong>。</p>
+<p>三个好处：快（毫秒级返回）、省（少调模型）、稳（同一问题永远同一答案）。</p>
+<p><strong>装法</strong>：<code>InMemoryCache</code> 就在 <code>langchain-core</code> 里（已自动安装）；<code>SQLiteCache</code> 在 <code>langchain-community</code> 里，用它之前先 <code>uv add langchain-community</code>。</p>
+<p><strong>最小示例 A：全局缓存（最常用）</strong>——设一次，全店生效：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.caches</span><span class="w"> </span><span class="kn">import</span> <span class="n">InMemoryCache</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.globals</span><span class="w"> </span><span class="kn">import</span> <span class="n">set_llm_cache</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain_ollama</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChatOllama</span>
+
+<span class="n">set_llm_cache</span><span class="p">(</span><span class="n">InMemoryCache</span><span class="p">())</span>  <span class="c1"># 开店时设一次：所有模型调用默认走它</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">ChatOllama</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="s2">"qwen3:4b"</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">reasoning</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="c1"># 第一次：真调用（慢）</span>
+<span class="n">model</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span><span class="s2">"用一句话介绍「拾光书屋」。"</span><span class="p">)</span>
+<span class="c1"># 第二次：命中缓存（毫秒级，返回和第一次完全相同）</span>
+<span class="n">model</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span><span class="s2">"用一句话介绍「拾光书屋」。"</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>最小示例 B：SQLite 持久化</strong>——内存缓存关机就没，SQLite 落到磁盘文件，<strong>重启进程也还在</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_community.cache</span><span class="w"> </span><span class="kn">import</span> <span class="n">SQLiteCache</span>
+
+<span class="n">set_llm_cache</span><span class="p">(</span><span class="n">SQLiteCache</span><span class="p">(</span><span class="n">database_path</span><span class="o">=</span><span class="s2">"shiguang.db"</span><span class="p">))</span>
+<span class="c1"># 想清空缓存：删掉 shiguang.db 文件即可</span>
+</code></pre></div>
+<p><strong>显式缓存（挂在模型实例上）</strong>：不想全店生效，只想给某一个模型挂缓存？<code>ChatOllama</code> 构造参数里藏着一个 <code>cache</code>，文档里很低调，但很好用：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.caches</span><span class="w"> </span><span class="kn">import</span> <span class="n">InMemoryCache</span>
+
+<span class="n">model_a</span> <span class="o">=</span> <span class="n">ChatOllama</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="s2">"qwen3:4b"</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="n">InMemoryCache</span><span class="p">())</span>  <span class="c1"># 自带私有缓存，不依赖全局</span>
+<span class="n">model_b</span> <span class="o">=</span> <span class="n">ChatOllama</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="s2">"qwen3:4b"</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>            <span class="c1"># 强制绕过全局缓存（即使 set_llm_cache 设过）</span>
+<span class="n">model_c</span> <span class="o">=</span> <span class="n">ChatOllama</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="s2">"qwen3:4b"</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>             <span class="c1"># 明确要求用全局缓存</span>
+</code></pre></div>
+<p>三条规则记一下：传缓存实例 = 用这个实例；<code>cache=False</code> = 强制关闭；<code>cache=True</code> = 必须先 <code>set_llm_cache</code>，否则一调用就抛 <code>ValueError</code>。</p>
+<p><strong>常见坑</strong>：</p>
+<ol>
+<li><strong>缓存 key 是「精确匹配」</strong>：key = 提示词的序列化串 + 模型配置串。「营业时间几点？」和「请问营业时间是几点？」是两个不同的 key，<strong>不会</strong>命中。改一个字、换一个参数（比如 temperature）、调换消息顺序，都会 miss。想让「相似问题也命中」得自己实现语义缓存（用嵌入算相似度），属于进阶玩法。</li>
+<li><strong><code>stream()</code> 不走缓存</strong>：缓存的检查发生在 <code>invoke</code> 这类整体调用的入口，而 <code>stream</code> 返回的是逐块迭代器，拿到的是生成过程本身——所以哪怕答案在缓存里躺着，流式仍然会完整生成一遍。（想要「流式 + 缓存」，常见做法是缓存命中后自己把整段答案切成小块模拟推送。）</li>
+<li><strong><code>cache=True</code> 没设全局缓存会直接报错</strong>：<code>ValueError: Asked to cache, but no cache found at 'langchain.cache'</code>。看到这个错，要么先 <code>set_llm_cache(...)</code>，要么直接传缓存实例。</li>
+<li><strong>开发期的缓存幻觉</strong>：缓存开着，你会觉得「模型怎么突然又快又稳」——其实是缓存。调试新提示词前，删 <code>.db</code> 文件或 <code>InMemoryCache().clear()</code>。</li>
+<li><strong>高 temperature + 缓存 = 自欺欺人</strong>：同一个 key 永远返回第一次的答案，你以为模型稳定输出，其实只是缓存冻结了某一次的发挥。缓存场景建议 <code>temperature=0</code>。</li>
+<li><strong>一条无害的警告</strong>：用 <code>langchain-community</code> 的 <code>SQLiteCache</code> 读缓存时，可能看到 <code>LangChainPendingDeprecationWarning</code>（提示 <code>allowed_objects</code> 默认值未来会收紧）——库自己在做迁移预告，不影响使用，忽略即可。</li>
+</ol>
+<hr />
+<h2 id="10-本章小结">10. 本章小结</h2>
+<p><strong>你拿到了什么</strong>：</p>
+<ul>
+<li>✅ 环境：uv + LangChain 1.x + 本地 Ollama（qwen3:4b）</li>
+<li>✅ 认知：LangChain 是乐高底板，Python 是旗舰语言，12 章就是模块地图</li>
+<li>✅ 模型接口两种姿势：<code>ChatOllama</code> 直连（学习用）与 <code>init_chat_model</code>（可切换用）</li>
+<li>✅ <code>AIMessage</code> 五件套：<code>content</code> / <code>response_metadata</code> / <code>usage_metadata</code> / <code>id</code> / <code>tool_calls</code></li>
+<li>✅ 参数：<code>temperature</code> 家族，qwen3 记得 <code>reasoning=False</code></li>
+<li>✅ 流式：<code>stream()</code> + chunk 拼接</li>
+<li>✅ 缓存：<code>set_llm_cache</code> 全局、<code>cache=</code> 实例级、SQLite 持久化，以及五个坑</li>
+</ul>
+<p><strong>配套 demo</strong>（在本章 <code>demo/</code> 目录）：</p>
+<table>
+<thead>
+<tr>
+<th>文件</th>
+<th>演示内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>demo/demo_chat.py</code></td>
+<td>invoke 两种写法、AIMessage 结构、流式输出、init_chat_model</td>
+</tr>
+<tr>
+<td><code>demo/demo_cache.py</code></td>
+<td>显式缓存、全局缓存、cache=False 绕过、SQLite 持久化、流式不走缓存</td>
+</tr>
+</tbody>
+</table>
+<p>跑法：<code>uv run demo/demo_chat.py</code>、<code>uv run demo/demo_cache.py</code>（先按第 1 节把环境装好）。</p>
+<p><strong>下一章</strong>：<a href="../langchain/02-ti-shi-ci-mu-ban-yu-xiao-xi.html">02 · 提示词模板与消息</a></p></div>
+
+      </article>
+<nav class="pager"><a class="pg-card pg-prev" href="../modules/langchain.html"><span class="pg-label">← 上一篇</span><span class="pg-title">LangChain 指南 · 使用指南</span><span class="pg-mod">LangChain 指南</span></a><a class="pg-card pg-next" href="../langchain/02-ti-shi-ci-mu-ban-yu-xiao-xi.html"><span class="pg-label">下一篇 →</span><span class="pg-title">提示词模板与消息</span><span class="pg-mod">LangChain 指南</span></a></nav>
+    </div>
+    <footer class="foot">
+      <span>深栈 DeepStack · AI Agent 工程师转型训练营配套文档</span>
+    </footer>
+  </main>
+<nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#本章技术基线">本章技术基线</a><a class="toc-link toc-h2" href="#1-环境准备开工前先摆好工具">1. 环境准备：开工前先摆好工具</a><a class="toc-link toc-h2" href="#2-langchain-是什么一块乐高底板">2. LangChain 是什么：一块乐高底板</a><a class="toc-link toc-h2" href="#3-生态对比为什么这本手册选-langchain">3. 生态对比：为什么这本手册选 LangChain</a><a class="toc-link toc-h2" href="#4-模块全景拾光书屋的部门分布图">4. 模块全景：拾光书屋的部门分布图</a><a class="toc-link toc-h2" href="#5-模型接口上chatollama把作家请进店">5. 模型接口（上）：ChatOllama，把作家请进店</a><a class="toc-link toc-h2" href="#6-模型接口下init_chat_model一行换作家">6. 模型接口（下）：init_chat_model，一行换作家</a><a class="toc-link toc-h2" href="#7-参数旋钮temperature-与它的家族">7. 参数旋钮：temperature 与它的家族</a><a class="toc-link toc-h2" href="#8-流式输出初见店员边写边递">8. 流式输出初见：店员边写边递</a><a class="toc-link toc-h2" href="#9-缓存让第二次提问变成白嫖">9. 缓存：让第二次提问变成「白嫖」</a><a class="toc-link toc-h2" href="#10-本章小结">10. 本章小结</a></nav>
+</div>
+<div class="sb-mask" id="sbMask"></div>
+<script src="../assets/app.js"></script>
+</body>
+</html>

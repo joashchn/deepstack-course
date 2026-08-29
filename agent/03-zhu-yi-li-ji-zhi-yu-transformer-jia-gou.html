@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>03 · 注意力机制与 Transformer 架构 · 深栈 DeepStack 课程文档</title>
+<meta name="description" content="第 2 章搭好的神经网络已经就位：它有了嵌入表和可训练的权重。但一个先天缺陷还没解决——嵌入表是一词一向量，静态不变的。&quot;苹果发布了新手机&quot;和&quot;我吃了个苹果&quot;里，&quot;苹果&quot;查的是嵌入表的同一行，含义却天差地别。本章讲 Tr…">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%23d9c39a' text-anchor='middle'%3EDS%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+<div class="progress" id="progress"></div>
+
+<div class="layout">
+<aside class="sidebar" id="sidebar">
+  <div class="sb-head">
+    <a class="brand" href="../index.html">
+      <span class="brand-mark">DS</span>
+      <span class="brand-text"><b>深栈 DeepStack</b><i>AI Agent 工程师转型训练营</i></span>
+    </a>
+    <button class="sb-close" id="sbClose" aria-label="关闭目录">✕</button>
+  </div>
+  <div class="sb-search"><input type="search" id="searchInput" placeholder="搜索 123 篇文档… ( / )" autocomplete="off">
+    <div class="sb-results" id="searchResults"></div></div>
+  <nav class="sb-nav">
+    <section class="sb-group" data-mod="python">
+      <a class="sb-group-title" href="../modules/python.html" data-toggle="python">
+        <span class="sb-num">01</span>
+        <span class="sb-group-text"><b>Python 与数据实践</b><i>31 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../python/01-huan-jing-da-jian-yu-ban-ben-guan-li.html"><span class="sb-item-num">01</span><span class="sb-item-title">环境搭建与版本管理</span></a>
+        <a class="sb-item" href="../python/02-bian-liang-biao-da-shi-yu-liu-cheng-kong-zhi.html"><span class="sb-item-num">02</span><span class="sb-item-title">变量、表达式与流程控制</span></a>
+        <a class="sb-item" href="../python/03-xu-lie-zi-dian-yu-ji-he.html"><span class="sb-item-num">03</span><span class="sb-item-title">序列、字典与集合</span></a>
+        <a class="sb-item" href="../python/04-han-shu-she-ji-yu-lambda.html"><span class="sb-item-num">04</span><span class="sb-item-title">函数设计与 lambda</span></a>
+        <a class="sb-item" href="../python/05-zuo-yong-yu-gui-ze-yu-bi-bao.html"><span class="sb-item-num">05</span><span class="sb-item-title">作用域规则与闭包</span></a>
+        <a class="sb-item" href="../python/06-lei-de-ding-yi-yu-shi-li-hua.html"><span class="sb-item-num">06</span><span class="sb-item-title">类的定义与实例化</span></a>
+        <a class="sb-item" href="../python/07-lei-xing-pan-ding-yu-chou-xiang-ji-lei.html"><span class="sb-item-num">07</span><span class="sb-item-title">类型判定与抽象基类</span></a>
+        <a class="sb-item" href="../python/08-mo-shu-fang-fa-quan-jing.html"><span class="sb-item-num">08</span><span class="sb-item-title">魔术方法全景</span></a>
+        <a class="sb-item" href="../python/09-miao-shu-fu-yu-yuan-lei.html"><span class="sb-item-num">09</span><span class="sb-item-title">描述符与元类</span></a>
+        <a class="sb-item" href="../python/10-zhuang-shi-qi.html"><span class="sb-item-num">10</span><span class="sb-item-title">装饰器</span></a>
+        <a class="sb-item" href="../python/11-die-dai-xie-yi-yu-sheng-cheng-qi.html"><span class="sb-item-num">11</span><span class="sb-item-title">迭代协议与生成器</span></a>
+        <a class="sb-item" href="../python/12-with-yu-shang-xia-wen-xie-yi.html"><span class="sb-item-num">12</span><span class="sb-item-title">with 与上下文协议</span></a>
+        <a class="sb-item" href="../python/13-yi-chang-ti-xi-yu-chu-li.html"><span class="sb-item-num">13</span><span class="sb-item-title">异常体系与处理</span></a>
+        <a class="sb-item" href="../python/14-lei-xing-biao-zhu.html"><span class="sb-item-num">14</span><span class="sb-item-title">类型标注</span></a>
+        <a class="sb-item" href="../python/15-mo-kuai-yu-bao-de-zu-zhi.html"><span class="sb-item-num">15</span><span class="sb-item-title">模块与包的组织</span></a>
+        <a class="sb-item" href="../python/16-biao-zhun-ku-xun-li.html"><span class="sb-item-num">16</span><span class="sb-item-title">标准库巡礼</span></a>
+        <a class="sb-item" href="../python/17-yi-lai-guan-li-yu-di-san-fang-ku.html"><span class="sb-item-num">17</span><span class="sb-item-title">依赖管理与第三方库</span></a>
+        <a class="sb-item" href="../python/18-xian-cheng-yu-jin-cheng.html"><span class="sb-item-num">18</span><span class="sb-item-title">线程与进程</span></a>
+        <a class="sb-item" href="../python/19-shi-jian-xun-huan.html"><span class="sb-item-num">19</span><span class="sb-item-title">事件循环</span></a>
+        <a class="sb-item" href="../python/20-future-yu-xie-cheng.html"><span class="sb-item-num">20</span><span class="sb-item-title">Future 与协程</span></a>
+        <a class="sb-item" href="../python/21-asyncio-shi-zhan.html"><span class="sb-item-num">21</span><span class="sb-item-title">asyncio 实战</span></a>
+        <a class="sb-item" href="../python/22-gou-jian-yu-fa-bu.html"><span class="sb-item-num">22</span><span class="sb-item-title">构建与发布</span></a>
+        <a class="sb-item" href="../python/23-gong-cheng-hua-gong-ju-lian.html"><span class="sb-item-num">23</span><span class="sb-item-title">工程化工具链</span></a>
+        <a class="sb-item" href="../python/24-monorepo-yu-tiao-shi.html"><span class="sb-item-num">24</span><span class="sb-item-title">monorepo 与调试</span></a>
+        <a class="sb-item" href="../python/25-jupyter-jiao-hu-huan-jing.html"><span class="sb-item-num">25</span><span class="sb-item-title">Jupyter 交互环境</span></a>
+        <a class="sb-item" href="../python/26-numpy-shu-zu-yu-xiang-liang-hua.html"><span class="sb-item-num">26</span><span class="sb-item-title">NumPy 数组与向量化</span></a>
+        <a class="sb-item" href="../python/27-pandas-shu-ju-jie-gou.html"><span class="sb-item-num">27</span><span class="sb-item-title">Pandas 数据结构</span></a>
+        <a class="sb-item" href="../python/28-pandas-shu-ju-qing-xi.html"><span class="sb-item-num">28</span><span class="sb-item-title">Pandas 数据清洗</span></a>
+        <a class="sb-item" href="../python/29-matplotlib-hui-tu-ti-xi.html"><span class="sb-item-num">29</span><span class="sb-item-title">Matplotlib 绘图体系</span></a>
+        <a class="sb-item" href="../python/30-matplotlib-dong-hua-yu-jiao-hu.html"><span class="sb-item-num">30</span><span class="sb-item-title">Matplotlib 动画与交互</span></a>
+        <a class="sb-item" href="../python/31-seaborn-tong-ji-ke-shi-hua.html"><span class="sb-item-num">31</span><span class="sb-item-title">Seaborn 统计可视化</span></a>
+      </div>
+    </section>
+    <section class="sb-group open" data-mod="agent">
+      <a class="sb-group-title" href="../modules/agent.html" data-toggle="agent">
+        <span class="sb-num">02</span>
+        <span class="sb-group-text"><b>Agent 核心</b><i>15 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../agent/01-token-yu-ci-qian-ru.html"><span class="sb-item-num">01</span><span class="sb-item-title">Token 与词嵌入</span></a>
+        <a class="sb-item" href="../agent/02-qian-xiang-chuan-bo-yu-fan-xiang-chuan-bo.html"><span class="sb-item-num">02</span><span class="sb-item-title">前向传播与反向传播</span></a>
+        <a class="sb-item current" href="../agent/03-zhu-yi-li-ji-zhi-yu-transformer-jia-gou.html"><span class="sb-item-num">03</span><span class="sb-item-title">注意力机制与 Transformer 架构</span></a>
+        <a class="sb-item" href="../agent/04-yu-xun-lian-rlhf-yu-cai-yang-kv-cache.html"><span class="sb-item-num">04</span><span class="sb-item-title">预训练、RLHF 与采样（KV Cache）</span></a>
+        <a class="sb-item" href="../agent/05-ben-di-mo-xing-yu-xiao-xi-jie-gou.html"><span class="sb-item-num">05</span><span class="sb-item-title">本地模型与消息结构</span></a>
+        <a class="sb-item" href="../agent/06-hui-hua-guan-li-yu-json-shu-chu.html"><span class="sb-item-num">06</span><span class="sb-item-title">会话管理与 JSON 输出</span></a>
+        <a class="sb-item" href="../agent/07-tool-calling-xie-yi-yu-feng-zhuang.html"><span class="sb-item-num">07</span><span class="sb-item-title">Tool Calling：协议与封装</span></a>
+        <a class="sb-item" href="../agent/08-react-mo-shi-yu-zhu-xun-huan.html"><span class="sb-item-num">08</span><span class="sb-item-title">ReAct 模式与主循环</span></a>
+        <a class="sb-item" href="../agent/09-shi-zhan-deep-research-agent.html"><span class="sb-item-num">09</span><span class="sb-item-title">实战：Deep Research Agent</span></a>
+        <a class="sb-item" href="../agent/10-skill-yu-jian-jin-shi-pi-lu.html"><span class="sb-item-num">10</span><span class="sb-item-title">Skill 与渐进式披露</span></a>
+        <a class="sb-item" href="../agent/11-mcp-quan-jing.html"><span class="sb-item-num">11</span><span class="sb-item-title">MCP 全景</span></a>
+        <a class="sb-item" href="../agent/12-duo-agent-yu-xuan-xing-ce-lve.html"><span class="sb-item-num">12</span><span class="sb-item-title">多 Agent 与选型策略</span></a>
+        <a class="sb-item" href="../agent/13-ti-shi-ci-gong-cheng-yu-shang-xia-wen-gong.html"><span class="sb-item-num">13</span><span class="sb-item-title">提示词工程与上下文工程</span></a>
+        <a class="sb-item" href="../agent/14-xun-huan-tu-yu-gu-jia-gong-cheng.html"><span class="sb-item-num">14</span><span class="sb-item-title">循环、图与骨架工程</span></a>
+        <a class="sb-item" href="../agent/15-ji-yi-quan-xian-yu-ping-ce.html"><span class="sb-item-num">15</span><span class="sb-item-title">记忆、权限与评测</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="langchain">
+      <a class="sb-group-title" href="../modules/langchain.html" data-toggle="langchain">
+        <span class="sb-num">03</span>
+        <span class="sb-group-text"><b>LangChain 指南</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langchain/01-ren-shi-langchain.html"><span class="sb-item-num">01</span><span class="sb-item-title">认识 LangChain</span></a>
+        <a class="sb-item" href="../langchain/02-ti-shi-ci-mu-ban-yu-xiao-xi.html"><span class="sb-item-num">02</span><span class="sb-item-title">提示词模板与消息</span></a>
+        <a class="sb-item" href="../langchain/03-lcel-yu-runnable.html"><span class="sb-item-num">03</span><span class="sb-item-title">LCEL 与 Runnable</span></a>
+        <a class="sb-item" href="../langchain/04-liu-shi-yu-bing-fa.html"><span class="sb-item-num">04</span><span class="sb-item-title">流式与并发</span></a>
+        <a class="sb-item" href="../langchain/05-shu-chu-jie-xi-qi.html"><span class="sb-item-num">05</span><span class="sb-item-title">输出解析器</span></a>
+        <a class="sb-item" href="../langchain/06-wen-dang-jia-zai-yu-qie-ge.html"><span class="sb-item-num">06</span><span class="sb-item-title">文档加载与切割</span></a>
+        <a class="sb-item" href="../langchain/07-qian-ru-yu-xiang-liang-ku.html"><span class="sb-item-num">07</span><span class="sb-item-title">嵌入与向量库</span></a>
+        <a class="sb-item" href="../langchain/08-jian-suo-yu-rag.html"><span class="sb-item-num">08</span><span class="sb-item-title">检索与RAG</span></a>
+        <a class="sb-item" href="../langchain/09-dui-hua-ji-yi.html"><span class="sb-item-num">09</span><span class="sb-item-title">对话记忆</span></a>
+        <a class="sb-item" href="../langchain/10-gong-ju-diao-yong.html"><span class="sb-item-num">10</span><span class="sb-item-title">工具调用</span></a>
+        <a class="sb-item" href="../langchain/11-agent.html"><span class="sb-item-num">11</span><span class="sb-item-title">Agent</span></a>
+        <a class="sb-item" href="../langchain/12-hui-diao-yu-tiao-shi-quan-ke-cheng-shou-guan.html"><span class="sb-item-num">12</span><span class="sb-item-title">回调与调试（全课程收官章）</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="langgraph">
+      <a class="sb-group-title" href="../modules/langgraph.html" data-toggle="langgraph">
+        <span class="sb-num">04</span>
+        <span class="sb-group-text"><b>LangGraph 框架指南</b><i>17 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langgraph/01-di-1-zhang-cong-yi-ge-shi-kong-de-jiao.html"><span class="sb-item-num">01</span><span class="sb-item-title">第 1 章 从一个失控的脚本说起</span></a>
+        <a class="sb-item" href="../langgraph/02-di-2-zhang-zui-xiao-ke-yun-xing-tu.html"><span class="sb-item-num">02</span><span class="sb-item-title">第 2 章 最小可运行图</span></a>
+        <a class="sb-item" href="../langgraph/03-di-3-zhang-zhuang-tai-tu-de-shu-ju-xin.html"><span class="sb-item-num">03</span><span class="sb-item-title">第 3 章 状态：图的数据心脏</span></a>
+        <a class="sb-item" href="../langgraph/04-di-4-zhang-rang-liu-cheng-xue-hui-jue-ce.html"><span class="sb-item-num">04</span><span class="sb-item-title">第 4 章 让流程学会决策</span></a>
+        <a class="sb-item" href="../langgraph/05-di-5-zhang-bing-xing-shi-jie-chao-bu-zhi.html"><span class="sb-item-num">05</span><span class="sb-item-title">第 5 章 并行世界：超步执行模型</span></a>
+        <a class="sb-item" href="../langgraph/06-di-6-zhang-command-ba-kong-zhi-quan-jiao-jin.html"><span class="sb-item-num">06</span><span class="sb-item-title">第 6 章 Command：把控制权交进节点</span></a>
+        <a class="sb-item" href="../langgraph/07-di-7-zhang-dong-tai-bing-xing-send-yu-mapreduce.html"><span class="sb-item-num">07</span><span class="sb-item-title">第 7 章 动态并行：Send 与 MapReduce</span></a>
+        <a class="sb-item" href="../langgraph/08-di-8-zhang-gei-tu-zhuang-shang-shou-jiao-gong.html"><span class="sb-item-num">08</span><span class="sb-item-title">第 8 章 给图装上手脚：工具调用</span></a>
+        <a class="sb-item" href="../langgraph/09-di-9-zhang-fu-yong-yu-feng-zhuang-zi-tu.html"><span class="sb-item-num">09</span><span class="sb-item-title">第 9 章 复用与封装：子图</span></a>
+        <a class="sb-item" href="../langgraph/10-di-10-zhang-cong-dan-tu-dao-tuan-dui-duo.html"><span class="sb-item-num">10</span><span class="sb-item-title">第 10 章 从单图到团队：多 Agent 架构</span></a>
+        <a class="sb-item" href="../langgraph/11-di-11-zhang-liu-shi-shu-chu.html"><span class="sb-item-num">11</span><span class="sb-item-title">第 11 章 流式输出</span></a>
+        <a class="sb-item" href="../langgraph/12-di-12-zhang-chi-jiu-hua-checkpointer-yu-xian-cheng.html"><span class="sb-item-num">12</span><span class="sb-item-title">第 12 章 持久化：Checkpointer 与线程</span></a>
+        <a class="sb-item" href="../langgraph/13-di-13-zhang-shi-jian-lv-xing.html"><span class="sb-item-num">13</span><span class="sb-item-title">第 13 章 时间旅行</span></a>
+        <a class="sb-item" href="../langgraph/14-di-14-zhang-zhong-duan-yu-ren-zai-hui-lu.html"><span class="sb-item-num">14</span><span class="sb-item-title">第 14 章 中断与人在回路</span></a>
+        <a class="sb-item" href="../langgraph/15-di-15-zhang-ji-yi-guan-li.html"><span class="sb-item-num">15</span><span class="sb-item-title">第 15 章 记忆管理</span></a>
+        <a class="sb-item" href="../langgraph/16-di-16-zhang-rong-cuo-zhong-shi-chao-shi-yu.html"><span class="sb-item-num">16</span><span class="sb-item-title">第 16 章 容错：重试、超时与兜底</span></a>
+        <a class="sb-item" href="../langgraph/17-di-17-zhang-quan-jing-hui-gu.html"><span class="sb-item-num">17</span><span class="sb-item-title">第 17 章 全景回顾</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="backend">
+      <a class="sb-group-title" href="../modules/backend.html" data-toggle="backend">
+        <span class="sb-num">05</span>
+        <span class="sb-group-text"><b>Python 框架指南</b><i>14 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../backend/01-fastapi-ru-men-yu-asgi.html"><span class="sb-item-num">01</span><span class="sb-item-title">FastAPI 入门与 ASGI</span></a>
+        <a class="sb-item" href="../backend/02-lu-you-yu-qing-qiu-xiang-ying.html"><span class="sb-item-num">02</span><span class="sb-item-title">路由与请求响应</span></a>
+        <a class="sb-item" href="../backend/03-pydantic-shu-ju-jiao-yan-yu-pei-zhi.html"><span class="sb-item-num">03</span><span class="sb-item-title">Pydantic 数据校验与配置</span></a>
+        <a class="sb-item" href="../backend/04-sqlalchemy-yi-bu-yin-qing-yu-hui-hua.html"><span class="sb-item-num">04</span><span class="sb-item-title">SQLAlchemy 异步引擎与会话</span></a>
+        <a class="sb-item" href="../backend/05-orm-jian-mo.html"><span class="sb-item-num">05</span><span class="sb-item-title">ORM 建模</span></a>
+        <a class="sb-item" href="../backend/06-sql-biao-da-shi-yu-shu-ju-cao-zuo.html"><span class="sb-item-num">06</span><span class="sb-item-title">SQL 表达式与数据操作</span></a>
+        <a class="sb-item" href="../backend/07-alembic-shu-ju-qian-yi.html"><span class="sb-item-num">07</span><span class="sb-item-title">Alembic 数据迁移</span></a>
+        <a class="sb-item" href="../backend/08-yi-lai-zhu-ru.html"><span class="sb-item-num">08</span><span class="sb-item-title">依赖注入</span></a>
+        <a class="sb-item" href="../backend/09-tong-yi-yi-chang-chu-li.html"><span class="sb-item-num">09</span><span class="sb-item-title">统一异常处理</span></a>
+        <a class="sb-item" href="../backend/10-zhong-jian-jian.html"><span class="sb-item-num">10</span><span class="sb-item-title">中间件</span></a>
+        <a class="sb-item" href="../backend/11-ren-zheng-yu-jwt.html"><span class="sb-item-num">11</span><span class="sb-item-title">认证与 JWT</span></a>
+        <a class="sb-item" href="../backend/12-pytest-ce-shi.html"><span class="sb-item-num">12</span><span class="sb-item-title">pytest 测试</span></a>
+        <a class="sb-item" href="../backend/13-ri-zhi-loguru.html"><span class="sb-item-num">13</span><span class="sb-item-title">日志 loguru</span></a>
+        <a class="sb-item" href="../backend/14-liu-shi-xiang-ying-sse-yu-websocket.html"><span class="sb-item-num">14</span><span class="sb-item-title">流式响应 SSE 与 WebSocket</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="interview">
+      <a class="sb-group-title" href="../modules/interview.html" data-toggle="interview">
+        <span class="sb-num">06</span>
+        <span class="sb-group-text"><b>面试题库</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../interview/01-llm-yuan-li-pian.html"><span class="sb-item-num">01</span><span class="sb-item-title">LLM 原理篇</span></a>
+        <a class="sb-item" href="../interview/02-rag-yu-jian-suo-pian.html"><span class="sb-item-num">02</span><span class="sb-item-title">RAG 与检索篇</span></a>
+        <a class="sb-item" href="../interview/03-agent-he-xin-pian.html"><span class="sb-item-num">03</span><span class="sb-item-title">Agent 核心篇</span></a>
+        <a class="sb-item" href="../interview/04-langgraph-pian.html"><span class="sb-item-num">04</span><span class="sb-item-title">LangGraph 篇</span></a>
+        <a class="sb-item" href="../interview/05-langchain-pian.html"><span class="sb-item-num">05</span><span class="sb-item-title">LangChain 篇</span></a>
+        <a class="sb-item" href="../interview/06-xi-tong-she-ji-pian.html"><span class="sb-item-num">06</span><span class="sb-item-title">系统设计篇</span></a>
+        <a class="sb-item" href="../interview/07-xiang-mu-shen-wa-pian.html"><span class="sb-item-num">07</span><span class="sb-item-title">项目深挖篇</span></a>
+        <a class="sb-item" href="../interview/08-gu-zhang-pai-cha-pian.html"><span class="sb-item-num">08</span><span class="sb-item-title">故障排查篇</span></a>
+        <a class="sb-item" href="../interview/09-python-ji-chu-pian.html"><span class="sb-item-num">09</span><span class="sb-item-title">Python 基础篇</span></a>
+        <a class="sb-item" href="../interview/10-fastapi-yu-hou-duan-pian.html"><span class="sb-item-num">10</span><span class="sb-item-title">FastAPI 与后端篇</span></a>
+        <a class="sb-item" href="../interview/11-ti-shi-ci-gong-cheng-yu-an-quan-pian.html"><span class="sb-item-num">11</span><span class="sb-item-title">提示词工程与安全篇</span></a>
+        <a class="sb-item" href="../interview/12-mo-xing-xuan-xing-yu-jiang-ben-pian.html"><span class="sb-item-num">12</span><span class="sb-item-title">模型选型与降本篇</span></a>
+      </div>
+    </section>
+  </nav>
+</aside>
+  <main class="main">
+    <header class="topbar">
+      <button class="menu-btn" id="menuBtn" aria-label="目录">☰</button>
+      <div class="crumbs"><a href="../index.html">首页</a><span>/</span><a href="../modules/agent.html">Agent 核心</a><span>/</span><span class="cur">注意力机制与 Transformer 架构</span></div>
+      <div class="topbar-actions">
+        <button class="icon-btn" id="themeBtn" title="切换深浅色" aria-label="切换深浅色">◐</button>
+      </div>
+    </header>
+    <div class="content">
+      <article class="article">
+
+<header class="page-head">
+  <div class="page-kicker">Agent 核心 · 第 03 章</div>
+  <h1 class="page-title">注意力机制与 Transformer 架构</h1>
+  <p class="page-desc">第 2 章搭好的神经网络已经就位：它有了嵌入表和可训练的权重。但一个先天缺陷还没解决——嵌入表是一词一向量，静态不变的。&quot;苹果发布了新手机&quot;和&quot;我吃了个苹果&quot;里，&quot;苹果&quot;查的是嵌入表的同一行，含义却天差地别。本章讲 Tr…</p>
+  <div class="page-meta">
+    <span>约 20 分钟</span><span>8,056 字</span><span>6 个代码示例</span>
+  </div>
+</header>
+<div class="md"><blockquote>
+<p>第 2 章搭好的神经网络已经就位：它有了嵌入表和可训练的权重。但一个先天缺陷还没解决——嵌入表是<strong>一词一向量，静态不变</strong>的。"苹果发布了新手机"和"我吃了个苹果"里，"苹果"查的是嵌入表的同一行，含义却天差地别。本章讲 Transformer 的核心突破——<strong>让词与词互相看见</strong>：每个 token 根据上下文吸收信息、动态修正自己的含义，这就是注意力机制（Attention），Transformer 名字里的 T 就是它。我们先拆透这台发动机，再装上多头、前馈、残差、位置编码这些传动和底盘，拼出一张完整的大模型架构图。读完这章，GPT、Claude、Qwen、DeepSeek 在你眼里不再是黑盒，你还能顺手回答一个高频面试题：为什么主流大模型清一色是 decoder-only 结构。</p>
+</blockquote>
+<h2 id="1-问题静态向量不够用">1. 问题：静态向量不够用</h2>
+<p>第 1 章的嵌入表有一个先天缺陷：<strong>一词一向量，静态不变</strong>。但语言的精妙恰恰在于语境：</p>
+<ul>
+<li>"苹果<strong>发布</strong>了新手机" → 公司</li>
+<li>"我吃了半个苹果" → 水果</li>
+<li>"她的脸颊红得像苹果" → 比喻</li>
+</ul>
+<p>理解"苹果"需要看它周围的词。所以在进入深度网络之前，必须有一个机制让每个 token 的向量<strong>融合上下文信息、按需更新自己</strong>。</p>
+<p>早期方案（RNN 时代）是让信息沿着序列一步步传递，但序列一长，早期信息就被"稀释"或"遗忘"了，而且无法并行计算。2017 年《Attention Is All You Need》给出了激进的答案：<strong>干脆只用注意力，扔掉循环结构</strong>。</p>
+<h2 id="2-直觉一场信息撮合会">2. 直觉：一场信息撮合会</h2>
+<p>把一句话里的 token 想象成一场交流会的成员。每个成员（比如"发布"）想弄清楚自己该吸收谁的信息，于是发生三件事：</p>
+<ol>
+<li><strong>我需要什么信息？</strong> ——它提出一个"查询"（Query）：比如"我在找'发布'的主语，谁是个组织？"</li>
+<li><strong>我能提供什么信息？</strong> ——每个成员亮出自己的"标签"（Key）：苹果亮出"名词/可能公司/可能水果"</li>
+<li><strong>实际给什么？</strong> ——匹配上的成员交付"内容"（Value）：苹果把自己当前的完整向量交出去</li>
+</ol>
+<p>Query 匹配 Key 的程度，决定了 Value 被吸收的比例。<strong>Q 是问题，K 是索引，V 是内容</strong>——像极了你每天用的搜索：查询词（Q）匹配文档的标题/关键词（K），返回文档正文（V）。</p>
+<h2 id="3-数学一次软性加权平均">3. 数学：一次软性加权平均</h2>
+<p>每个 token 的向量 $\mathbf{x}$ 通过三个不同的矩阵，投影出三个角色：</p>
+<p>$$
+\mathbf{q} = \mathbf{W}_Q \mathbf{x} \qquad \mathbf{k} = \mathbf{W}_K \mathbf{x} \qquad \mathbf{v} = \mathbf{W}_V \mathbf{x}
+$$</p>
+<p>对于某个 token 的查询 $\mathbf{q}_i$，它和所有位置的 $\mathbf{k}_j$ 做点积（点积大 = 匹配强），再经过 softmax 归一化成一组和为 1 的权重，然后对所有的 $\mathbf{v}_j$ 加权平均：</p>
+<p>$$
+\text{Attention}(\mathbf{q}<em _text_权重：我有多关注位置="\text{权重：我有多关注位置">i) = \sum_j \underbrace{\text{softmax}\left(\frac{\mathbf{q}_i \cdot \mathbf{k}_j}{\sqrt{d_k}}\right)_j}</em>_j
+$$} j} \cdot \mathbf{v</p>
+<p>三个设计细节值得说透：</p>
+<p><strong>① 点积 = 匹配度</strong>。两个向量越"同向"，点积越大。Q 和 K 的维度故意设计成一致，就是为了能逐对点积算匹配分。</p>
+<p><strong>② softmax = 软选择</strong>。权重是 0.3 / 0.6 / 0.1 这种"软"分配，不是硬性的二选一。模型可以同时从多个位置吸收信息，比例由匹配度决定。所有权重加起来恰好等于 1（softmax 的性质）。</p>
+<p><strong>③ 除以 $\sqrt{d_k}$ = 温度调控</strong>。维度越高，点积的数值天然越大，softmax 会被推向"一家独大"（梯度消失）。除以 $\sqrt{d_k}$ 把数值拉回合理区间。这个小动作叫 scaled dot-product attention，是为训练稳定性服务的。</p>
+<p>矩阵形式（一次算完所有 token 的注意力）：</p>
+<p>$$
+\text{Attention}(\mathbf{Q}, \mathbf{K}, \mathbf{V}) = \text{softmax}\left(\frac{\mathbf{Q}\mathbf{K}^T}{\sqrt{d_k}}\right)\mathbf{V}
+$$</p>
+<h2 id="4-动手手写一遍注意力">4. 动手：手写一遍注意力</h2>
+<p>用 numpy 实现一遍，规模虽小，但和真实模型里的计算<strong>一字不差</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">softmax</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
+    <span class="n">e</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">x</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>   <span class="c1"># 减最大值防溢出</span>
+    <span class="k">return</span> <span class="n">e</span> <span class="o">/</span> <span class="n">e</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">attention</span><span class="p">(</span><span class="n">Q</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">V</span><span class="p">):</span>
+    <span class="n">d_k</span> <span class="o">=</span> <span class="n">Q</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">scores</span> <span class="o">=</span> <span class="n">Q</span> <span class="o">@</span> <span class="n">K</span><span class="o">.</span><span class="n">T</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">d_k</span><span class="p">)</span>      <span class="c1"># (n, n) 匹配度矩阵</span>
+    <span class="n">weights</span> <span class="o">=</span> <span class="n">softmax</span><span class="p">(</span><span class="n">scores</span><span class="p">)</span>            <span class="c1"># 每行和为 1</span>
+    <span class="k">return</span> <span class="n">weights</span> <span class="o">@</span> <span class="n">V</span><span class="p">,</span> <span class="n">weights</span>          <span class="c1"># 输出 + 权重（留着可视化）</span>
+
+<span class="c1"># 3 个 token，向量维度 4</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+
+<span class="c1"># 三个投影矩阵（真实模型中它们是可训练参数）</span>
+<span class="n">Wq</span><span class="p">,</span> <span class="n">Wk</span><span class="p">,</span> <span class="n">Wv</span> <span class="o">=</span> <span class="p">(</span><span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+
+<span class="n">Q</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">V</span> <span class="o">=</span> <span class="n">X</span> <span class="o">@</span> <span class="n">Wq</span><span class="p">,</span> <span class="n">X</span> <span class="o">@</span> <span class="n">Wk</span><span class="p">,</span> <span class="n">X</span> <span class="o">@</span> <span class="n">Wv</span>
+
+<span class="n">out</span><span class="p">,</span> <span class="n">weights</span> <span class="o">=</span> <span class="n">attention</span><span class="p">(</span><span class="n">Q</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">V</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"输出形状:"</span><span class="p">,</span> <span class="n">out</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>             <span class="c1"># (3, 4) 每个位置一个融合后的向量</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"权重矩阵:</span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"每行权重和:"</span><span class="p">,</span> <span class="n">weights</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>  <span class="c1"># 全是 1.0</span>
+</code></pre></div>
+<p>输出的形状和输入相同：<strong>注意力不改变序列长度，它做的是"每个位置的向量，按相关性吸收了全句信息后，被重写了"</strong>。这就是从"静态词向量"到"语境化向量"的过程。</p>
+<h2 id="5-因果掩码只许看过去">5. 因果掩码：只许看过去</h2>
+<p>聊天模型（decoder-only，见本章第 13 节）训练时要预测下一个词，必须遵守一个规则：<strong>预测第 5 个词时，不能偷看第 5 个词之后的内容</strong>。但标准注意力会让每个位置看到全句，怎么办？</p>
+<p>掩码（mask）：把"未来位置"的匹配分数设成负无穷，softmax 后权重自然变成 0。</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">causal_attention</span><span class="p">(</span><span class="n">Q</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">V</span><span class="p">):</span>
+    <span class="n">d_k</span> <span class="o">=</span> <span class="n">Q</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="n">Q</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">scores</span> <span class="o">=</span> <span class="n">Q</span> <span class="o">@</span> <span class="n">K</span><span class="o">.</span><span class="n">T</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">d_k</span><span class="p">)</span>
+    <span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">triu</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">n</span><span class="p">,</span> <span class="n">n</span><span class="p">)),</span> <span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span>   <span class="c1"># 上三角 = 未来</span>
+    <span class="n">scores</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span>                               <span class="c1"># 未来不可见</span>
+    <span class="n">weights</span> <span class="o">=</span> <span class="n">softmax</span><span class="p">(</span><span class="n">scores</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">weights</span> <span class="o">@</span> <span class="n">V</span>
+</code></pre></div>
+<p>这个上三角禁令就是"因果"二字的由来，也是<strong>生成式模型逐 token 输出</strong>（第 4 章的推理部分）的伏笔。你现在应该能理解为什么模型的输出是一字一字往外蹦的——它在每个位置都只能基于过去做决策。</p>
+<h2 id="6-多头注意力多视角并行">6. 多头注意力：多视角并行</h2>
+<p>一个注意力头只学一种关系模式，但语言里的关系是多维的：语法关系（主谓）、指代关系（它 → 苹果）、语义关系（水果 vs 公司）……所以 Transformer 把注意力做成<strong>多头（Multi-Head）</strong>：</p>
+<ul>
+<li>并行运行 h 个独立的注意力，各自有自己的 $\mathbf{W}_Q/\mathbf{W}_K/\mathbf{W}_V$</li>
+<li>每个头维度是 $d/h$（例如 4096 维 32 头，每头 128 维）</li>
+<li>各头输出拼接后，再过一个线性层融合</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="c1"># 概念示意：两头注意力</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">multi_head</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Wq</span><span class="p">,</span> <span class="n">Wk</span><span class="p">,</span> <span class="n">Wv</span><span class="p">,</span> <span class="n">Wo</span><span class="p">,</span> <span class="n">n_heads</span><span class="p">):</span>
+    <span class="n">n</span><span class="p">,</span> <span class="n">d</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span>
+    <span class="n">hd</span> <span class="o">=</span> <span class="n">d</span> <span class="o">//</span> <span class="n">n_heads</span>
+    <span class="c1"># 切头：(n, d) → (n_heads, n, hd)</span>
+    <span class="n">Q</span> <span class="o">=</span> <span class="p">(</span><span class="n">X</span> <span class="o">@</span> <span class="n">Wq</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">n_heads</span><span class="p">,</span> <span class="n">hd</span><span class="p">)</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">K</span> <span class="o">=</span> <span class="p">(</span><span class="n">X</span> <span class="o">@</span> <span class="n">Wk</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">n_heads</span><span class="p">,</span> <span class="n">hd</span><span class="p">)</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">V</span> <span class="o">=</span> <span class="p">(</span><span class="n">X</span> <span class="o">@</span> <span class="n">Wv</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">n_heads</span><span class="p">,</span> <span class="n">hd</span><span class="p">)</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+
+    <span class="c1"># 逐头注意力后拼回去</span>
+    <span class="n">outs</span> <span class="o">=</span> <span class="p">[</span><span class="n">causal_attention</span><span class="p">(</span><span class="n">Q</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">K</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">V</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_heads</span><span class="p">)]</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">outs</span><span class="p">)</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">d</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">out</span> <span class="o">@</span> <span class="n">Wo</span>
+</code></pre></div>
+<p>一个不严谨但有用的类比：每个头是一个"专家评委"，语法评委、指代评委、主题评委各自打分，最后汇总成对每个词的完整理解。</p>
+<blockquote>
+<p>一个有趣的工程事实：各头的注意力权重模式是可以可视化的，研究者确实观察到了"专门盯主谓关系的头""专门负责相邻位置的头"。但注意：<strong>注意力权重 ≠ 模型的解释</strong>，它能提示信息流动，但不能当作模型推理依据（第 13 章会再遇到这一点）。</p>
+</blockquote>
+<h2 id="7-位置编码注意力不知道顺序">7. 位置编码：注意力不知道顺序</h2>
+<p>还有一个隐藏问题：注意力对所有位置一视同仁，<strong>"猫追狗"和"狗追猫"在它眼里完全相同</strong>（纯集合式交互）！而语序显然是语义的一部分。</p>
+<p>解法是位置编码（Positional Encoding）：给每个位置的向量加上（或拼接）一个"位置签名"，让模型能区分"谁在谁前面"。现代主流是旋转位置编码 RoPE（把 q/k 向量按位置旋转角度），细节不影响使用，记住结论：</p>
+<p>$$
+\text{模型输入} = \text{词嵌入} + \text{位置信息}
+$$</p>
+<p>Agent 开发者遇到的"长文本中间部分被忽略"（lost in the middle）现象，与位置编码的外推能力有关——这是第 13 章的上下文工程要处理的现实问题之一。</p>
+<h2 id="8-一个-transformer-层的全貌">8. 一个 Transformer 层的全貌</h2>
+<p>注意力这台发动机已经造好，现在拼出整辆车。真实模型由 N 层相同的结构堆叠（GPT-3 是 96 层，Qwen 按规模 28~80 层）。<strong>每一层</strong>的流水线是：</p>
+<div class="highlight"><pre><span></span><code>                x（本层输入）
+                │
+        ┌───────▼────────┐
+        │   多头注意力     │  token 之间交换信息（本章第 6 节）
+        └───────┬────────┘
+                │ ← 残差连接 ①：y = x + Attn(x)
+        ┌───────▼────────┐
+        │   层归一化      │  数值稳定
+        └───────┬────────┘
+                │
+        ┌───────▼────────┐
+        │  前馈网络 FFN   │  每个 token 独立加工（本章第 9 节）
+        └───────┬────────┘
+                │ ← 残差连接 ②：y = y + FFN(y)
+        ┌───────▼────────┐
+        │   层归一化      │
+        └───────┬────────┘
+                ▼
+              输出（交给下一层）
+</code></pre></div>
+<p>两个子层各司其职，这个分工值得记住：</p>
+<ul>
+<li><strong>注意力 = 横向沟通</strong>：token 之间按需交换信息（"苹果"找"发布"确认自己是公司）</li>
+<li><strong>前馈网络 = 纵向深加工</strong>：每个 token 独立地消化融合来的信息，做非线性变换（可以理解为"查资料后的思考"）</li>
+</ul>
+<p>一个形象的类比：注意力是<strong>开会</strong>（信息同步），FFN 是<strong>回工位干活</strong>（各自消化）。开完会再各自干活，重复几十轮，语义逐层加深。</p>
+<h2 id="9-前馈网络-ffn两层矩阵-激活">9. 前馈网络 FFN：两层矩阵 + 激活</h2>
+<p>FFN 结构出奇地简单——就是第 2 章讲的两层全连接，中间夹激活函数：</p>
+<p>$$
+\text{FFN}(\mathbf{x}) = \sigma(\mathbf{W}_1\mathbf{x} + \mathbf{b}_1)\mathbf{W}_2 + \mathbf{b}_2
+$$</p>
+<p>特点是其<strong>中间维度被故意放大</strong>（通常 4 倍）：768 维的模型，FFN 中间层是 3072 维。直觉：先升维（展开成更丰富的特征空间），再降回来（压缩成结论）。</p>
+<p>近年研究有一个很有意思的发现：<strong>FFN 层的行为像一张巨大的"键值记忆库"</strong>——升维后的每个中间神经元像一个记忆槽，触发条件（$\mathbf{W}_1$ 的行）和存储内容（$\mathbf{W}_2$ 的列）分离，模型的大量事实知识（"法国的首都是巴黎"）被认为主要存储在 FFN 里，而不是注意力里。这也解释了模型为什么"知道"那么多事——它们被压缩在几百亿个 FFN 参数里。</p>
+<h2 id="10-残差连接深度的生命线">10. 残差连接：深度的生命线</h2>
+<p>每一层的输出都写成 <code>x + 子层(x)</code> 而不是 <code>子层(x)</code>，这个小改动是 2015 年 ResNet 带来的革命，价值在于<strong>让"非常深"成为可能</strong>：</p>
+<ul>
+<li><strong>信息高速公路</strong>：输入可以无损地"直通"到深层，每层只需学"增量修正"（学 $F(x) = 目标 - x$ 比直接学目标容易得多）</li>
+<li><strong>梯度畅通</strong>：反向传播时，残差提供了一条无衰减的回传路径，深层网络不再梯度消失</li>
+</ul>
+<p>一个不严谨但传神的比喻：残差连接让每层的工作变成"在传阅的文档上补充批注"，而不是"重写一份新文档"。100 层下来，第一手信息仍在场。</p>
+<h2 id="11-层归一化-layernorm">11. 层归一化 LayerNorm</h2>
+<p>把每个 token 的向量数值调整到均值 0、方差 1 的稳定区间（再配两个可训练的缩放/平移参数）。作用类似音频设备的"自动增益控制"：</p>
+<ul>
+<li>数值不会逐层爆炸或消失</li>
+<li>学习率可以设得更激进，训练更快更稳</li>
+</ul>
+<p>工程上你只需要知道它存在且不可省略。现代变体（RMSNorm）只是计算更省，思想相同。</p>
+<h2 id="12-动手拼一个最小-transformer">12. 动手：拼一个最小 Transformer</h2>
+<p>把前文的注意力和本节的零件组装起来（省略多头切分，保留完整骨架；真实结构就是它的放大版）：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">softmax</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
+    <span class="n">e</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">x</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">e</span> <span class="o">/</span> <span class="n">e</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">TinyTransformerLayer</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="mi">16</span><span class="p">):</span>
+        <span class="n">w</span> <span class="o">=</span> <span class="k">lambda</span> <span class="o">*</span><span class="n">s</span><span class="p">:</span> <span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span>          <span class="c1"># 初始化助手</span>
+        <span class="c1"># 注意力投影</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Wq</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Wk</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Wv</span> <span class="o">=</span> <span class="n">w</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">d</span><span class="p">),</span> <span class="n">w</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">d</span><span class="p">),</span> <span class="n">w</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">d</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Wo</span> <span class="o">=</span> <span class="n">w</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">d</span><span class="p">)</span>
+        <span class="c1"># FFN：d → 4d → d</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">W1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">W2</span> <span class="o">=</span> <span class="n">w</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">d</span><span class="p">),</span> <span class="n">w</span><span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">d</span><span class="p">,</span> <span class="n">d</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">d</span> <span class="o">=</span> <span class="n">d</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">attention</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>                            <span class="c1"># X: (n, d)</span>
+        <span class="n">Q</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">V</span> <span class="o">=</span> <span class="n">X</span> <span class="o">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">Wq</span><span class="p">,</span> <span class="n">X</span> <span class="o">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">Wk</span><span class="p">,</span> <span class="n">X</span> <span class="o">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">Wv</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">scores</span> <span class="o">=</span> <span class="n">Q</span> <span class="o">@</span> <span class="n">K</span><span class="o">.</span><span class="n">T</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">d</span><span class="p">)</span>
+        <span class="n">scores</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">triu</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">n</span><span class="p">,</span> <span class="n">n</span><span class="p">)),</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">)]</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span>   <span class="c1"># 因果掩码</span>
+        <span class="k">return</span> <span class="n">softmax</span><span class="p">(</span><span class="n">scores</span><span class="p">)</span> <span class="o">@</span> <span class="n">V</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">ffn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+        <span class="n">H</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">X</span> <span class="o">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">W1</span><span class="p">)</span>                 <span class="c1"># 升维 + ReLU</span>
+        <span class="k">return</span> <span class="n">H</span> <span class="o">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">W2</span>                             <span class="c1"># 降维</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+        <span class="c1"># 子层1：注意力 + 残差</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="n">X</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">attention</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+        <span class="c1"># 子层2：FFN + 残差</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="n">X</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">ffn</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">X</span>
+
+<span class="c1"># 3 层小模型跑通 5 个 token</span>
+<span class="n">d</span> <span class="o">=</span> <span class="mi">16</span>
+<span class="n">layers</span> <span class="o">=</span> <span class="p">[</span><span class="n">TinyTransformerLayer</span><span class="p">(</span><span class="n">d</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">)]</span>
+<span class="n">tokens</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="n">d</span><span class="p">))</span>       <span class="c1"># 假装这是嵌入后的向量（第 1 章）</span>
+
+<span class="n">h</span> <span class="o">=</span> <span class="n">tokens</span>
+<span class="k">for</span> <span class="n">layer</span> <span class="ow">in</span> <span class="n">layers</span><span class="p">:</span>
+    <span class="n">h</span> <span class="o">=</span> <span class="n">layer</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>                 <span class="c1"># 形状始终 (5, 16)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">"输出形状:"</span><span class="p">,</span> <span class="n">h</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>               <span class="c1"># (5, 16)</span>
+</code></pre></div>
+<p>加上词嵌入和输出层，这就是一个完整可训练的语言模型骨架：</p>
+<div class="highlight"><pre><span></span><code>token 编号 → 查嵌入表(第1章) → [Transformer 层 × N] → 投影回词表 → softmax → 下一个词概率
+</code></pre></div>
+<p>最后一步值得单独说：顶层输出要预测词表里<strong>每个 token</strong> 作为下一个词的概率。做法是把顶层向量乘一个 <code>(d, V)</code> 的矩阵（很多实现直接复用嵌入表转置，叫 weight tying），得到 V 个分数，softmax 归一化。所以模型每一步的"思考成果"，最终是一次对全词表的投票。</p>
+<h2 id="13-为什么-decoder-only-赢了">13. 为什么 decoder-only 赢了</h2>
+<p>原始 Transformer（2017）是 encoder-decoder 结构，为翻译设计。此后三年演化出三个流派，最终格局出乎很多人意料：</p>
+<table>
+<thead>
+<tr>
+<th>流派</th>
+<th>代表</th>
+<th>注意力可见范围</th>
+<th>擅长</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>encoder-only</td>
+<td>BERT</td>
+<td>双向（看全文）</td>
+<td>理解类任务：分类、抽取</td>
+</tr>
+<tr>
+<td>encoder-decoder</td>
+<td>T5、原始翻译模型</td>
+<td>编码器双向 + 解码器单向</td>
+<td>翻译、摘要</td>
+</tr>
+<tr>
+<td>decoder-only</td>
+<td>GPT 系、所有主流 LLM</td>
+<td>单向（只看过去）</td>
+<td>生成；规模化后通吃</td>
+</tr>
+</tbody>
+</table>
+<p>decoder-only 胜出的原因，工程逻辑大于算法逻辑：</p>
+<ol>
+<li><strong>训练任务即产品形态</strong>：预测下一个词，和聊天/生成/Agent 的使用方式天然同构——训练目标就是"持续生成"</li>
+<li><strong>规模化效率最高</strong>：因果掩码让每个位置的标签（下一个词）都免费获得监督信号，一句一万个词的语料就是一万个训练样本（第 1 章自监督的完全体）</li>
+<li><strong>工程统一</strong>：训练和推理的计算模式完全一致，K-V 缓存（第 4 章）等优化直接可用</li>
+<li><strong>涌现</strong>：规模足够大后，理解能力以 in-context learning 的形式自然涌现，"不会理解"的短板被规模补齐</li>
+</ol>
+<p>对 Agent 开发者的直接启示：你调用的模型架构上是"补全机器"——它没有"回答问题"的出厂设置，回答问题是被后训练（第 4 章）塑造出的行为模式。理解这一点，你对模型"为什么有时不听话"会有全新的认识。</p>
+<h2 id="14-参数都花在哪了">14. 参数都花在哪了</h2>
+<p>以本章拼出的结构盘点一个 <code>d=4096</code>、层数 40、词表 150K 的 7B 级模型（数量级示意）：</p>
+<table>
+<thead>
+<tr>
+<th>部件</th>
+<th>计算</th>
+<th>参数量</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>嵌入表</td>
+<td>V × d = 150K × 4096</td>
+<td>~0.6B</td>
+</tr>
+<tr>
+<td>注意力（每层 4 个投影）</td>
+<td>4 × d²</td>
+<td>~67M/层</td>
+</tr>
+<tr>
+<td>FFN（每层，中间 4d）</td>
+<td>2 × d × 4d</td>
+<td>~134M/层</td>
+</tr>
+<tr>
+<td>单层合计</td>
+<td></td>
+<td>~200M</td>
+</tr>
+<tr>
+<td>40 层 + 嵌入 + 输出层</td>
+<td></td>
+<td><strong>~7-8B</strong></td>
+</tr>
+</tbody>
+</table>
+<p>注意 FFN 是参数大户（约占 2/3），呼应"知识主要存在 FFN"的研究结论。下次看到"72B 模型需要 140GB 显存"（16bit 下 1 参数约 2 字节），你可以直接心算出来。</p>
+<h2 id="本章小结">本章小结</h2>
+<ul>
+<li>注意力的使命：让每个 token 按相关性吸收上下文，把静态向量变成语境化向量</li>
+<li>Q/K/V 三部曲：查询（我要什么）、键（我是什么）、值（我的内容）；点积算匹配，softmax 做软加权</li>
+<li>缩放因子 $\sqrt{d_k}$ 是训练稳定性的关键小动作</li>
+<li>因果掩码禁止看未来 → 生成模型逐 token 输出的根源</li>
+<li>多头 = 多个"专家评委"并行分析不同关系模式</li>
+<li>位置编码补上注意力缺失的顺序感</li>
+<li>一层 Transformer = 注意力（横向沟通）+ FFN（纵向深加工），各配残差和归一化</li>
+<li>残差连接是深度的生命线：每层学"增量批注"，信息无损耗传递</li>
+<li>FFN 占参数 2/3，是模型事实知识的主要仓库</li>
+<li>完整流水线：嵌入 → N 层 → 投影回词表 → softmax → 下一个词概率</li>
+<li>decoder-only 胜出的原因：训练任务与生成形态同构、自监督效率最高、规模涌现</li>
+<li>参数量可手算：注意力 4d²/层，FFN 8d²/层，由此可推算显存需求</li>
+</ul>
+<p><strong>下一篇</strong>：<a href="../agent/04-yu-xun-lian-rlhf-yu-cai-yang-kv-cache.html">04 · 预训练、RLHF 与采样（KV Cache）</a> —— 架构有了，参数怎么来？为什么同一个基座，经过后训练后从"补全机器"变成"贴心助手"？</p></div>
+
+      </article>
+<nav class="pager"><a class="pg-card pg-prev" href="../agent/02-qian-xiang-chuan-bo-yu-fan-xiang-chuan-bo.html"><span class="pg-label">← 上一篇</span><span class="pg-title">前向传播与反向传播</span><span class="pg-mod">Agent 核心</span></a><a class="pg-card pg-next" href="../agent/04-yu-xun-lian-rlhf-yu-cai-yang-kv-cache.html"><span class="pg-label">下一篇 →</span><span class="pg-title">预训练、RLHF 与采样（KV Cache）</span><span class="pg-mod">Agent 核心</span></a></nav>
+    </div>
+    <footer class="foot">
+      <span>深栈 DeepStack · AI Agent 工程师转型训练营配套文档</span>
+    </footer>
+  </main>
+<nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#1-问题静态向量不够用">1. 问题：静态向量不够用</a><a class="toc-link toc-h2" href="#2-直觉一场信息撮合会">2. 直觉：一场信息撮合会</a><a class="toc-link toc-h2" href="#3-数学一次软性加权平均">3. 数学：一次软性加权平均</a><a class="toc-link toc-h2" href="#4-动手手写一遍注意力">4. 动手：手写一遍注意力</a><a class="toc-link toc-h2" href="#5-因果掩码只许看过去">5. 因果掩码：只许看过去</a><a class="toc-link toc-h2" href="#6-多头注意力多视角并行">6. 多头注意力：多视角并行</a><a class="toc-link toc-h2" href="#7-位置编码注意力不知道顺序">7. 位置编码：注意力不知道顺序</a><a class="toc-link toc-h2" href="#8-一个-transformer-层的全貌">8. 一个 Transformer 层的全貌</a><a class="toc-link toc-h2" href="#9-前馈网络-ffn两层矩阵-激活">9. 前馈网络 FFN：两层矩阵 + 激活</a><a class="toc-link toc-h2" href="#10-残差连接深度的生命线">10. 残差连接：深度的生命线</a><a class="toc-link toc-h2" href="#11-层归一化-layernorm">11. 层归一化 LayerNorm</a><a class="toc-link toc-h2" href="#12-动手拼一个最小-transformer">12. 动手：拼一个最小 Transformer</a><a class="toc-link toc-h2" href="#13-为什么-decoder-only-赢了">13. 为什么 decoder-only 赢了</a><a class="toc-link toc-h2" href="#14-参数都花在哪了">14. 参数都花在哪了</a><a class="toc-link toc-h2" href="#本章小结">本章小结</a></nav>
+</div>
+<div class="sb-mask" id="sbMask"></div>
+<script src="../assets/app.js"></script>
+</body>
+</html>

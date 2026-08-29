@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>07 · 嵌入与向量库 · 深栈 DeepStack 课程文档</title>
+<meta name="description" content="本章你将学会
+
+ - 嵌入（embeddings）是什么：把「意思」翻译成一串数字，让两段话能像坐标上的两个点一样算远近；余弦相似度怎么读
+ - OllamaEmbeddings：本地跑 nomic-embed-text…">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%23d9c39a' text-anchor='middle'%3EDS%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+<div class="progress" id="progress"></div>
+
+<div class="layout">
+<aside class="sidebar" id="sidebar">
+  <div class="sb-head">
+    <a class="brand" href="../index.html">
+      <span class="brand-mark">DS</span>
+      <span class="brand-text"><b>深栈 DeepStack</b><i>AI Agent 工程师转型训练营</i></span>
+    </a>
+    <button class="sb-close" id="sbClose" aria-label="关闭目录">✕</button>
+  </div>
+  <div class="sb-search"><input type="search" id="searchInput" placeholder="搜索 123 篇文档… ( / )" autocomplete="off">
+    <div class="sb-results" id="searchResults"></div></div>
+  <nav class="sb-nav">
+    <section class="sb-group" data-mod="python">
+      <a class="sb-group-title" href="../modules/python.html" data-toggle="python">
+        <span class="sb-num">01</span>
+        <span class="sb-group-text"><b>Python 与数据实践</b><i>31 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../python/01-huan-jing-da-jian-yu-ban-ben-guan-li.html"><span class="sb-item-num">01</span><span class="sb-item-title">环境搭建与版本管理</span></a>
+        <a class="sb-item" href="../python/02-bian-liang-biao-da-shi-yu-liu-cheng-kong-zhi.html"><span class="sb-item-num">02</span><span class="sb-item-title">变量、表达式与流程控制</span></a>
+        <a class="sb-item" href="../python/03-xu-lie-zi-dian-yu-ji-he.html"><span class="sb-item-num">03</span><span class="sb-item-title">序列、字典与集合</span></a>
+        <a class="sb-item" href="../python/04-han-shu-she-ji-yu-lambda.html"><span class="sb-item-num">04</span><span class="sb-item-title">函数设计与 lambda</span></a>
+        <a class="sb-item" href="../python/05-zuo-yong-yu-gui-ze-yu-bi-bao.html"><span class="sb-item-num">05</span><span class="sb-item-title">作用域规则与闭包</span></a>
+        <a class="sb-item" href="../python/06-lei-de-ding-yi-yu-shi-li-hua.html"><span class="sb-item-num">06</span><span class="sb-item-title">类的定义与实例化</span></a>
+        <a class="sb-item" href="../python/07-lei-xing-pan-ding-yu-chou-xiang-ji-lei.html"><span class="sb-item-num">07</span><span class="sb-item-title">类型判定与抽象基类</span></a>
+        <a class="sb-item" href="../python/08-mo-shu-fang-fa-quan-jing.html"><span class="sb-item-num">08</span><span class="sb-item-title">魔术方法全景</span></a>
+        <a class="sb-item" href="../python/09-miao-shu-fu-yu-yuan-lei.html"><span class="sb-item-num">09</span><span class="sb-item-title">描述符与元类</span></a>
+        <a class="sb-item" href="../python/10-zhuang-shi-qi.html"><span class="sb-item-num">10</span><span class="sb-item-title">装饰器</span></a>
+        <a class="sb-item" href="../python/11-die-dai-xie-yi-yu-sheng-cheng-qi.html"><span class="sb-item-num">11</span><span class="sb-item-title">迭代协议与生成器</span></a>
+        <a class="sb-item" href="../python/12-with-yu-shang-xia-wen-xie-yi.html"><span class="sb-item-num">12</span><span class="sb-item-title">with 与上下文协议</span></a>
+        <a class="sb-item" href="../python/13-yi-chang-ti-xi-yu-chu-li.html"><span class="sb-item-num">13</span><span class="sb-item-title">异常体系与处理</span></a>
+        <a class="sb-item" href="../python/14-lei-xing-biao-zhu.html"><span class="sb-item-num">14</span><span class="sb-item-title">类型标注</span></a>
+        <a class="sb-item" href="../python/15-mo-kuai-yu-bao-de-zu-zhi.html"><span class="sb-item-num">15</span><span class="sb-item-title">模块与包的组织</span></a>
+        <a class="sb-item" href="../python/16-biao-zhun-ku-xun-li.html"><span class="sb-item-num">16</span><span class="sb-item-title">标准库巡礼</span></a>
+        <a class="sb-item" href="../python/17-yi-lai-guan-li-yu-di-san-fang-ku.html"><span class="sb-item-num">17</span><span class="sb-item-title">依赖管理与第三方库</span></a>
+        <a class="sb-item" href="../python/18-xian-cheng-yu-jin-cheng.html"><span class="sb-item-num">18</span><span class="sb-item-title">线程与进程</span></a>
+        <a class="sb-item" href="../python/19-shi-jian-xun-huan.html"><span class="sb-item-num">19</span><span class="sb-item-title">事件循环</span></a>
+        <a class="sb-item" href="../python/20-future-yu-xie-cheng.html"><span class="sb-item-num">20</span><span class="sb-item-title">Future 与协程</span></a>
+        <a class="sb-item" href="../python/21-asyncio-shi-zhan.html"><span class="sb-item-num">21</span><span class="sb-item-title">asyncio 实战</span></a>
+        <a class="sb-item" href="../python/22-gou-jian-yu-fa-bu.html"><span class="sb-item-num">22</span><span class="sb-item-title">构建与发布</span></a>
+        <a class="sb-item" href="../python/23-gong-cheng-hua-gong-ju-lian.html"><span class="sb-item-num">23</span><span class="sb-item-title">工程化工具链</span></a>
+        <a class="sb-item" href="../python/24-monorepo-yu-tiao-shi.html"><span class="sb-item-num">24</span><span class="sb-item-title">monorepo 与调试</span></a>
+        <a class="sb-item" href="../python/25-jupyter-jiao-hu-huan-jing.html"><span class="sb-item-num">25</span><span class="sb-item-title">Jupyter 交互环境</span></a>
+        <a class="sb-item" href="../python/26-numpy-shu-zu-yu-xiang-liang-hua.html"><span class="sb-item-num">26</span><span class="sb-item-title">NumPy 数组与向量化</span></a>
+        <a class="sb-item" href="../python/27-pandas-shu-ju-jie-gou.html"><span class="sb-item-num">27</span><span class="sb-item-title">Pandas 数据结构</span></a>
+        <a class="sb-item" href="../python/28-pandas-shu-ju-qing-xi.html"><span class="sb-item-num">28</span><span class="sb-item-title">Pandas 数据清洗</span></a>
+        <a class="sb-item" href="../python/29-matplotlib-hui-tu-ti-xi.html"><span class="sb-item-num">29</span><span class="sb-item-title">Matplotlib 绘图体系</span></a>
+        <a class="sb-item" href="../python/30-matplotlib-dong-hua-yu-jiao-hu.html"><span class="sb-item-num">30</span><span class="sb-item-title">Matplotlib 动画与交互</span></a>
+        <a class="sb-item" href="../python/31-seaborn-tong-ji-ke-shi-hua.html"><span class="sb-item-num">31</span><span class="sb-item-title">Seaborn 统计可视化</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="agent">
+      <a class="sb-group-title" href="../modules/agent.html" data-toggle="agent">
+        <span class="sb-num">02</span>
+        <span class="sb-group-text"><b>Agent 核心</b><i>15 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../agent/01-token-yu-ci-qian-ru.html"><span class="sb-item-num">01</span><span class="sb-item-title">Token 与词嵌入</span></a>
+        <a class="sb-item" href="../agent/02-qian-xiang-chuan-bo-yu-fan-xiang-chuan-bo.html"><span class="sb-item-num">02</span><span class="sb-item-title">前向传播与反向传播</span></a>
+        <a class="sb-item" href="../agent/03-zhu-yi-li-ji-zhi-yu-transformer-jia-gou.html"><span class="sb-item-num">03</span><span class="sb-item-title">注意力机制与 Transformer 架构</span></a>
+        <a class="sb-item" href="../agent/04-yu-xun-lian-rlhf-yu-cai-yang-kv-cache.html"><span class="sb-item-num">04</span><span class="sb-item-title">预训练、RLHF 与采样（KV Cache）</span></a>
+        <a class="sb-item" href="../agent/05-ben-di-mo-xing-yu-xiao-xi-jie-gou.html"><span class="sb-item-num">05</span><span class="sb-item-title">本地模型与消息结构</span></a>
+        <a class="sb-item" href="../agent/06-hui-hua-guan-li-yu-json-shu-chu.html"><span class="sb-item-num">06</span><span class="sb-item-title">会话管理与 JSON 输出</span></a>
+        <a class="sb-item" href="../agent/07-tool-calling-xie-yi-yu-feng-zhuang.html"><span class="sb-item-num">07</span><span class="sb-item-title">Tool Calling：协议与封装</span></a>
+        <a class="sb-item" href="../agent/08-react-mo-shi-yu-zhu-xun-huan.html"><span class="sb-item-num">08</span><span class="sb-item-title">ReAct 模式与主循环</span></a>
+        <a class="sb-item" href="../agent/09-shi-zhan-deep-research-agent.html"><span class="sb-item-num">09</span><span class="sb-item-title">实战：Deep Research Agent</span></a>
+        <a class="sb-item" href="../agent/10-skill-yu-jian-jin-shi-pi-lu.html"><span class="sb-item-num">10</span><span class="sb-item-title">Skill 与渐进式披露</span></a>
+        <a class="sb-item" href="../agent/11-mcp-quan-jing.html"><span class="sb-item-num">11</span><span class="sb-item-title">MCP 全景</span></a>
+        <a class="sb-item" href="../agent/12-duo-agent-yu-xuan-xing-ce-lve.html"><span class="sb-item-num">12</span><span class="sb-item-title">多 Agent 与选型策略</span></a>
+        <a class="sb-item" href="../agent/13-ti-shi-ci-gong-cheng-yu-shang-xia-wen-gong.html"><span class="sb-item-num">13</span><span class="sb-item-title">提示词工程与上下文工程</span></a>
+        <a class="sb-item" href="../agent/14-xun-huan-tu-yu-gu-jia-gong-cheng.html"><span class="sb-item-num">14</span><span class="sb-item-title">循环、图与骨架工程</span></a>
+        <a class="sb-item" href="../agent/15-ji-yi-quan-xian-yu-ping-ce.html"><span class="sb-item-num">15</span><span class="sb-item-title">记忆、权限与评测</span></a>
+      </div>
+    </section>
+    <section class="sb-group open" data-mod="langchain">
+      <a class="sb-group-title" href="../modules/langchain.html" data-toggle="langchain">
+        <span class="sb-num">03</span>
+        <span class="sb-group-text"><b>LangChain 指南</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langchain/01-ren-shi-langchain.html"><span class="sb-item-num">01</span><span class="sb-item-title">认识 LangChain</span></a>
+        <a class="sb-item" href="../langchain/02-ti-shi-ci-mu-ban-yu-xiao-xi.html"><span class="sb-item-num">02</span><span class="sb-item-title">提示词模板与消息</span></a>
+        <a class="sb-item" href="../langchain/03-lcel-yu-runnable.html"><span class="sb-item-num">03</span><span class="sb-item-title">LCEL 与 Runnable</span></a>
+        <a class="sb-item" href="../langchain/04-liu-shi-yu-bing-fa.html"><span class="sb-item-num">04</span><span class="sb-item-title">流式与并发</span></a>
+        <a class="sb-item" href="../langchain/05-shu-chu-jie-xi-qi.html"><span class="sb-item-num">05</span><span class="sb-item-title">输出解析器</span></a>
+        <a class="sb-item" href="../langchain/06-wen-dang-jia-zai-yu-qie-ge.html"><span class="sb-item-num">06</span><span class="sb-item-title">文档加载与切割</span></a>
+        <a class="sb-item current" href="../langchain/07-qian-ru-yu-xiang-liang-ku.html"><span class="sb-item-num">07</span><span class="sb-item-title">嵌入与向量库</span></a>
+        <a class="sb-item" href="../langchain/08-jian-suo-yu-rag.html"><span class="sb-item-num">08</span><span class="sb-item-title">检索与RAG</span></a>
+        <a class="sb-item" href="../langchain/09-dui-hua-ji-yi.html"><span class="sb-item-num">09</span><span class="sb-item-title">对话记忆</span></a>
+        <a class="sb-item" href="../langchain/10-gong-ju-diao-yong.html"><span class="sb-item-num">10</span><span class="sb-item-title">工具调用</span></a>
+        <a class="sb-item" href="../langchain/11-agent.html"><span class="sb-item-num">11</span><span class="sb-item-title">Agent</span></a>
+        <a class="sb-item" href="../langchain/12-hui-diao-yu-tiao-shi-quan-ke-cheng-shou-guan.html"><span class="sb-item-num">12</span><span class="sb-item-title">回调与调试（全课程收官章）</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="langgraph">
+      <a class="sb-group-title" href="../modules/langgraph.html" data-toggle="langgraph">
+        <span class="sb-num">04</span>
+        <span class="sb-group-text"><b>LangGraph 框架指南</b><i>17 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langgraph/01-di-1-zhang-cong-yi-ge-shi-kong-de-jiao.html"><span class="sb-item-num">01</span><span class="sb-item-title">第 1 章 从一个失控的脚本说起</span></a>
+        <a class="sb-item" href="../langgraph/02-di-2-zhang-zui-xiao-ke-yun-xing-tu.html"><span class="sb-item-num">02</span><span class="sb-item-title">第 2 章 最小可运行图</span></a>
+        <a class="sb-item" href="../langgraph/03-di-3-zhang-zhuang-tai-tu-de-shu-ju-xin.html"><span class="sb-item-num">03</span><span class="sb-item-title">第 3 章 状态：图的数据心脏</span></a>
+        <a class="sb-item" href="../langgraph/04-di-4-zhang-rang-liu-cheng-xue-hui-jue-ce.html"><span class="sb-item-num">04</span><span class="sb-item-title">第 4 章 让流程学会决策</span></a>
+        <a class="sb-item" href="../langgraph/05-di-5-zhang-bing-xing-shi-jie-chao-bu-zhi.html"><span class="sb-item-num">05</span><span class="sb-item-title">第 5 章 并行世界：超步执行模型</span></a>
+        <a class="sb-item" href="../langgraph/06-di-6-zhang-command-ba-kong-zhi-quan-jiao-jin.html"><span class="sb-item-num">06</span><span class="sb-item-title">第 6 章 Command：把控制权交进节点</span></a>
+        <a class="sb-item" href="../langgraph/07-di-7-zhang-dong-tai-bing-xing-send-yu-mapreduce.html"><span class="sb-item-num">07</span><span class="sb-item-title">第 7 章 动态并行：Send 与 MapReduce</span></a>
+        <a class="sb-item" href="../langgraph/08-di-8-zhang-gei-tu-zhuang-shang-shou-jiao-gong.html"><span class="sb-item-num">08</span><span class="sb-item-title">第 8 章 给图装上手脚：工具调用</span></a>
+        <a class="sb-item" href="../langgraph/09-di-9-zhang-fu-yong-yu-feng-zhuang-zi-tu.html"><span class="sb-item-num">09</span><span class="sb-item-title">第 9 章 复用与封装：子图</span></a>
+        <a class="sb-item" href="../langgraph/10-di-10-zhang-cong-dan-tu-dao-tuan-dui-duo.html"><span class="sb-item-num">10</span><span class="sb-item-title">第 10 章 从单图到团队：多 Agent 架构</span></a>
+        <a class="sb-item" href="../langgraph/11-di-11-zhang-liu-shi-shu-chu.html"><span class="sb-item-num">11</span><span class="sb-item-title">第 11 章 流式输出</span></a>
+        <a class="sb-item" href="../langgraph/12-di-12-zhang-chi-jiu-hua-checkpointer-yu-xian-cheng.html"><span class="sb-item-num">12</span><span class="sb-item-title">第 12 章 持久化：Checkpointer 与线程</span></a>
+        <a class="sb-item" href="../langgraph/13-di-13-zhang-shi-jian-lv-xing.html"><span class="sb-item-num">13</span><span class="sb-item-title">第 13 章 时间旅行</span></a>
+        <a class="sb-item" href="../langgraph/14-di-14-zhang-zhong-duan-yu-ren-zai-hui-lu.html"><span class="sb-item-num">14</span><span class="sb-item-title">第 14 章 中断与人在回路</span></a>
+        <a class="sb-item" href="../langgraph/15-di-15-zhang-ji-yi-guan-li.html"><span class="sb-item-num">15</span><span class="sb-item-title">第 15 章 记忆管理</span></a>
+        <a class="sb-item" href="../langgraph/16-di-16-zhang-rong-cuo-zhong-shi-chao-shi-yu.html"><span class="sb-item-num">16</span><span class="sb-item-title">第 16 章 容错：重试、超时与兜底</span></a>
+        <a class="sb-item" href="../langgraph/17-di-17-zhang-quan-jing-hui-gu.html"><span class="sb-item-num">17</span><span class="sb-item-title">第 17 章 全景回顾</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="backend">
+      <a class="sb-group-title" href="../modules/backend.html" data-toggle="backend">
+        <span class="sb-num">05</span>
+        <span class="sb-group-text"><b>Python 框架指南</b><i>14 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../backend/01-fastapi-ru-men-yu-asgi.html"><span class="sb-item-num">01</span><span class="sb-item-title">FastAPI 入门与 ASGI</span></a>
+        <a class="sb-item" href="../backend/02-lu-you-yu-qing-qiu-xiang-ying.html"><span class="sb-item-num">02</span><span class="sb-item-title">路由与请求响应</span></a>
+        <a class="sb-item" href="../backend/03-pydantic-shu-ju-jiao-yan-yu-pei-zhi.html"><span class="sb-item-num">03</span><span class="sb-item-title">Pydantic 数据校验与配置</span></a>
+        <a class="sb-item" href="../backend/04-sqlalchemy-yi-bu-yin-qing-yu-hui-hua.html"><span class="sb-item-num">04</span><span class="sb-item-title">SQLAlchemy 异步引擎与会话</span></a>
+        <a class="sb-item" href="../backend/05-orm-jian-mo.html"><span class="sb-item-num">05</span><span class="sb-item-title">ORM 建模</span></a>
+        <a class="sb-item" href="../backend/06-sql-biao-da-shi-yu-shu-ju-cao-zuo.html"><span class="sb-item-num">06</span><span class="sb-item-title">SQL 表达式与数据操作</span></a>
+        <a class="sb-item" href="../backend/07-alembic-shu-ju-qian-yi.html"><span class="sb-item-num">07</span><span class="sb-item-title">Alembic 数据迁移</span></a>
+        <a class="sb-item" href="../backend/08-yi-lai-zhu-ru.html"><span class="sb-item-num">08</span><span class="sb-item-title">依赖注入</span></a>
+        <a class="sb-item" href="../backend/09-tong-yi-yi-chang-chu-li.html"><span class="sb-item-num">09</span><span class="sb-item-title">统一异常处理</span></a>
+        <a class="sb-item" href="../backend/10-zhong-jian-jian.html"><span class="sb-item-num">10</span><span class="sb-item-title">中间件</span></a>
+        <a class="sb-item" href="../backend/11-ren-zheng-yu-jwt.html"><span class="sb-item-num">11</span><span class="sb-item-title">认证与 JWT</span></a>
+        <a class="sb-item" href="../backend/12-pytest-ce-shi.html"><span class="sb-item-num">12</span><span class="sb-item-title">pytest 测试</span></a>
+        <a class="sb-item" href="../backend/13-ri-zhi-loguru.html"><span class="sb-item-num">13</span><span class="sb-item-title">日志 loguru</span></a>
+        <a class="sb-item" href="../backend/14-liu-shi-xiang-ying-sse-yu-websocket.html"><span class="sb-item-num">14</span><span class="sb-item-title">流式响应 SSE 与 WebSocket</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="interview">
+      <a class="sb-group-title" href="../modules/interview.html" data-toggle="interview">
+        <span class="sb-num">06</span>
+        <span class="sb-group-text"><b>面试题库</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../interview/01-llm-yuan-li-pian.html"><span class="sb-item-num">01</span><span class="sb-item-title">LLM 原理篇</span></a>
+        <a class="sb-item" href="../interview/02-rag-yu-jian-suo-pian.html"><span class="sb-item-num">02</span><span class="sb-item-title">RAG 与检索篇</span></a>
+        <a class="sb-item" href="../interview/03-agent-he-xin-pian.html"><span class="sb-item-num">03</span><span class="sb-item-title">Agent 核心篇</span></a>
+        <a class="sb-item" href="../interview/04-langgraph-pian.html"><span class="sb-item-num">04</span><span class="sb-item-title">LangGraph 篇</span></a>
+        <a class="sb-item" href="../interview/05-langchain-pian.html"><span class="sb-item-num">05</span><span class="sb-item-title">LangChain 篇</span></a>
+        <a class="sb-item" href="../interview/06-xi-tong-she-ji-pian.html"><span class="sb-item-num">06</span><span class="sb-item-title">系统设计篇</span></a>
+        <a class="sb-item" href="../interview/07-xiang-mu-shen-wa-pian.html"><span class="sb-item-num">07</span><span class="sb-item-title">项目深挖篇</span></a>
+        <a class="sb-item" href="../interview/08-gu-zhang-pai-cha-pian.html"><span class="sb-item-num">08</span><span class="sb-item-title">故障排查篇</span></a>
+        <a class="sb-item" href="../interview/09-python-ji-chu-pian.html"><span class="sb-item-num">09</span><span class="sb-item-title">Python 基础篇</span></a>
+        <a class="sb-item" href="../interview/10-fastapi-yu-hou-duan-pian.html"><span class="sb-item-num">10</span><span class="sb-item-title">FastAPI 与后端篇</span></a>
+        <a class="sb-item" href="../interview/11-ti-shi-ci-gong-cheng-yu-an-quan-pian.html"><span class="sb-item-num">11</span><span class="sb-item-title">提示词工程与安全篇</span></a>
+        <a class="sb-item" href="../interview/12-mo-xing-xuan-xing-yu-jiang-ben-pian.html"><span class="sb-item-num">12</span><span class="sb-item-title">模型选型与降本篇</span></a>
+      </div>
+    </section>
+  </nav>
+</aside>
+  <main class="main">
+    <header class="topbar">
+      <button class="menu-btn" id="menuBtn" aria-label="目录">☰</button>
+      <div class="crumbs"><a href="../index.html">首页</a><span>/</span><a href="../modules/langchain.html">LangChain 指南</a><span>/</span><span class="cur">嵌入与向量库</span></div>
+      <div class="topbar-actions">
+        <button class="icon-btn" id="themeBtn" title="切换深浅色" aria-label="切换深浅色">◐</button>
+      </div>
+    </header>
+    <div class="content">
+      <article class="article">
+
+<header class="page-head">
+  <div class="page-kicker">LangChain 指南 · 第 07 章</div>
+  <h1 class="page-title">嵌入与向量库</h1>
+  <p class="page-desc">本章你将学会
+
+ - 嵌入（embeddings）是什么：把「意思」翻译成一串数字，让两段话能像坐标上的两个点一样算远近；余弦相似度怎么读
+ - OllamaEmbeddings：本地跑 nomic-embed-text…</p>
+  <div class="page-meta">
+    <span>约 29 分钟</span><span>11,436 字</span><span>14 个代码示例</span>
+  </div>
+</header>
+<div class="md"><blockquote>
+<p><strong>本章你将学会</strong></p>
+<ul>
+<li>嵌入（embeddings）是什么：把「意思」翻译成一串数字，让两段话能像坐标上的两个点一样算远近；余弦相似度怎么读</li>
+<li><code>OllamaEmbeddings</code>：本地跑 <code>nomic-embed-text</code>，<code>embed_query</code> 和 <code>embed_documents</code> 一个管查询一个管入库</li>
+<li>批量嵌入与并发控制：JS 版用 p-limit 掐并发，Python 版用 <code>asyncio.Semaphore</code> + <code>gather</code>，收银台只开三个窗口</li>
+<li><code>InMemoryVectorStore</code>：零依赖的内存向量库，<code>from_documents</code> / <code>add_documents</code> / <code>similarity_search</code> 一条龙</li>
+<li>向量库的通用接口：今天用内存白板，明天换 FAISS / Chroma 只改构造那几行；顺手把持久化思路聊明白</li>
+</ul>
+</blockquote>
+<p>回忆 RAG 三步曲：<strong>切割 → 嵌入 → 入库</strong>。<a href="../langchain/06-wen-dang-jia-zai-yu-qie-ge.html">06 章</a>我们干完了第一步，把拾光书屋的读书笔记切成了一摞 <code>Document</code>。但有个根本问题一直悬着：<strong>计算机不认识字，只认识数</strong>。「睡前想读点温柔治愈的」和「有没有适合夜里安静看的温暖书」——人一眼看出是一个意思，机器眼里却是两串完全不同的字符，一个字都对不上。</p>
+<p>本章就解决这件事，分两步走：</p>
+<ol>
+<li><strong>嵌入</strong>：把文本交给嵌入模型，换回一串数字（向量），且意思相近的文本向量也相近——语义从此可计算；</li>
+<li><strong>向量库</strong>：把这批向量连同原文存起来，等读者来提问时，把问题也变成向量，去库里找「坐标最近」的那几条笔记。</li>
+</ol>
+<p><strong>技术基线</strong>：Python + LangChain 1.x（<code>langchain</code> + <code>langchain-ollama</code>），本地 Ollama。注意本章要请出<strong>第二个模型</strong>：<code>qwen3:4b</code> 负责聊天（08 章才上场），<code>nomic-embed-text</code> 负责嵌入——各司其职，单独安装：</p>
+<div class="highlight"><pre><span></span><code>ollama<span class="w"> </span>pull<span class="w"> </span>nomic-embed-text
+</code></pre></div>
+<hr />
+<h2 id="1-嵌入是什么给文字办一张语义身份证">1. 嵌入是什么：给文字办一张「语义身份证」</h2>
+<p><strong>作用</strong>：嵌入（embedding），也叫向量化，就是把一段文本喂给嵌入模型，换回一个<strong>固定长度的浮点数列表</strong>。<code>nomic-embed-text</code> 每次吐 <strong>768 个数</strong>。真正的魔法在于：<strong>意思相近的文本，向量也相近</strong>。</p>
+<p>打个比方：想象书屋有一间 768 维的大书房（别硬想画面，反正比三维多了 763 个方向），每段笔记进来都会被安排到一个精确的坐标上——讲治愈童话的挤在东边一格书架，讲硬核科幻的聚在西边一格。<strong>语义成了空间位置，相似度成了距离</strong>。找「相关的笔记」，就是找「坐标挨得近的向量」。</p>
+<p><strong>最小示例</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_ollama</span><span class="w"> </span><span class="kn">import</span> <span class="n">OllamaEmbeddings</span>
+
+<span class="n">embeddings</span> <span class="o">=</span> <span class="n">OllamaEmbeddings</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="s2">"nomic-embed-text"</span><span class="p">)</span>
+
+<span class="n">vec</span> <span class="o">=</span> <span class="n">embeddings</span><span class="o">.</span><span class="n">embed_query</span><span class="p">(</span><span class="s2">"睡前想读点温柔治愈的书"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">vec</span><span class="p">))</span>   <span class="c1"># 768 —— nomic-embed-text 的固定维度</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">vec</span><span class="p">[:</span><span class="mi">4</span><span class="p">])</span>    <span class="c1"># [0.0231, -0.1178, ...] 每个数都在 -1 ~ 1 附近晃</span>
+</code></pre></div>
+<p>一串裸数字看不出名堂，重点从来不是某个数的大小，而是<strong>整串数字的方向</strong>。</p>
+<p><strong>相似度直觉</strong>：怎么量化「两个向量近不近」？最常用的是<strong>余弦相似度</strong>——不管向量多长，只看两个箭头的夹角：同向 = 1（很像），垂直 = 0（没关系），反向 = -1（意思拧着来）。手写只要几行：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">cosine_similarity</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">b</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""余弦相似度：越大越像。1 同向，0 无关，-1 反向。"""</span>
+    <span class="n">dot</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="n">y</span> <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">))</span>
+    <span class="n">norm_a</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">a</span><span class="p">))</span>
+    <span class="n">norm_b</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">y</span> <span class="o">*</span> <span class="n">y</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">b</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">dot</span> <span class="o">/</span> <span class="p">(</span><span class="n">norm_a</span> <span class="o">*</span> <span class="n">norm_b</span><span class="p">)</span>
+</code></pre></div>
+<p>拿三句话试试水（完整可跑版在 <code>demo/demo_embed.py</code>）：</p>
+<div class="highlight"><pre><span></span><code><span class="n">q1</span> <span class="o">=</span> <span class="n">embeddings</span><span class="o">.</span><span class="n">embed_query</span><span class="p">(</span><span class="s2">"睡前想读点温柔治愈的书"</span><span class="p">)</span>
+<span class="n">q2</span> <span class="o">=</span> <span class="n">embeddings</span><span class="o">.</span><span class="n">embed_query</span><span class="p">(</span><span class="s2">"有没有适合夜里安静看的温暖书"</span><span class="p">)</span>
+<span class="n">q3</span> <span class="o">=</span> <span class="n">embeddings</span><span class="o">.</span><span class="n">embed_query</span><span class="p">(</span><span class="s2">"数据库索引为什么用 B+ 树"</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">cosine_similarity</span><span class="p">(</span><span class="n">q1</span><span class="p">,</span> <span class="n">q2</span><span class="p">))</span>  <span class="c1"># 明显更高 —— 同一个意思</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">cosine_similarity</span><span class="p">(</span><span class="n">q1</span><span class="p">,</span> <span class="n">q3</span><span class="p">))</span>  <span class="c1"># 明显更低 —— 八竿子打不着</span>
+</code></pre></div>
+<p>两个同义问句的分数显著高于无关问句——这就是全部魔法的内核。后面 RAG 里说的「找相关笔记」，翻译成数学就是「找余弦相似度最高的那几个向量」。</p>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li><strong>嵌入模型不是聊天模型</strong>。<code>nomic-embed-text</code> 只会把文字变向量，你让它荐书它无能为力；<code>qwen3:4b</code> 会聊天但不产向量。两队人马，别排错岗。</li>
+<li><strong>不同模型的向量不可混用</strong>。A 模型和 B 模型就算都输出 768 维，也是两套完全不同的坐标系——库里存了 A 的向量，查询就必须继续用 A，换了模型等于换了城市，老地址全作废。</li>
+<li><strong>相似度看相对排序，别迷信绝对数值</strong>。0.82 比 0.45 像没问题，但「多少分以上算相关」没有普适及格线——不同模型、不同语料分布下数值整体都会漂移，排序才是硬信息。</li>
+</ul>
+<hr />
+<h2 id="2-ollamaembeddings入库一把尺查询一把尺">2. OllamaEmbeddings：入库一把尺，查询一把尺</h2>
+<p><strong>作用</strong>：<code>OllamaEmbeddings</code> 是 LangChain 对 Ollama 嵌入接口的封装。它实现了 <code>Embeddings</code> 这个基类定下的契约——基类就规定两组核心方法，所有厂商的嵌入类（<code>OpenAIEmbeddings</code>、<code>OllamaEmbeddings</code>……）签名都一样，所以向量库、检索器这些组件可以无感互换嵌入供应商。</p>
+<p><strong>签名</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_ollama</span><span class="w"> </span><span class="kn">import</span> <span class="n">OllamaEmbeddings</span>
+
+<span class="n">embeddings</span> <span class="o">=</span> <span class="n">OllamaEmbeddings</span><span class="p">(</span>
+    <span class="n">model</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"nomic-embed-text"</span><span class="p">,</span>        <span class="c1"># 模型名，需先 ollama pull</span>
+    <span class="n">base_url</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"http://localhost:11434"</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">embed_query</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span> <span class="o">...</span>            <span class="c1"># 查询侧：一条进一条出</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">embed_documents</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">texts</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]]:</span> <span class="o">...</span>  <span class="c1"># 入库侧：一摞进一摞出</span>
+<span class="c1"># 异步版各有一个：aembed_query / aembed_documents，签名相同</span>
+</code></pre></div>
+<p><strong>embed_query vs embed_documents 的分工</strong>：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th><code>embed_query</code></th>
+<th><code>embed_documents</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>输入</td>
+<td>一条 <code>str</code></td>
+<td>一个 <code>list[str]</code></td>
+</tr>
+<tr>
+<td>输出</td>
+<td>一条向量 <code>list[float]</code></td>
+<td>一摞向量 <code>list[list[float]]</code></td>
+</tr>
+<tr>
+<td>什么时候用</td>
+<td>读者来提问时（高频、单条）</td>
+<td>语料入库时（低频、大批量）</td>
+</tr>
+<tr>
+<td>在向量库里</td>
+<td><code>similarity_search</code> 内部偷偷调它</td>
+<td><code>add_documents</code> 内部偷偷调它</td>
+</tr>
+</tbody>
+</table>
+<p>一句话记忆：<strong><code>embed_documents</code> 是编目员</strong>，把馆藏挨个贴上索书号（一次性、大批量）；<strong><code>embed_query</code> 是查询台</strong>，读者每问一次，就把问题也编个号去对暗号（单条、随来随办）。</p>
+<p><strong>最小示例</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="n">notes</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">"小王子在 B-612 星球看了四十四次日落"</span><span class="p">,</span>
+    <span class="s2">"夜航船是张岱编的明代小百科"</span><span class="p">,</span>
+    <span class="s2">"山月记里李征变成了老虎"</span><span class="p">,</span>
+<span class="p">]</span>
+
+<span class="n">vectors</span> <span class="o">=</span> <span class="n">embeddings</span><span class="o">.</span><span class="n">embed_documents</span><span class="p">(</span><span class="n">notes</span><span class="p">)</span>              <span class="c1"># 入库用：一次一摞</span>
+<span class="n">query_vec</span> <span class="o">=</span> <span class="n">embeddings</span><span class="o">.</span><span class="n">embed_query</span><span class="p">(</span><span class="s2">"哪个故事和星球有关"</span><span class="p">)</span>  <span class="c1"># 查询用：一次一条</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">vectors</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">vectors</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>  <span class="c1"># 3 768 —— 三条文本，每条 768 维</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">query_vec</span><span class="p">))</span>                 <span class="c1"># 768</span>
+</code></pre></div>
+<p><strong>接口背后：<code>Embeddings</code> 基类</strong>。假如哪天要接一个 LangChain 没包装的嵌入服务，自己写一个类继承 <code>Embeddings</code>、实现这两个方法，任何向量库都会认它——「面向接口」的甜头：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.embeddings</span><span class="w"> </span><span class="kn">import</span> <span class="n">Embeddings</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">MyEmbeddings</span><span class="p">(</span><span class="n">Embeddings</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""自定义嵌入类：实现两个方法，即可被所有 VectorStore 接受。"""</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">embed_documents</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">texts</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]]:</span>
+        <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_vec</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">texts</span><span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">embed_query</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vec</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_vec</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
+        <span class="o">...</span>  <span class="c1"># 你的向量化逻辑（调自家接口、或在测试里用哈希打桩）</span>
+</code></pre></div>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li><strong>忘了 pull 模型</strong>：报 <code>model "nomic-embed-text" not found</code> 之类，先 <code>ollama pull nomic-embed-text</code>，再确认 Ollama 进程活着。</li>
+<li><strong><code>embed_documents</code> 吃的是纯字符串，不是 <code>Document</code></strong>。06 章切出来的 <code>Document</code> 要先取 <code>.page_content</code>：<code>embed_documents([d.page_content for d in docs])</code>。（下一节用向量库的 <code>add_documents</code> 时可以直接喂 <code>Document</code>，它帮你取。）</li>
+<li>两个方法换个用「也能跑出向量」，但<strong>接口纪律要守</strong>：查询侧和文档侧是两个不同的优化方向（缓存、批处理策略都不一样），语义上就该各管各的。</li>
+<li>事件循环里的代码用异步版 <code>aembed_query</code> / <code>aembed_documents</code>，别拿同步版把整个循环卡住——这个坑和 04 章讲过的 <code>time.sleep</code> 是一家的。</li>
+</ul>
+<hr />
+<h2 id="3-批量嵌入与并发控制p-limit-的-python-姿势">3. 批量嵌入与并发控制：p-limit 的 Python 姿势</h2>
+<p><strong>作用</strong>：语料一多，嵌入的耗时立刻露馅。JS 版课程里做过计时实验：一条条串行请求，时间全花在排队上；用 p-limit 掐住「同时在飞的请求数」后大幅提速。Python 这边的对应物是标准库 asyncio：<strong><code>Semaphore</code> 限流 + <code>gather</code> 收账</strong>。</p>
+<p>先给写过 JS 的同学一张对照表：</p>
+<table>
+<thead>
+<tr>
+<th>JS（p-limit）</th>
+<th>Python（asyncio）</th>
+<th>一句话备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>const limit = pLimit(3)</code></td>
+<td><code>sem = asyncio.Semaphore(3)</code></td>
+<td>同时最多 3 个在飞</td>
+</tr>
+<tr>
+<td><code>limit(() =&gt; fetch(url))</code></td>
+<td>任务体里 <code>async with sem:</code></td>
+<td>领号排队，满了等着</td>
+</tr>
+<tr>
+<td><code>await Promise.all(tasks)</code></td>
+<td><code>await asyncio.gather(*tasks)</code></td>
+<td>一起收账，结果保序</td>
+</tr>
+</tbody>
+</table>
+<p><strong>一个好消息</strong>：<code>OllamaEmbeddings.embed_documents(texts)</code> 在 Ollama 这一侧<strong>本来就是一次请求批量</strong>（底层走 <code>/api/embed</code>，整个列表一起发），不像 JS 版手写时一条一请求。所以几十上百条笔记，直接一次调用完事，不用自己造轮子。</p>
+<p><strong>那什么时候还需要分批？</strong> 语料上千条时：一是一次请求太大容易超时、内存吃紧；二是想把多批同时发出去，摊薄总耗时。这时「分批 + 并发上限」就派上用场——<code>Semaphore</code> 像收银台只开三个窗口，谁先到谁先办，但同时服务的顾客绝不会超过三个：</p>
+<p><strong>最小示例</strong>（分批 + Semaphore 控制同时在飞的批数；带计时和并发探针的完整版见 <code>demo/demo_embed.py</code>）：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
+
+<span class="n">BATCH_SIZE</span> <span class="o">=</span> <span class="mi">16</span>        <span class="c1"># 一批 16 条</span>
+<span class="n">MAX_CONCURRENCY</span> <span class="o">=</span> <span class="mi">3</span>    <span class="c1"># 同时最多 3 批在飞</span>
+
+
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">embed_all</span><span class="p">(</span>
+    <span class="n">embeddings</span><span class="p">:</span> <span class="n">OllamaEmbeddings</span><span class="p">,</span> <span class="n">texts</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">"""大语料分批并发嵌入：Semaphore 控并发，gather 保序收账。"""</span>
+    <span class="n">semaphore</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">Semaphore</span><span class="p">(</span><span class="n">MAX_CONCURRENCY</span><span class="p">)</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">embed_batch</span><span class="p">(</span><span class="n">batch</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]]:</span>
+        <span class="k">async</span> <span class="k">with</span> <span class="n">semaphore</span><span class="p">:</span>  <span class="c1"># 领号：窗口满了就排队</span>
+            <span class="k">return</span> <span class="k">await</span> <span class="n">embeddings</span><span class="o">.</span><span class="n">aembed_documents</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
+
+    <span class="n">batches</span> <span class="o">=</span> <span class="p">[</span><span class="n">texts</span><span class="p">[</span><span class="n">i</span> <span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="n">BATCH_SIZE</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">texts</span><span class="p">),</span> <span class="n">BATCH_SIZE</span><span class="p">)]</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="n">embed_batch</span><span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">batches</span><span class="p">))</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">vec</span> <span class="k">for</span> <span class="n">batch</span> <span class="ow">in</span> <span class="n">results</span> <span class="k">for</span> <span class="n">vec</span> <span class="ow">in</span> <span class="n">batch</span><span class="p">]</span>  <span class="c1"># 摊平，顺序不乱</span>
+</code></pre></div>
+<p><code>gather</code> 保证所有批次到齐后一起交账，且<strong>结果顺序永远和传入顺序一致</strong>——第 i 个位置永远是第 i 批，先完成的后完成的都乖乖排队。</p>
+<p>顺带一个<strong>并发探针</strong>的小技巧（JS 版课堂上也玩了）：在任务体里维护一个 <code>active</code> 计数器，进任务 <code>+1</code>、出任务 <code>-1</code>，随手记下 <code>max_active</code>，跑完看一眼是不是真的没超窗。写爬虫、调批量接口时这是最朴素的自我检查。</p>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li><strong><code>gather</code> 忘了 await</strong>。<code>asyncio.gather(...)</code> 返回的是可等待对象，不 <code>await</code> 等于没跑，只留下一句 RuntimeWarning——04 章讲过协程只创建不运行的老坑，这是它的批量版。</li>
+<li><strong><code>Semaphore</code> 在协程内部创建最稳</strong>。像上面那样写在函数体里，天然活在事件循环里，不会遇到循环绑定问题。</li>
+<li><strong>并发不是越大越好</strong>。本地 Ollama 内存和算力有限，开 16 路并发可能把它挤爆反而更慢，3~4 是个谦逊的起点，往上调要看机器脸色。</li>
+<li><strong>保序的是 <code>gather</code>，不是完成顺序</strong>。先回来的批次也排在原位；摊平结果时别「聪明地」按完成时间重排。</li>
+</ul>
+<hr />
+<h2 id="4-inmemoryvectorstore把书屋笔记装上白板书架">4. InMemoryVectorStore：把书屋笔记装上白板书架</h2>
+<p><strong>作用</strong>：向量算出来了，得有地方存、有地方查。LangChain 内置 <code>InMemoryVectorStore</code>——一个<strong>纯内存</strong>的向量库：零额外依赖、即插即用，本地调试和快速演示的首选。它是一块<strong>白板书架</strong>：写上去飞快，但打烊一擦就没了（持久化见第 5 节）。</p>
+<p>向量库大致分三类，本章先用第一种：</p>
+<ol>
+<li><strong>内存型</strong>（<code>InMemoryVectorStore</code>）：快、零依赖、不落盘；</li>
+<li><strong>本地自托管</strong>（FAISS、Chroma 落本地文件/目录）：数据在你手里；</li>
+<li><strong>云托管</strong>（各种在线向量数据库）：省运维、要花钱。</li>
+</ol>
+<p><strong>整体工作流</strong>（正好是 RAG 三步曲的后两步）：</p>
+<ol>
+<li>把笔记包成 <code>Document</code>（06 章的产出，<code>page_content</code> + <code>metadata</code>）；</li>
+<li><code>add_documents</code> 入库——它内部自动调 <code>embed_documents</code> 把文本变向量存好；</li>
+<li><code>similarity_search</code> 检索——它内部自动调 <code>embed_query</code> 把问题变向量，再逐条算相似度排序。</li>
+</ol>
+<p><strong>签名</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.vectorstores</span><span class="w"> </span><span class="kn">import</span> <span class="n">InMemoryVectorStore</span>
+
+<span class="nd">@classmethod</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">from_documents</span><span class="p">(</span>
+    <span class="n">documents</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Document</span><span class="p">],</span> <span class="n">embedding</span><span class="p">:</span> <span class="n">Embeddings</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span> <span class="o">...</span>
+<span class="c1"># 建库 + 入库一步到位，等价于 InMemoryVectorStore(embedding) 再 add_documents(...)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">add_documents</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">documents</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Document</span><span class="p">],</span> <span class="n">ids</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span> <span class="o">...</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">similarity_search</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Document</span><span class="p">]:</span> <span class="o">...</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">similarity_search_with_score</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="n">Document</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span> <span class="o">...</span>
+</code></pre></div>
+<p><strong>最小示例</strong>（拾光书屋读书笔记节选，完整流程在 <code>demo/demo_vectorstore.py</code>）：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.documents</span><span class="w"> </span><span class="kn">import</span> <span class="n">Document</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.vectorstores</span><span class="w"> </span><span class="kn">import</span> <span class="n">InMemoryVectorStore</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain_ollama</span><span class="w"> </span><span class="kn">import</span> <span class="n">OllamaEmbeddings</span>
+
+<span class="n">embeddings</span> <span class="o">=</span> <span class="n">OllamaEmbeddings</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="s2">"nomic-embed-text"</span><span class="p">)</span>
+
+<span class="n">notes</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">Document</span><span class="p">(</span>
+        <span class="n">page_content</span><span class="o">=</span><span class="s2">"小王子在 B-612 星球看了四十四次日落，狐狸说驯养就是建立联系。"</span><span class="p">,</span>
+        <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">"book"</span><span class="p">:</span> <span class="s2">"小王子"</span><span class="p">,</span> <span class="s2">"tag"</span><span class="p">:</span> <span class="s2">"治愈"</span><span class="p">},</span>
+    <span class="p">),</span>
+    <span class="n">Document</span><span class="p">(</span>
+        <span class="n">page_content</span><span class="o">=</span><span class="s2">"夜航船是张岱编的明代小百科，从天文地理聊到草木鸟兽。"</span><span class="p">,</span>
+        <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">"book"</span><span class="p">:</span> <span class="s2">"夜航船"</span><span class="p">,</span> <span class="s2">"tag"</span><span class="p">:</span> <span class="s2">"杂学"</span><span class="p">},</span>
+    <span class="p">),</span>
+    <span class="n">Document</span><span class="p">(</span>
+        <span class="n">page_content</span><span class="o">=</span><span class="s2">"三体里的黑暗森林法则：宇宙是一座黑暗森林，每个文明都是带枪的猎人。"</span><span class="p">,</span>
+        <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">"book"</span><span class="p">:</span> <span class="s2">"三体"</span><span class="p">,</span> <span class="s2">"tag"</span><span class="p">:</span> <span class="s2">"科幻"</span><span class="p">},</span>
+    <span class="p">),</span>
+<span class="p">]</span>
+
+<span class="n">store</span> <span class="o">=</span> <span class="n">InMemoryVectorStore</span><span class="o">.</span><span class="n">from_documents</span><span class="p">(</span><span class="n">notes</span><span class="p">,</span> <span class="n">embeddings</span><span class="p">)</span>  <span class="c1"># ① 入库</span>
+
+<span class="k">for</span> <span class="n">doc</span> <span class="ow">in</span> <span class="n">store</span><span class="o">.</span><span class="n">similarity_search</span><span class="p">(</span><span class="s2">"睡前想读点温柔的"</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>  <span class="c1"># ② 检索</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">doc</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">"book"</span><span class="p">],</span> <span class="n">doc</span><span class="o">.</span><span class="n">page_content</span><span class="p">)</span>
+</code></pre></div>
+<p>想知道「有多像」，用带分数的版本：</p>
+<div class="highlight"><pre><span></span><code><span class="k">for</span> <span class="n">doc</span><span class="p">,</span> <span class="n">score</span> <span class="ow">in</span> <span class="n">store</span><span class="o">.</span><span class="n">similarity_search_with_score</span><span class="p">(</span><span class="s2">"睡前想读点温柔的"</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">score</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">  </span><span class="si">{</span><span class="n">doc</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s1">'book'</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="c1"># 分数高（更靠 1）的排前面 —— InMemoryVectorStore 给的是余弦相似度，越大越像</span>
+</code></pre></div>
+<p>店里又收到新笔记？不用推倒重建，<code>add_documents</code> 随时往书架上添：</p>
+<div class="highlight"><pre><span></span><code><span class="n">store</span><span class="o">.</span><span class="n">add_documents</span><span class="p">([</span>
+    <span class="n">Document</span><span class="p">(</span>
+        <span class="n">page_content</span><span class="o">=</span><span class="s2">"山月记里李征变成了老虎，『我深怕自己本非美玉』读得人脊背发凉。"</span><span class="p">,</span>
+        <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">"book"</span><span class="p">:</span> <span class="s2">"山月记"</span><span class="p">,</span> <span class="s2">"tag"</span><span class="p">:</span> <span class="s2">"经典"</span><span class="p">},</span>
+    <span class="p">),</span>
+<span class="p">])</span>
+</code></pre></div>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li><strong>内存型 = 进程退出就清零</strong>。脚本跑完、服务重启，书架就擦干净了。演示无所谓，正经用请看第 5 节的搬家与持久化。</li>
+<li><strong><code>k</code> 默认是 4</strong>。不传就永远最多拿 4 条；语料多、想多看几条候选时记得显式传。</li>
+<li><strong>分数方向要认清</strong>：<code>InMemoryVectorStore</code> 给的是<strong>余弦相似度，越大越像</strong>；下一节换成 FAISS，默认给的是 <strong>L2 距离，越小越像</strong>——同一套代码换个库，排序方向可能整个掉头。</li>
+<li><strong><code>from_documents</code> 每调一次就是一座新库</strong>。把它写进循环等于反复建空库各塞一点；要累积请持有同一个 <code>store</code> 调 <code>add_documents</code>。</li>
+<li>检索质量的上游是<strong>切块质量</strong>：块太大语义一锅粥，太小信息量不够——翻回 06 章看 <code>chunk_size</code> 的讨论，那里埋的因这里结果。</li>
+</ul>
+<hr />
+<h2 id="5-通用接口与搬家路径今天白板明天-faiss">5. 通用接口与搬家路径：今天白板，明天 FAISS</h2>
+<p><strong>作用</strong>：LangChain 把「向量库」抽象成 <code>VectorStore</code> 这套接口：<code>from_documents</code> / <code>add_documents</code> / <code>similarity_search</code> ……方法名<strong>全家族统一</strong>。InMemoryVectorStore、FAISS、Chroma 只是不同的实现——好比连锁书店不管开在哪，借书流程都一样，店员（你的业务代码）不用重新培训。这也是为什么第 2 节的 <code>Embeddings</code> 基类值得记住：<strong>接口统一，零件可换</strong>。</p>
+<p><strong>换库只改构造那几行</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 今天：内存白板（零依赖，调试用）</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain_core.vectorstores</span><span class="w"> </span><span class="kn">import</span> <span class="n">InMemoryVectorStore</span>
+<span class="n">store</span> <span class="o">=</span> <span class="n">InMemoryVectorStore</span><span class="o">.</span><span class="n">from_documents</span><span class="p">(</span><span class="n">notes</span><span class="p">,</span> <span class="n">embeddings</span><span class="p">)</span>
+
+<span class="c1"># 明天：FAISS（pip install faiss-cpu，向量落本地文件，检索更快）</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain_community.vectorstores</span><span class="w"> </span><span class="kn">import</span> <span class="n">FAISS</span>
+<span class="n">store</span> <span class="o">=</span> <span class="n">FAISS</span><span class="o">.</span><span class="n">from_documents</span><span class="p">(</span><span class="n">notes</span><span class="p">,</span> <span class="n">embeddings</span><span class="p">)</span>   <span class="c1"># 同一个方法名</span>
+<span class="n">store</span><span class="o">.</span><span class="n">save_local</span><span class="p">(</span><span class="s2">"book_index"</span><span class="p">)</span>                    <span class="c1"># 落盘</span>
+<span class="n">store</span> <span class="o">=</span> <span class="n">FAISS</span><span class="o">.</span><span class="n">load_local</span><span class="p">(</span>
+    <span class="s2">"book_index"</span><span class="p">,</span> <span class="n">embeddings</span><span class="p">,</span> <span class="n">allow_dangerous_deserialization</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
+
+<span class="c1"># 后天：Chroma（pip install langchain-chroma，目录即数据库，自动持久化）</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain_chroma</span><span class="w"> </span><span class="kn">import</span> <span class="n">Chroma</span>
+<span class="n">store</span> <span class="o">=</span> <span class="n">Chroma</span><span class="o">.</span><span class="n">from_documents</span><span class="p">(</span><span class="n">notes</span><span class="p">,</span> <span class="n">embeddings</span><span class="p">,</span> <span class="n">persist_directory</span><span class="o">=</span><span class="s2">"./chroma_db"</span><span class="p">)</span>
+</code></pre></div>
+<p>注意 <code>from_documents(notes, embeddings)</code> 这一行在三段代码里<strong>一个字不用改</strong>——业务代码里所有的 <code>similarity_search</code> 也原样能跑，选型差异被接口吃掉了。（小提示：FAISS 的集成在 <code>langchain_community</code> 包里，官方正在把集成逐步迁往独立包，动手装之前查一眼它最新的家在哪。）</p>
+<p><strong>内存库的持久化思路</strong>：<code>InMemoryVectorStore</code> 自己也留了后门——<code>dump</code> / <code>load</code>，把算好的向量导出成 JSON 文件，下次直接读回来：</p>
+<div class="highlight"><pre><span></span><code><span class="n">store</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="s2">"book_store.json"</span><span class="p">)</span>  <span class="c1"># 存：向量 + 原文都在文件里</span>
+
+<span class="n">store</span> <span class="o">=</span> <span class="n">InMemoryVectorStore</span><span class="o">.</span><span class="n">load</span><span class="p">(</span>  <span class="c1"># 取：读回来就不用重新算嵌入</span>
+    <span class="s2">"book_store.json"</span><span class="p">,</span> <span class="n">embeddings</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>省的是「入库那一趟的嵌入计算」——几百条笔记的嵌入时间不用再花一遍；但<strong>查询时嵌入模型仍必须在场</strong>（新问题还得变向量）。语料再大、要求再高，就换 FAISS / Chroma 这类专业户：FAISS 走索引文件（<code>save_local</code> / <code>load_local</code>），Chroma 走目录还能起服务。</p>
+<p><strong>常见坑</strong>：</p>
+<ul>
+<li><strong>换嵌入模型 = 全量重建</strong>。向量是模型坐标系里的点，换模型就是换坐标系，旧向量全部作废。<code>dump</code> 出来的文件也必须和「当初那个模型」配套使用，文件名里带上模型名是个好习惯。</li>
+<li><strong>score 方向在换库时会变</strong>（重要的事说第二遍）：InMemory 是余弦相似度越大越好，FAISS 默认是 L2 距离越小越好。写「取 top k」时别把方向写死，换库先跑一次对拍。</li>
+<li>FAISS 的 <code>load_local</code> 要传 <code>allow_dangerous_deserialization=True</code>：底层用 pickle，反序列化不可信文件有安全风险——<strong>只加载自己亲手存的文件</strong>。</li>
+<li>换库报 <code>ImportError</code> 先看依赖装没装：FAISS 要 <code>pip install faiss-cpu</code>，Chroma 要 <code>pip install langchain-chroma</code>，各是各的包。</li>
+</ul>
+<hr />
+<h2 id="6-本章小结">6. 本章小结</h2>
+<p>一张表带走本章所有开关：</p>
+<table>
+<thead>
+<tr>
+<th>你的需求</th>
+<th>用什么</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>一段话变向量（查询侧）</td>
+<td><code>embeddings.embed_query(text)</code></td>
+</tr>
+<tr>
+<td>一摞话变向量（入库侧）</td>
+<td><code>embeddings.embed_documents(texts)</code></td>
+</tr>
+<tr>
+<td>本地嵌入模型</td>
+<td><code>OllamaEmbeddings(model="nomic-embed-text")</code>，先 <code>ollama pull</code></td>
+</tr>
+<tr>
+<td>手写自定义嵌入类</td>
+<td>继承 <code>langchain_core.embeddings.Embeddings</code>，实现两个方法</td>
+</tr>
+<tr>
+<td>大语料入库提速</td>
+<td>切批 + <code>asyncio.Semaphore</code> 限流 + <code>asyncio.gather</code> 保序收账</td>
+</tr>
+<tr>
+<td>建内存库并入库</td>
+<td><code>InMemoryVectorStore.from_documents(docs, embeddings)</code></td>
+</tr>
+<tr>
+<td>追加新笔记</td>
+<td><code>store.add_documents([...])</code></td>
+</tr>
+<tr>
+<td>语义搜索</td>
+<td><code>store.similarity_search(query, k=3)</code></td>
+</tr>
+<tr>
+<td>搜索 + 相似度分数</td>
+<td><code>store.similarity_search_with_score(query, k=3)</code></td>
+</tr>
+<tr>
+<td>内存库存档 / 读档</td>
+<td><code>store.dump(path)</code> / <code>InMemoryVectorStore.load(path, embeddings)</code></td>
+</tr>
+<tr>
+<td>换正经向量库</td>
+<td>FAISS / Chroma：改构造行，其余代码不动</td>
+</tr>
+</tbody>
+</table>
+<p>配套 demo（都在本章 <code>demo/</code> 目录）：</p>
+<ul>
+<li><code>demo_embed.py</code>：嵌入四连——单句看维度、批量嵌入、同义句 vs 无关句的余弦对比、串行 vs <code>Semaphore</code> 限流并发的计时与并发探针——<strong>需要本机 Ollama 已启动且拉取了 <code>nomic-embed-text</code></strong>，文件头注释写了全部前提；连不上时自动打印提示并退出。</li>
+<li><code>demo_vectorstore.py</code>：<code>InMemoryVectorStore</code> 全流程——十条书屋读书笔记入库 → 语义检索 → 带分数输出 → <code>add_documents</code> 追加新笔记再验证 → <code>dump</code> / <code>load</code> 持久化读档——同样依赖嵌入模型，离线自动降级。</li>
+</ul>
+<p>到这里，RAG 三步曲走完两步：06 章切块、07 章入库。书架上的向量已经就位，下一章把「检索器」（<code>as_retriever</code>，提前剧透一句：LangChain 1.x 里想改条数要写 <code>as_retriever(search_kwargs={"k": 2})</code>，直接传 <code>k=2</code> 可不生效）接上大模型，让拾光书屋的 AI 真正开口回答读者的问题。</p>
+<p><strong>下一章</strong>：<a href="../langchain/08-jian-suo-yu-rag.html">08 · 检索与 RAG</a></p></div>
+
+      </article>
+<nav class="pager"><a class="pg-card pg-prev" href="../langchain/06-wen-dang-jia-zai-yu-qie-ge.html"><span class="pg-label">← 上一篇</span><span class="pg-title">文档加载与切割</span><span class="pg-mod">LangChain 指南</span></a><a class="pg-card pg-next" href="../langchain/08-jian-suo-yu-rag.html"><span class="pg-label">下一篇 →</span><span class="pg-title">检索与RAG</span><span class="pg-mod">LangChain 指南</span></a></nav>
+    </div>
+    <footer class="foot">
+      <span>深栈 DeepStack · AI Agent 工程师转型训练营配套文档</span>
+    </footer>
+  </main>
+<nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#1-嵌入是什么给文字办一张语义身份证">1. 嵌入是什么：给文字办一张「语义身份证」</a><a class="toc-link toc-h2" href="#2-ollamaembeddings入库一把尺查询一把尺">2. OllamaEmbeddings：入库一把尺，查询一把尺</a><a class="toc-link toc-h2" href="#3-批量嵌入与并发控制p-limit-的-python-姿势">3. 批量嵌入与并发控制：p-limit 的 Python 姿势</a><a class="toc-link toc-h2" href="#4-inmemoryvectorstore把书屋笔记装上白板书架">4. InMemoryVectorStore：把书屋笔记装上白板书架</a><a class="toc-link toc-h2" href="#5-通用接口与搬家路径今天白板明天-faiss">5. 通用接口与搬家路径：今天白板，明天 FAISS</a><a class="toc-link toc-h2" href="#6-本章小结">6. 本章小结</a></nav>
+</div>
+<div class="sb-mask" id="sbMask"></div>
+<script src="../assets/app.js"></script>
+</body>
+</html>

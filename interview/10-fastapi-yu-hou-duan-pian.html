@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>10 · FastAPI 与后端篇 · 深栈 DeepStack 课程文档</title>
+<meta name="description" content="对应课件：Python框架指南/01-14。AI 应用开发岗的 JD 里几乎都写着&quot;会 FastAPI/会后端&quot;——面试官要确认你能独立交付服务，而不只是跑脚本。本篇 6 题对准 AI 岗最常考的后端点：异步路由（阻塞事…">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%23d9c39a' text-anchor='middle'%3EDS%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+<div class="progress" id="progress"></div>
+
+<div class="layout">
+<aside class="sidebar" id="sidebar">
+  <div class="sb-head">
+    <a class="brand" href="../index.html">
+      <span class="brand-mark">DS</span>
+      <span class="brand-text"><b>深栈 DeepStack</b><i>AI Agent 工程师转型训练营</i></span>
+    </a>
+    <button class="sb-close" id="sbClose" aria-label="关闭目录">✕</button>
+  </div>
+  <div class="sb-search"><input type="search" id="searchInput" placeholder="搜索 123 篇文档… ( / )" autocomplete="off">
+    <div class="sb-results" id="searchResults"></div></div>
+  <nav class="sb-nav">
+    <section class="sb-group" data-mod="python">
+      <a class="sb-group-title" href="../modules/python.html" data-toggle="python">
+        <span class="sb-num">01</span>
+        <span class="sb-group-text"><b>Python 与数据实践</b><i>31 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../python/01-huan-jing-da-jian-yu-ban-ben-guan-li.html"><span class="sb-item-num">01</span><span class="sb-item-title">环境搭建与版本管理</span></a>
+        <a class="sb-item" href="../python/02-bian-liang-biao-da-shi-yu-liu-cheng-kong-zhi.html"><span class="sb-item-num">02</span><span class="sb-item-title">变量、表达式与流程控制</span></a>
+        <a class="sb-item" href="../python/03-xu-lie-zi-dian-yu-ji-he.html"><span class="sb-item-num">03</span><span class="sb-item-title">序列、字典与集合</span></a>
+        <a class="sb-item" href="../python/04-han-shu-she-ji-yu-lambda.html"><span class="sb-item-num">04</span><span class="sb-item-title">函数设计与 lambda</span></a>
+        <a class="sb-item" href="../python/05-zuo-yong-yu-gui-ze-yu-bi-bao.html"><span class="sb-item-num">05</span><span class="sb-item-title">作用域规则与闭包</span></a>
+        <a class="sb-item" href="../python/06-lei-de-ding-yi-yu-shi-li-hua.html"><span class="sb-item-num">06</span><span class="sb-item-title">类的定义与实例化</span></a>
+        <a class="sb-item" href="../python/07-lei-xing-pan-ding-yu-chou-xiang-ji-lei.html"><span class="sb-item-num">07</span><span class="sb-item-title">类型判定与抽象基类</span></a>
+        <a class="sb-item" href="../python/08-mo-shu-fang-fa-quan-jing.html"><span class="sb-item-num">08</span><span class="sb-item-title">魔术方法全景</span></a>
+        <a class="sb-item" href="../python/09-miao-shu-fu-yu-yuan-lei.html"><span class="sb-item-num">09</span><span class="sb-item-title">描述符与元类</span></a>
+        <a class="sb-item" href="../python/10-zhuang-shi-qi.html"><span class="sb-item-num">10</span><span class="sb-item-title">装饰器</span></a>
+        <a class="sb-item" href="../python/11-die-dai-xie-yi-yu-sheng-cheng-qi.html"><span class="sb-item-num">11</span><span class="sb-item-title">迭代协议与生成器</span></a>
+        <a class="sb-item" href="../python/12-with-yu-shang-xia-wen-xie-yi.html"><span class="sb-item-num">12</span><span class="sb-item-title">with 与上下文协议</span></a>
+        <a class="sb-item" href="../python/13-yi-chang-ti-xi-yu-chu-li.html"><span class="sb-item-num">13</span><span class="sb-item-title">异常体系与处理</span></a>
+        <a class="sb-item" href="../python/14-lei-xing-biao-zhu.html"><span class="sb-item-num">14</span><span class="sb-item-title">类型标注</span></a>
+        <a class="sb-item" href="../python/15-mo-kuai-yu-bao-de-zu-zhi.html"><span class="sb-item-num">15</span><span class="sb-item-title">模块与包的组织</span></a>
+        <a class="sb-item" href="../python/16-biao-zhun-ku-xun-li.html"><span class="sb-item-num">16</span><span class="sb-item-title">标准库巡礼</span></a>
+        <a class="sb-item" href="../python/17-yi-lai-guan-li-yu-di-san-fang-ku.html"><span class="sb-item-num">17</span><span class="sb-item-title">依赖管理与第三方库</span></a>
+        <a class="sb-item" href="../python/18-xian-cheng-yu-jin-cheng.html"><span class="sb-item-num">18</span><span class="sb-item-title">线程与进程</span></a>
+        <a class="sb-item" href="../python/19-shi-jian-xun-huan.html"><span class="sb-item-num">19</span><span class="sb-item-title">事件循环</span></a>
+        <a class="sb-item" href="../python/20-future-yu-xie-cheng.html"><span class="sb-item-num">20</span><span class="sb-item-title">Future 与协程</span></a>
+        <a class="sb-item" href="../python/21-asyncio-shi-zhan.html"><span class="sb-item-num">21</span><span class="sb-item-title">asyncio 实战</span></a>
+        <a class="sb-item" href="../python/22-gou-jian-yu-fa-bu.html"><span class="sb-item-num">22</span><span class="sb-item-title">构建与发布</span></a>
+        <a class="sb-item" href="../python/23-gong-cheng-hua-gong-ju-lian.html"><span class="sb-item-num">23</span><span class="sb-item-title">工程化工具链</span></a>
+        <a class="sb-item" href="../python/24-monorepo-yu-tiao-shi.html"><span class="sb-item-num">24</span><span class="sb-item-title">monorepo 与调试</span></a>
+        <a class="sb-item" href="../python/25-jupyter-jiao-hu-huan-jing.html"><span class="sb-item-num">25</span><span class="sb-item-title">Jupyter 交互环境</span></a>
+        <a class="sb-item" href="../python/26-numpy-shu-zu-yu-xiang-liang-hua.html"><span class="sb-item-num">26</span><span class="sb-item-title">NumPy 数组与向量化</span></a>
+        <a class="sb-item" href="../python/27-pandas-shu-ju-jie-gou.html"><span class="sb-item-num">27</span><span class="sb-item-title">Pandas 数据结构</span></a>
+        <a class="sb-item" href="../python/28-pandas-shu-ju-qing-xi.html"><span class="sb-item-num">28</span><span class="sb-item-title">Pandas 数据清洗</span></a>
+        <a class="sb-item" href="../python/29-matplotlib-hui-tu-ti-xi.html"><span class="sb-item-num">29</span><span class="sb-item-title">Matplotlib 绘图体系</span></a>
+        <a class="sb-item" href="../python/30-matplotlib-dong-hua-yu-jiao-hu.html"><span class="sb-item-num">30</span><span class="sb-item-title">Matplotlib 动画与交互</span></a>
+        <a class="sb-item" href="../python/31-seaborn-tong-ji-ke-shi-hua.html"><span class="sb-item-num">31</span><span class="sb-item-title">Seaborn 统计可视化</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="agent">
+      <a class="sb-group-title" href="../modules/agent.html" data-toggle="agent">
+        <span class="sb-num">02</span>
+        <span class="sb-group-text"><b>Agent 核心</b><i>15 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../agent/01-token-yu-ci-qian-ru.html"><span class="sb-item-num">01</span><span class="sb-item-title">Token 与词嵌入</span></a>
+        <a class="sb-item" href="../agent/02-qian-xiang-chuan-bo-yu-fan-xiang-chuan-bo.html"><span class="sb-item-num">02</span><span class="sb-item-title">前向传播与反向传播</span></a>
+        <a class="sb-item" href="../agent/03-zhu-yi-li-ji-zhi-yu-transformer-jia-gou.html"><span class="sb-item-num">03</span><span class="sb-item-title">注意力机制与 Transformer 架构</span></a>
+        <a class="sb-item" href="../agent/04-yu-xun-lian-rlhf-yu-cai-yang-kv-cache.html"><span class="sb-item-num">04</span><span class="sb-item-title">预训练、RLHF 与采样（KV Cache）</span></a>
+        <a class="sb-item" href="../agent/05-ben-di-mo-xing-yu-xiao-xi-jie-gou.html"><span class="sb-item-num">05</span><span class="sb-item-title">本地模型与消息结构</span></a>
+        <a class="sb-item" href="../agent/06-hui-hua-guan-li-yu-json-shu-chu.html"><span class="sb-item-num">06</span><span class="sb-item-title">会话管理与 JSON 输出</span></a>
+        <a class="sb-item" href="../agent/07-tool-calling-xie-yi-yu-feng-zhuang.html"><span class="sb-item-num">07</span><span class="sb-item-title">Tool Calling：协议与封装</span></a>
+        <a class="sb-item" href="../agent/08-react-mo-shi-yu-zhu-xun-huan.html"><span class="sb-item-num">08</span><span class="sb-item-title">ReAct 模式与主循环</span></a>
+        <a class="sb-item" href="../agent/09-shi-zhan-deep-research-agent.html"><span class="sb-item-num">09</span><span class="sb-item-title">实战：Deep Research Agent</span></a>
+        <a class="sb-item" href="../agent/10-skill-yu-jian-jin-shi-pi-lu.html"><span class="sb-item-num">10</span><span class="sb-item-title">Skill 与渐进式披露</span></a>
+        <a class="sb-item" href="../agent/11-mcp-quan-jing.html"><span class="sb-item-num">11</span><span class="sb-item-title">MCP 全景</span></a>
+        <a class="sb-item" href="../agent/12-duo-agent-yu-xuan-xing-ce-lve.html"><span class="sb-item-num">12</span><span class="sb-item-title">多 Agent 与选型策略</span></a>
+        <a class="sb-item" href="../agent/13-ti-shi-ci-gong-cheng-yu-shang-xia-wen-gong.html"><span class="sb-item-num">13</span><span class="sb-item-title">提示词工程与上下文工程</span></a>
+        <a class="sb-item" href="../agent/14-xun-huan-tu-yu-gu-jia-gong-cheng.html"><span class="sb-item-num">14</span><span class="sb-item-title">循环、图与骨架工程</span></a>
+        <a class="sb-item" href="../agent/15-ji-yi-quan-xian-yu-ping-ce.html"><span class="sb-item-num">15</span><span class="sb-item-title">记忆、权限与评测</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="langchain">
+      <a class="sb-group-title" href="../modules/langchain.html" data-toggle="langchain">
+        <span class="sb-num">03</span>
+        <span class="sb-group-text"><b>LangChain 指南</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langchain/01-ren-shi-langchain.html"><span class="sb-item-num">01</span><span class="sb-item-title">认识 LangChain</span></a>
+        <a class="sb-item" href="../langchain/02-ti-shi-ci-mu-ban-yu-xiao-xi.html"><span class="sb-item-num">02</span><span class="sb-item-title">提示词模板与消息</span></a>
+        <a class="sb-item" href="../langchain/03-lcel-yu-runnable.html"><span class="sb-item-num">03</span><span class="sb-item-title">LCEL 与 Runnable</span></a>
+        <a class="sb-item" href="../langchain/04-liu-shi-yu-bing-fa.html"><span class="sb-item-num">04</span><span class="sb-item-title">流式与并发</span></a>
+        <a class="sb-item" href="../langchain/05-shu-chu-jie-xi-qi.html"><span class="sb-item-num">05</span><span class="sb-item-title">输出解析器</span></a>
+        <a class="sb-item" href="../langchain/06-wen-dang-jia-zai-yu-qie-ge.html"><span class="sb-item-num">06</span><span class="sb-item-title">文档加载与切割</span></a>
+        <a class="sb-item" href="../langchain/07-qian-ru-yu-xiang-liang-ku.html"><span class="sb-item-num">07</span><span class="sb-item-title">嵌入与向量库</span></a>
+        <a class="sb-item" href="../langchain/08-jian-suo-yu-rag.html"><span class="sb-item-num">08</span><span class="sb-item-title">检索与RAG</span></a>
+        <a class="sb-item" href="../langchain/09-dui-hua-ji-yi.html"><span class="sb-item-num">09</span><span class="sb-item-title">对话记忆</span></a>
+        <a class="sb-item" href="../langchain/10-gong-ju-diao-yong.html"><span class="sb-item-num">10</span><span class="sb-item-title">工具调用</span></a>
+        <a class="sb-item" href="../langchain/11-agent.html"><span class="sb-item-num">11</span><span class="sb-item-title">Agent</span></a>
+        <a class="sb-item" href="../langchain/12-hui-diao-yu-tiao-shi-quan-ke-cheng-shou-guan.html"><span class="sb-item-num">12</span><span class="sb-item-title">回调与调试（全课程收官章）</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="langgraph">
+      <a class="sb-group-title" href="../modules/langgraph.html" data-toggle="langgraph">
+        <span class="sb-num">04</span>
+        <span class="sb-group-text"><b>LangGraph 框架指南</b><i>17 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langgraph/01-di-1-zhang-cong-yi-ge-shi-kong-de-jiao.html"><span class="sb-item-num">01</span><span class="sb-item-title">第 1 章 从一个失控的脚本说起</span></a>
+        <a class="sb-item" href="../langgraph/02-di-2-zhang-zui-xiao-ke-yun-xing-tu.html"><span class="sb-item-num">02</span><span class="sb-item-title">第 2 章 最小可运行图</span></a>
+        <a class="sb-item" href="../langgraph/03-di-3-zhang-zhuang-tai-tu-de-shu-ju-xin.html"><span class="sb-item-num">03</span><span class="sb-item-title">第 3 章 状态：图的数据心脏</span></a>
+        <a class="sb-item" href="../langgraph/04-di-4-zhang-rang-liu-cheng-xue-hui-jue-ce.html"><span class="sb-item-num">04</span><span class="sb-item-title">第 4 章 让流程学会决策</span></a>
+        <a class="sb-item" href="../langgraph/05-di-5-zhang-bing-xing-shi-jie-chao-bu-zhi.html"><span class="sb-item-num">05</span><span class="sb-item-title">第 5 章 并行世界：超步执行模型</span></a>
+        <a class="sb-item" href="../langgraph/06-di-6-zhang-command-ba-kong-zhi-quan-jiao-jin.html"><span class="sb-item-num">06</span><span class="sb-item-title">第 6 章 Command：把控制权交进节点</span></a>
+        <a class="sb-item" href="../langgraph/07-di-7-zhang-dong-tai-bing-xing-send-yu-mapreduce.html"><span class="sb-item-num">07</span><span class="sb-item-title">第 7 章 动态并行：Send 与 MapReduce</span></a>
+        <a class="sb-item" href="../langgraph/08-di-8-zhang-gei-tu-zhuang-shang-shou-jiao-gong.html"><span class="sb-item-num">08</span><span class="sb-item-title">第 8 章 给图装上手脚：工具调用</span></a>
+        <a class="sb-item" href="../langgraph/09-di-9-zhang-fu-yong-yu-feng-zhuang-zi-tu.html"><span class="sb-item-num">09</span><span class="sb-item-title">第 9 章 复用与封装：子图</span></a>
+        <a class="sb-item" href="../langgraph/10-di-10-zhang-cong-dan-tu-dao-tuan-dui-duo.html"><span class="sb-item-num">10</span><span class="sb-item-title">第 10 章 从单图到团队：多 Agent 架构</span></a>
+        <a class="sb-item" href="../langgraph/11-di-11-zhang-liu-shi-shu-chu.html"><span class="sb-item-num">11</span><span class="sb-item-title">第 11 章 流式输出</span></a>
+        <a class="sb-item" href="../langgraph/12-di-12-zhang-chi-jiu-hua-checkpointer-yu-xian-cheng.html"><span class="sb-item-num">12</span><span class="sb-item-title">第 12 章 持久化：Checkpointer 与线程</span></a>
+        <a class="sb-item" href="../langgraph/13-di-13-zhang-shi-jian-lv-xing.html"><span class="sb-item-num">13</span><span class="sb-item-title">第 13 章 时间旅行</span></a>
+        <a class="sb-item" href="../langgraph/14-di-14-zhang-zhong-duan-yu-ren-zai-hui-lu.html"><span class="sb-item-num">14</span><span class="sb-item-title">第 14 章 中断与人在回路</span></a>
+        <a class="sb-item" href="../langgraph/15-di-15-zhang-ji-yi-guan-li.html"><span class="sb-item-num">15</span><span class="sb-item-title">第 15 章 记忆管理</span></a>
+        <a class="sb-item" href="../langgraph/16-di-16-zhang-rong-cuo-zhong-shi-chao-shi-yu.html"><span class="sb-item-num">16</span><span class="sb-item-title">第 16 章 容错：重试、超时与兜底</span></a>
+        <a class="sb-item" href="../langgraph/17-di-17-zhang-quan-jing-hui-gu.html"><span class="sb-item-num">17</span><span class="sb-item-title">第 17 章 全景回顾</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="backend">
+      <a class="sb-group-title" href="../modules/backend.html" data-toggle="backend">
+        <span class="sb-num">05</span>
+        <span class="sb-group-text"><b>Python 框架指南</b><i>14 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../backend/01-fastapi-ru-men-yu-asgi.html"><span class="sb-item-num">01</span><span class="sb-item-title">FastAPI 入门与 ASGI</span></a>
+        <a class="sb-item" href="../backend/02-lu-you-yu-qing-qiu-xiang-ying.html"><span class="sb-item-num">02</span><span class="sb-item-title">路由与请求响应</span></a>
+        <a class="sb-item" href="../backend/03-pydantic-shu-ju-jiao-yan-yu-pei-zhi.html"><span class="sb-item-num">03</span><span class="sb-item-title">Pydantic 数据校验与配置</span></a>
+        <a class="sb-item" href="../backend/04-sqlalchemy-yi-bu-yin-qing-yu-hui-hua.html"><span class="sb-item-num">04</span><span class="sb-item-title">SQLAlchemy 异步引擎与会话</span></a>
+        <a class="sb-item" href="../backend/05-orm-jian-mo.html"><span class="sb-item-num">05</span><span class="sb-item-title">ORM 建模</span></a>
+        <a class="sb-item" href="../backend/06-sql-biao-da-shi-yu-shu-ju-cao-zuo.html"><span class="sb-item-num">06</span><span class="sb-item-title">SQL 表达式与数据操作</span></a>
+        <a class="sb-item" href="../backend/07-alembic-shu-ju-qian-yi.html"><span class="sb-item-num">07</span><span class="sb-item-title">Alembic 数据迁移</span></a>
+        <a class="sb-item" href="../backend/08-yi-lai-zhu-ru.html"><span class="sb-item-num">08</span><span class="sb-item-title">依赖注入</span></a>
+        <a class="sb-item" href="../backend/09-tong-yi-yi-chang-chu-li.html"><span class="sb-item-num">09</span><span class="sb-item-title">统一异常处理</span></a>
+        <a class="sb-item" href="../backend/10-zhong-jian-jian.html"><span class="sb-item-num">10</span><span class="sb-item-title">中间件</span></a>
+        <a class="sb-item" href="../backend/11-ren-zheng-yu-jwt.html"><span class="sb-item-num">11</span><span class="sb-item-title">认证与 JWT</span></a>
+        <a class="sb-item" href="../backend/12-pytest-ce-shi.html"><span class="sb-item-num">12</span><span class="sb-item-title">pytest 测试</span></a>
+        <a class="sb-item" href="../backend/13-ri-zhi-loguru.html"><span class="sb-item-num">13</span><span class="sb-item-title">日志 loguru</span></a>
+        <a class="sb-item" href="../backend/14-liu-shi-xiang-ying-sse-yu-websocket.html"><span class="sb-item-num">14</span><span class="sb-item-title">流式响应 SSE 与 WebSocket</span></a>
+      </div>
+    </section>
+    <section class="sb-group open" data-mod="interview">
+      <a class="sb-group-title" href="../modules/interview.html" data-toggle="interview">
+        <span class="sb-num">06</span>
+        <span class="sb-group-text"><b>面试题库</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../interview/01-llm-yuan-li-pian.html"><span class="sb-item-num">01</span><span class="sb-item-title">LLM 原理篇</span></a>
+        <a class="sb-item" href="../interview/02-rag-yu-jian-suo-pian.html"><span class="sb-item-num">02</span><span class="sb-item-title">RAG 与检索篇</span></a>
+        <a class="sb-item" href="../interview/03-agent-he-xin-pian.html"><span class="sb-item-num">03</span><span class="sb-item-title">Agent 核心篇</span></a>
+        <a class="sb-item" href="../interview/04-langgraph-pian.html"><span class="sb-item-num">04</span><span class="sb-item-title">LangGraph 篇</span></a>
+        <a class="sb-item" href="../interview/05-langchain-pian.html"><span class="sb-item-num">05</span><span class="sb-item-title">LangChain 篇</span></a>
+        <a class="sb-item" href="../interview/06-xi-tong-she-ji-pian.html"><span class="sb-item-num">06</span><span class="sb-item-title">系统设计篇</span></a>
+        <a class="sb-item" href="../interview/07-xiang-mu-shen-wa-pian.html"><span class="sb-item-num">07</span><span class="sb-item-title">项目深挖篇</span></a>
+        <a class="sb-item" href="../interview/08-gu-zhang-pai-cha-pian.html"><span class="sb-item-num">08</span><span class="sb-item-title">故障排查篇</span></a>
+        <a class="sb-item" href="../interview/09-python-ji-chu-pian.html"><span class="sb-item-num">09</span><span class="sb-item-title">Python 基础篇</span></a>
+        <a class="sb-item current" href="../interview/10-fastapi-yu-hou-duan-pian.html"><span class="sb-item-num">10</span><span class="sb-item-title">FastAPI 与后端篇</span></a>
+        <a class="sb-item" href="../interview/11-ti-shi-ci-gong-cheng-yu-an-quan-pian.html"><span class="sb-item-num">11</span><span class="sb-item-title">提示词工程与安全篇</span></a>
+        <a class="sb-item" href="../interview/12-mo-xing-xuan-xing-yu-jiang-ben-pian.html"><span class="sb-item-num">12</span><span class="sb-item-title">模型选型与降本篇</span></a>
+      </div>
+    </section>
+  </nav>
+</aside>
+  <main class="main">
+    <header class="topbar">
+      <button class="menu-btn" id="menuBtn" aria-label="目录">☰</button>
+      <div class="crumbs"><a href="../index.html">首页</a><span>/</span><a href="../modules/interview.html">面试题库</a><span>/</span><span class="cur">FastAPI 与后端篇</span></div>
+      <div class="topbar-actions">
+        <button class="icon-btn" id="themeBtn" title="切换深浅色" aria-label="切换深浅色">◐</button>
+      </div>
+    </header>
+    <div class="content">
+      <article class="article">
+
+<header class="page-head">
+  <div class="page-kicker">面试题库 · 第 10 章</div>
+  <h1 class="page-title">FastAPI 与后端篇</h1>
+  <p class="page-desc">对应课件：Python框架指南/01-14。AI 应用开发岗的 JD 里几乎都写着&quot;会 FastAPI/会后端&quot;——面试官要确认你能独立交付服务，而不只是跑脚本。本篇 6 题对准 AI 岗最常考的后端点：异步路由（阻塞事…</p>
+  <div class="page-meta">
+    <span>约 29 分钟</span><span>11,491 字</span><span>1 个代码示例</span>
+  </div>
+</header>
+<div class="md"><blockquote>
+<p>对应课件：Python框架指南/01-14。AI 应用开发岗的 JD 里几乎都写着"会 FastAPI/会后端"——面试官要确认你能独立交付服务，而不只是跑脚本。本篇 6 题对准 AI 岗最常考的后端点：<strong>异步路由（阻塞事件循环是重灾区）、Pydantic 校验、依赖注入、SSE 流式（LLM 应用的标配接口）、中间件与异常、认证</strong>。</p>
+</blockquote>
+<hr />
+<h2 id="q01-fastapi-的路由什么时候必须写-async-def写错了会怎样">Q01 · FastAPI 的路由什么时候必须写 async def？写错了会怎样？</h2>
+<blockquote>
+<p>难度：★★★★ ｜ 频率：极高 ｜ 对应课件：Python框架指南/01-FastAPI入门与ASGI</p>
+</blockquote>
+<p><strong>面试官</strong>：FastAPI 里有的路由写 <code>async def</code>，有的写普通 <code>def</code>——区别是什么？我写了个 async 路由里面调 requests 库，出了什么问题？</p>
+<p><strong>第 1 层追问：两条执行路径</strong></p>
+<blockquote>
+<p>先说两种路由分别跑在哪。</p>
+</blockquote>
+<p>参考回答：FastAPI（ASGI 框架）对两种路由有<strong>完全不同的执行安排</strong>。<strong><code>async def</code> 路由</strong>：直接跑在<strong>事件循环</strong>里——你拥有极高的并发容量（单进程万级连接），代价是<strong>绝对不能阻塞</strong>（见第 2 层）。<strong>普通 <code>def</code> 路由</strong>：框架自动把它<strong>丢进线程池</strong>执行（anyio 缺省几十个线程）——阻塞了也只占一个线程，事件循环不受影响，但并发上限就是线程数。所以选型逻辑：<strong>路由体是同步代码/同步库 → 写 def（让框架兜底）；路由体全程异步（异步客户端、异步 DB）→ 写 async def（拿满并发红利）</strong>。</p>
+<p><strong>第 2 层追问：经典事故</strong></p>
+<blockquote>
+<p>async 路由里用 requests 会怎样？</p>
+</blockquote>
+<p>参考回答：<strong>整服务瘫痪级事故</strong>。requests 是同步阻塞库——async 路由跑在事件循环上，一个 <code>requests.get</code>（等几十秒 LLM 响应）期间<strong>事件循环被卡死，整个服务的所有请求（包括健康检查）全部冻结</strong>。症状极迷惑：并发量一上来全接口变慢，CPU 却很闲。<strong>纪律：async 路由里的一切调用都必须是异步的</strong>——LLM 用 AsyncOpenAI/httpx.AsyncClient、HTTP 用 httpx 异步模式、sleep 用 <code>asyncio.sleep</code>、DB 用异步驱动（SQLAlchemy async session）。这个坑和 Python 篇 Q08（阻塞冻结 loop）是同一个原理在 Web 层的重演，面试官常故意串着问。</p>
+<p><strong>第 3 层追问：诊断与修复</strong></p>
+<blockquote>
+<p>线上怀疑有路由在阻塞事件循环，怎么定位？</p>
+</blockquote>
+<p>参考回答：三个手段。<strong>一，看症状指纹</strong>：所有接口延迟一起涨（不是某个接口慢）、健康检查也超时、CPU 低——高度怀疑事件循环被卡。<strong>二，代码扫描</strong>：全局搜 async def 路由体内的同步调用（requests、time.sleep、open 同步、重 CPU 循环）。<strong>三，埋点证实</strong>：中间件里对比"事件循环延迟"（<code>asyncio</code> 的 <code>loop.time</code> 定期心跳探针）和请求处理时长——<strong>循环心跳变慢 = 有东西在阻塞</strong>。修复三板斧：换异步库；改路由为 def 让线程池兜底（同步库场景的快速止血）；CPU 密集段丢 <code>run_in_executor</code>/<code>asyncio.to_thread</code>。</p>
+<p><strong>第 4 层追问：ASGI 视角</strong></p>
+<blockquote>
+<p>为什么 FastAPI 能同时吃 HTTP 和 WebSocket？ASGI 和 WSGI 差在哪？</p>
+</blockquote>
+<p>参考回答：因为 <strong>ASGI 是异步协议</strong>。WSGI（Flask 时代）是同步模型：一个请求占一个 worker，长连接（WebSocket、SSE）会<strong>占死 worker</strong>，天生做不了流式推送。ASGI 的事件模型：<strong>等待不占执行权</strong>——一个事件循环上挂万级连接，WebSocket 消息、SSE 逐块推送都是"事件来了处理一下"。这正是 LLM 应用的刚需：<strong>流式输出意味着一条 HTTP 连接挂着几十秒慢慢吐 token</strong>——同步模型下一个用户流式对话就吃掉一个 worker，十个用户并发就瘫痪；ASGI 下这只是事件循环里的一万个挂起协程之一。Uvicorn 是跑 ASGI 应用的服务器，Starlette 是 FastAPI 底下的 ASGI 工具层——三层关系说清楚，框架选型的"为什么"就闭环了。</p>
+<h3 id="考察意图与踩坑点">考察意图与踩坑点</h3>
+<ul>
+<li>考察意图：这是 AI 应用岗后端面试的<strong>头号题</strong>——"会不会把 LLM 应用部署成真服务"一锤定音；阻塞事件循环是最常见的事故源，亲历过的人能讲到症状指纹级。</li>
+<li>踩坑点："async def 就是快"（不知道代价和纪律）；说不出 requests 事故的机制；分不清 ASGI/WSGI 与流式的关系。</li>
+<li>一句话总结：async 路由跑事件循环不能阻塞、def 路由自动进线程池；async 里用同步库 = 全服务冻结；ASGI 的"等待不占执行权"是流式和长连接的根基。</li>
+</ul>
+<hr />
+<h2 id="q02-pydantic-在-fastapi-里起什么作用和-llm-应用有什么关系">Q02 · Pydantic 在 FastAPI 里起什么作用？和 LLM 应用有什么关系？</h2>
+<blockquote>
+<p>难度：★★★ ｜ 频率：高 ｜ 对应课件：Python框架指南/03-Pydantic数据校验与配置</p>
+</blockquote>
+<p><strong>面试官</strong>：FastAPI 为什么拿 Pydantic 当核心？请求体校验的流程说下。你做 LLM 应用时 Pydantic 还能干什么？</p>
+<p><strong>第 1 层追问：校验的角色</strong></p>
+<blockquote>
+<p>先说它在 FastAPI 里的位置。</p>
+</blockquote>
+<p>参考回答：Pydantic 是 FastAPI 的<strong>数据校验与类型系统</strong>：请求体声明为 Pydantic 模型后，框架在进路由函数前自动完成——<strong>解析 JSON → 类型强制转换 → 字段校验 → 生成带类型提示的模型实例</strong>。<code>{"age": "18"}</code> 会自动转成 int 18；类型不符/缺字段/超约束直接返回 <strong>422 + 逐字段错误详情</strong>（FastAPI 的开箱体验一半来自这里）。三层收益：<strong>边界安全</strong>（脏数据进不了业务层——课程"统一异常处理"的地基）；<strong>类型即文档</strong>（OpenAPI/Swagger 自动生成）；<strong>开发体验</strong>（编辑器里 <code>order.items</code> 全程有类型提示）。</p>
+<p><strong>第 2 层追问：校验进阶</strong></p>
+<blockquote>
+<p>自定义校验规则怎么写？配置怎么管理？</p>
+</blockquote>
+<p>参考回答：<strong>字段级 <code>field_validator</code></strong>（v2 语法）：对单字段加规则——<code>@field_validator("price") def check(cls, v): if v &lt; 0: raise ValueError(...)</code>；<strong>模型级 <code>model_validator</code></strong>：跨字段约束（结束日期必须晚于开始日期）。<strong>配置管理用 <code>BaseSettings</code></strong>：字段从环境变量自动读取（<code>OPENAI_API_KEY</code> → <code>settings.openai_api_key</code>），<code>.env</code> 文件支持——<strong>把密钥从代码里赶出去</strong>的标准姿势，课程 demo 的 <code>.env.example</code> 就是这个模式：仓库里放 example 模板、真实值进 <code>.env</code> 且 gitignore。生产铁律：<strong>配置和密钥永远不硬编码</strong>。</p>
+<p><strong>第 3 层追问：LLM 应用里的第二个身份</strong></p>
+<blockquote>
+<p>在 AI 应用里 Pydantic 还有什么用？</p>
+</blockquote>
+<p>参考回答：它是<strong>模型输出的第一道闸</strong>——这个身份比 Web 校验更关键。LLM 输出是概率性文本：<code>with_structured_output(模型类)</code> 让模型按 schema 生成、结果直接转成 Pydantic 实例；<strong>类型不对、枚举越界、缺字段全部在校验层拦截</strong>，而不是带着脏数据跑进业务逻辑。再叠一层<strong>语义校验</strong>（LangChain 篇 Q03 的三层工程）：格式合法后再查业务约束（日期在未来、城市在枚举内）。同一个工具在系统的两个边界各守一关：<strong>入口拦用户的脏输入，出口拦模型的脏输出</strong>——"所有跨边界的数据都要过校验"这个原则，在 AI 应用里因为模型不可靠而加倍成立。</p>
+<p><strong>第 4 层追问：性能与版本</strong></p>
+<blockquote>
+<p>Pydantic v2 的变化知道吗？</p>
+</blockquote>
+<p>参考回答：知道核心点即可：<strong>v2 把校验核心用 Rust 重写（pydantic-core）</strong>，比 v1 快数倍到数十倍——校验高频路径（每个请求、每条 LLM 输出）收益真实。API 层面 v2 有破坏性变化：validator 从 <code>@validator</code> 改 <code>@field_validator</code>、<code>.dict()</code> 改 <code>.model_dump()</code>、<code>BaseSettings</code> 拆去了 <code>pydantic-settings</code> 包。<strong>迁移意识</strong>：接手项目先看 <code>pydantic</code> 版本再抄写法，v1/v2 代码混抄是最常见的"抄了就报错"来源。深层认知：校验开销在 LLM 应用里几乎可以忽略——<strong>一次校验微秒级，一次模型调用秒级，性能敏感点永远在模型侧不在校验侧</strong>（别在错误的层优化）。</p>
+<h3 id="考察意图与踩坑点_1">考察意图与踩坑点</h3>
+<ul>
+<li>考察意图：Pydantic 是 FastAPI 技术栈的黏合剂，也是 AI 应用校验体系的承重墙；"两个身份"（入口拦用户、出口拦模型）的答案结构直接对应课程的工程思想。</li>
+<li>踩坑点：只知道"自动校验"说不出 422 流程；不知道 BaseSettings 管密钥；想不到 Pydantic 和 LLM 结构化输出的关系（AI 岗的隐性考点）。</li>
+<li>一句话总结：Pydantic 在入口拦用户的脏输入（422+OpenAPI）、在出口拦模型的脏输出（with_structured_output）；密钥进 BaseSettings/.env；v2 Rust 内核、性能无关痛痒因为瓶颈在模型。</li>
+</ul>
+<hr />
+<h2 id="q03-依赖注入是什么fastapi-的-depends-解决什么问题">Q03 · 依赖注入是什么？FastAPI 的 Depends 解决什么问题？</h2>
+<blockquote>
+<p>难度：★★★ ｜ 频率：高 ｜ 对应课件：Python框架指南/08-依赖注入</p>
+</blockquote>
+<p><strong>面试官</strong>：FastAPI 到处是 Depends。依赖注入解决什么问题？yield 依赖又是干什么的？</p>
+<p><strong>第 1 层追问：解决的问题</strong></p>
+<blockquote>
+<p>先说不用 DI 会怎样。</p>
+</blockquote>
+<p>参考回答：不用依赖注入，路由函数里得自己 <code>new</code> 出所有协作对象：<code>db = Session(...)</code>、<code>settings = load_config()</code>、<code>llm = OpenAI(key...)</code>——四个代价：<strong>重复</strong>（每个路由一段样板）；<strong>耦合</strong>（路由写死具体实现，换实现要改 N 处）；<strong>难测</strong>（单测没法替身，一测就连真库）；<strong>资源失控</strong>（连接谁关？异常路径也关吗？）。依赖注入把"<strong>要什么</strong>"（参数声明）和"<strong>怎么造</strong>"（provider 函数）分离：路由签名里声明依赖，框架注入现成实例——<strong>依赖的构造、复用、销毁、替身全部集中管理</strong>。这是控制反转思想：对象不来"拿"依赖，而是"被喂"依赖。</p>
+<p><strong>第 2 层追问：FastAPI 的形态</strong></p>
+<blockquote>
+<p>具体怎么用？</p>
+</blockquote>
+<p>参考回答：<code>def get_db(): ...</code> + 路由参数 <code>db = Depends(get_db)</code>。三个进阶形态：<strong>一，依赖树</strong>——依赖可以依赖别的依赖（<code>get_service</code> 依赖 <code>get_db</code> 依赖 <code>get_settings</code>），框架按需构建整棵树，配置→引擎→会话→业务的装配链一条声明搞定。<strong>二，同请求缓存</strong>——同一个依赖在一次请求里被引用多次<strong>只构建一次</strong>（多处 Depends(get_db) 拿到同一会话），既省资源又保证"同请求同实例"的语义。<strong>三，鉴权即依赖</strong>——<code>current_user = Depends(verify_token)</code>：校验失败在依赖里直接抛 401，<strong>路由体内干净得看不到鉴权代码</strong>；这是 DI 在 FastAPI 里最漂亮的用法（JWT 题会展开）。</p>
+<p><strong>第 3 层追问：yield 依赖</strong></p>
+<blockquote>
+<p>def 依赖里带 yield 是什么？</p>
+</blockquote>
+<p>参考回答：<strong>资源生命周期管理</strong>——yield 前是"获取"（相当于 <strong>enter</strong>），yield 后是"清理"（相当于 <strong>exit</strong>）：</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_db</span><span class="p">():</span>
+    <span class="n">db</span> <span class="o">=</span> <span class="n">SessionLocal</span><span class="p">()</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">yield</span> <span class="n">db</span>          <span class="c1"># 请求处理期间，db 交给路由</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>        <span class="c1"># 请求结束（无论成功异常）必执行</span>
+</code></pre></div>
+<p><strong>异常路径也保证清理</strong>——这正是 with 语句的 try/finally 语义被搬进了依赖系统（Python 篇 Q07 的呼应）。课程里数据库会话就是这么写的：<strong>"一个请求一个会话"</strong> 的资源纪律，用声明式写法落地。yield 依赖 + 同请求缓存组合出标准模式：<code>db: Session = Depends(get_db)</code> 出现在所有路由签名里，没人手写 close。</p>
+<p><strong>第 4 层追问：测试视角</strong></p>
+<blockquote>
+<p>依赖注入对测试意味着什么？</p>
+</blockquote>
+<p>参考回答：<strong>可替换性是 DI 的终极回报</strong>。测试时 <code>app.dependency_overrides[get_db] = override_get_db</code>——真库换成内存 SQLite/假会话，路由代码零改动；LLM 依赖同样可整体替换成<strong>桩模型</strong>（返回预设响应的假客户端）——<strong>不用 mock 补丁去改内部，直接换供给</strong>，测试稳定且不脆。这也是依赖注入的检验标准：<strong>"想替身时要改多少业务代码"</strong>——答案应该是零。工程判断：DI 不是炫技，是<strong>为"会变的边界"（数据库、外部 API、模型服务）预留的替换缝</strong>；纯内部函数不用硬上。</p>
+<h3 id="考察意图与踩坑点_2">考察意图与踩坑点</h3>
+<ul>
+<li>考察意图：DI 是"写脚本"和"做工程"的分水岭；yield 依赖和测试替身两问，能筛出真正交付过服务的人。</li>
+<li>踩坑点：把 Depends 说成"传参数的语法糖"；不知道同请求缓存和依赖树；说不清 yield 依赖和 finally 的关系。</li>
+<li>一句话总结：DI 分离"要什么"和"怎么造"——依赖树自动装配、同请求缓存、鉴权即依赖、yield 管资源生命周期、测试靠 override 整体换桩。</li>
+</ul>
+<hr />
+<h2 id="q04-llm-流式接口为什么用-sse-而不是-websocket">Q04 · LLM 流式接口为什么用 SSE 而不是 WebSocket？</h2>
+<blockquote>
+<p>难度：★★★ ｜ 频率：极高（AI 岗专属高频）｜ 对应课件：Python框架指南/14-流式响应SSE与WebSocket</p>
+</blockquote>
+<p><strong>面试官</strong>：你的 LLM 应用前端逐字显示模型输出，后端接口怎么设计的？为什么选 SSE 不选 WebSocket？</p>
+<p><strong>第 1 层追问：SSE 是什么</strong></p>
+<blockquote>
+<p>先说方案本身。</p>
+</blockquote>
+<p>参考回答：<strong>SSE（Server-Sent Events）</strong>：基于 <strong>HTTP 的单向服务端推送协议</strong>——响应头 <code>Content-Type: text/event-stream</code>，连接保持，服务端按 <code>data: {...}\n\n</code> 的帧格式持续写事件，客户端（浏览器原生 <code>EventSource</code> 或 fetch 流式读取）逐块接收。FastAPI 里就是 <code>StreamingResponse</code> 包一个生成器/异步生成器——<strong>模型吐一个 chunk，yield 一个 SSE 帧</strong>，天然咬合（生成器 → SSE 的管线在 Python 篇 Q03 和 LangChain 篇 Q02 都出现过，这条链是流式的完整闭环）。</p>
+<p><strong>第 2 层追问：为什么不是 WebSocket</strong></p>
+<blockquote>
+<p>双向的 WebSocket 不是更强吗？</p>
+</blockquote>
+<p>参考回答：<strong>用不到的双向是纯开销</strong>。对比四个维度：<strong>协议成本</strong>——WS 要升级握手、独立帧协议、自定义重连逻辑；SSE 就是 HTTP，<strong>现有基础设施全兼容</strong>（网关、代理、鉴权头、CDN）。<strong>方向匹配</strong>——LLM 对话的流量本质是"请求一次、单向流回"：输入一个 prompt，输出一条 token 流，SSE 的单向模型精确匹配。<strong>断线恢复</strong>——SSE <strong>协议内置自动重连 + Last-Event-ID 续传</strong>，浏览器白送；WS 的重连和状态恢复全部自己写。<strong>WebSocket 的正当场景</strong>：真双向高频——协作编辑、游戏、多人聊天室、语音流。判别一句话：<strong>服务端推、客户端只发一两次请求 → SSE；客户端也要高频推 → WS</strong>。</p>
+<p><strong>第 3 层追问：断流与保活</strong></p>
+<blockquote>
+<p>LLM 生成到一半连接断了，怎么办？中间的 nginx 把连接掐了怎么办？</p>
+</blockquote>
+<p>参考回答：两个真实生产问题。<strong>断流</strong>：LLM 流<strong>不能真正续传</strong>（模型是自回归状态，Last-Event-ID 只能定位"客户端收到哪"，服务端没法从那个 token 继续生成——除非服务端缓存完整响应）。工程方案三选一：<strong>重新生成</strong>（简单，用户体验是重看一遍）、<strong>后台任务续跑</strong>（断流后任务转后台生成完存库，用户重连拉全量——把流式降级成异步任务，系统设计篇 Q05 的提交-查询模式）、<strong>服务端缓冲+按 id 补发</strong>（连接断了任务不停，重连时先补已生成部分再继续流）。<strong>保活</strong>：代理/网关默认掐空闲连接（nginx 缺省 60s），生成间隙或长思考期连接"看似空闲"——<strong>定期发 SSE 注释帧（<code>: ping\n\n</code>）做心跳</strong>，是标准防掐手段。<strong>结束标记</strong>：流结束要发显式的 <code>[DONE]</code> 或结束事件并关闭——客户端靠它区分"正常结束"和"断流"。</p>
+<p><strong>第 4 层追问：心跳之外的坑</strong></p>
+<blockquote>
+<p>上线前还要注意什么？</p>
+</blockquote>
+<p>参考回答：三个高频坑。<strong>一，缓冲层吞流式</strong>：某些中间件/WSGI 化的部署会把响应缓冲到完整才发——<strong>流式变"一次性到货"</strong>；自测方法：curl 直接看是不是逐块到。<strong>二，异步一致性</strong>：StreamingResponse 的生成器必须全异步——里面出现同步阻塞（Python 篇 Q08 的坑），流式变成"卡住-爆发"的节奏。<strong>三，客户端消费姿势</strong>：fetch 读 SSE 不能用普通 <code>await res.text()</code>（会等全量）——要用 <code>res.body</code> 的流式 reader 逐块解帧；浏览器 EventSource 自动处理但<strong>只支持 GET</strong>（POST 请求要 fetch 流）。这层答出来 = <strong>真上过线的流式接口</strong>。</p>
+<h3 id="考察意图与踩坑点_3">考察意图与踩坑点</h3>
+<ul>
+<li>考察意图：SSE 是 AI 应用的<strong>标配接口</strong>，这题出现频率随 LLM 应用普及暴涨；"为什么不是 WS"考技术选型，断流/保活考生产经验。</li>
+<li>踩坑点：答"WebSocket 更高级所以用 WS"（方向不匹配）；不知道断流不能续传的真实原因（自回归状态）；没听说过心跳防掐和缓冲吞流。</li>
+<li>一句话总结：SSE = HTTP 单向流，方向精确匹配 LLM 输出、自动重连白送；模型自回归决定断流只能重生成或转后台；心跳防代理、异步防卡顿。</li>
+</ul>
+<hr />
+<h2 id="q05-中间件的执行顺序统一异常处理怎么设计">Q05 · 中间件的执行顺序？统一异常处理怎么设计？</h2>
+<blockquote>
+<p>难度：★★★ ｜ 频率：中 ｜ 对应课件：Python框架指南/09-统一异常处理、10-中间件</p>
+</blockquote>
+<p><strong>面试官</strong>：FastAPI 的中间件写洋葱模型，注册顺序和执行顺序什么关系？全服务的错误响应格式怎么统一？</p>
+<p><strong>第 1 层追问：洋葱模型</strong></p>
+<blockquote>
+<p>中间件怎么运转？</p>
+</blockquote>
+<p>参考回答：<strong>洋葱模型</strong>：请求进来逐层穿透中间件到路由，响应再原路穿回来——每层中间件包住"里面的所有东西"，<strong>处理请求在剥进去的路上、处理响应在剥出来的路上</strong>。<strong>注册顺序和执行顺序是反的</strong>：先注册的中间件在<strong>最外层</strong>（先看到请求、最后看到响应）。用 <code>@app.middleware("http")</code> 或 <code>app.add_middleware(Custom)</code> 注册，内部形态就是"调 <code>call_next</code> 拿响应、前后做自己的事"。实测心法：<strong>请求日志在最外层（能看到全链路）、计时器包住业务（测的才是处理时长）</strong>——顺序写反，日志就记不到真实耗时，这是中间件顺序最有实战意义的坑。</p>
+<p><strong>第 2 层追问：统一异常处理</strong></p>
+<blockquote>
+<p>各路由抛不同的异常，怎么让客户端拿到一致的错误格式？</p>
+</blockquote>
+<p>参考回答：<strong><code>@app.exception_handler(异常类)</code></strong>——按异常类型注册全局处理器：路由/依赖里抛的异常被框架拦截，转成统一结构的 JSONResponse（code、message、request_id、可读的 detail）。设计标准三件：<strong>一，业务异常体系</strong>——自定义异常类层级（<code>AppError</code> 基类 → <code>NotFoundError</code>、<code>QuotaExceededError</code>...），路由里 <code>raise</code> 语义化异常而不是返回裸 dict；<strong>二，兜底处理器</strong>——挂一个 <code>Exception</code> 兜底：未预期异常统一 500 + 服务器日志记全栈（<strong>对外不泄栈，对内不丢栈</strong>）；<strong>三，错误码设计</strong>——错误码是<strong>给调用方程序消费的契约</strong>，要稳定、分层（4xx 参数/权限/配额，5xx 系统），不能靠 message 文案传达语义。这层是"接口质量"的直接展示面，也是课程第九章的主题。</p>
+<p><strong>第 3 层追问：横切关注点组合</strong></p>
+<blockquote>
+<p>日志、trace id、耗时、鉴权怎么摆进中间件体系？</p>
+</blockquote>
+<p>参考回答：<strong>按关注点选层</strong>，不是全塞中间件。<strong>最外层</strong>：trace-id 中间件——生成 request_id 注入 contextvar，日志全链路带同一个 id（<strong>排障的钥匙</strong>：一个请求的所有日志一 grep 全出）；请求日志 + 耗时统计也在外层。<strong>中间层</strong>：CORS、限流（可插拔）。<strong>靠内</strong>：<strong>鉴权用依赖注入而不是中间件</strong>（Q03 的结论——依赖可以精确到路由级"哪些接口要鉴权"，中间件是全局一刀切，粒度不够）。<strong>责任清单</strong>：trace-id/日志/耗时=中间件；鉴权/参数校验=依赖；错误格式=exception_handler；<strong>三层各司其职，路由函数里只剩业务</strong>。这套组合是"接口工程完整度"的样板，答出来就是做过正经服务的人。</p>
+<p><strong>第 4 层追问：性能与陷阱</strong></p>
+<blockquote>
+<p>中间件有什么性能或行为上的坑？</p>
+</blockquote>
+<p>参考回答：两个值得知道的。<strong>一，BaseHTTPMiddleware 的开销</strong>：这类基类实现（@app.middleware 装饰器底层）会为每个请求包一层 anyio 任务和流的包装，<strong>高 QPS 下有可测量的开销</strong>——极致性能场景用纯 ASGI 中间件（<code>raw = app; async def __call__(scope, receive, send)</code> 直接管消息）；一般业务量级不用担心，<strong>先测量再优化</strong>。<strong>二，response 不可变的坑</strong>：中间件里 <code>call_next</code> 返回的 StreamingResponse <strong>不能直接改 body</strong>（流已被消费/未生成完）——想改响应头可以（<code>response.headers[...]</code>），想改 body 必须在路由层做或重新组装流。<strong>"中间件里改不了流式响应的 body"</strong>这个坑踩过一次就终身免疫。</p>
+<h3 id="考察意图与踩坑点_4">考察意图与踩坑点</h3>
+<ul>
+<li>考察意图：中间件+异常处理考"服务工程完整度"——AI 应用岗常要一个人扛起整套接口，这题是交付能力的证明。</li>
+<li>踩坑点：注册/执行顺序说反；鉴权塞中间件不放依赖；不知道 exception_handler 兜底；改流式 body 的坑没概念。</li>
+<li>一句话总结：洋葱反序（先注册在最外）、异常靠 exception_handler 统一格式、trace-id 进 contextvar、鉴权归依赖；流式响应的 body 在中间件里改不了。</li>
+</ul>
+<hr />
+<h2 id="q06-jwt-认证的原理过期了怎么办">Q06 · JWT 认证的原理？过期了怎么办？</h2>
+<blockquote>
+<p>难度：★★★ ｜ 频率：中 ｜ 对应课件：Python框架指南/11-认证与JWT</p>
+</blockquote>
+<p><strong>面试官</strong>：你们的 API 用 JWT 认证。它的原理是什么？"无状态"是什么意思？token 过期了用户还在填表单，怎么处理？</p>
+<p><strong>第 1 层追问：原理</strong></p>
+<blockquote>
+<p>JWT 的结构和工作机制。</p>
+</blockquote>
+<p>参考回答：JWT 是<strong>自验证的令牌</strong>：三段式 <code>header.payload.signature</code>——header 声明算法，payload 装声明（user_id、角色、过期时间），<strong>signature = 服务端用密钥对前两段签名</strong>。验证时服务端<strong>用同一密钥重算签名比对</strong>——篡改 payload（改 user_id 提权）会让签名对不上，立即失效。<strong>"无状态"的含义</strong>：验证只需密钥，<strong>不需要查库/查会话表</strong>——服务可以水平扩容、无共享存储，任何实例都能独立验签。<strong>不可变双刃剑</strong>：payload 签发后不能改（改了签名失效）——<strong>JWT 里不能放可变数据</strong>，且<strong>签发后无法主动作废</strong>（没有"注销"按钮，只能等过期）。</p>
+<p><strong>第 2 层追问：FastAPI 里的接法</strong></p>
+<blockquote>
+<p>代码层面怎么组织？</p>
+</blockquote>
+<p>参考回答：<strong>鉴权做成依赖</strong>（Q03 的最佳拍档）：<code>OAuth2PasswordBearer(tokenUrl="/login")</code> 声明取 token 的位置，依赖函数里 decode 验签 → 查出 user → 失败抛 401。路由签名一行 <code>user = Depends(get_current_user)</code> 完成<strong>声明式鉴权</strong>——哪些接口要、哪些不要，粒度精确到路由；依赖链还能再叠（<code>admin = Depends(require_admin)</code> 里复用 get_current_user）——<strong>权限模型变成可组合的依赖树</strong>。安全纪律两条：密钥进环境变量（Pydantic Settings）；<strong>payload 只放 user_id/角色这类身份标识，不放敏感信息</strong>（JWT 的 payload 只是 Base64，<strong>能被任何人解开看</strong>——签名防篡改不防偷看）。</p>
+<p><strong>第 3 层追问：过期与刷新</strong></p>
+<blockquote>
+<p>access token 过期了怎么办？一直不发新 token 会怎样？</p>
+</blockquote>
+<p>参考回答：<strong>双 token 机制</strong>。<strong>access token</strong>：短命（15 分钟-1 小时），每个请求带——<strong>泄露了危害窗口小</strong>。<strong>refresh token</strong>：长命（数天-数周），只在<strong>刷新接口</strong>用一次换新 access token——平时不暴露在业务请求里。流程：access 过期 → 前端静默拿 refresh 换新 → 重放原请求——<strong>用户填了一半的表单无感续期</strong>（用户视角"没掉线"）。refresh 也过期才真正重新登录。<strong>为什么这么设计</strong>：access 的泄露面（每个请求头）决定它必须短命；refresh 的暴露面小（专用接口）所以可以长——<strong>暴露面和寿命成反比</strong>是 token 设计的核心权衡。配套服务端细节：refresh 可以建"撤销清单"（存 Redis）——补上 JWT"无法主动作废"的短板；轮换（每次刷新发新 refresh 旧的作废）防重放。</p>
+<p><strong>第 4 层追问：LLM 应用的特有考题</strong></p>
+<blockquote>
+<p>AI 应用的认证有什么特殊的地方？</p>
+</blockquote>
+<p>参考回答：三个 AI 场景特有的点。<strong>一，凭证分层</strong>：用户 JWT 鉴"人"，<strong>调 LLM 服务的 API key 是另一层凭证</strong>（服务身份）——两层不能混：用户 token 永远不该到模型服务，模型 key 永远不下发前端；<strong>凭证最小化 + 各守各层</strong>。<strong>二，配额绑定认证</strong>：AI 调用是真金白银，<strong>认证完紧接配额检查</strong>（依赖链：<code>Depends(get_current_user)</code> → <code>Depends(check_quota)</code>）——超限的 429/402 响应在进模型前拦下，不是烧完 token 才发现欠费。<strong>三，Agent 工具的凭证</strong>：Agent 替用户执行工具时，工具的权限应<strong>继承用户权限</strong>（用用户的凭证跑用户能干的事）而不是给 Agent 一个超级凭证——这是 agent核心/15"权限控制"的落地：<strong>Agent 永远不该比用户更有权</strong>。</p>
+<h3 id="考察意图与踩坑点_5">考察意图与踩坑点</h3>
+<ul>
+<li>考察意图：认证是后端面试的常规必考；AI 岗加考"凭证分层和配额前置"——答出这两点就区分于普通后端候选人。</li>
+<li>踩坑点：以为 payload 加密（只是编码）；不知道 JWT 无法主动作废；access/refresh 的权衡说不出"暴露面"逻辑；用户凭证和模型 key 混用。</li>
+<li>一句话总结：签名防篡改、payload 能看不能藏、无状态=验签不查库但不能撤销；短 access+长 refresh 换无感续期；用户 JWT 和模型 key 分层、配额检查在模型调用之前。</li>
+</ul>
+<hr />
+<h2 id="本篇速记卡">本篇速记卡</h2>
+<table>
+<thead>
+<tr>
+<th>题</th>
+<th>一句话核心</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Q01 async 路由</td>
+<td>async 跑事件循环禁止阻塞、def 自动进线程池；同步库混进 async = 全服务冻结</td>
+</tr>
+<tr>
+<td>Q02 Pydantic</td>
+<td>入口拦用户 422、出口拦模型脏输出；BaseSettings 管密钥；瓶颈在模型不在校验</td>
+</tr>
+<tr>
+<td>Q03 依赖注入</td>
+<td>要什么和怎么造分离；依赖树+同请求缓存+鉴权即依赖；yield 管 finally；测试靠 override</td>
+</tr>
+<tr>
+<td>Q04 SSE</td>
+<td>HTTP 单向流精确匹配 LLM 输出；断流只能重生成或转后台；心跳防代理掐连接</td>
+</tr>
+<tr>
+<td>Q05 中间件</td>
+<td>洋葱反序、异常统一靠 handler、trace-id 进 contextvar；流式 body 中间层改不了</td>
+</tr>
+<tr>
+<td>Q06 JWT</td>
+<td>签名防篡改不防看、无状态不能撤销；短 access 长 refresh；用户凭证与模型 key 分层</td>
+</tr>
+</tbody>
+</table></div>
+
+      </article>
+<nav class="pager"><a class="pg-card pg-prev" href="../interview/09-python-ji-chu-pian.html"><span class="pg-label">← 上一篇</span><span class="pg-title">Python 基础篇</span><span class="pg-mod">面试题库</span></a><a class="pg-card pg-next" href="../interview/11-ti-shi-ci-gong-cheng-yu-an-quan-pian.html"><span class="pg-label">下一篇 →</span><span class="pg-title">提示词工程与安全篇</span><span class="pg-mod">面试题库</span></a></nav>
+    </div>
+    <footer class="foot">
+      <span>深栈 DeepStack · AI Agent 工程师转型训练营配套文档</span>
+    </footer>
+  </main>
+<nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#q01-fastapi-的路由什么时候必须写-async-def写错了会怎样">Q01 · FastAPI 的路由什么时候必须写 async def？写错了会怎样？</a><a class="toc-link toc-h3" href="#考察意图与踩坑点">考察意图与踩坑点</a><a class="toc-link toc-h2" href="#q02-pydantic-在-fastapi-里起什么作用和-llm-应用有什么关系">Q02 · Pydantic 在 FastAPI 里起什么作用？和 LLM 应用有什么关系？</a><a class="toc-link toc-h3" href="#考察意图与踩坑点_1">考察意图与踩坑点</a><a class="toc-link toc-h2" href="#q03-依赖注入是什么fastapi-的-depends-解决什么问题">Q03 · 依赖注入是什么？FastAPI 的 Depends 解决什么问题？</a><a class="toc-link toc-h3" href="#考察意图与踩坑点_2">考察意图与踩坑点</a><a class="toc-link toc-h2" href="#q04-llm-流式接口为什么用-sse-而不是-websocket">Q04 · LLM 流式接口为什么用 SSE 而不是 WebSocket？</a><a class="toc-link toc-h3" href="#考察意图与踩坑点_3">考察意图与踩坑点</a><a class="toc-link toc-h2" href="#q05-中间件的执行顺序统一异常处理怎么设计">Q05 · 中间件的执行顺序？统一异常处理怎么设计？</a><a class="toc-link toc-h3" href="#考察意图与踩坑点_4">考察意图与踩坑点</a><a class="toc-link toc-h2" href="#q06-jwt-认证的原理过期了怎么办">Q06 · JWT 认证的原理？过期了怎么办？</a><a class="toc-link toc-h3" href="#考察意图与踩坑点_5">考察意图与踩坑点</a><a class="toc-link toc-h2" href="#本篇速记卡">本篇速记卡</a></nav>
+</div>
+<div class="sb-mask" id="sbMask"></div>
+<script src="../assets/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>14 · 流式响应 SSE 与 WebSocket · 深栈 DeepStack 课程文档</title>
+<meta name="description" content="本章你将学会
+
+ - 为什么需要流式：大文件下载、慢生成任务、AI 逐字输出——一次性响应撑不住的三种场面
+ - StreamingResponse 全套用法：同步/异步生成器、mediatype、Content-Dis…">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%23d9c39a' text-anchor='middle'%3EDS%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+<div class="progress" id="progress"></div>
+
+<div class="layout">
+<aside class="sidebar" id="sidebar">
+  <div class="sb-head">
+    <a class="brand" href="../index.html">
+      <span class="brand-mark">DS</span>
+      <span class="brand-text"><b>深栈 DeepStack</b><i>AI Agent 工程师转型训练营</i></span>
+    </a>
+    <button class="sb-close" id="sbClose" aria-label="关闭目录">✕</button>
+  </div>
+  <div class="sb-search"><input type="search" id="searchInput" placeholder="搜索 123 篇文档… ( / )" autocomplete="off">
+    <div class="sb-results" id="searchResults"></div></div>
+  <nav class="sb-nav">
+    <section class="sb-group" data-mod="python">
+      <a class="sb-group-title" href="../modules/python.html" data-toggle="python">
+        <span class="sb-num">01</span>
+        <span class="sb-group-text"><b>Python 与数据实践</b><i>31 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../python/01-huan-jing-da-jian-yu-ban-ben-guan-li.html"><span class="sb-item-num">01</span><span class="sb-item-title">环境搭建与版本管理</span></a>
+        <a class="sb-item" href="../python/02-bian-liang-biao-da-shi-yu-liu-cheng-kong-zhi.html"><span class="sb-item-num">02</span><span class="sb-item-title">变量、表达式与流程控制</span></a>
+        <a class="sb-item" href="../python/03-xu-lie-zi-dian-yu-ji-he.html"><span class="sb-item-num">03</span><span class="sb-item-title">序列、字典与集合</span></a>
+        <a class="sb-item" href="../python/04-han-shu-she-ji-yu-lambda.html"><span class="sb-item-num">04</span><span class="sb-item-title">函数设计与 lambda</span></a>
+        <a class="sb-item" href="../python/05-zuo-yong-yu-gui-ze-yu-bi-bao.html"><span class="sb-item-num">05</span><span class="sb-item-title">作用域规则与闭包</span></a>
+        <a class="sb-item" href="../python/06-lei-de-ding-yi-yu-shi-li-hua.html"><span class="sb-item-num">06</span><span class="sb-item-title">类的定义与实例化</span></a>
+        <a class="sb-item" href="../python/07-lei-xing-pan-ding-yu-chou-xiang-ji-lei.html"><span class="sb-item-num">07</span><span class="sb-item-title">类型判定与抽象基类</span></a>
+        <a class="sb-item" href="../python/08-mo-shu-fang-fa-quan-jing.html"><span class="sb-item-num">08</span><span class="sb-item-title">魔术方法全景</span></a>
+        <a class="sb-item" href="../python/09-miao-shu-fu-yu-yuan-lei.html"><span class="sb-item-num">09</span><span class="sb-item-title">描述符与元类</span></a>
+        <a class="sb-item" href="../python/10-zhuang-shi-qi.html"><span class="sb-item-num">10</span><span class="sb-item-title">装饰器</span></a>
+        <a class="sb-item" href="../python/11-die-dai-xie-yi-yu-sheng-cheng-qi.html"><span class="sb-item-num">11</span><span class="sb-item-title">迭代协议与生成器</span></a>
+        <a class="sb-item" href="../python/12-with-yu-shang-xia-wen-xie-yi.html"><span class="sb-item-num">12</span><span class="sb-item-title">with 与上下文协议</span></a>
+        <a class="sb-item" href="../python/13-yi-chang-ti-xi-yu-chu-li.html"><span class="sb-item-num">13</span><span class="sb-item-title">异常体系与处理</span></a>
+        <a class="sb-item" href="../python/14-lei-xing-biao-zhu.html"><span class="sb-item-num">14</span><span class="sb-item-title">类型标注</span></a>
+        <a class="sb-item" href="../python/15-mo-kuai-yu-bao-de-zu-zhi.html"><span class="sb-item-num">15</span><span class="sb-item-title">模块与包的组织</span></a>
+        <a class="sb-item" href="../python/16-biao-zhun-ku-xun-li.html"><span class="sb-item-num">16</span><span class="sb-item-title">标准库巡礼</span></a>
+        <a class="sb-item" href="../python/17-yi-lai-guan-li-yu-di-san-fang-ku.html"><span class="sb-item-num">17</span><span class="sb-item-title">依赖管理与第三方库</span></a>
+        <a class="sb-item" href="../python/18-xian-cheng-yu-jin-cheng.html"><span class="sb-item-num">18</span><span class="sb-item-title">线程与进程</span></a>
+        <a class="sb-item" href="../python/19-shi-jian-xun-huan.html"><span class="sb-item-num">19</span><span class="sb-item-title">事件循环</span></a>
+        <a class="sb-item" href="../python/20-future-yu-xie-cheng.html"><span class="sb-item-num">20</span><span class="sb-item-title">Future 与协程</span></a>
+        <a class="sb-item" href="../python/21-asyncio-shi-zhan.html"><span class="sb-item-num">21</span><span class="sb-item-title">asyncio 实战</span></a>
+        <a class="sb-item" href="../python/22-gou-jian-yu-fa-bu.html"><span class="sb-item-num">22</span><span class="sb-item-title">构建与发布</span></a>
+        <a class="sb-item" href="../python/23-gong-cheng-hua-gong-ju-lian.html"><span class="sb-item-num">23</span><span class="sb-item-title">工程化工具链</span></a>
+        <a class="sb-item" href="../python/24-monorepo-yu-tiao-shi.html"><span class="sb-item-num">24</span><span class="sb-item-title">monorepo 与调试</span></a>
+        <a class="sb-item" href="../python/25-jupyter-jiao-hu-huan-jing.html"><span class="sb-item-num">25</span><span class="sb-item-title">Jupyter 交互环境</span></a>
+        <a class="sb-item" href="../python/26-numpy-shu-zu-yu-xiang-liang-hua.html"><span class="sb-item-num">26</span><span class="sb-item-title">NumPy 数组与向量化</span></a>
+        <a class="sb-item" href="../python/27-pandas-shu-ju-jie-gou.html"><span class="sb-item-num">27</span><span class="sb-item-title">Pandas 数据结构</span></a>
+        <a class="sb-item" href="../python/28-pandas-shu-ju-qing-xi.html"><span class="sb-item-num">28</span><span class="sb-item-title">Pandas 数据清洗</span></a>
+        <a class="sb-item" href="../python/29-matplotlib-hui-tu-ti-xi.html"><span class="sb-item-num">29</span><span class="sb-item-title">Matplotlib 绘图体系</span></a>
+        <a class="sb-item" href="../python/30-matplotlib-dong-hua-yu-jiao-hu.html"><span class="sb-item-num">30</span><span class="sb-item-title">Matplotlib 动画与交互</span></a>
+        <a class="sb-item" href="../python/31-seaborn-tong-ji-ke-shi-hua.html"><span class="sb-item-num">31</span><span class="sb-item-title">Seaborn 统计可视化</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="agent">
+      <a class="sb-group-title" href="../modules/agent.html" data-toggle="agent">
+        <span class="sb-num">02</span>
+        <span class="sb-group-text"><b>Agent 核心</b><i>15 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../agent/01-token-yu-ci-qian-ru.html"><span class="sb-item-num">01</span><span class="sb-item-title">Token 与词嵌入</span></a>
+        <a class="sb-item" href="../agent/02-qian-xiang-chuan-bo-yu-fan-xiang-chuan-bo.html"><span class="sb-item-num">02</span><span class="sb-item-title">前向传播与反向传播</span></a>
+        <a class="sb-item" href="../agent/03-zhu-yi-li-ji-zhi-yu-transformer-jia-gou.html"><span class="sb-item-num">03</span><span class="sb-item-title">注意力机制与 Transformer 架构</span></a>
+        <a class="sb-item" href="../agent/04-yu-xun-lian-rlhf-yu-cai-yang-kv-cache.html"><span class="sb-item-num">04</span><span class="sb-item-title">预训练、RLHF 与采样（KV Cache）</span></a>
+        <a class="sb-item" href="../agent/05-ben-di-mo-xing-yu-xiao-xi-jie-gou.html"><span class="sb-item-num">05</span><span class="sb-item-title">本地模型与消息结构</span></a>
+        <a class="sb-item" href="../agent/06-hui-hua-guan-li-yu-json-shu-chu.html"><span class="sb-item-num">06</span><span class="sb-item-title">会话管理与 JSON 输出</span></a>
+        <a class="sb-item" href="../agent/07-tool-calling-xie-yi-yu-feng-zhuang.html"><span class="sb-item-num">07</span><span class="sb-item-title">Tool Calling：协议与封装</span></a>
+        <a class="sb-item" href="../agent/08-react-mo-shi-yu-zhu-xun-huan.html"><span class="sb-item-num">08</span><span class="sb-item-title">ReAct 模式与主循环</span></a>
+        <a class="sb-item" href="../agent/09-shi-zhan-deep-research-agent.html"><span class="sb-item-num">09</span><span class="sb-item-title">实战：Deep Research Agent</span></a>
+        <a class="sb-item" href="../agent/10-skill-yu-jian-jin-shi-pi-lu.html"><span class="sb-item-num">10</span><span class="sb-item-title">Skill 与渐进式披露</span></a>
+        <a class="sb-item" href="../agent/11-mcp-quan-jing.html"><span class="sb-item-num">11</span><span class="sb-item-title">MCP 全景</span></a>
+        <a class="sb-item" href="../agent/12-duo-agent-yu-xuan-xing-ce-lve.html"><span class="sb-item-num">12</span><span class="sb-item-title">多 Agent 与选型策略</span></a>
+        <a class="sb-item" href="../agent/13-ti-shi-ci-gong-cheng-yu-shang-xia-wen-gong.html"><span class="sb-item-num">13</span><span class="sb-item-title">提示词工程与上下文工程</span></a>
+        <a class="sb-item" href="../agent/14-xun-huan-tu-yu-gu-jia-gong-cheng.html"><span class="sb-item-num">14</span><span class="sb-item-title">循环、图与骨架工程</span></a>
+        <a class="sb-item" href="../agent/15-ji-yi-quan-xian-yu-ping-ce.html"><span class="sb-item-num">15</span><span class="sb-item-title">记忆、权限与评测</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="langchain">
+      <a class="sb-group-title" href="../modules/langchain.html" data-toggle="langchain">
+        <span class="sb-num">03</span>
+        <span class="sb-group-text"><b>LangChain 指南</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langchain/01-ren-shi-langchain.html"><span class="sb-item-num">01</span><span class="sb-item-title">认识 LangChain</span></a>
+        <a class="sb-item" href="../langchain/02-ti-shi-ci-mu-ban-yu-xiao-xi.html"><span class="sb-item-num">02</span><span class="sb-item-title">提示词模板与消息</span></a>
+        <a class="sb-item" href="../langchain/03-lcel-yu-runnable.html"><span class="sb-item-num">03</span><span class="sb-item-title">LCEL 与 Runnable</span></a>
+        <a class="sb-item" href="../langchain/04-liu-shi-yu-bing-fa.html"><span class="sb-item-num">04</span><span class="sb-item-title">流式与并发</span></a>
+        <a class="sb-item" href="../langchain/05-shu-chu-jie-xi-qi.html"><span class="sb-item-num">05</span><span class="sb-item-title">输出解析器</span></a>
+        <a class="sb-item" href="../langchain/06-wen-dang-jia-zai-yu-qie-ge.html"><span class="sb-item-num">06</span><span class="sb-item-title">文档加载与切割</span></a>
+        <a class="sb-item" href="../langchain/07-qian-ru-yu-xiang-liang-ku.html"><span class="sb-item-num">07</span><span class="sb-item-title">嵌入与向量库</span></a>
+        <a class="sb-item" href="../langchain/08-jian-suo-yu-rag.html"><span class="sb-item-num">08</span><span class="sb-item-title">检索与RAG</span></a>
+        <a class="sb-item" href="../langchain/09-dui-hua-ji-yi.html"><span class="sb-item-num">09</span><span class="sb-item-title">对话记忆</span></a>
+        <a class="sb-item" href="../langchain/10-gong-ju-diao-yong.html"><span class="sb-item-num">10</span><span class="sb-item-title">工具调用</span></a>
+        <a class="sb-item" href="../langchain/11-agent.html"><span class="sb-item-num">11</span><span class="sb-item-title">Agent</span></a>
+        <a class="sb-item" href="../langchain/12-hui-diao-yu-tiao-shi-quan-ke-cheng-shou-guan.html"><span class="sb-item-num">12</span><span class="sb-item-title">回调与调试（全课程收官章）</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="langgraph">
+      <a class="sb-group-title" href="../modules/langgraph.html" data-toggle="langgraph">
+        <span class="sb-num">04</span>
+        <span class="sb-group-text"><b>LangGraph 框架指南</b><i>17 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langgraph/01-di-1-zhang-cong-yi-ge-shi-kong-de-jiao.html"><span class="sb-item-num">01</span><span class="sb-item-title">第 1 章 从一个失控的脚本说起</span></a>
+        <a class="sb-item" href="../langgraph/02-di-2-zhang-zui-xiao-ke-yun-xing-tu.html"><span class="sb-item-num">02</span><span class="sb-item-title">第 2 章 最小可运行图</span></a>
+        <a class="sb-item" href="../langgraph/03-di-3-zhang-zhuang-tai-tu-de-shu-ju-xin.html"><span class="sb-item-num">03</span><span class="sb-item-title">第 3 章 状态：图的数据心脏</span></a>
+        <a class="sb-item" href="../langgraph/04-di-4-zhang-rang-liu-cheng-xue-hui-jue-ce.html"><span class="sb-item-num">04</span><span class="sb-item-title">第 4 章 让流程学会决策</span></a>
+        <a class="sb-item" href="../langgraph/05-di-5-zhang-bing-xing-shi-jie-chao-bu-zhi.html"><span class="sb-item-num">05</span><span class="sb-item-title">第 5 章 并行世界：超步执行模型</span></a>
+        <a class="sb-item" href="../langgraph/06-di-6-zhang-command-ba-kong-zhi-quan-jiao-jin.html"><span class="sb-item-num">06</span><span class="sb-item-title">第 6 章 Command：把控制权交进节点</span></a>
+        <a class="sb-item" href="../langgraph/07-di-7-zhang-dong-tai-bing-xing-send-yu-mapreduce.html"><span class="sb-item-num">07</span><span class="sb-item-title">第 7 章 动态并行：Send 与 MapReduce</span></a>
+        <a class="sb-item" href="../langgraph/08-di-8-zhang-gei-tu-zhuang-shang-shou-jiao-gong.html"><span class="sb-item-num">08</span><span class="sb-item-title">第 8 章 给图装上手脚：工具调用</span></a>
+        <a class="sb-item" href="../langgraph/09-di-9-zhang-fu-yong-yu-feng-zhuang-zi-tu.html"><span class="sb-item-num">09</span><span class="sb-item-title">第 9 章 复用与封装：子图</span></a>
+        <a class="sb-item" href="../langgraph/10-di-10-zhang-cong-dan-tu-dao-tuan-dui-duo.html"><span class="sb-item-num">10</span><span class="sb-item-title">第 10 章 从单图到团队：多 Agent 架构</span></a>
+        <a class="sb-item" href="../langgraph/11-di-11-zhang-liu-shi-shu-chu.html"><span class="sb-item-num">11</span><span class="sb-item-title">第 11 章 流式输出</span></a>
+        <a class="sb-item" href="../langgraph/12-di-12-zhang-chi-jiu-hua-checkpointer-yu-xian-cheng.html"><span class="sb-item-num">12</span><span class="sb-item-title">第 12 章 持久化：Checkpointer 与线程</span></a>
+        <a class="sb-item" href="../langgraph/13-di-13-zhang-shi-jian-lv-xing.html"><span class="sb-item-num">13</span><span class="sb-item-title">第 13 章 时间旅行</span></a>
+        <a class="sb-item" href="../langgraph/14-di-14-zhang-zhong-duan-yu-ren-zai-hui-lu.html"><span class="sb-item-num">14</span><span class="sb-item-title">第 14 章 中断与人在回路</span></a>
+        <a class="sb-item" href="../langgraph/15-di-15-zhang-ji-yi-guan-li.html"><span class="sb-item-num">15</span><span class="sb-item-title">第 15 章 记忆管理</span></a>
+        <a class="sb-item" href="../langgraph/16-di-16-zhang-rong-cuo-zhong-shi-chao-shi-yu.html"><span class="sb-item-num">16</span><span class="sb-item-title">第 16 章 容错：重试、超时与兜底</span></a>
+        <a class="sb-item" href="../langgraph/17-di-17-zhang-quan-jing-hui-gu.html"><span class="sb-item-num">17</span><span class="sb-item-title">第 17 章 全景回顾</span></a>
+      </div>
+    </section>
+    <section class="sb-group open" data-mod="backend">
+      <a class="sb-group-title" href="../modules/backend.html" data-toggle="backend">
+        <span class="sb-num">05</span>
+        <span class="sb-group-text"><b>Python 框架指南</b><i>14 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../backend/01-fastapi-ru-men-yu-asgi.html"><span class="sb-item-num">01</span><span class="sb-item-title">FastAPI 入门与 ASGI</span></a>
+        <a class="sb-item" href="../backend/02-lu-you-yu-qing-qiu-xiang-ying.html"><span class="sb-item-num">02</span><span class="sb-item-title">路由与请求响应</span></a>
+        <a class="sb-item" href="../backend/03-pydantic-shu-ju-jiao-yan-yu-pei-zhi.html"><span class="sb-item-num">03</span><span class="sb-item-title">Pydantic 数据校验与配置</span></a>
+        <a class="sb-item" href="../backend/04-sqlalchemy-yi-bu-yin-qing-yu-hui-hua.html"><span class="sb-item-num">04</span><span class="sb-item-title">SQLAlchemy 异步引擎与会话</span></a>
+        <a class="sb-item" href="../backend/05-orm-jian-mo.html"><span class="sb-item-num">05</span><span class="sb-item-title">ORM 建模</span></a>
+        <a class="sb-item" href="../backend/06-sql-biao-da-shi-yu-shu-ju-cao-zuo.html"><span class="sb-item-num">06</span><span class="sb-item-title">SQL 表达式与数据操作</span></a>
+        <a class="sb-item" href="../backend/07-alembic-shu-ju-qian-yi.html"><span class="sb-item-num">07</span><span class="sb-item-title">Alembic 数据迁移</span></a>
+        <a class="sb-item" href="../backend/08-yi-lai-zhu-ru.html"><span class="sb-item-num">08</span><span class="sb-item-title">依赖注入</span></a>
+        <a class="sb-item" href="../backend/09-tong-yi-yi-chang-chu-li.html"><span class="sb-item-num">09</span><span class="sb-item-title">统一异常处理</span></a>
+        <a class="sb-item" href="../backend/10-zhong-jian-jian.html"><span class="sb-item-num">10</span><span class="sb-item-title">中间件</span></a>
+        <a class="sb-item" href="../backend/11-ren-zheng-yu-jwt.html"><span class="sb-item-num">11</span><span class="sb-item-title">认证与 JWT</span></a>
+        <a class="sb-item" href="../backend/12-pytest-ce-shi.html"><span class="sb-item-num">12</span><span class="sb-item-title">pytest 测试</span></a>
+        <a class="sb-item" href="../backend/13-ri-zhi-loguru.html"><span class="sb-item-num">13</span><span class="sb-item-title">日志 loguru</span></a>
+        <a class="sb-item current" href="../backend/14-liu-shi-xiang-ying-sse-yu-websocket.html"><span class="sb-item-num">14</span><span class="sb-item-title">流式响应 SSE 与 WebSocket</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="interview">
+      <a class="sb-group-title" href="../modules/interview.html" data-toggle="interview">
+        <span class="sb-num">06</span>
+        <span class="sb-group-text"><b>面试题库</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../interview/01-llm-yuan-li-pian.html"><span class="sb-item-num">01</span><span class="sb-item-title">LLM 原理篇</span></a>
+        <a class="sb-item" href="../interview/02-rag-yu-jian-suo-pian.html"><span class="sb-item-num">02</span><span class="sb-item-title">RAG 与检索篇</span></a>
+        <a class="sb-item" href="../interview/03-agent-he-xin-pian.html"><span class="sb-item-num">03</span><span class="sb-item-title">Agent 核心篇</span></a>
+        <a class="sb-item" href="../interview/04-langgraph-pian.html"><span class="sb-item-num">04</span><span class="sb-item-title">LangGraph 篇</span></a>
+        <a class="sb-item" href="../interview/05-langchain-pian.html"><span class="sb-item-num">05</span><span class="sb-item-title">LangChain 篇</span></a>
+        <a class="sb-item" href="../interview/06-xi-tong-she-ji-pian.html"><span class="sb-item-num">06</span><span class="sb-item-title">系统设计篇</span></a>
+        <a class="sb-item" href="../interview/07-xiang-mu-shen-wa-pian.html"><span class="sb-item-num">07</span><span class="sb-item-title">项目深挖篇</span></a>
+        <a class="sb-item" href="../interview/08-gu-zhang-pai-cha-pian.html"><span class="sb-item-num">08</span><span class="sb-item-title">故障排查篇</span></a>
+        <a class="sb-item" href="../interview/09-python-ji-chu-pian.html"><span class="sb-item-num">09</span><span class="sb-item-title">Python 基础篇</span></a>
+        <a class="sb-item" href="../interview/10-fastapi-yu-hou-duan-pian.html"><span class="sb-item-num">10</span><span class="sb-item-title">FastAPI 与后端篇</span></a>
+        <a class="sb-item" href="../interview/11-ti-shi-ci-gong-cheng-yu-an-quan-pian.html"><span class="sb-item-num">11</span><span class="sb-item-title">提示词工程与安全篇</span></a>
+        <a class="sb-item" href="../interview/12-mo-xing-xuan-xing-yu-jiang-ben-pian.html"><span class="sb-item-num">12</span><span class="sb-item-title">模型选型与降本篇</span></a>
+      </div>
+    </section>
+  </nav>
+</aside>
+  <main class="main">
+    <header class="topbar">
+      <button class="menu-btn" id="menuBtn" aria-label="目录">☰</button>
+      <div class="crumbs"><a href="../index.html">首页</a><span>/</span><a href="../modules/backend.html">Python 框架指南</a><span>/</span><span class="cur">流式响应 SSE 与 WebSocket</span></div>
+      <div class="topbar-actions">
+        <button class="icon-btn" id="themeBtn" title="切换深浅色" aria-label="切换深浅色">◐</button>
+      </div>
+    </header>
+    <div class="content">
+      <article class="article">
+
+<header class="page-head">
+  <div class="page-kicker">Python 框架指南 · 第 14 章</div>
+  <h1 class="page-title">流式响应 SSE 与 WebSocket</h1>
+  <p class="page-desc">本章你将学会
+
+ - 为什么需要流式：大文件下载、慢生成任务、AI 逐字输出——一次性响应撑不住的三种场面
+ - StreamingResponse 全套用法：同步/异步生成器、mediatype、Content-Dis…</p>
+  <div class="page-meta">
+    <span>约 46 分钟</span><span>18,547 字</span><span>31 个代码示例</span>
+  </div>
+</header>
+<div class="md"><blockquote>
+<p><strong>本章你将学会</strong></p>
+<ul>
+<li>为什么需要流式：大文件下载、慢生成任务、AI 逐字输出——一次性响应撑不住的三种场面</li>
+<li><code>StreamingResponse</code> 全套用法：同步/异步生成器、<code>media_type</code>、<code>Content-Disposition</code> 文件下载</li>
+<li>SSE 协议的规矩：<code>text/event-stream</code>、<code>data:</code>/<code>event:</code>/<code>id:</code>/<code>retry:</code> 四类字段、消息边界那个空行</li>
+<li>断线重连：浏览器自动重连的机制、<code>Last-Event-ID</code> 断点续传怎么接</li>
+<li><code>sse-starlette</code> 的 <code>EventSourceResponse</code>：比手写 SSE 多白送的三样货</li>
+<li>AI 场景实战：给墨集写一个「AI 写作助手逐字生成」端点——本课程 AI 定位的落地样板</li>
+<li>WebSocket：<code>@app.websocket</code>、生命周期 accept/receive/send/close、<code>ConnectionManager</code> 广播、前端 <code>WebSocket()</code> 对照</li>
+<li>SSE vs WebSocket 选型对比表：单向还是双向、要不要自动重连、代理兼容性</li>
+</ul>
+</blockquote>
+<p>上一章（第 13 章）用 loguru 把墨集的日志盘顺了，观测性的活儿到此收齐。这一章——全课程的最后一章——来还两笔欠账：<strong>第 01 章说过「高并发、WebSocket、长连接这些新需求，都得靠 ASGI 才好使」</strong>，当时一笔带过；<strong>第 10 章的信封中间件遇到 SSE 流要专门放行</strong>，当时说「第 14 章见」。本章把流式响应、SSE、WebSocket 一次讲透，主题只有一个：<strong>不再一次性给完</strong>。</p>
+<hr />
+<h2 id="1-为什么需要流式一次性响应的三种翻车现场">1. 为什么需要流式：一次性响应的三种翻车现场</h2>
+<p><strong>作用</strong>：给「为什么需要流式」建立直觉。先看墨集 inkhub 的三个真实场面：</p>
+<ol>
+<li><strong>大文件下载</strong>。运营要把全站文章打包导出，500 MB。一次性响应意味着服务端得把 500 MB 在内存里攒成完整 body 才能开始发——内存直接被吃爆；就算攒得齐，客户端也要等到最后一个字节生成完，才收到第一个字节。</li>
+<li><strong>慢生成</strong>。年度报告的统计接口要跑 30 秒。一次性响应下，客户端就白屏干等 30 秒，网关的超时阈值（常见 30~60 秒）一过，连接直接被掐。</li>
+<li><strong>AI 逐字输出</strong>。墨集的 AI 写作助手生成一篇 500 字的短文要 15 秒。用过 ChatGPT 类产品都知道那种「打字机效果」——字一个一个往外冒。一次性响应 15 秒憋出一整篇，体验上是两个时代的产品。</li>
+</ol>
+<p>关键认知：<strong>HTTP 响应从来不要求「全部准备好才发第一个字节」</strong>。第 02 章那种普通端点之所以一次性，是因为框架替你把返回值攒成一个完整 body 再发。HTTP/1.1 自带<strong>分块传输</strong>（<code>Transfer-Encoding: chunked</code>）：服务器可以把响应体切成任意多块，边生成边发，最后发一个终止块收尾。</p>
+<p>打个比方：一次性响应是<strong>食堂大锅菜</strong>——一桌菜全做好才端上来，菜越多等越久，后厨还得有一张摆得下整桌的案板（内存）；流式响应是<strong>回转寿司</strong>——师傅捏好一碟推出来一碟，客人三秒就能入口第一碟，师傅手边永远只需要一个碟子的位置。</p>
+<p>第 01 章那句「ASGI 才好使」在这兑现：流式的本质是<strong>生成器 yield 一段、服务器 send 一段</strong>，发送间隙事件循环还能去伺候别的请求。同步的 WSGI 世界里，框架只能把生成器从头跑到尾攒齐了再给。</p>
+<p><strong>常见坑</strong>（认知层面先排三个雷）：</p>
+<ul>
+<li>「要流式就得先上 WebSocket」——不用。普通 HTTP 就能流式，SSE 本质就是一条流式 HTTP 响应。</li>
+<li>流式响应头里没有 <code>content-length</code>，<code>curl -i</code> 看到的是 <code>transfer-encoding: chunked</code>——这是分块传输的标志，不是 bug。</li>
+<li>流式省的是<strong>等待感</strong>和<strong>服务端内存</strong>，不省总耗时：生成要 15 秒的活，客户端总归 15 秒才收完，区别只是「憋 15 秒一次性吐」变成「边产边收」。</li>
+</ul>
+<hr />
+<h2 id="2-streamingresponse边做边给的基本功">2. StreamingResponse：边做边给的基本功</h2>
+<p><strong>作用</strong>：把一个生成器交给框架，框架边从生成器取、边往网络写。</p>
+<p><strong>签名</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">fastapi.responses</span><span class="w"> </span><span class="kn">import</span> <span class="n">StreamingResponse</span>
+
+<span class="n">StreamingResponse</span><span class="p">(</span>
+    <span class="n">content</span><span class="p">,</span>                       <span class="c1"># 同步或异步迭代器，逐块产出 str / bytes</span>
+    <span class="n">status_code</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">200</span><span class="p">,</span>
+    <span class="n">headers</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">media_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="c1"># 不写就没有 content-type，见 2.3</span>
+    <span class="n">background</span><span class="p">:</span> <span class="n">BackgroundTask</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span>
+</code></pre></div>
+<h3 id="21-异步生成器首选">2.1 异步生成器（首选）</h3>
+<p><strong>最小示例</strong>——墨集的定时任务日志边产生边推：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">AsyncIterator</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">fastapi</span><span class="w"> </span><span class="kn">import</span> <span class="n">FastAPI</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fastapi.responses</span><span class="w"> </span><span class="kn">import</span> <span class="n">StreamingResponse</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">FastAPI</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">"墨集 inkhub"</span><span class="p">)</span>
+
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"/api/logs/stream"</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">stream_logs</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">StreamingResponse</span><span class="p">:</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">gen</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">AsyncIterator</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"INFO  定时任务启动：扫描全站死链"</span><span class="p">,</span> <span class="s2">"WARN  发现 1 条失效外链"</span><span class="p">,</span> <span class="s2">"INFO  任务结束"</span><span class="p">):</span>
+            <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.4</span><span class="p">)</span>  <span class="c1"># 模拟日志慢慢产生</span>
+            <span class="k">yield</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">line</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
+
+    <span class="k">return</span> <span class="n">StreamingResponse</span><span class="p">(</span><span class="n">gen</span><span class="p">(),</span> <span class="n">media_type</span><span class="o">=</span><span class="s2">"text/plain"</span><span class="p">)</span>
+</code></pre></div>
+<p>实测（<code>curl -i http://127.0.0.1:8000/api/logs/stream</code>，约每 0.4 秒蹦一行）：</p>
+<div class="highlight"><pre><span></span><code>HTTP/1.1 200 OK
+content-type: text/plain; charset=utf-8
+transfer-encoding: chunked        ← 没有 content-length，分块传输
+
+INFO  定时任务启动：扫描全站死链
+INFO  已扫描 1280 篇文章
+WARN  《夜航船里的旧灯》存在 1 条失效外链
+INFO  死链报告已生成，等待客户端拉取
+INFO  本次任务结束
+</code></pre></div>
+<h3 id="22-同步生成器也能跑但要知道它在哪跑">2.2 同步生成器：也能跑，但要知道它在哪跑</h3>
+<p>普通函数生成器一样能交给 <code>StreamingResponse</code>——Starlette 会把它丢进<strong>线程池</strong>里迭代，不堵事件循环：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Iterator</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">chunks</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]:</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">report_text</span><span class="o">.</span><span class="n">splitlines</span><span class="p">(</span><span class="n">keepends</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="k">yield</span> <span class="n">line</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">"utf-8"</span><span class="p">)</span>
+
+<span class="k">return</span> <span class="n">StreamingResponse</span><span class="p">(</span><span class="n">chunks</span><span class="p">(),</span> <span class="n">media_type</span><span class="o">=</span><span class="s2">"text/markdown"</span><span class="p">)</span>
+</code></pre></div>
+<p>两个必须知道的点：</p>
+<ul>
+<li>同步生成器里的 <code>time.sleep</code> 占的是<strong>线程池线程</strong>，池子默认只有 40 个——大量慢同步生成器同时在线，会把线程池耗干，别的请求跟着遭殃。能 <code>await</code> 的场景一律用异步生成器 + <code>asyncio.sleep</code>。</li>
+<li>同步生成器里写不了 <code>await</code>——要消费异步资源（比如第 04 章的异步数据库游标），就必须换异步生成器。</li>
+</ul>
+<h3 id="23-media_type不写就没有-content-type">2.3 media_type：不写就没有 content-type</h3>
+<p>第 02 章讲过 MIME 类型。这里的坑很朴素：<strong><code>media_type</code> 不写，响应连 <code>content-type</code> 头都没有</strong>，浏览器只能瞎猜内容类型。写了 <code>text/*</code> 开头的类型，框架自动补 <code>; charset=utf-8</code>（上面实测里的 <code>text/plain; charset=utf-8</code> 就是这么来的）。</p>
+<h3 id="24-文件下载content-disposition">2.4 文件下载：Content-Disposition</h3>
+<p><strong>作用</strong>：告诉浏览器「这是要下载保存的文件，别当网页渲染」。</p>
+<div class="highlight"><pre><span></span><code><span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"/api/reports/download"</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">download_report</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">StreamingResponse</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">chunks</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]:</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">build_report</span><span class="p">()</span><span class="o">.</span><span class="n">splitlines</span><span class="p">(</span><span class="n">keepends</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+            <span class="k">yield</span> <span class="n">line</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">"utf-8"</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">StreamingResponse</span><span class="p">(</span>
+        <span class="n">chunks</span><span class="p">(),</span>
+        <span class="n">media_type</span><span class="o">=</span><span class="s2">"text/markdown"</span><span class="p">,</span>
+        <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s2">"Content-Disposition"</span><span class="p">:</span> <span class="s1">'attachment; filename="inkhub-report.md"'</span><span class="p">},</span>
+    <span class="p">)</span>
+</code></pre></div>
+<p>实测响应头：</p>
+<div class="highlight"><pre><span></span><code>content-disposition: attachment; filename="inkhub-report.md"
+content-type: text/markdown; charset=utf-8
+transfer-encoding: chunked
+</code></pre></div>
+<ul>
+<li><code>attachment</code> = 提示浏览器下载保存；<code>inline</code> = 能渲染就渲染（PDF 常用）。</li>
+<li>中文文件名要走 RFC 5987 扩展格式：<code>filename*=UTF-8''%E5%A2%A8%E9%9B%86%E6%97%A5%E6%8A%A5.md</code>，和 <code>filename=</code> 两段一起写最稳（老浏览器认前者，新浏览器认后者）。</li>
+<li><strong>磁盘上现成的文件优先用 <code>FileResponse</code></strong>（第 10 章文章导出用过）——传个 <code>filename</code> 参数它自动帮你写好 Content-Disposition，发送效率也比手搓生成器高。<code>StreamingResponse</code> 留给「内存里现生成的数据」。</li>
+</ul>
+<h3 id="25-常见坑">2.5 常见坑</h3>
+<ul>
+<li><strong>流已开吐，状态码就改不了了。</strong>响应头（含状态码 200）一旦发出去，中途再抛异常也没法把状态码改成 500——第 09 章的异常处理器只能在「响应还没开始」时接管。所以流式端点的生成器内部要自己兜错误，通常以一条错误事件（SSE 场景）或提前终止流（下载场景）收场。</li>
+<li><strong>不能返回 dict。</strong>普通端点返回 dict 框架自动转 JSON；<code>StreamingResponse</code> 只认产 <code>str</code>/<code>bytes</code> 的迭代器，JSON 要自己 <code>json.dumps</code>。</li>
+<li><strong>curl 看流式要加 <code>-N</code></strong>（<code>--no-buffer</code>），否则 curl 自己攒够缓冲才往屏幕打，看起来像卡死。</li>
+</ul>
+<hr />
+<h2 id="3-ssehttp-长连接上的单向广播">3. SSE：HTTP 长连接上的单向广播</h2>
+<h3 id="31-sse-是什么">3.1 SSE 是什么</h3>
+<p><strong>Server-Sent Events（服务器推送事件）</strong>：服务器向客户端<strong>单向</strong>持续推消息的协议。本质是一条保持不关的 HTTP 流式响应，<code>Content-Type</code> 固定为 <code>text/event-stream</code>。</p>
+<p>打个比方：SSE 是<strong>收音机</strong>——电台（服务器）持续广播，你（客户端）只能听、不能插嘴；想点歌，得另外打个电话（发一条普通 HTTP 请求）。收音机断了电（断线），它自己会重新搜台（浏览器自动重连），还记得上次听到第几首（<code>Last-Event-ID</code>）。</p>
+<p>第 10 章 demo 里 <code>/api/posts/{id}/stream</code> 吐的那些 <code>data:</code> 开头的行——那就是手写 SSE，本章把协议规矩补全。当时信封中间件按 <code>content-type</code> 判断放行它，现在你知道为什么必须放行：把流读光再重打包，实时性就没了，流式响应唯一的价值就是「边产边走」。</p>
+<h3 id="32-报文格式四类字段-一个空行">3.2 报文格式：四类字段 + 一个空行</h3>
+<p>一条最完整的 SSE 消息长这样：</p>
+<div class="highlight"><pre><span></span><code>id: 42
+event: token
+retry: 3000
+data: 墨
+</code></pre></div>
+<p>字段手册：</p>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>作用</th>
+<th>不写会怎样</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>data:</code></td>
+<td>消息正文，浏览器端 <code>e.data</code> 拿到</td>
+<td>这条消息没有正文</td>
+</tr>
+<tr>
+<td><code>event:</code></td>
+<td>事件类型，默认叫 <code>message</code></td>
+<td>客户端只能挤在 onmessage 里处理，没法分流</td>
+</tr>
+<tr>
+<td><code>id:</code></td>
+<td>事件编号，浏览器只记住最后收到的一个</td>
+<td>断线重连没法续传</td>
+</tr>
+<tr>
+<td><code>retry:</code></td>
+<td>建议的重连间隔（毫秒）</td>
+<td>浏览器用自己的默认值（约 3 秒）</td>
+</tr>
+<tr>
+<td><code>:</code> 开头的行</td>
+<td>注释行</td>
+<td>常用来当心跳占位（<code>: ping</code>）</td>
+</tr>
+</tbody>
+</table>
+<p>三条铁律：</p>
+<ol>
+<li><strong>每条消息以空行结尾</strong>——报文里就是两个换行 <code>\n\n</code>。空行是「一条消息到此为止」的边界，<strong>漏写的话客户端会把几条攒成一条、甚至永远收不到</strong>，这是 SSE 的头号大坑。</li>
+<li><code>data</code> 可以多行，每行都要带 <code>data:</code> 前缀，浏览器收到后用 <code>\n</code> 拼接。</li>
+<li>一行一个字段，格式 <code>字段名: 值</code>，冒号后的空格可有可无。</li>
+</ol>
+<h3 id="33-浏览器端eventsource">3.3 浏览器端：EventSource</h3>
+<div class="highlight"><pre><span></span><code><span class="kd">const</span><span class="w"> </span><span class="nx">es</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">EventSource</span><span class="p">(</span><span class="s2">"/api/ai/write"</span><span class="p">);</span>
+<span class="nx">es</span><span class="p">.</span><span class="nx">onmessage</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="nx">e</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">"默认 message 事件:"</span><span class="p">,</span><span class="w"> </span><span class="nx">e</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
+<span class="nx">es</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s2">"token"</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="nx">e</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">"逐字:"</span><span class="p">,</span><span class="w"> </span><span class="nx">e</span><span class="p">.</span><span class="nx">data</span><span class="p">));</span><span class="w">  </span><span class="c1">// 具名事件</span>
+<span class="nx">es</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s2">"done"</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="nx">e</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">es</span><span class="p">.</span><span class="nx">close</span><span class="p">());</span><span class="w">                    </span><span class="c1">// 服务器说完了，主动关</span>
+</code></pre></div>
+<p>三个硬限制：</p>
+<ul>
+<li><strong>只能 GET</strong>——事件流全靠 URL（加 query 参数）表达，没法用 POST 带请求体。</li>
+<li><strong>不能自定义请求头</strong>——第 11 章放进 <code>Authorization</code> 头的 JWT 在这带不进去，token 只能走 cookie 或 URL query。</li>
+<li>自动重连是浏览器送的；但 <code>fetch</code>/<code>axios</code> 没这待遇——想用 POST 享受流式，得自己用 <code>fetch</code> + <code>ReadableStream</code> 逐块读（前端进阶话题，知道方向即可）。</li>
+</ul>
+<h3 id="34-断线重连last-event-id-断点续传">3.4 断线重连：Last-Event-ID 断点续传</h3>
+<p>SSE 断线后浏览器自动重连（默认约 3 秒，服务端可用 <code>retry:</code> 调整），重连时<strong>自动带上 <code>Last-Event-ID</code> 请求头</strong>，值就是最后收到的那条事件的 <code>id</code>。服务端读它，从下一个编号接着发即可：</p>
+<div class="highlight"><pre><span></span><code>客户端                                服务端
+  │  GET /api/ai/write                 │
+  │───────────────────────────────────▶│
+  │◀── id: 0 ... id: 9（吐到第 10 个字）│   ← 网络断了
+  │        ✗ 连接断开                   │
+  │  （约 3 秒后，浏览器自动重连）        │
+  │  GET /api/ai/write                 │
+  │  Last-Event-ID: 9                  │
+  │───────────────────────────────────▶│
+  │◀── id: 10, 11, ...（从断点续着吐）──│
+</code></pre></div>
+<p>服务端就三行：</p>
+<div class="highlight"><pre><span></span><code><span class="n">last_id</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"last-event-id"</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span>
+<span class="n">start</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">last_id</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">last_id</span><span class="o">.</span><span class="n">isdigit</span><span class="p">()</span> <span class="k">else</span> <span class="mi">0</span>
+<span class="c1"># 生成器从 start 开始发编号</span>
+</code></pre></div>
+<p>注意：服务端不实现这个也没人报错——只是客户端重连后会把整个流<strong>从头再收一遍</strong>，AI 场景里就是打字机倒带重放。</p>
+<h3 id="35-eventsourceresponsesse-starlette-替你把脏活干了">3.5 EventSourceResponse：sse-starlette 替你把脏活干了</h3>
+<p>裸 <code>StreamingResponse</code> 手写 SSE，得自己拼 <code>id:</code>/<code>event:</code>/<code>data:</code> 行和空行。社区库 <code>sse-starlette</code> 的 <code>EventSourceResponse</code> 收一个「产 dict 的生成器」，报文自动拼。</p>
+<p><strong>安装</strong>：<code>uv add sse-starlette</code></p>
+<p><strong>签名</strong>（节选）：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">sse_starlette.sse</span><span class="w"> </span><span class="kn">import</span> <span class="n">EventSourceResponse</span>
+
+<span class="n">EventSourceResponse</span><span class="p">(</span>
+    <span class="n">content</span><span class="p">,</span>                                  <span class="c1"># 产 dict / str 的（异步）生成器</span>
+    <span class="n">status_code</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">200</span><span class="p">,</span>
+    <span class="n">headers</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">media_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"text/event-stream"</span><span class="p">,</span>    <span class="c1"># 默认已是对的</span>
+    <span class="n">ping</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="mi">15</span><span class="p">,</span>                  <span class="c1"># 心跳间隔秒数；None 关闭</span>
+<span class="p">)</span>
+</code></pre></div>
+<p><strong>最小示例</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">AsyncIterator</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">sse_starlette.sse</span><span class="w"> </span><span class="kn">import</span> <span class="n">EventSourceResponse</span>
+
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"/api/feed"</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">feed</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">EventSourceResponse</span><span class="p">:</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">gen</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">AsyncIterator</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]:</span>
+        <span class="k">yield</span> <span class="p">{</span><span class="s2">"event"</span><span class="p">:</span> <span class="s2">"notice"</span><span class="p">,</span> <span class="s2">"data"</span><span class="p">:</span> <span class="s2">"墨集专栏更新了"</span><span class="p">}</span>
+        <span class="k">yield</span> <span class="p">{</span><span class="s2">"id"</span><span class="p">:</span> <span class="s2">"1"</span><span class="p">,</span> <span class="s2">"event"</span><span class="p">:</span> <span class="s2">"notice"</span><span class="p">,</span> <span class="s2">"data"</span><span class="p">:</span> <span class="s2">"有人评论了你的文章"</span><span class="p">}</span>
+
+    <span class="k">return</span> <span class="n">EventSourceResponse</span><span class="p">(</span><span class="n">gen</span><span class="p">())</span>
+</code></pre></div>
+<p>dict 的 key 就是 3.2 表里的字段名（<code>data</code>/<code>event</code>/<code>id</code>/<code>retry</code>），用哪个写哪个。</p>
+<p><strong>白送的三样</strong>（实测响应头）：</p>
+<div class="highlight"><pre><span></span><code>cache-control: no-store                 ← 不许中间设备缓存
+x-accel-buffering: no                   ← 告诉 nginx 别缓冲（下一节细说）
+content-type: text/event-stream; charset=utf-8
+</code></pre></div>
+<p>外加默认每 15 秒一条注释行心跳（<code>ping</code> 参数可调可关）——长时间不发包的空闲连接，容易被中间设备当死连接掐掉，心跳就是「我还活着」的信号。</p>
+<p><strong>文档去哪看</strong>：https://github.com/sysid/sse-starlette ；EventSource 的 MDN 页面：https://developer.mozilla.org/zh-CN/docs/Web/API/EventSource</p>
+<h3 id="36-常见坑">3.6 常见坑</h3>
+<ul>
+<li><strong><code>\n\n</code> 漏写</strong>（手写版）——重申一遍，头号坑。</li>
+<li><strong>本地好使、上线卡死</strong>：开发环境 uvicorn 逐块直发不缓冲；上了 nginx，默认 <code>proxy_buffering on</code> 会把流攒够一批才转发，打字机效果变成「憋十秒、蹦一百个字」。解法：响应头 <code>X-Accel-Buffering: no</code>（<code>EventSourceResponse</code> 自动带）或 nginx 站点配置 <code>proxy_buffering off</code>。</li>
+<li>EventSource 断线自动重连是<strong>无条件</strong>的——服务端不支持 <code>Last-Event-ID</code> 时会整流重放；另外连不上时它会永远重连下去，前端记得在合适的时机 <code>es.close()</code>。</li>
+<li>EventSource 也受同源策略管，跨源要后端配 CORS（第 10 章的 <code>CORSMiddleware</code>），本章 demo 已放行。</li>
+</ul>
+<hr />
+<h2 id="4-ai-场景实战墨集-ai-写作助手逐字生成">4. AI 场景实战：墨集 AI 写作助手逐字生成</h2>
+<p>现在所有大模型 Web 界面的「打字机效果」，背后几乎都是 SSE 或 chunked 流；主流 LLM API 的 <code>stream=True</code> 返回的也正是 <code>text/event-stream</code>。本节的模拟端点吃透之后，接真模型只是把 <code>asyncio.sleep</code> 换成「从模型客户端的流里逐块取」。</p>
+<h3 id="41-端点设计">4.1 端点设计</h3>
+<ul>
+<li><code>GET /api/ai/write?topic=深夜书房</code>：逐字吐出一篇短文；</li>
+<li>先沉默约 1 秒——照实模拟大模型的「首字延迟」；</li>
+<li>每个字一条 <code>event: token</code> 事件，<code>id</code> 递增；</li>
+<li>结束发一条 <code>event: done</code>，<code>data</code> 直接带全文（前端不用自己攒字）；</li>
+<li>读 <code>Last-Event-ID</code>，断线重连从断点续吐。</li>
+</ul>
+<h3 id="42-核心代码节选自-demodemo_streampy">4.2 核心代码（节选自 <code>demo/demo_stream.py</code>）</h3>
+<div class="highlight"><pre><span></span><code><span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"/api/ai/write"</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">ai_write</span><span class="p">(</span><span class="n">request</span><span class="p">:</span> <span class="n">Request</span><span class="p">,</span> <span class="n">topic</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"深夜书房"</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EventSourceResponse</span><span class="p">:</span>
+    <span class="n">draft</span> <span class="o">=</span> <span class="n">AI_DRAFTS</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">topic</span><span class="p">,</span> <span class="n">AI_DRAFTS</span><span class="p">[</span><span class="s2">"深夜书房"</span><span class="p">])</span>
+
+    <span class="c1"># 断线重连：浏览器自动带上 Last-Event-ID，从下一个编号接着发</span>
+    <span class="n">last_id</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"last-event-id"</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span>
+    <span class="n">start</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">last_id</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">last_id</span><span class="o">.</span><span class="n">isdigit</span><span class="p">()</span> <span class="k">else</span> <span class="mi">0</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">gen</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">AsyncIterator</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]:</span>
+        <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>              <span class="c1"># 模拟首字延迟</span>
+        <span class="k">for</span> <span class="n">seq</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">draft</span><span class="p">)):</span>
+            <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.12</span><span class="p">)</span>         <span class="c1"># 模拟逐字节奏</span>
+            <span class="k">yield</span> <span class="p">{</span><span class="s2">"id"</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">seq</span><span class="p">),</span> <span class="s2">"event"</span><span class="p">:</span> <span class="s2">"token"</span><span class="p">,</span> <span class="s2">"data"</span><span class="p">:</span> <span class="n">draft</span><span class="p">[</span><span class="n">seq</span><span class="p">]}</span>
+        <span class="k">yield</span> <span class="p">{</span><span class="s2">"id"</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">draft</span><span class="p">)),</span> <span class="s2">"event"</span><span class="p">:</span> <span class="s2">"done"</span><span class="p">,</span> <span class="s2">"data"</span><span class="p">:</span> <span class="n">draft</span><span class="p">}</span>
+
+    <span class="k">return</span> <span class="n">EventSourceResponse</span><span class="p">(</span><span class="n">gen</span><span class="p">())</span>
+</code></pre></div>
+<h3 id="43-实测">4.3 实测</h3>
+<div class="highlight"><pre><span></span><code>curl<span class="w"> </span>-N<span class="w"> </span>http://127.0.0.1:8000/api/ai/write
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>（沉默约 1 秒——首字延迟）
+id: 0
+event: token
+data: 墨
+
+id: 1
+event: token
+data: 集
+
+……（逐字省略）……
+
+id: 57
+event: done
+data: 墨集编辑部的深夜书房永远亮着一盏灯，键盘声此起彼伏，像一场不会散场的雨。有人写完最后一段，抬头发现窗外天已经亮了。
+</code></pre></div>
+<p>断点续传实测——手动模拟浏览器的重连请求：</p>
+<div class="highlight"><pre><span></span><code>curl<span class="w"> </span>-N<span class="w"> </span>-H<span class="w"> </span><span class="s2">"Last-Event-ID: 9"</span><span class="w"> </span>http://127.0.0.1:8000/api/ai/write
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>id: 10
+event: token
+data: 永
+</code></pre></div>
+<p>前 10 个字（id 0~9 的「墨集编辑部的深夜书房」）没有重发，从第 11 个字「永」接着走。</p>
+<h3 id="44-前端打字机">4.4 前端打字机</h3>
+<div class="highlight"><pre><span></span><code><span class="kd">const</span><span class="w"> </span><span class="nx">box</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s2">"#draft"</span><span class="p">);</span>
+<span class="kd">const</span><span class="w"> </span><span class="nx">es</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">EventSource</span><span class="p">(</span><span class="s2">"/api/ai/write?topic=雨巷"</span><span class="p">);</span>
+<span class="nx">es</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s2">"token"</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="nx">e</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">box</span><span class="p">.</span><span class="nx">textContent</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="nx">e</span><span class="p">.</span><span class="nx">data</span><span class="p">;</span><span class="w"> </span><span class="p">});</span><span class="w"> </span><span class="c1">// 一字一格往外冒</span>
+<span class="nx">es</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s2">"done"</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="nx">e</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">"全文："</span><span class="p">,</span><span class="w"> </span><span class="nx">e</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span><span class="w"> </span><span class="nx">es</span><span class="p">.</span><span class="nx">close</span><span class="p">();</span><span class="w"> </span><span class="p">});</span>
+<span class="nx">es</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s2">"error"</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">es</span><span class="p">.</span><span class="nx">close</span><span class="p">());</span><span class="w">  </span><span class="c1">// 服务端真挂了就别无限重连</span>
+</code></pre></div>
+<h3 id="45-接真模型只差一步">4.5 接真模型只差一步</h3>
+<p>把生成器里的「睡 0.12 秒吐一个字」换成「从模型流里取一块」，其余一行不动：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 示意：以 OpenAI 兼容接口为例</span>
+<span class="k">async</span> <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">chat</span><span class="o">.</span><span class="n">completions</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">=</span><span class="s2">"deepseek-chat"</span><span class="p">,</span> <span class="n">messages</span><span class="o">=</span><span class="p">[</span><span class="o">...</span><span class="p">],</span> <span class="n">stream</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">):</span>
+    <span class="n">delta</span> <span class="o">=</span> <span class="n">chunk</span><span class="o">.</span><span class="n">choices</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">delta</span><span class="o">.</span><span class="n">content</span>
+    <span class="k">if</span> <span class="n">delta</span><span class="p">:</span>
+        <span class="k">yield</span> <span class="p">{</span><span class="s2">"event"</span><span class="p">:</span> <span class="s2">"token"</span><span class="p">,</span> <span class="s2">"data"</span><span class="p">:</span> <span class="n">delta</span><span class="p">}</span>
+</code></pre></div>
+<hr />
+<h2 id="5-websocket全双工对讲机">5. WebSocket：全双工对讲机</h2>
+<h3 id="51-和-sse-的本质区别">5.1 和 SSE 的本质区别</h3>
+<p>HTTP 的请求-响应模型是<strong>半双工</strong>：一问一答，问完才能答。SSE 已经把「答」拉长成一条持续不断的流，但方向仍然只有服务器 → 客户端。</p>
+<p><strong>WebSocket</strong>（RFC 6455）更进一步：先用一次普通 HTTP 请求带上 <code>Upgrade: websocket</code> 头握手，服务器同意后，这条 TCP 连接就升级成<strong>全双工</strong>通道——两边随时互发，谁也不用等谁。</p>
+<p>比喻升级：SSE 是收音机，WebSocket 是<strong>对讲机</strong>——你一句我一句，还能同时喊。</p>
+<p>两句欠账在这兑现：</p>
+<ul>
+<li>第 01 章说 WebSocket 靠 ASGI——ASGI 规范里 <code>scope["type"]</code> 除了 <code>"http"</code> 还有 <code>"websocket"</code>，WebSocket 是 ASGI 的原生公民。</li>
+<li>第 10 章说 <code>@app.middleware("http")</code> 管不到 WebSocket——那套中间件挂在 http 类型上，websocket 类型的流量从旁边直接穿过去。计时、信封、CORS 三件套对 WS 连接<strong>全部失效</strong>，需要在 WS 端点里自己干的活，后面坑列表里列。</li>
+</ul>
+<h3 id="52-签名与最小示例">5.2 签名与最小示例</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">fastapi</span><span class="w"> </span><span class="kn">import</span> <span class="n">FastAPI</span><span class="p">,</span> <span class="n">WebSocket</span><span class="p">,</span> <span class="n">WebSocketDisconnect</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">FastAPI</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">"墨集 inkhub"</span><span class="p">)</span>
+
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">websocket</span><span class="p">(</span><span class="s2">"/ws/echo"</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">echo</span><span class="p">(</span><span class="n">websocket</span><span class="p">:</span> <span class="n">WebSocket</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">await</span> <span class="n">websocket</span><span class="o">.</span><span class="n">accept</span><span class="p">()</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">text</span> <span class="o">=</span> <span class="k">await</span> <span class="n">websocket</span><span class="o">.</span><span class="n">receive_text</span><span class="p">()</span>
+            <span class="k">await</span> <span class="n">websocket</span><span class="o">.</span><span class="n">send_text</span><span class="p">(</span><span class="sa">f</span><span class="s2">"echo: </span><span class="si">{</span><span class="n">text</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">WebSocketDisconnect</span><span class="p">:</span>
+        <span class="k">pass</span>  <span class="c1"># 客户端断开，收摊</span>
+</code></pre></div>
+<p>路由识别靠 <code>websocket: WebSocket</code> 这个类型标注——和 HTTP 端点用 <code>q: str</code> 声明查询参数是同一套机制。</p>
+<h3 id="53-连接生命周期accept-receivesend-close">5.3 连接生命周期：accept → receive/send → close</h3>
+<table>
+<thead>
+<tr>
+<th>动作</th>
+<th>方法</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>握手</td>
+<td><code>await ws.accept()</code></td>
+<td>必须最先调；不握手就收发，直接 <code>RuntimeError</code></td>
+</tr>
+<tr>
+<td>收</td>
+<td><code>await ws.receive_text()</code></td>
+<td>没消息就挂起等；<strong>客户端断开时抛 <code>WebSocketDisconnect</code></strong></td>
+</tr>
+<tr>
+<td>发</td>
+<td><code>await ws.send_text(...)</code></td>
+<td>推给对端，随发随到</td>
+</tr>
+<tr>
+<td>关</td>
+<td><code>await ws.close(code=1000, reason="...")</code></td>
+<td>主动关门，双方都能收到关闭码</td>
+</tr>
+</tbody>
+</table>
+<p>收发全家桶：</p>
+<ul>
+<li>收：<code>receive_text()</code> / <code>receive_json()</code> / <code>receive_bytes()</code> / <code>receive()</code>（原始 dict）</li>
+<li>发：<code>send_text()</code> / <code>send_json()</code> / <code>send_bytes()</code> / <code>send()</code>（原始 dict）</li>
+</ul>
+<p>三个生命周期补充：</p>
+<ul>
+<li><strong><code>WebSocketDisconnect</code> 必须接住</strong>：客户端关页面、断网、杀进程，服务端的 <code>receive</code> 会抛它（<code>.code</code> 属性是关闭码）。不接住，日志里全是异常栈。常见关闭码：1000 正常关闭、1001 离开、1008 策略拒绝。</li>
+<li><strong>握手前拒绝</strong>：<code>accept</code> 之前直接 <code>await ws.close(code=1008)</code>，握手失败客户端拿 403——鉴权失败的推荐姿势（第 11 章的 token 可在握手时校验，token 走 URL query 或 cookie）。</li>
+<li><strong>并发收发可以，并发收不行</strong>：同一个连接上，一边 <code>receive</code> 一边 <code>send</code> 没问题（对讲机边听边说）；但两个协程同时 <code>await receive()</code> 会抢消息，一条连接配一个收协程。</li>
+</ul>
+<p><strong>文档去哪看</strong>：https://fastapi.tiangolo.com/zh/advanced/websockets/ ；协议本体 RFC 6455：https://www.rfc-editor.org/rfc/rfc6455.html</p>
+<h3 id="54-常见坑">5.4 常见坑</h3>
+<ul>
+<li><strong>忘写 accept</strong>——握手没完成就 receive/send，当场 <code>RuntimeError: WebSocket is not connected. Need to call "accept" first.</code>。</li>
+<li><strong><code>/docs</code> 里看不到 WebSocket 路由</strong>——OpenAPI 规范不覆盖 WebSocket，交互文档只管 HTTP；WS 接口的文档要自己维护（路径、消息格式、事件类型写进 README 或接口文档）。</li>
+<li><strong>HTTP 中间件全失效</strong>——第 10 章三件套对 WS 不生效：计时要在端点里自己掐表；信封更没意义（WS 没有「响应」概念）；CORS 也不设防——浏览器对 WebSocket 不做预检，<strong>任何网页都能连你的 WS 服务</strong>，想限制就在 accept 前检查 <code>ws.headers.get("origin")</code>。</li>
+<li><strong>异常处理器也够不着</strong>——第 09 章那套住在 HTTP 洋葱最内层；WS 端点里抛出的异常没有统一出口，要自己 <code>try/except</code> 后 <code>send_json({"error": ...})</code>。</li>
+</ul>
+<h3 id="55-前端对照new-websocket">5.5 前端对照：new WebSocket()</h3>
+<p>浏览器四件套，和后端生命周期一一对应：</p>
+<div class="highlight"><pre><span></span><code><span class="kd">const</span><span class="w"> </span><span class="nx">ws</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">WebSocket</span><span class="p">(</span><span class="s2">"ws://127.0.0.1:8001/ws/room/editors?name=沈墨"</span><span class="p">);</span>
+
+<span class="nx">ws</span><span class="p">.</span><span class="nx">onopen</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">ws</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="s2">"编辑部的各位好"</span><span class="p">);</span><span class="w">        </span><span class="c1">// 对应后端 accept() 完成</span>
+<span class="nx">ws</span><span class="p">.</span><span class="nx">onmessage</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="nx">e</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span><span class="w">          </span><span class="c1">// 对应后端 send_text()</span>
+<span class="nx">ws</span><span class="p">.</span><span class="nx">onclose</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="nx">e</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">code</span><span class="p">,</span><span class="w"> </span><span class="nx">e</span><span class="p">.</span><span class="nx">reason</span><span class="p">);</span><span class="w">  </span><span class="c1">// 对应后端 close() / 断线</span>
+<span class="nx">ws</span><span class="p">.</span><span class="nx">onerror</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{};</span><span class="w">                              </span><span class="c1">// 出错，随后多伴生一次 onclose</span>
+</code></pre></div>
+<p>三个注意点：</p>
+<ul>
+<li>URL 协议用 <code>ws://</code>（https 站点用 <code>wss://</code>）。</li>
+<li><strong>EventSource 的自动重连是送的，WebSocket 的重连要自己写</strong>——惯用姿势：<code>onclose</code> 里 <code>setTimeout</code> 递归重连，指数退避。</li>
+<li>消息用 JSON 最常见：<code>ws.send(JSON.stringify({type: "join", name: "沈墨"}))</code>，后端 <code>receive_json()</code> 配对。</li>
+</ul>
+<p>Python 侧客户端用 <code>websockets</code> 库（<code>uv add websockets</code>），第 12 章写 WS 测试也能用 TestClient 的 <code>websocket_connect</code>：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">websockets</span>
+
+
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">async</span> <span class="k">with</span> <span class="n">websockets</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s2">"ws://127.0.0.1:8001/ws/room/editors?name=沈墨"</span><span class="p">)</span> <span class="k">as</span> <span class="n">ws</span><span class="p">:</span>
+        <span class="k">await</span> <span class="n">ws</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="s2">"大家好，我刚提交了《夜航船里的旧灯》初稿"</span><span class="p">)</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="k">await</span> <span class="n">ws</span><span class="o">.</span><span class="n">recv</span><span class="p">())</span>
+
+
+<span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">main</span><span class="p">())</span>
+</code></pre></div>
+<hr />
+<h2 id="6-connectionmanager聊天室的广播台">6. ConnectionManager：聊天室的广播台</h2>
+<h3 id="61-为什么需要它">6.1 为什么需要它</h3>
+<p>广播 = 拿着<strong>所有在线连接</strong>挨个 <code>send</code> 一遍。但 WebSocket 对象之间互相不认识，得有人管名单：谁在线（登记）、谁走了（划掉）、有事喊一嗓子（逐个通知）——这就是连接管理器 <code>ConnectionManager</code>。墨集的场景：编辑们连进「编辑室」，谁提交了稿件、哪篇文章过审、哪里来了新评论，全编辑室实时可见。</p>
+<p>打个比方：编辑室门口的<strong>签到台</strong>。进门登记（<code>connect</code>），离开划掉（<code>disconnect</code>），前台有事拿起喇叭挨桌喊（<code>broadcast</code>）。</p>
+<h3 id="62-代码节选自-demodemo_wspy">6.2 代码（节选自 <code>demo/demo_ws.py</code>）</h3>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">ConnectionManager</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rooms</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">WebSocket</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>   <span class="c1"># room_id -&gt; 在线名单</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">connect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">room_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">websocket</span><span class="p">:</span> <span class="n">WebSocket</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">await</span> <span class="n">websocket</span><span class="o">.</span><span class="n">accept</span><span class="p">()</span>                      <span class="c1"># 谁登记谁握手</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rooms</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">room_id</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">websocket</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">disconnect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">room_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">websocket</span><span class="p">:</span> <span class="n">WebSocket</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">room</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rooms</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">room_id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">room</span> <span class="ow">and</span> <span class="n">websocket</span> <span class="ow">in</span> <span class="n">room</span><span class="p">:</span>
+            <span class="n">room</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">websocket</span><span class="p">)</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">broadcast</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">room_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">ws</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rooms</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">room_id</span><span class="p">,</span> <span class="p">[])):</span>  <span class="c1"># 快照遍历，见下</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">await</span> <span class="n">ws</span><span class="o">.</span><span class="n">send_text</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">RuntimeError</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">disconnect</span><span class="p">(</span><span class="n">room_id</span><span class="p">,</span> <span class="n">ws</span><span class="p">)</span>          <span class="c1"># 死连接踢出名单</span>
+
+
+<span class="n">manager</span> <span class="o">=</span> <span class="n">ConnectionManager</span><span class="p">()</span>
+</code></pre></div>
+<p>三个细节：</p>
+<ul>
+<li><strong>快照遍历</strong>：<code>list(...)</code> 先拷一份名单再循环，循环体里删元素才安全——边遍历原列表边删，会跳过元素甚至抛错。</li>
+<li><strong>兜 <code>RuntimeError</code></strong>：给已断开的连接 <code>send</code> 会抛异常，一条死连接不能毒死整轮广播。</li>
+<li><strong>accept 放进 connect</strong>：连接管理的固定套路——「登记」和「握手」绑定在一起，业务代码里就不会忘。</li>
+</ul>
+<h3 id="63-聊天室主循环-http-配合">6.3 聊天室主循环 + HTTP 配合</h3>
+<div class="highlight"><pre><span></span><code><span class="nd">@app</span><span class="o">.</span><span class="n">websocket</span><span class="p">(</span><span class="s2">"/ws/room/</span><span class="si">{room_id}</span><span class="s2">"</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">chat_room</span><span class="p">(</span>
+    <span class="n">websocket</span><span class="p">:</span> <span class="n">WebSocket</span><span class="p">,</span>
+    <span class="n">room_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Query</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">"匿名编辑"</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">20</span><span class="p">),</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">await</span> <span class="n">manager</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">room_id</span><span class="p">,</span> <span class="n">websocket</span><span class="p">)</span>
+    <span class="k">await</span> <span class="n">manager</span><span class="o">.</span><span class="n">broadcast</span><span class="p">(</span><span class="n">room_id</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"【系统】</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> 进入了编辑室（当前 </span><span class="si">{</span><span class="n">manager</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">room_id</span><span class="p">)</span><span class="si">}</span><span class="s2"> 人在线）"</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">text</span> <span class="o">=</span> <span class="k">await</span> <span class="n">websocket</span><span class="o">.</span><span class="n">receive_text</span><span class="p">()</span>     <span class="c1"># 没消息就挂起，不空转</span>
+            <span class="k">await</span> <span class="n">manager</span><span class="o">.</span><span class="n">broadcast</span><span class="p">(</span><span class="n">room_id</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">：</span><span class="si">{</span><span class="n">text</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">WebSocketDisconnect</span><span class="p">:</span>
+        <span class="n">manager</span><span class="o">.</span><span class="n">disconnect</span><span class="p">(</span><span class="n">room_id</span><span class="p">,</span> <span class="n">websocket</span><span class="p">)</span>
+        <span class="k">await</span> <span class="n">manager</span><span class="o">.</span><span class="n">broadcast</span><span class="p">(</span><span class="n">room_id</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"【系统】</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> 离开了编辑室（剩余 </span><span class="si">{</span><span class="n">manager</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">room_id</span><span class="p">)</span><span class="si">}</span><span class="s2"> 人在线）"</span><span class="p">)</span>
+</code></pre></div>
+<p>再配一个 HTTP 入口，演示「通知从 HTTP 进、从 WS 出」——业务系统照常走 HTTP，WS 只当广播喇叭，这是实时通知类功能的标准姿势：</p>
+<div class="highlight"><pre><span></span><code><span class="nd">@app</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">"/api/notify"</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">notify</span><span class="p">(</span>
+    <span class="n">article</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"夜航船里的旧灯"</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"published"</span><span class="p">,</span> <span class="n">room</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"editors"</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+    <span class="n">message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"【协作通知】《</span><span class="si">{</span><span class="n">article</span><span class="si">}</span><span class="s2">》已发布"</span>
+    <span class="k">await</span> <span class="n">manager</span><span class="o">.</span><span class="n">broadcast</span><span class="p">(</span><span class="n">room</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">"status"</span><span class="p">:</span> <span class="s2">"ok"</span><span class="p">,</span> <span class="s2">"message"</span><span class="p">:</span> <span class="n">message</span><span class="p">}</span>
+</code></pre></div>
+<p>实测（两个 <code>websockets</code> 客户端各占一个终端，再 <code>curl -X POST http://127.0.0.1:8001/api/notify</code>）：</p>
+<div class="highlight"><pre><span></span><code>终端 A（沈墨）                                终端 B（阿蓝）
+&lt;- 【系统】阿蓝 进入了编辑室（当前 2 人在线）
+&lt;- 沈墨：大家好，我刚提交了《夜航船里的旧灯》初稿
+                                             &lt;- 沈墨：大家好，我刚提交了《夜航船里的旧灯》初稿
+                                             &lt;- 【协作通知】《夜航船里的旧灯》已发布      ← curl 触发
+&lt;- 【系统】阿蓝 离开了编辑室（剩余 1 人在线）   ← B 的终端被关掉，A 立刻知道
+</code></pre></div>
+<p><code>curl -X POST http://127.0.0.1:8001/api/notify</code> 的响应：</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span><span class="nt">"status"</span><span class="p">:</span><span class="s2">"ok"</span><span class="p">,</span><span class="nt">"message"</span><span class="p">:</span><span class="s2">"【协作通知】《夜航船里的旧灯》已发布"</span><span class="p">}</span>
+</code></pre></div>
+<h3 id="64-常见坑">6.4 常见坑</h3>
+<ul>
+<li><strong>内存名单只认单进程</strong>：<code>uvicorn --workers 4</code> 时每个进程一份 <code>manager</code>，A 进程的连接收不到 B 进程广播的 <code>broadcast</code>。多进程/多机部署要上 Redis Pub/Sub 之类的消息总线把广播跨进程转发——demo 不展开，知道边界在哪就行。</li>
+<li><strong>忘 <code>disconnect</code></strong>——名单越积越长，全是幽灵连接，每轮广播挨个抛异常。</li>
+<li><strong>逐个 <code>await</code> 发送会互相拖累</strong>——一条慢连接能让整轮广播变慢；连接量大时可换 <code>asyncio.gather</code> 并发发。demo 量级小，顺序发足够且更好读。</li>
+</ul>
+<hr />
+<h2 id="7-选型对比sse-还是-websocket">7. 选型对比：SSE 还是 WebSocket</h2>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>SSE</th>
+<th>WebSocket</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>通信方向</td>
+<td><strong>单向</strong>：服务器 → 客户端</td>
+<td><strong>双向</strong>，两边随时互发</td>
+</tr>
+<tr>
+<td>底层</td>
+<td>普通 HTTP 长连接（chunked 流）</td>
+<td>HTTP 握手升级后的独立协议</td>
+</tr>
+<tr>
+<td>浏览器 API</td>
+<td><code>EventSource</code></td>
+<td><code>WebSocket</code></td>
+</tr>
+<tr>
+<td><strong>自动重连</strong></td>
+<td>浏览器白送，带 <code>Last-Event-ID</code> 续传</td>
+<td>自己写重连逻辑</td>
+</tr>
+<tr>
+<td>认证</td>
+<td>只能 GET、不能自定义头（token 走 cookie/URL）</td>
+<td>握手是 HTTP，能带 cookie；自定义头同样进不去</td>
+</tr>
+<tr>
+<td><strong>代理兼容</strong></td>
+<td>极好——它就是 HTTP，只是别被缓冲</td>
+<td>老代理/网关可能不认识 <code>Upgrade</code>，得放行配置</td>
+</tr>
+<tr>
+<td>数据格式</td>
+<td>纯文本</td>
+<td>文本 + 二进制</td>
+</tr>
+<tr>
+<td>典型场景</td>
+<td>AI 逐字输出、通知推送、进度条</td>
+<td>聊天室、协作编辑、游戏、客户端频繁上报</td>
+</tr>
+</tbody>
+</table>
+<p>选型口诀：<strong>只需要服务器往外推，用 SSE；客户端也要频繁说话，才上 WebSocket。</strong></p>
+<p>AI 逐字输出是教科书级的 SSE 场景：你把提问发给模型，走一条普通 HTTP POST 就够了；模型吐字给你，走一条 SSE——「说」和「听」两条路各干各的，没必要为听单口相声开一条对讲机专线。反过来，墨集编辑室的多人协作，编辑随时要发言、系统随时要推通知，双向高频，WebSocket 才对路。</p>
+<hr />
+<h2 id="8-跑一下本章-demo">8. 跑一下本章 demo</h2>
+<p>两个文件、两个端口（故意错开，可以同时跑）：</p>
+<div class="highlight"><pre><span></span><code>uv<span class="w"> </span>add<span class="w"> </span>fastapi<span class="w"> </span><span class="s2">"uvicorn[standard]"</span><span class="w"> </span>sse-starlette
+python<span class="w"> </span>demo/demo_stream.py<span class="w">   </span><span class="c1"># 8000 端口：流式 + SSE + AI 逐字输出</span>
+python<span class="w"> </span>demo/demo_ws.py<span class="w">       </span><span class="c1"># 8001 端口：WebSocket 聊天室</span>
+</code></pre></div>
+<p><strong>demo_stream.py 验证清单</strong>（以下均为实测输出，节选）：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># ① StreamingResponse 基本款：日志逐条蹦（响应头无 content-length）</span>
+curl<span class="w"> </span>-i<span class="w"> </span>http://127.0.0.1:8000/api/logs/stream
+
+<span class="c1"># ② 文件下载：Content-Disposition 触发浏览器「另存为」</span>
+curl<span class="w"> </span>-i<span class="w"> </span>http://127.0.0.1:8000/api/reports/download
+
+<span class="c1"># ③ 手写 SSE 报文：自己拼 id/event/data + 空行</span>
+curl<span class="w"> </span>-N<span class="w"> </span>http://127.0.0.1:8000/api/ai/write-raw
+
+<span class="c1"># ④ 本章主角：AI 逐字输出（-N 关掉 curl 缓冲，别忘）</span>
+curl<span class="w"> </span>-N<span class="w"> </span>http://127.0.0.1:8000/api/ai/write
+
+<span class="c1"># ⑤ 断点续传：从 id: 10 接着吐</span>
+curl<span class="w"> </span>-N<span class="w"> </span>-H<span class="w"> </span><span class="s2">"Last-Event-ID: 9"</span><span class="w"> </span>http://127.0.0.1:8000/api/ai/write
+</code></pre></div>
+<p><strong>demo_ws.py 验证清单</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># HTTP 侧群推协作通知（配合任意 WebSocket 客户端验证）</span>
+curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://127.0.0.1:8001/api/notify
+curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span><span class="s2">"http://127.0.0.1:8001/api/notify?event=review"</span>
+</code></pre></div>
+<p>WebSocket 客户端两种开法（demo 文件头注释里有完整可粘贴版本）：</p>
+<ul>
+<li>Python：<code>websockets.connect(...)</code> 开两个终端各连一个，体验「一条消息两边都收到」；</li>
+<li>浏览器：任意页面 F12 控制台 <code>new WebSocket("ws://127.0.0.1:8001/ws/room/editors?name=沈墨")</code>，WebSocket 握手不受同源策略限制。</li>
+</ul>
+<hr />
+<h2 id="9-小结速查">9. 小结速查</h2>
+<table>
+<thead>
+<tr>
+<th>需求</th>
+<th>用法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>流式吐数据</td>
+<td><code>StreamingResponse(gen(), media_type=...)</code>，gen 同步/异步生成器皆可</td>
+</tr>
+<tr>
+<td>文件下载另存为</td>
+<td>headers 传 <code>Content-Disposition: attachment; filename="..."</code>；磁盘现成文件用 <code>FileResponse</code></td>
+</tr>
+<tr>
+<td>手写 SSE</td>
+<td>自己拼 <code>data:</code>/<code>event:</code>/<code>id:</code> 行 + 空行 <code>\n\n</code>，media_type=<code>text/event-stream</code></td>
+</tr>
+<tr>
+<td>SSE 标准姿势</td>
+<td><code>uv add sse-starlette</code>，<code>EventSourceResponse(产 dict 的生成器)</code></td>
+</tr>
+<tr>
+<td>SSE 断点续传</td>
+<td>读 <code>request.headers.get("last-event-id")</code>，从下一号接着发</td>
+</tr>
+<tr>
+<td>AI 逐字输出</td>
+<td>token 事件逐字 + done 事件收尾；首字延迟照实模拟</td>
+</tr>
+<tr>
+<td>WebSocket 端点</td>
+<td><code>@app.websocket("/ws")</code> + <code>websocket: WebSocket</code> 参数，先 <code>await ws.accept()</code></td>
+</tr>
+<tr>
+<td>收 / 发</td>
+<td><code>receive_text/json/bytes</code> ↔ <code>send_text/json/bytes</code>；断开抛 <code>WebSocketDisconnect</code></td>
+</tr>
+<tr>
+<td>拒绝握手</td>
+<td>accept 之前 <code>await ws.close(code=1008)</code></td>
+</tr>
+<tr>
+<td>广播</td>
+<td><code>ConnectionManager</code>：名单 + <code>broadcast()</code>，快照遍历 + 兜异常</td>
+</tr>
+<tr>
+<td>前端连接</td>
+<td><code>new EventSource(url)</code>（自动重连）/ <code>new WebSocket(url)</code>（重连自己写）</td>
+</tr>
+<tr>
+<td>选型</td>
+<td>只往外推 → SSE；双向互说 → WebSocket</td>
+</tr>
+</tbody>
+</table>
+<p><strong>自测三问</strong>：</p>
+<ol>
+<li><code>StreamingResponse</code> 的响应头里为什么没有 <code>content-length</code>？流已经开吐之后端点函数抛了异常，客户端收到的状态码是什么、为什么改不了？</li>
+<li>SSE 手写报文漏了 <code>\n\n</code> 会发生什么？<code>Last-Event-ID</code> 是谁放进请求头的、在什么时机？</li>
+<li>第 10 章的三个中间件为什么对 WebSocket 全部失效？由此推论，WS 端点里哪两件事得自己干？</li>
+</ol>
+<hr />
+<h2 id="10-全课程收官">10. 全课程收官</h2>
+<p>十四章前，你在 01 章敲下第一行 <code>uvicorn.run(app, ...)</code>，墨集 inkhub 开了张；十四章后的现在，把整条路串一遍：一个请求从 Uvicorn 进门（01），对上路由、拿到参数（02），被 Pydantic 过一遍安检（03），在 SQLAlchemy 的异步会话里读写（04~06），库表结构跟着 Alembic 演进（07），一路上依赖注入递工具（08）、异常有统一的病历单（09）、中间件在出口盖计时章、打包信封（10）、门口查 JWT 令牌（11）；上线之前 pytest 过一遍（12），跑起来之后 loguru 盯着日志（13）；最后，该一次给完的快速给完，不该等的——大文件、慢生成、AI 逐字输出——学会让它边做边给（14）。一套 API 服务的完整零件箱，你已经一件一件摸过了。</p>
+<p>课程到这里正式完结，但你的路才刚开始。几个值得去的方向：</p>
+<ul>
+<li><strong>把这套东西用到一个真实项目里</strong>——真实需求永远是最好的下一章：给自己写个工具、给团队写个内部服务、接一个真模型的 API 都行，零件箱里的东西只有在真项目里拧过螺丝才算你的。</li>
+<li><strong>AI 方向</strong>：把第 4 节的模拟端点接到真模型上（OpenAI 兼容接口、本地模型皆可），SSE 链路一模一样；再往后是 Function Calling、RAG，那些都是「FastAPI 当传送带」的活。</li>
+<li><strong>部署方向</strong>：nginx 反代下 SSE 的 <code>proxy_buffering off</code>、WebSocket 的 <code>Upgrade</code> 放行、多进程下的 Redis 广播总线——本章「常见坑」里点过名的账，实战里都会真实遇到。</li>
+</ul>
+<p>从第一个 Hello World 到一条逐字流淌的流式响应，你走完了。去写点什么吧。</p>
+<hr />
+<p><strong>全课程完</strong> · 返回 <a href="../modules/backend.html">00 · 使用指南</a></p></div>
+
+      </article>
+<nav class="pager"><a class="pg-card pg-prev" href="../backend/13-ri-zhi-loguru.html"><span class="pg-label">← 上一篇</span><span class="pg-title">日志 loguru</span><span class="pg-mod">Python 框架指南</span></a><a class="pg-card pg-next" href="../modules/interview.html"><span class="pg-label">下一篇 →</span><span class="pg-title">面试题库 · 使用指南</span><span class="pg-mod">面试题库</span></a></nav>
+    </div>
+    <footer class="foot">
+      <span>深栈 DeepStack · AI Agent 工程师转型训练营配套文档</span>
+    </footer>
+  </main>
+<nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#1-为什么需要流式一次性响应的三种翻车现场">1. 为什么需要流式：一次性响应的三种翻车现场</a><a class="toc-link toc-h2" href="#2-streamingresponse边做边给的基本功">2. StreamingResponse：边做边给的基本功</a><a class="toc-link toc-h3" href="#21-异步生成器首选">2.1 异步生成器（首选）</a><a class="toc-link toc-h3" href="#22-同步生成器也能跑但要知道它在哪跑">2.2 同步生成器：也能跑，但要知道它在哪跑</a><a class="toc-link toc-h3" href="#23-media_type不写就没有-content-type">2.3 media_type：不写就没有 content-type</a><a class="toc-link toc-h3" href="#24-文件下载content-disposition">2.4 文件下载：Content-Disposition</a><a class="toc-link toc-h3" href="#25-常见坑">2.5 常见坑</a><a class="toc-link toc-h2" href="#3-ssehttp-长连接上的单向广播">3. SSE：HTTP 长连接上的单向广播</a><a class="toc-link toc-h3" href="#31-sse-是什么">3.1 SSE 是什么</a><a class="toc-link toc-h3" href="#32-报文格式四类字段-一个空行">3.2 报文格式：四类字段 + 一个空行</a><a class="toc-link toc-h3" href="#33-浏览器端eventsource">3.3 浏览器端：EventSource</a><a class="toc-link toc-h3" href="#34-断线重连last-event-id-断点续传">3.4 断线重连：Last-Event-ID 断点续传</a><a class="toc-link toc-h3" href="#35-eventsourceresponsesse-starlette-替你把脏活干了">3.5 EventSourceResponse：sse-starlette 替你把脏活干了</a><a class="toc-link toc-h3" href="#36-常见坑">3.6 常见坑</a><a class="toc-link toc-h2" href="#4-ai-场景实战墨集-ai-写作助手逐字生成">4. AI 场景实战：墨集 AI 写作助手逐字生成</a><a class="toc-link toc-h3" href="#41-端点设计">4.1 端点设计</a><a class="toc-link toc-h3" href="#42-核心代码节选自-demodemo_streampy">4.2 核心代码（节选自 demo/demo_stream.py）</a><a class="toc-link toc-h3" href="#43-实测">4.3 实测</a><a class="toc-link toc-h3" href="#44-前端打字机">4.4 前端打字机</a><a class="toc-link toc-h3" href="#45-接真模型只差一步">4.5 接真模型只差一步</a><a class="toc-link toc-h2" href="#5-websocket全双工对讲机">5. WebSocket：全双工对讲机</a><a class="toc-link toc-h3" href="#51-和-sse-的本质区别">5.1 和 SSE 的本质区别</a><a class="toc-link toc-h3" href="#52-签名与最小示例">5.2 签名与最小示例</a><a class="toc-link toc-h3" href="#53-连接生命周期accept-receivesend-close">5.3 连接生命周期：accept → receive/send → close</a><a class="toc-link toc-h3" href="#54-常见坑">5.4 常见坑</a><a class="toc-link toc-h3" href="#55-前端对照new-websocket">5.5 前端对照：new WebSocket()</a><a class="toc-link toc-h2" href="#6-connectionmanager聊天室的广播台">6. ConnectionManager：聊天室的广播台</a><a class="toc-link toc-h3" href="#61-为什么需要它">6.1 为什么需要它</a><a class="toc-link toc-h3" href="#62-代码节选自-demodemo_wspy">6.2 代码（节选自 demo/demo_ws.py）</a><a class="toc-link toc-h3" href="#63-聊天室主循环-http-配合">6.3 聊天室主循环 + HTTP 配合</a><a class="toc-link toc-h3" href="#64-常见坑">6.4 常见坑</a><a class="toc-link toc-h2" href="#7-选型对比sse-还是-websocket">7. 选型对比：SSE 还是 WebSocket</a><a class="toc-link toc-h2" href="#8-跑一下本章-demo">8. 跑一下本章 demo</a><a class="toc-link toc-h2" href="#9-小结速查">9. 小结速查</a><a class="toc-link toc-h2" href="#10-全课程收官">10. 全课程收官</a></nav>
+</div>
+<div class="sb-mask" id="sbMask"></div>
+<script src="../assets/app.js"></script>
+</body>
+</html>

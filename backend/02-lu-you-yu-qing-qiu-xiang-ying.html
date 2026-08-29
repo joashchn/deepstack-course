@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>02 · 路由与请求响应 · 深栈 DeepStack 课程文档</title>
+<meta name="description" content="本章是 FastAPI 的「点单系统」说明书：URL 怎么进来、数据怎么接住、结果怎么发回去。学完你能独立写出一套带文档、带校验的 CRUD 接口。
+
+ 示例场景统一为墨集 inkhub 内容平台——一个管理「栏目、文章…">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%23d9c39a' text-anchor='middle'%3EDS%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+<div class="progress" id="progress"></div>
+
+<div class="layout">
+<aside class="sidebar" id="sidebar">
+  <div class="sb-head">
+    <a class="brand" href="../index.html">
+      <span class="brand-mark">DS</span>
+      <span class="brand-text"><b>深栈 DeepStack</b><i>AI Agent 工程师转型训练营</i></span>
+    </a>
+    <button class="sb-close" id="sbClose" aria-label="关闭目录">✕</button>
+  </div>
+  <div class="sb-search"><input type="search" id="searchInput" placeholder="搜索 123 篇文档… ( / )" autocomplete="off">
+    <div class="sb-results" id="searchResults"></div></div>
+  <nav class="sb-nav">
+    <section class="sb-group" data-mod="python">
+      <a class="sb-group-title" href="../modules/python.html" data-toggle="python">
+        <span class="sb-num">01</span>
+        <span class="sb-group-text"><b>Python 与数据实践</b><i>31 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../python/01-huan-jing-da-jian-yu-ban-ben-guan-li.html"><span class="sb-item-num">01</span><span class="sb-item-title">环境搭建与版本管理</span></a>
+        <a class="sb-item" href="../python/02-bian-liang-biao-da-shi-yu-liu-cheng-kong-zhi.html"><span class="sb-item-num">02</span><span class="sb-item-title">变量、表达式与流程控制</span></a>
+        <a class="sb-item" href="../python/03-xu-lie-zi-dian-yu-ji-he.html"><span class="sb-item-num">03</span><span class="sb-item-title">序列、字典与集合</span></a>
+        <a class="sb-item" href="../python/04-han-shu-she-ji-yu-lambda.html"><span class="sb-item-num">04</span><span class="sb-item-title">函数设计与 lambda</span></a>
+        <a class="sb-item" href="../python/05-zuo-yong-yu-gui-ze-yu-bi-bao.html"><span class="sb-item-num">05</span><span class="sb-item-title">作用域规则与闭包</span></a>
+        <a class="sb-item" href="../python/06-lei-de-ding-yi-yu-shi-li-hua.html"><span class="sb-item-num">06</span><span class="sb-item-title">类的定义与实例化</span></a>
+        <a class="sb-item" href="../python/07-lei-xing-pan-ding-yu-chou-xiang-ji-lei.html"><span class="sb-item-num">07</span><span class="sb-item-title">类型判定与抽象基类</span></a>
+        <a class="sb-item" href="../python/08-mo-shu-fang-fa-quan-jing.html"><span class="sb-item-num">08</span><span class="sb-item-title">魔术方法全景</span></a>
+        <a class="sb-item" href="../python/09-miao-shu-fu-yu-yuan-lei.html"><span class="sb-item-num">09</span><span class="sb-item-title">描述符与元类</span></a>
+        <a class="sb-item" href="../python/10-zhuang-shi-qi.html"><span class="sb-item-num">10</span><span class="sb-item-title">装饰器</span></a>
+        <a class="sb-item" href="../python/11-die-dai-xie-yi-yu-sheng-cheng-qi.html"><span class="sb-item-num">11</span><span class="sb-item-title">迭代协议与生成器</span></a>
+        <a class="sb-item" href="../python/12-with-yu-shang-xia-wen-xie-yi.html"><span class="sb-item-num">12</span><span class="sb-item-title">with 与上下文协议</span></a>
+        <a class="sb-item" href="../python/13-yi-chang-ti-xi-yu-chu-li.html"><span class="sb-item-num">13</span><span class="sb-item-title">异常体系与处理</span></a>
+        <a class="sb-item" href="../python/14-lei-xing-biao-zhu.html"><span class="sb-item-num">14</span><span class="sb-item-title">类型标注</span></a>
+        <a class="sb-item" href="../python/15-mo-kuai-yu-bao-de-zu-zhi.html"><span class="sb-item-num">15</span><span class="sb-item-title">模块与包的组织</span></a>
+        <a class="sb-item" href="../python/16-biao-zhun-ku-xun-li.html"><span class="sb-item-num">16</span><span class="sb-item-title">标准库巡礼</span></a>
+        <a class="sb-item" href="../python/17-yi-lai-guan-li-yu-di-san-fang-ku.html"><span class="sb-item-num">17</span><span class="sb-item-title">依赖管理与第三方库</span></a>
+        <a class="sb-item" href="../python/18-xian-cheng-yu-jin-cheng.html"><span class="sb-item-num">18</span><span class="sb-item-title">线程与进程</span></a>
+        <a class="sb-item" href="../python/19-shi-jian-xun-huan.html"><span class="sb-item-num">19</span><span class="sb-item-title">事件循环</span></a>
+        <a class="sb-item" href="../python/20-future-yu-xie-cheng.html"><span class="sb-item-num">20</span><span class="sb-item-title">Future 与协程</span></a>
+        <a class="sb-item" href="../python/21-asyncio-shi-zhan.html"><span class="sb-item-num">21</span><span class="sb-item-title">asyncio 实战</span></a>
+        <a class="sb-item" href="../python/22-gou-jian-yu-fa-bu.html"><span class="sb-item-num">22</span><span class="sb-item-title">构建与发布</span></a>
+        <a class="sb-item" href="../python/23-gong-cheng-hua-gong-ju-lian.html"><span class="sb-item-num">23</span><span class="sb-item-title">工程化工具链</span></a>
+        <a class="sb-item" href="../python/24-monorepo-yu-tiao-shi.html"><span class="sb-item-num">24</span><span class="sb-item-title">monorepo 与调试</span></a>
+        <a class="sb-item" href="../python/25-jupyter-jiao-hu-huan-jing.html"><span class="sb-item-num">25</span><span class="sb-item-title">Jupyter 交互环境</span></a>
+        <a class="sb-item" href="../python/26-numpy-shu-zu-yu-xiang-liang-hua.html"><span class="sb-item-num">26</span><span class="sb-item-title">NumPy 数组与向量化</span></a>
+        <a class="sb-item" href="../python/27-pandas-shu-ju-jie-gou.html"><span class="sb-item-num">27</span><span class="sb-item-title">Pandas 数据结构</span></a>
+        <a class="sb-item" href="../python/28-pandas-shu-ju-qing-xi.html"><span class="sb-item-num">28</span><span class="sb-item-title">Pandas 数据清洗</span></a>
+        <a class="sb-item" href="../python/29-matplotlib-hui-tu-ti-xi.html"><span class="sb-item-num">29</span><span class="sb-item-title">Matplotlib 绘图体系</span></a>
+        <a class="sb-item" href="../python/30-matplotlib-dong-hua-yu-jiao-hu.html"><span class="sb-item-num">30</span><span class="sb-item-title">Matplotlib 动画与交互</span></a>
+        <a class="sb-item" href="../python/31-seaborn-tong-ji-ke-shi-hua.html"><span class="sb-item-num">31</span><span class="sb-item-title">Seaborn 统计可视化</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="agent">
+      <a class="sb-group-title" href="../modules/agent.html" data-toggle="agent">
+        <span class="sb-num">02</span>
+        <span class="sb-group-text"><b>Agent 核心</b><i>15 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../agent/01-token-yu-ci-qian-ru.html"><span class="sb-item-num">01</span><span class="sb-item-title">Token 与词嵌入</span></a>
+        <a class="sb-item" href="../agent/02-qian-xiang-chuan-bo-yu-fan-xiang-chuan-bo.html"><span class="sb-item-num">02</span><span class="sb-item-title">前向传播与反向传播</span></a>
+        <a class="sb-item" href="../agent/03-zhu-yi-li-ji-zhi-yu-transformer-jia-gou.html"><span class="sb-item-num">03</span><span class="sb-item-title">注意力机制与 Transformer 架构</span></a>
+        <a class="sb-item" href="../agent/04-yu-xun-lian-rlhf-yu-cai-yang-kv-cache.html"><span class="sb-item-num">04</span><span class="sb-item-title">预训练、RLHF 与采样（KV Cache）</span></a>
+        <a class="sb-item" href="../agent/05-ben-di-mo-xing-yu-xiao-xi-jie-gou.html"><span class="sb-item-num">05</span><span class="sb-item-title">本地模型与消息结构</span></a>
+        <a class="sb-item" href="../agent/06-hui-hua-guan-li-yu-json-shu-chu.html"><span class="sb-item-num">06</span><span class="sb-item-title">会话管理与 JSON 输出</span></a>
+        <a class="sb-item" href="../agent/07-tool-calling-xie-yi-yu-feng-zhuang.html"><span class="sb-item-num">07</span><span class="sb-item-title">Tool Calling：协议与封装</span></a>
+        <a class="sb-item" href="../agent/08-react-mo-shi-yu-zhu-xun-huan.html"><span class="sb-item-num">08</span><span class="sb-item-title">ReAct 模式与主循环</span></a>
+        <a class="sb-item" href="../agent/09-shi-zhan-deep-research-agent.html"><span class="sb-item-num">09</span><span class="sb-item-title">实战：Deep Research Agent</span></a>
+        <a class="sb-item" href="../agent/10-skill-yu-jian-jin-shi-pi-lu.html"><span class="sb-item-num">10</span><span class="sb-item-title">Skill 与渐进式披露</span></a>
+        <a class="sb-item" href="../agent/11-mcp-quan-jing.html"><span class="sb-item-num">11</span><span class="sb-item-title">MCP 全景</span></a>
+        <a class="sb-item" href="../agent/12-duo-agent-yu-xuan-xing-ce-lve.html"><span class="sb-item-num">12</span><span class="sb-item-title">多 Agent 与选型策略</span></a>
+        <a class="sb-item" href="../agent/13-ti-shi-ci-gong-cheng-yu-shang-xia-wen-gong.html"><span class="sb-item-num">13</span><span class="sb-item-title">提示词工程与上下文工程</span></a>
+        <a class="sb-item" href="../agent/14-xun-huan-tu-yu-gu-jia-gong-cheng.html"><span class="sb-item-num">14</span><span class="sb-item-title">循环、图与骨架工程</span></a>
+        <a class="sb-item" href="../agent/15-ji-yi-quan-xian-yu-ping-ce.html"><span class="sb-item-num">15</span><span class="sb-item-title">记忆、权限与评测</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="langchain">
+      <a class="sb-group-title" href="../modules/langchain.html" data-toggle="langchain">
+        <span class="sb-num">03</span>
+        <span class="sb-group-text"><b>LangChain 指南</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langchain/01-ren-shi-langchain.html"><span class="sb-item-num">01</span><span class="sb-item-title">认识 LangChain</span></a>
+        <a class="sb-item" href="../langchain/02-ti-shi-ci-mu-ban-yu-xiao-xi.html"><span class="sb-item-num">02</span><span class="sb-item-title">提示词模板与消息</span></a>
+        <a class="sb-item" href="../langchain/03-lcel-yu-runnable.html"><span class="sb-item-num">03</span><span class="sb-item-title">LCEL 与 Runnable</span></a>
+        <a class="sb-item" href="../langchain/04-liu-shi-yu-bing-fa.html"><span class="sb-item-num">04</span><span class="sb-item-title">流式与并发</span></a>
+        <a class="sb-item" href="../langchain/05-shu-chu-jie-xi-qi.html"><span class="sb-item-num">05</span><span class="sb-item-title">输出解析器</span></a>
+        <a class="sb-item" href="../langchain/06-wen-dang-jia-zai-yu-qie-ge.html"><span class="sb-item-num">06</span><span class="sb-item-title">文档加载与切割</span></a>
+        <a class="sb-item" href="../langchain/07-qian-ru-yu-xiang-liang-ku.html"><span class="sb-item-num">07</span><span class="sb-item-title">嵌入与向量库</span></a>
+        <a class="sb-item" href="../langchain/08-jian-suo-yu-rag.html"><span class="sb-item-num">08</span><span class="sb-item-title">检索与RAG</span></a>
+        <a class="sb-item" href="../langchain/09-dui-hua-ji-yi.html"><span class="sb-item-num">09</span><span class="sb-item-title">对话记忆</span></a>
+        <a class="sb-item" href="../langchain/10-gong-ju-diao-yong.html"><span class="sb-item-num">10</span><span class="sb-item-title">工具调用</span></a>
+        <a class="sb-item" href="../langchain/11-agent.html"><span class="sb-item-num">11</span><span class="sb-item-title">Agent</span></a>
+        <a class="sb-item" href="../langchain/12-hui-diao-yu-tiao-shi-quan-ke-cheng-shou-guan.html"><span class="sb-item-num">12</span><span class="sb-item-title">回调与调试（全课程收官章）</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="langgraph">
+      <a class="sb-group-title" href="../modules/langgraph.html" data-toggle="langgraph">
+        <span class="sb-num">04</span>
+        <span class="sb-group-text"><b>LangGraph 框架指南</b><i>17 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langgraph/01-di-1-zhang-cong-yi-ge-shi-kong-de-jiao.html"><span class="sb-item-num">01</span><span class="sb-item-title">第 1 章 从一个失控的脚本说起</span></a>
+        <a class="sb-item" href="../langgraph/02-di-2-zhang-zui-xiao-ke-yun-xing-tu.html"><span class="sb-item-num">02</span><span class="sb-item-title">第 2 章 最小可运行图</span></a>
+        <a class="sb-item" href="../langgraph/03-di-3-zhang-zhuang-tai-tu-de-shu-ju-xin.html"><span class="sb-item-num">03</span><span class="sb-item-title">第 3 章 状态：图的数据心脏</span></a>
+        <a class="sb-item" href="../langgraph/04-di-4-zhang-rang-liu-cheng-xue-hui-jue-ce.html"><span class="sb-item-num">04</span><span class="sb-item-title">第 4 章 让流程学会决策</span></a>
+        <a class="sb-item" href="../langgraph/05-di-5-zhang-bing-xing-shi-jie-chao-bu-zhi.html"><span class="sb-item-num">05</span><span class="sb-item-title">第 5 章 并行世界：超步执行模型</span></a>
+        <a class="sb-item" href="../langgraph/06-di-6-zhang-command-ba-kong-zhi-quan-jiao-jin.html"><span class="sb-item-num">06</span><span class="sb-item-title">第 6 章 Command：把控制权交进节点</span></a>
+        <a class="sb-item" href="../langgraph/07-di-7-zhang-dong-tai-bing-xing-send-yu-mapreduce.html"><span class="sb-item-num">07</span><span class="sb-item-title">第 7 章 动态并行：Send 与 MapReduce</span></a>
+        <a class="sb-item" href="../langgraph/08-di-8-zhang-gei-tu-zhuang-shang-shou-jiao-gong.html"><span class="sb-item-num">08</span><span class="sb-item-title">第 8 章 给图装上手脚：工具调用</span></a>
+        <a class="sb-item" href="../langgraph/09-di-9-zhang-fu-yong-yu-feng-zhuang-zi-tu.html"><span class="sb-item-num">09</span><span class="sb-item-title">第 9 章 复用与封装：子图</span></a>
+        <a class="sb-item" href="../langgraph/10-di-10-zhang-cong-dan-tu-dao-tuan-dui-duo.html"><span class="sb-item-num">10</span><span class="sb-item-title">第 10 章 从单图到团队：多 Agent 架构</span></a>
+        <a class="sb-item" href="../langgraph/11-di-11-zhang-liu-shi-shu-chu.html"><span class="sb-item-num">11</span><span class="sb-item-title">第 11 章 流式输出</span></a>
+        <a class="sb-item" href="../langgraph/12-di-12-zhang-chi-jiu-hua-checkpointer-yu-xian-cheng.html"><span class="sb-item-num">12</span><span class="sb-item-title">第 12 章 持久化：Checkpointer 与线程</span></a>
+        <a class="sb-item" href="../langgraph/13-di-13-zhang-shi-jian-lv-xing.html"><span class="sb-item-num">13</span><span class="sb-item-title">第 13 章 时间旅行</span></a>
+        <a class="sb-item" href="../langgraph/14-di-14-zhang-zhong-duan-yu-ren-zai-hui-lu.html"><span class="sb-item-num">14</span><span class="sb-item-title">第 14 章 中断与人在回路</span></a>
+        <a class="sb-item" href="../langgraph/15-di-15-zhang-ji-yi-guan-li.html"><span class="sb-item-num">15</span><span class="sb-item-title">第 15 章 记忆管理</span></a>
+        <a class="sb-item" href="../langgraph/16-di-16-zhang-rong-cuo-zhong-shi-chao-shi-yu.html"><span class="sb-item-num">16</span><span class="sb-item-title">第 16 章 容错：重试、超时与兜底</span></a>
+        <a class="sb-item" href="../langgraph/17-di-17-zhang-quan-jing-hui-gu.html"><span class="sb-item-num">17</span><span class="sb-item-title">第 17 章 全景回顾</span></a>
+      </div>
+    </section>
+    <section class="sb-group open" data-mod="backend">
+      <a class="sb-group-title" href="../modules/backend.html" data-toggle="backend">
+        <span class="sb-num">05</span>
+        <span class="sb-group-text"><b>Python 框架指南</b><i>14 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../backend/01-fastapi-ru-men-yu-asgi.html"><span class="sb-item-num">01</span><span class="sb-item-title">FastAPI 入门与 ASGI</span></a>
+        <a class="sb-item current" href="../backend/02-lu-you-yu-qing-qiu-xiang-ying.html"><span class="sb-item-num">02</span><span class="sb-item-title">路由与请求响应</span></a>
+        <a class="sb-item" href="../backend/03-pydantic-shu-ju-jiao-yan-yu-pei-zhi.html"><span class="sb-item-num">03</span><span class="sb-item-title">Pydantic 数据校验与配置</span></a>
+        <a class="sb-item" href="../backend/04-sqlalchemy-yi-bu-yin-qing-yu-hui-hua.html"><span class="sb-item-num">04</span><span class="sb-item-title">SQLAlchemy 异步引擎与会话</span></a>
+        <a class="sb-item" href="../backend/05-orm-jian-mo.html"><span class="sb-item-num">05</span><span class="sb-item-title">ORM 建模</span></a>
+        <a class="sb-item" href="../backend/06-sql-biao-da-shi-yu-shu-ju-cao-zuo.html"><span class="sb-item-num">06</span><span class="sb-item-title">SQL 表达式与数据操作</span></a>
+        <a class="sb-item" href="../backend/07-alembic-shu-ju-qian-yi.html"><span class="sb-item-num">07</span><span class="sb-item-title">Alembic 数据迁移</span></a>
+        <a class="sb-item" href="../backend/08-yi-lai-zhu-ru.html"><span class="sb-item-num">08</span><span class="sb-item-title">依赖注入</span></a>
+        <a class="sb-item" href="../backend/09-tong-yi-yi-chang-chu-li.html"><span class="sb-item-num">09</span><span class="sb-item-title">统一异常处理</span></a>
+        <a class="sb-item" href="../backend/10-zhong-jian-jian.html"><span class="sb-item-num">10</span><span class="sb-item-title">中间件</span></a>
+        <a class="sb-item" href="../backend/11-ren-zheng-yu-jwt.html"><span class="sb-item-num">11</span><span class="sb-item-title">认证与 JWT</span></a>
+        <a class="sb-item" href="../backend/12-pytest-ce-shi.html"><span class="sb-item-num">12</span><span class="sb-item-title">pytest 测试</span></a>
+        <a class="sb-item" href="../backend/13-ri-zhi-loguru.html"><span class="sb-item-num">13</span><span class="sb-item-title">日志 loguru</span></a>
+        <a class="sb-item" href="../backend/14-liu-shi-xiang-ying-sse-yu-websocket.html"><span class="sb-item-num">14</span><span class="sb-item-title">流式响应 SSE 与 WebSocket</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="interview">
+      <a class="sb-group-title" href="../modules/interview.html" data-toggle="interview">
+        <span class="sb-num">06</span>
+        <span class="sb-group-text"><b>面试题库</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../interview/01-llm-yuan-li-pian.html"><span class="sb-item-num">01</span><span class="sb-item-title">LLM 原理篇</span></a>
+        <a class="sb-item" href="../interview/02-rag-yu-jian-suo-pian.html"><span class="sb-item-num">02</span><span class="sb-item-title">RAG 与检索篇</span></a>
+        <a class="sb-item" href="../interview/03-agent-he-xin-pian.html"><span class="sb-item-num">03</span><span class="sb-item-title">Agent 核心篇</span></a>
+        <a class="sb-item" href="../interview/04-langgraph-pian.html"><span class="sb-item-num">04</span><span class="sb-item-title">LangGraph 篇</span></a>
+        <a class="sb-item" href="../interview/05-langchain-pian.html"><span class="sb-item-num">05</span><span class="sb-item-title">LangChain 篇</span></a>
+        <a class="sb-item" href="../interview/06-xi-tong-she-ji-pian.html"><span class="sb-item-num">06</span><span class="sb-item-title">系统设计篇</span></a>
+        <a class="sb-item" href="../interview/07-xiang-mu-shen-wa-pian.html"><span class="sb-item-num">07</span><span class="sb-item-title">项目深挖篇</span></a>
+        <a class="sb-item" href="../interview/08-gu-zhang-pai-cha-pian.html"><span class="sb-item-num">08</span><span class="sb-item-title">故障排查篇</span></a>
+        <a class="sb-item" href="../interview/09-python-ji-chu-pian.html"><span class="sb-item-num">09</span><span class="sb-item-title">Python 基础篇</span></a>
+        <a class="sb-item" href="../interview/10-fastapi-yu-hou-duan-pian.html"><span class="sb-item-num">10</span><span class="sb-item-title">FastAPI 与后端篇</span></a>
+        <a class="sb-item" href="../interview/11-ti-shi-ci-gong-cheng-yu-an-quan-pian.html"><span class="sb-item-num">11</span><span class="sb-item-title">提示词工程与安全篇</span></a>
+        <a class="sb-item" href="../interview/12-mo-xing-xuan-xing-yu-jiang-ben-pian.html"><span class="sb-item-num">12</span><span class="sb-item-title">模型选型与降本篇</span></a>
+      </div>
+    </section>
+  </nav>
+</aside>
+  <main class="main">
+    <header class="topbar">
+      <button class="menu-btn" id="menuBtn" aria-label="目录">☰</button>
+      <div class="crumbs"><a href="../index.html">首页</a><span>/</span><a href="../modules/backend.html">Python 框架指南</a><span>/</span><span class="cur">路由与请求响应</span></div>
+      <div class="topbar-actions">
+        <button class="icon-btn" id="themeBtn" title="切换深浅色" aria-label="切换深浅色">◐</button>
+      </div>
+    </header>
+    <div class="content">
+      <article class="article">
+
+<header class="page-head">
+  <div class="page-kicker">Python 框架指南 · 第 02 章</div>
+  <h1 class="page-title">路由与请求响应</h1>
+  <p class="page-desc">本章是 FastAPI 的「点单系统」说明书：URL 怎么进来、数据怎么接住、结果怎么发回去。学完你能独立写出一套带文档、带校验的 CRUD 接口。
+
+ 示例场景统一为墨集 inkhub 内容平台——一个管理「栏目、文章…</p>
+  <div class="page-meta">
+    <span>约 28 分钟</span><span>11,170 字</span><span>24 个代码示例</span>
+  </div>
+</header>
+<div class="md"><blockquote>
+<p>本章是 FastAPI 的「点单系统」说明书：URL 怎么进来、数据怎么接住、结果怎么发回去。学完你能独立写出一套带文档、带校验的 CRUD 接口。</p>
+<p>示例场景统一为<strong>墨集 inkhub 内容平台</strong>——一个管理「栏目、文章、作者」的内容系统。</p>
+</blockquote>
+<h2 id="本章你会用到的东西">本章你会用到的东西</h2>
+<ul>
+<li><code>@app.get / post / put / patch / delete</code>：五个请求方法装饰器</li>
+<li>路径参数 + 查询参数：URL 两处取值的地方</li>
+<li>Pydantic 模型请求体：接 JSON 的正规姿势</li>
+<li><code>response_model</code>：出口滤网</li>
+<li><code>status_code</code>：把结果「办成了没」说清楚</li>
+<li><code>APIRouter</code>：路由分货架</li>
+<li><code>tags / summary / description</code>：给 /docs 写说明书</li>
+</ul>
+<hr />
+<h2 id="21-五个方法装饰器五种点单方式">2.1 五个方法装饰器：五种「点单方式」</h2>
+<p><strong>作用</strong>：把「HTTP 方法 + 路径」和某个 Python 函数绑在一起。客户端怎么点单，就进哪个函数。</p>
+<p><strong>签名</strong>（五个装饰器参数完全一样，只是语义不同）：</p>
+<div class="highlight"><pre><span></span><code><span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+    <span class="n">path</span><span class="p">,</span>                    <span class="c1"># 路径，必填，以 / 开头</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">response_model</span><span class="o">=...</span><span class="p">,</span>      <span class="c1"># 响应模型（2.5 节）</span>
+    <span class="n">status_code</span><span class="o">=...</span><span class="p">,</span>         <span class="c1"># 状态码（2.6 节）</span>
+    <span class="n">tags</span><span class="o">=...</span><span class="p">,</span>                <span class="c1"># 文档分组标签（2.8 节）</span>
+    <span class="n">summary</span><span class="o">=...</span><span class="p">,</span>             <span class="c1"># 一句话摘要（2.8 节）</span>
+    <span class="n">description</span><span class="o">=...</span><span class="p">,</span>         <span class="c1"># 详细说明（2.8 节）</span>
+    <span class="n">deprecated</span><span class="o">=...</span><span class="p">,</span>          <span class="c1"># 标记为已废弃</span>
+<span class="p">)</span>
+</code></pre></div>
+<p><strong>语义速记</strong>（咖啡店比喻）：</p>
+<table>
+<thead>
+<tr>
+<th>装饰器</th>
+<th>语义</th>
+<th>咖啡店动作</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>@app.get</code></td>
+<td>取数据</td>
+<td>看菜单、取餐</td>
+</tr>
+<tr>
+<td><code>@app.post</code></td>
+<td>新建</td>
+<td>下一单新的</td>
+</tr>
+<tr>
+<td><code>@app.put</code></td>
+<td>整体替换</td>
+<td>整杯重做</td>
+</tr>
+<tr>
+<td><code>@app.patch</code></td>
+<td>局部更新</td>
+<td>只改备注（少冰）</td>
+</tr>
+<tr>
+<td><code>@app.delete</code></td>
+<td>删除</td>
+<td>退单</td>
+</tr>
+</tbody>
+</table>
+<p><strong>最小示例</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">fastapi</span><span class="w"> </span><span class="kn">import</span> <span class="n">FastAPI</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">FastAPI</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">"墨集 inkhub 内容平台"</span><span class="p">)</span>
+
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"/articles"</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">list_articles</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">]]:</span>
+    <span class="k">return</span> <span class="p">[{</span><span class="s2">"id"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"title"</span><span class="p">:</span> <span class="s2">"FastAPI 路由速览"</span><span class="p">}]</span>
+
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">"/articles"</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_article</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">"message"</span><span class="p">:</span> <span class="s2">"文章已创建"</span><span class="p">}</span>
+
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="s2">"/articles/</span><span class="si">{article_id}</span><span class="s2">"</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">replace_article</span><span class="p">(</span><span class="n">article_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">"message"</span><span class="p">:</span> <span class="sa">f</span><span class="s2">"文章 </span><span class="si">{</span><span class="n">article_id</span><span class="si">}</span><span class="s2"> 已整体替换"</span><span class="p">}</span>
+
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="s2">"/articles/</span><span class="si">{article_id}</span><span class="s2">"</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">update_article</span><span class="p">(</span><span class="n">article_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">"message"</span><span class="p">:</span> <span class="sa">f</span><span class="s2">"文章 </span><span class="si">{</span><span class="n">article_id</span><span class="si">}</span><span class="s2"> 已局部更新"</span><span class="p">}</span>
+
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="s2">"/articles/</span><span class="si">{article_id}</span><span class="s2">"</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">delete_article</span><span class="p">(</span><span class="n">article_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">"message"</span><span class="p">:</span> <span class="sa">f</span><span class="s2">"文章 </span><span class="si">{</span><span class="n">article_id</span><span class="si">}</span><span class="s2"> 已删除"</span><span class="p">}</span>
+</code></pre></div>
+<p><strong>常见坑</strong>：</p>
+<ol>
+<li>同一路径可以注册多个方法（GET + POST 共存没问题），FastAPI 靠「方法 + 路径」二元组区分。</li>
+<li>忘写装饰器、只定义了函数——函数永远不会被调用，还不报错。</li>
+<li>别用 GET 做删除等危险操作：浏览器预加载、爬虫、各种缓存代理都可能「顺手」访问 GET 接口，造成误删。</li>
+</ol>
+<hr />
+<h2 id="22-路径参数url-里的动态位">2.2 路径参数：URL 里的动态位</h2>
+<p><strong>作用</strong>：在路径里挖个坑 <code>{article_id}</code>，请求时坑里的值自动传给<strong>同名</strong>函数参数。就像快递单号——单号本身就是地址的一部分，定位唯一资源。</p>
+<p><strong>签名</strong>：坑写在路径里，值靠函数参数的类型标注来校验：</p>
+<div class="highlight"><pre><span></span><code><span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"/articles/</span><span class="si">{article_id}</span><span class="s2">"</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_article</span><span class="p">(</span><span class="n">article_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+    <span class="c1">#                     ^^^^ 类型标注 = 校验规则</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">"article_id"</span><span class="p">:</span> <span class="n">article_id</span><span class="p">}</span>
+</code></pre></div>
+<p>请求 <code>GET /articles/42</code> → <code>article_id</code> 是 <code>int</code> 的 <code>42</code>；
+请求 <code>GET /articles/abc</code> → 类型对不上，FastAPI 直接回 <strong>422</strong>，函数根本不会执行。</p>
+<p><strong>支持的数据类型</strong>：<code>int</code>、<code>float</code>、<code>str</code>、<code>bool</code>、<code>UUID</code>、<code>datetime</code>、<code>Enum</code> 以及它们的列表。</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">Enum</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Column</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>  <span class="c1"># Enum 路径参数：只允许枚举里的值</span>
+    <span class="n">tech</span> <span class="o">=</span> <span class="s2">"tech"</span>
+    <span class="n">life</span> <span class="o">=</span> <span class="s2">"life"</span>
+    <span class="n">design</span> <span class="o">=</span> <span class="s2">"design"</span>
+
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"/columns/</span><span class="si">{column}</span><span class="s2">"</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_column</span><span class="p">(</span><span class="n">column</span><span class="p">:</span> <span class="n">Column</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">"column"</span><span class="p">:</span> <span class="n">column</span><span class="o">.</span><span class="n">value</span><span class="p">}</span>
+<span class="c1"># GET /columns/tech     ✅ 200</span>
+<span class="c1"># GET /columns/finance  ❌ 422（不在枚举里）</span>
+</code></pre></div>
+<p><strong>加约束</strong>：用 <code>Path()</code>，配合 <code>Annotated</code>（新写法，推荐）：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Annotated</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fastapi</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"/articles/</span><span class="si">{article_id}</span><span class="s2">"</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_article</span><span class="p">(</span>
+    <span class="n">article_id</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Path</span><span class="p">(</span><span class="n">ge</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">le</span><span class="o">=</span><span class="mi">99999</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">"文章ID"</span><span class="p">)],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">"article_id"</span><span class="p">:</span> <span class="n">article_id</span><span class="p">}</span>
+<span class="c1"># GET /articles/0  ❌ 422（小于 1）</span>
+</code></pre></div>
+<p><strong>常见坑</strong>：</p>
+<ol>
+<li><strong>路由顺序</strong>：<code>/articles/me</code> 必须注册在 <code>/articles/{article_id}</code> <strong>之前</strong>，否则 <code>me</code> 会被当成 <code>article_id</code> 去做 int 校验，直接 422。FastAPI 按注册顺序匹配，先到先得。</li>
+<li>路径参数值里带 <code>/</code>（如文件路径 <code>a/b/c</code>）会 404，需要通配写法 <code>{file_path:path}</code>。</li>
+<li>函数参数名必须和坑名<strong>完全一致</strong>：<code>{article_id}</code> 对应 <code>article_id</code>，写成 <code>articleID</code> 就对不上了。</li>
+</ol>
+<hr />
+<h2 id="23-查询参数url-问号后面的备注栏">2.3 查询参数：URL 问号后面的备注栏</h2>
+<p><strong>作用</strong>：<code>?key=value&amp;key2=value2</code> 形式的参数。规则很简单——<strong>函数参数没出现在路径里，就自动变成查询参数</strong>。它是「点单备注」：不改变你要哪杯咖啡（路径），只调整细节（筛选、分页）。</p>
+<p><strong>必选 / 可选 / 默认值三件套</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"/articles"</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">list_articles</span><span class="p">(</span>
+    <span class="n">keyword</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>   <span class="c1"># 有默认值 None → 可选</span>
+    <span class="n">page</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>                <span class="c1"># 有默认值 → 可选，不传就用 1</span>
+    <span class="n">size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
+    <span class="n">author</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"all"</span><span class="p">,</span>          <span class="c1"># 默认值可以是任意值</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">]:</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">"keyword"</span><span class="p">:</span> <span class="n">keyword</span><span class="p">,</span> <span class="s2">"page"</span><span class="p">:</span> <span class="n">page</span><span class="p">,</span> <span class="s2">"size"</span><span class="p">:</span> <span class="n">size</span><span class="p">,</span> <span class="s2">"author"</span><span class="p">:</span> <span class="n">author</span><span class="p">}</span>
+</code></pre></div>
+<p>反过来说：<strong>没有默认值的参数就是必选</strong>，不传就 422：</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">list_articles</span><span class="p">(</span><span class="n">keyword</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="o">...</span><span class="p">:</span>  <span class="c1"># ?keyword=xxx 必须传</span>
+</code></pre></div>
+<p><strong>bool 的智能转换</strong>：查询参数是 <code>bool</code> 时，<code>true / false</code>、<code>1 / 0</code>、<code>on / off</code>、<code>yes / no</code> 都能识别：</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">list_articles</span><span class="p">(</span><span class="n">published</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="o">...</span><span class="p">:</span>
+    <span class="o">...</span>
+
+<span class="c1"># GET /articles?published=no   → published = False</span>
+<span class="c1"># GET /articles?published=1    → published = True</span>
+</code></pre></div>
+<p><strong>列表参数</strong>：同一个 key 重复出现：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># GET /articles?tag=python&amp;tag=fastapi</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">list_articles</span><span class="p">(</span><span class="n">tag</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="o">...</span><span class="p">:</span>
+    <span class="o">...</span>  <span class="c1"># tag = ["python", "fastapi"]</span>
+</code></pre></div>
+<p><strong>加约束 / 写文档</strong>：用 <code>Query()</code>，同样推荐 <code>Annotated</code> 写法：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Annotated</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fastapi</span><span class="w"> </span><span class="kn">import</span> <span class="n">Query</span>
+
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"/articles"</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">list_articles</span><span class="p">(</span>
+    <span class="n">keyword</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span>
+        <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">Query</span><span class="p">(</span><span class="n">min_length</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">"标题关键词"</span><span class="p">),</span>
+    <span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">page</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Query</span><span class="p">(</span><span class="n">ge</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">le</span><span class="o">=</span><span class="mi">999</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">"页码"</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">]:</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">"keyword"</span><span class="p">:</span> <span class="n">keyword</span><span class="p">,</span> <span class="s2">"page"</span><span class="p">:</span> <span class="n">page</span><span class="p">}</span>
+</code></pre></div>
+<p><strong>常见坑</strong>：</p>
+<ol>
+<li>可选参数的标准写法是 <code>str | None = None</code>（或 <code>Optional[str]</code>）。只写 <code>q: str = None</code> 会过不了类型检查器。</li>
+<li><code>Query()</code> 里不给 <code>default</code>，参数就变成必选——想可选记得 <code>Query(default=None)</code> 或用 <code>Annotated</code> + <code>= None</code> 的组合。</li>
+<li>422 报错里看 <code>loc</code> 字段：<code>["query", "page"]</code> 说明是查询参数 <code>page</code> 出错，别去请求体里找。</li>
+</ol>
+<hr />
+<h2 id="24-请求体让客户端填表">2.4 请求体：让客户端「填表」</h2>
+<p><strong>作用</strong>：POST / PUT / PATCH 的数据主力在请求体里，通常是 JSON。FastAPI 的接法：<strong>定义一个 Pydantic 模型当参数类型</strong>，框架自动完成「读 body → JSON 解析 → 逐字段校验 → 组装成实例」。</p>
+<p><strong>签名与最小示例</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">Field</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fastapi</span><span class="w"> </span><span class="kn">import</span> <span class="n">FastAPI</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">FastAPI</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">"墨集 inkhub 内容平台"</span><span class="p">)</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">ArticleIn</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>          <span class="c1"># 入参模型：客户端填的表</span>
+    <span class="n">title</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">min_length</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+    <span class="n">content</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">author_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">ge</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">tags</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>             <span class="c1"># 嵌套结构直接用类型标注</span>
+
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">"/articles"</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_article</span><span class="p">(</span><span class="n">article</span><span class="p">:</span> <span class="n">ArticleIn</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">]:</span>
+    <span class="c1"># article 已经是 ArticleIn 实例，字段访问直接用</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">"title"</span><span class="p">:</span> <span class="n">article</span><span class="o">.</span><span class="n">title</span><span class="p">,</span> <span class="s2">"tags"</span><span class="p">:</span> <span class="n">article</span><span class="o">.</span><span class="n">tags</span><span class="p">}</span>
+</code></pre></div>
+<p>请求：</p>
+<div class="highlight"><pre><span></span><code>curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://127.0.0.1:8000/articles<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-H<span class="w"> </span><span class="s2">"Content-Type: application/json"</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-d<span class="w"> </span><span class="s1">'{"title": "SSE 入门", "content": "……", "author_id": 2, "tags": ["实时"]}'</span>
+</code></pre></div>
+<p><strong>模型可以嵌套</strong>，一层套一层都行：</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">AuthorBrief</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">bio</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">ArticleIn</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">title</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">author</span><span class="p">:</span> <span class="n">AuthorBrief</span>      <span class="c1"># 嵌套模型</span>
+    <span class="n">tags</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+</code></pre></div>
+<p>对应 JSON 里 <code>author</code> 是一个对象。</p>
+<p><strong>常见坑</strong>：</p>
+<ol>
+<li>请求头必须是 <code>Content-Type: application/json</code>。用表单（form-data）发 JSON 字段会 422——表单要用 <code>Form()</code>，那是另一套接法。</li>
+<li>字段校验失败返回 422，错误明细在 <code>detail</code> 数组里，<code>loc: ["body", "title"]</code> 会精确到字段。</li>
+<li>请求体参数用于 POST / PUT / PATCH；GET 虽然技术上能带 body，但约定不带，别这么干。</li>
+<li>别在 handler 里手写 <code>await request.json()</code> 再自己取字段——交给 Pydantic 模型，校验和文档都是白送的。</li>
+</ol>
+<blockquote>
+<p>Field 的完整约束（<code>ge / pattern / examples</code> 等）在第 03 章展开，这里先会「模型接住 body」即可。</p>
+</blockquote>
+<hr />
+<h2 id="25-response_model出口滤网">2.5 response_model：出口滤网</h2>
+<p><strong>作用</strong>：函数 return 的数据先过一遍「滤网」再发给客户端——<strong>该带的带出去，不该带的拦下来</strong>。你 return 的可能是数据库整行（带密码哈希），滤网只放行模型里声明的字段。</p>
+<p><strong>签名</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"/authors/</span><span class="si">{author_id}</span><span class="s2">"</span><span class="p">,</span> <span class="n">response_model</span><span class="o">=</span><span class="n">AuthorOut</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>最小示例</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">AuthorOut</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>     <span class="c1"># 出参模型：注意——没有 password 字段</span>
+    <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">bio</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span>
+
+
+<span class="n">AUTHORS</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="mi">1</span><span class="p">:</span> <span class="p">{</span><span class="s2">"id"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"林墨"</span><span class="p">,</span> <span class="s2">"bio"</span><span class="p">:</span> <span class="s2">"写字的人"</span><span class="p">,</span> <span class="s2">"password"</span><span class="p">:</span> <span class="s2">"不告诉你"</span><span class="p">},</span>
+<span class="p">}</span>
+
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"/authors/</span><span class="si">{author_id}</span><span class="s2">"</span><span class="p">,</span> <span class="n">response_model</span><span class="o">=</span><span class="n">AuthorOut</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_author</span><span class="p">(</span><span class="n">author_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+    <span class="k">return</span> <span class="n">AUTHORS</span><span class="p">[</span><span class="n">author_id</span><span class="p">]</span>   <span class="c1"># 返回值里带着 password，但出不去</span>
+</code></pre></div>
+<p>客户端收到的只有 <code>id / name / bio</code>——<code>password</code> 被滤网拦住了。这就是它最重要的价值：<strong>入库模型和出参模型分开定义</strong>。</p>
+<p><strong>三件事一次做完</strong>：</p>
+<ol>
+<li><strong>字段过滤</strong>：return 的数据里，只有 <code>AuthorOut</code> 声明过的字段能出去。</li>
+<li><strong>输出校验 + 转换</strong>：返回的数据会按模型做一次校验和类型转换，返回类型不对会当场报错，脏数据出不了门。</li>
+<li><strong>文档生成</strong>：/docs 里这个接口的响应结构就是 <code>AuthorOut</code> 的形状。</li>
+</ol>
+<p><strong>按需裁剪</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"/authors/</span><span class="si">{author_id}</span><span class="s2">"</span><span class="p">,</span> <span class="n">response_model</span><span class="o">=</span><span class="n">AuthorOut</span><span class="p">,</span>
+         <span class="n">response_model_exclude_unset</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>      <span class="c1"># 只输出显式赋值过的字段</span>
+<span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"/authors/</span><span class="si">{author_id}</span><span class="s2">"</span><span class="p">,</span> <span class="n">response_model</span><span class="o">=</span><span class="n">AuthorOut</span><span class="p">,</span>
+         <span class="n">response_model_exclude_defaults</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>   <span class="c1"># 排除等于默认值的字段</span>
+<span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"/authors/</span><span class="si">{article_id}</span><span class="s2">"</span><span class="p">,</span> <span class="n">response_model</span><span class="o">=</span><span class="n">ArticleOut</span><span class="p">,</span>
+         <span class="n">response_model_exclude</span><span class="o">=</span><span class="p">{</span><span class="s2">"content"</span><span class="p">})</span>     <span class="c1"># 排除指定字段（列表页不吐正文）</span>
+</code></pre></div>
+<p><strong>常见坑</strong>：</p>
+<ol>
+<li>handler 同时写了返回类型标注（<code>-&gt; AuthorOut</code>）和 <code>response_model=AuthorOut</code> 时，以 <code>response_model</code> 为准。建议二选一，团队统一风格。</li>
+<li>返回数据<strong>缺少</strong> <code>response_model</code> 的必填字段时，会抛 <code>ResponseValidationError</code>（500）——滤网拦的不只是「多的」，还有「残的」。</li>
+<li>默认返回 <code>null</code> 的字段照样出现在响应里，想要「空的就别出现」用 <code>response_model_exclude_none=True</code>。</li>
+<li>入参和出参共用一个模型是大坑：客户端能看到不该看的字段定义。<strong>入参用 <code>XxxIn</code>，出参用 <code>XxxOut</code></strong>。</li>
+</ol>
+<hr />
+<h2 id="26-状态码告诉客户端办成了没">2.6 状态码：告诉客户端「办成了没」</h2>
+<p><strong>作用</strong>：HTTP 状态码是「办理结果」的速记。return 的 body 说「发生了什么」，状态码说「这单办得怎么样」。</p>
+<p><strong>用法</strong>：装饰器参数 <code>status_code</code>，配合 <code>fastapi.status</code> 里的常量：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">fastapi</span><span class="w"> </span><span class="kn">import</span> <span class="n">FastAPI</span><span class="p">,</span> <span class="n">status</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">FastAPI</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">"墨集 inkhub 内容平台"</span><span class="p">)</span>
+
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">"/articles"</span><span class="p">,</span> <span class="n">status_code</span><span class="o">=</span><span class="n">status</span><span class="o">.</span><span class="n">HTTP_201_CREATED</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_article</span><span class="p">(</span><span class="n">article</span><span class="p">:</span> <span class="n">ArticleIn</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">"id"</span><span class="p">:</span> <span class="mi">100</span><span class="p">}</span>
+
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="s2">"/articles/</span><span class="si">{article_id}</span><span class="s2">"</span><span class="p">,</span> <span class="n">status_code</span><span class="o">=</span><span class="n">status</span><span class="o">.</span><span class="n">HTTP_204_NO_CONTENT</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">delete_article</span><span class="p">(</span><span class="n">article_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">return</span> <span class="kc">None</span>    <span class="c1"># 204 = 无内容，不 return body</span>
+</code></pre></div>
+<p><strong>常用常量速查</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>常量</th>
+<th>含义</th>
+<th>什么时候用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>HTTP_200_OK</code></td>
+<td>成功</td>
+<td>查询、普通操作（默认值）</td>
+</tr>
+<tr>
+<td><code>HTTP_201_CREATED</code></td>
+<td>已创建</td>
+<td>POST 新建成功</td>
+</tr>
+<tr>
+<td><code>HTTP_204_NO_CONTENT</code></td>
+<td>无内容</td>
+<td>DELETE 成功、更新成功不返回体</td>
+</tr>
+<tr>
+<td><code>HTTP_400_BAD_REQUEST</code></td>
+<td>请求错误</td>
+<td>参数语义不对</td>
+</tr>
+<tr>
+<td><code>HTTP_401_UNAUTHORIZED</code></td>
+<td>未认证</td>
+<td>没 token（第 11 章）</td>
+</tr>
+<tr>
+<td><code>HTTP_403_FORBIDDEN</code></td>
+<td>无权限</td>
+<td>认证了但没权限</td>
+</tr>
+<tr>
+<td><code>HTTP_404_NOT_FOUND</code></td>
+<td>不存在</td>
+<td>资源找不到</td>
+</tr>
+<tr>
+<td><code>HTTP_409_CONFLICT</code></td>
+<td>冲突</td>
+<td>唯一约束被撞（重名）</td>
+</tr>
+<tr>
+<td><code>HTTP_422_UNPROCESSABLE_ENTITY</code></td>
+<td>校验失败</td>
+<td>FastAPI 校验不通过时自动返回</td>
+</tr>
+</tbody>
+</table>
+<p><strong>动态状态码</strong>：装饰器里的 <code>status_code</code> 是写死的；要根据运行结果变，注入 <code>Response</code> 对象：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">fastapi</span><span class="w"> </span><span class="kn">import</span> <span class="n">Response</span>
+
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">"/articles"</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_article</span><span class="p">(</span><span class="n">article</span><span class="p">:</span> <span class="n">ArticleIn</span><span class="p">,</span> <span class="n">response</span><span class="p">:</span> <span class="n">Response</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+    <span class="n">article_id</span> <span class="o">=</span> <span class="mi">100</span>
+    <span class="k">if</span> <span class="n">article_id</span> <span class="o">&gt;</span> <span class="mi">99</span><span class="p">:</span>
+        <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">=</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_201_CREATED</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">"id"</span><span class="p">:</span> <span class="n">article_id</span><span class="p">}</span>
+</code></pre></div>
+<p>更常见的动态做法是抛 <code>HTTPException</code>（统一异常处理那章细讲）。</p>
+<p><strong>常见坑</strong>：</p>
+<ol>
+<li>204 接口别 return 有内容的对象——body 会被忽略或直接报错，客户端预期也是空体。</li>
+<li>「全接口 200，错误写在 body 里」是反模式：监控、网关、客户端 SDK 都读状态码，别绕过它。</li>
+<li>POST 创建成功返回 201 更专业，但注意前端拿到的处理逻辑一样，别为了 201 又包一层。</li>
+</ol>
+<hr />
+<h2 id="27-apirouter把路由分货架">2.7 APIRouter：把路由分货架</h2>
+<p><strong>作用</strong>：接口多了全挂在 <code>app</code> 上，<code>main.py</code> 会变成菜市场。<code>APIRouter</code> 是「分区货架」：文章一个货架、作者一个货架，各自带前缀和标签，最后由收银台 <code>include_router</code> 统一扫码入库。</p>
+<p><strong>最小示例</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># articles_api.py —— 文章货架</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fastapi</span><span class="w"> </span><span class="kn">import</span> <span class="n">APIRouter</span>
+
+<span class="n">articles_router</span> <span class="o">=</span> <span class="n">APIRouter</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s2">"/articles"</span><span class="p">,</span> <span class="n">tags</span><span class="o">=</span><span class="p">[</span><span class="s2">"文章管理"</span><span class="p">])</span>
+
+
+<span class="nd">@articles_router</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"/</span><span class="si">{article_id}</span><span class="s2">"</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_article</span><span class="p">(</span><span class="n">article_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">"article_id"</span><span class="p">:</span> <span class="n">article_id</span><span class="p">}</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="c1"># authors_api.py —— 作者货架</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fastapi</span><span class="w"> </span><span class="kn">import</span> <span class="n">APIRouter</span>
+
+<span class="n">authors_router</span> <span class="o">=</span> <span class="n">APIRouter</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s2">"/authors"</span><span class="p">,</span> <span class="n">tags</span><span class="o">=</span><span class="p">[</span><span class="s2">"作者"</span><span class="p">])</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="c1"># main.py —— 收银台：统一挂载</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fastapi</span><span class="w"> </span><span class="kn">import</span> <span class="n">FastAPI</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">FastAPI</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">"墨集 inkhub 内容平台"</span><span class="p">)</span>
+
+<span class="n">app</span><span class="o">.</span><span class="n">include_router</span><span class="p">(</span><span class="n">articles_router</span><span class="p">)</span>
+<span class="n">app</span><span class="o">.</span><span class="n">include_router</span><span class="p">(</span><span class="n">authors_router</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s2">"/v1"</span><span class="p">)</span>   <span class="c1"># 挂载时还能再叠加前缀</span>
+</code></pre></div>
+<p>挂载后，文章接口的完整路径是 <code>/articles/{article_id}</code>，作者接口是 <code>/v1/authors/...</code>。</p>
+<p><strong>APIRouter 常用参数</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>prefix</code></td>
+<td>本货架所有路径的公共前缀</td>
+</tr>
+<tr>
+<td><code>tags</code></td>
+<td>文档分组标签（2.8 节）</td>
+</tr>
+<tr>
+<td><code>dependencies</code></td>
+<td>货架级依赖，如整组接口都要登录（第 08 章展开）</td>
+</tr>
+<tr>
+<td><code>responses</code></td>
+<td>整组接口的公共额外响应说明</td>
+</tr>
+</tbody>
+</table>
+<p><strong>include_router 的参数</strong>：<code>prefix</code>（叠加到 router 的 prefix 后面）、<code>tags</code>（追加）、<code>dependencies</code>（追加）。<strong>同一套 router 可以挂到多个前缀下</strong>——做 <code>/v1</code>、<code>/v2</code> 双版本接口时特别好用：</p>
+<div class="highlight"><pre><span></span><code><span class="n">app</span><span class="o">.</span><span class="n">include_router</span><span class="p">(</span><span class="n">articles_router</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s2">"/v1"</span><span class="p">)</span>
+<span class="n">app</span><span class="o">.</span><span class="n">include_router</span><span class="p">(</span><span class="n">articles_router</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s2">"/v2"</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>常见坑</strong>：</p>
+<ol>
+<li><code>prefix</code> 必须以 <code>/</code> 开头；结尾不要带 <code>/</code>（拼接时会出双斜杠）。</li>
+<li>忘了 <code>include_router</code> → 路由不存在，请求 404，而且<strong>没有任何报错提示</strong>，排查时先检查挂载。</li>
+<li>两个 router 的路径撞车（前缀拼接后相同）不会报错，先注册的先匹配——命名时保持前缀唯一。</li>
+<li>路由顺序问题（2.2 节的 <code>/articles/me</code>）在拆成 router 后依然存在：固定路径的路由要保证<strong>最终注册顺序</strong>靠前。</li>
+</ol>
+<hr />
+<h2 id="28-tags-summary-description给接口写说明书">2.8 tags / summary / description：给接口写说明书</h2>
+<p><strong>作用</strong>：让 <code>/docs</code> 从「草稿纸」变成「说明书」。三层可以配：应用级、路由级、参数级。</p>
+<p><strong>应用级</strong>——<code>FastAPI()</code> 构造参数：</p>
+<div class="highlight"><pre><span></span><code><span class="n">app</span> <span class="o">=</span> <span class="n">FastAPI</span><span class="p">(</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">"墨集 inkhub 内容平台"</span><span class="p">,</span>
+    <span class="n">description</span><span class="o">=</span><span class="s2">"内容平台的**文章、栏目、作者**管理接口。"</span><span class="p">,</span>
+    <span class="n">version</span><span class="o">=</span><span class="s2">"1.0.0"</span><span class="p">,</span>
+<span class="p">)</span>
+</code></pre></div>
+<p><strong>路由级</strong>——装饰器参数：</p>
+<div class="highlight"><pre><span></span><code><span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+    <span class="s2">"/articles/</span><span class="si">{article_id}</span><span class="s2">"</span><span class="p">,</span>
+    <span class="n">tags</span><span class="o">=</span><span class="p">[</span><span class="s2">"文章管理"</span><span class="p">],</span>                        <span class="c1"># 文档里按 tag 自动分组</span>
+    <span class="n">summary</span><span class="o">=</span><span class="s2">"查询单篇文章"</span><span class="p">,</span>                    <span class="c1"># 一句话摘要（不支持 Markdown）</span>
+    <span class="n">description</span><span class="o">=</span><span class="s2">"按 ID 查询文章详情，**正文全文返回**。"</span><span class="p">,</span>  <span class="c1"># 支持 Markdown</span>
+    <span class="n">response_description</span><span class="o">=</span><span class="s2">"文章详情"</span><span class="p">,</span>
+    <span class="n">deprecated</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>                         <span class="c1"># True 时文档标灰提示废弃</span>
+    <span class="n">responses</span><span class="o">=</span><span class="p">{</span>                               <span class="c1"># 声明额外响应</span>
+        <span class="s2">"404"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"description"</span><span class="p">:</span> <span class="s2">"文章不存在"</span><span class="p">},</span>
+    <span class="p">},</span>
+<span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_article</span><span class="p">(</span><span class="n">article_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">"article_id"</span><span class="p">:</span> <span class="n">article_id</span><span class="p">}</span>
+</code></pre></div>
+<p>用了 <code>APIRouter</code> 的路由，<code>tags=["文章管理"]</code> 也可以写在 router 上，组内接口共享，省得每个都写。</p>
+<p><strong>参数级</strong>——<code>Path() / Query() / Field()</code> 的 <code>title / description / examples</code>，让文档里每个参数都有说明（Field 的完整玩法第 03 章讲）。</p>
+<p><strong>常见坑</strong>：</p>
+<ol>
+<li><code>summary</code> 是纯文本一行字，<code>description</code> 才支持 Markdown。</li>
+<li><code>deprecated=True</code> 只是「标注废弃」，接口照常能调，真正的禁用要靠依赖（第 08 章）。</li>
+<li><code>responses</code> 的 key 是<strong>字符串</strong> <code>"404"</code>，不是数字。</li>
+<li>tags 是分组标签不是路径，别把它当 prefix 用。</li>
+</ol>
+<hr />
+<h2 id="29-小结">2.9 小结</h2>
+<p>一张表带走本章：</p>
+<table>
+<thead>
+<tr>
+<th>你想做什么</th>
+<th>用什么</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>绑定 URL 到函数</td>
+<td><code>@app.get/post/put/patch/delete</code></td>
+</tr>
+<tr>
+<td>URL 里取动态值并校验</td>
+<td>路径参数 + 类型标注（<code>Path()</code> 加约束）</td>
+</tr>
+<tr>
+<td>筛选 / 分页 / 可选项</td>
+<td>查询参数（默认值控制必选可选，<code>Query()</code> 加约束）</td>
+</tr>
+<tr>
+<td>接收 JSON</td>
+<td>Pydantic 模型参数（<code>XxxIn</code>）</td>
+</tr>
+<tr>
+<td>控制返回哪些字段</td>
+<td><code>response_model=XxxOut</code></td>
+</tr>
+<tr>
+<td>声明办理结果</td>
+<td><code>status_code=status.HTTP_201_CREATED</code></td>
+</tr>
+<tr>
+<td>路由分组建前缀</td>
+<td><code>APIRouter(prefix=..., tags=...)</code> + <code>include_router</code></td>
+</tr>
+<tr>
+<td>完善接口文档</td>
+<td><code>tags / summary / description / responses</code></td>
+</tr>
+</tbody>
+</table>
+<p>配套代码：</p>
+<ul>
+<li><code>demo/demo_router.py</code>：单文件演示路径参数 / 查询参数 / 请求体 / 响应模型 / 状态码，内嵌 uvicorn，注释里有 curl 示例</li>
+<li><code>demo/demo_api_router.py</code>：APIRouter 拆分与挂载的最小演示</li>
+</ul>
+<h3 id="作业">作业</h3>
+<ol>
+<li>路径参数和查询参数，在「定义方式」上的根本区别是什么？</li>
+<li><code>response_model</code> 为什么被叫做「出口滤网」？它能防住哪一类典型的信息泄漏？</li>
+<li><code>/articles/me</code> 和 <code>/articles/{article_id}</code> 谁应该先注册？不这么做会发生什么？</li>
+<li>router 自带 <code>prefix="/articles"</code>，<code>include_router(router, prefix="/v2")</code>，最终路径是什么？</li>
+<li>新建文章成功、删除文章成功，分别适合返回什么状态码？哪个不应该带响应体？</li>
+</ol>
+<hr />
+<p><strong>下一章</strong>：<a href="../backend/03-pydantic-shu-ju-jiao-yan-yu-pei-zhi.html">03 · Pydantic 数据校验与配置</a></p></div>
+
+      </article>
+<nav class="pager"><a class="pg-card pg-prev" href="../backend/01-fastapi-ru-men-yu-asgi.html"><span class="pg-label">← 上一篇</span><span class="pg-title">FastAPI 入门与 ASGI</span><span class="pg-mod">Python 框架指南</span></a><a class="pg-card pg-next" href="../backend/03-pydantic-shu-ju-jiao-yan-yu-pei-zhi.html"><span class="pg-label">下一篇 →</span><span class="pg-title">Pydantic 数据校验与配置</span><span class="pg-mod">Python 框架指南</span></a></nav>
+    </div>
+    <footer class="foot">
+      <span>深栈 DeepStack · AI Agent 工程师转型训练营配套文档</span>
+    </footer>
+  </main>
+<nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#本章你会用到的东西">本章你会用到的东西</a><a class="toc-link toc-h2" href="#21-五个方法装饰器五种点单方式">2.1 五个方法装饰器：五种「点单方式」</a><a class="toc-link toc-h2" href="#22-路径参数url-里的动态位">2.2 路径参数：URL 里的动态位</a><a class="toc-link toc-h2" href="#23-查询参数url-问号后面的备注栏">2.3 查询参数：URL 问号后面的备注栏</a><a class="toc-link toc-h2" href="#24-请求体让客户端填表">2.4 请求体：让客户端「填表」</a><a class="toc-link toc-h2" href="#25-response_model出口滤网">2.5 response_model：出口滤网</a><a class="toc-link toc-h2" href="#26-状态码告诉客户端办成了没">2.6 状态码：告诉客户端「办成了没」</a><a class="toc-link toc-h2" href="#27-apirouter把路由分货架">2.7 APIRouter：把路由分货架</a><a class="toc-link toc-h2" href="#28-tags-summary-description给接口写说明书">2.8 tags / summary / description：给接口写说明书</a><a class="toc-link toc-h2" href="#29-小结">2.9 小结</a><a class="toc-link toc-h3" href="#作业">作业</a></nav>
+</div>
+<div class="sb-mask" id="sbMask"></div>
+<script src="../assets/app.js"></script>
+</body>
+</html>

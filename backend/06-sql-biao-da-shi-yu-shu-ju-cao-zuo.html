@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>06 · SQL 表达式与数据操作 · 深栈 DeepStack 课程文档</title>
+<meta name="description" content="本章你将学会
+
+ - select() 骨架与链式拼装：where / orderby / limit / offset
+ - 比较运算符全家桶：== 的真面目、like vs ilike、in、is(None)
+ - …">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%23d9c39a' text-anchor='middle'%3EDS%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+<div class="progress" id="progress"></div>
+
+<div class="layout">
+<aside class="sidebar" id="sidebar">
+  <div class="sb-head">
+    <a class="brand" href="../index.html">
+      <span class="brand-mark">DS</span>
+      <span class="brand-text"><b>深栈 DeepStack</b><i>AI Agent 工程师转型训练营</i></span>
+    </a>
+    <button class="sb-close" id="sbClose" aria-label="关闭目录">✕</button>
+  </div>
+  <div class="sb-search"><input type="search" id="searchInput" placeholder="搜索 123 篇文档… ( / )" autocomplete="off">
+    <div class="sb-results" id="searchResults"></div></div>
+  <nav class="sb-nav">
+    <section class="sb-group" data-mod="python">
+      <a class="sb-group-title" href="../modules/python.html" data-toggle="python">
+        <span class="sb-num">01</span>
+        <span class="sb-group-text"><b>Python 与数据实践</b><i>31 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../python/01-huan-jing-da-jian-yu-ban-ben-guan-li.html"><span class="sb-item-num">01</span><span class="sb-item-title">环境搭建与版本管理</span></a>
+        <a class="sb-item" href="../python/02-bian-liang-biao-da-shi-yu-liu-cheng-kong-zhi.html"><span class="sb-item-num">02</span><span class="sb-item-title">变量、表达式与流程控制</span></a>
+        <a class="sb-item" href="../python/03-xu-lie-zi-dian-yu-ji-he.html"><span class="sb-item-num">03</span><span class="sb-item-title">序列、字典与集合</span></a>
+        <a class="sb-item" href="../python/04-han-shu-she-ji-yu-lambda.html"><span class="sb-item-num">04</span><span class="sb-item-title">函数设计与 lambda</span></a>
+        <a class="sb-item" href="../python/05-zuo-yong-yu-gui-ze-yu-bi-bao.html"><span class="sb-item-num">05</span><span class="sb-item-title">作用域规则与闭包</span></a>
+        <a class="sb-item" href="../python/06-lei-de-ding-yi-yu-shi-li-hua.html"><span class="sb-item-num">06</span><span class="sb-item-title">类的定义与实例化</span></a>
+        <a class="sb-item" href="../python/07-lei-xing-pan-ding-yu-chou-xiang-ji-lei.html"><span class="sb-item-num">07</span><span class="sb-item-title">类型判定与抽象基类</span></a>
+        <a class="sb-item" href="../python/08-mo-shu-fang-fa-quan-jing.html"><span class="sb-item-num">08</span><span class="sb-item-title">魔术方法全景</span></a>
+        <a class="sb-item" href="../python/09-miao-shu-fu-yu-yuan-lei.html"><span class="sb-item-num">09</span><span class="sb-item-title">描述符与元类</span></a>
+        <a class="sb-item" href="../python/10-zhuang-shi-qi.html"><span class="sb-item-num">10</span><span class="sb-item-title">装饰器</span></a>
+        <a class="sb-item" href="../python/11-die-dai-xie-yi-yu-sheng-cheng-qi.html"><span class="sb-item-num">11</span><span class="sb-item-title">迭代协议与生成器</span></a>
+        <a class="sb-item" href="../python/12-with-yu-shang-xia-wen-xie-yi.html"><span class="sb-item-num">12</span><span class="sb-item-title">with 与上下文协议</span></a>
+        <a class="sb-item" href="../python/13-yi-chang-ti-xi-yu-chu-li.html"><span class="sb-item-num">13</span><span class="sb-item-title">异常体系与处理</span></a>
+        <a class="sb-item" href="../python/14-lei-xing-biao-zhu.html"><span class="sb-item-num">14</span><span class="sb-item-title">类型标注</span></a>
+        <a class="sb-item" href="../python/15-mo-kuai-yu-bao-de-zu-zhi.html"><span class="sb-item-num">15</span><span class="sb-item-title">模块与包的组织</span></a>
+        <a class="sb-item" href="../python/16-biao-zhun-ku-xun-li.html"><span class="sb-item-num">16</span><span class="sb-item-title">标准库巡礼</span></a>
+        <a class="sb-item" href="../python/17-yi-lai-guan-li-yu-di-san-fang-ku.html"><span class="sb-item-num">17</span><span class="sb-item-title">依赖管理与第三方库</span></a>
+        <a class="sb-item" href="../python/18-xian-cheng-yu-jin-cheng.html"><span class="sb-item-num">18</span><span class="sb-item-title">线程与进程</span></a>
+        <a class="sb-item" href="../python/19-shi-jian-xun-huan.html"><span class="sb-item-num">19</span><span class="sb-item-title">事件循环</span></a>
+        <a class="sb-item" href="../python/20-future-yu-xie-cheng.html"><span class="sb-item-num">20</span><span class="sb-item-title">Future 与协程</span></a>
+        <a class="sb-item" href="../python/21-asyncio-shi-zhan.html"><span class="sb-item-num">21</span><span class="sb-item-title">asyncio 实战</span></a>
+        <a class="sb-item" href="../python/22-gou-jian-yu-fa-bu.html"><span class="sb-item-num">22</span><span class="sb-item-title">构建与发布</span></a>
+        <a class="sb-item" href="../python/23-gong-cheng-hua-gong-ju-lian.html"><span class="sb-item-num">23</span><span class="sb-item-title">工程化工具链</span></a>
+        <a class="sb-item" href="../python/24-monorepo-yu-tiao-shi.html"><span class="sb-item-num">24</span><span class="sb-item-title">monorepo 与调试</span></a>
+        <a class="sb-item" href="../python/25-jupyter-jiao-hu-huan-jing.html"><span class="sb-item-num">25</span><span class="sb-item-title">Jupyter 交互环境</span></a>
+        <a class="sb-item" href="../python/26-numpy-shu-zu-yu-xiang-liang-hua.html"><span class="sb-item-num">26</span><span class="sb-item-title">NumPy 数组与向量化</span></a>
+        <a class="sb-item" href="../python/27-pandas-shu-ju-jie-gou.html"><span class="sb-item-num">27</span><span class="sb-item-title">Pandas 数据结构</span></a>
+        <a class="sb-item" href="../python/28-pandas-shu-ju-qing-xi.html"><span class="sb-item-num">28</span><span class="sb-item-title">Pandas 数据清洗</span></a>
+        <a class="sb-item" href="../python/29-matplotlib-hui-tu-ti-xi.html"><span class="sb-item-num">29</span><span class="sb-item-title">Matplotlib 绘图体系</span></a>
+        <a class="sb-item" href="../python/30-matplotlib-dong-hua-yu-jiao-hu.html"><span class="sb-item-num">30</span><span class="sb-item-title">Matplotlib 动画与交互</span></a>
+        <a class="sb-item" href="../python/31-seaborn-tong-ji-ke-shi-hua.html"><span class="sb-item-num">31</span><span class="sb-item-title">Seaborn 统计可视化</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="agent">
+      <a class="sb-group-title" href="../modules/agent.html" data-toggle="agent">
+        <span class="sb-num">02</span>
+        <span class="sb-group-text"><b>Agent 核心</b><i>15 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../agent/01-token-yu-ci-qian-ru.html"><span class="sb-item-num">01</span><span class="sb-item-title">Token 与词嵌入</span></a>
+        <a class="sb-item" href="../agent/02-qian-xiang-chuan-bo-yu-fan-xiang-chuan-bo.html"><span class="sb-item-num">02</span><span class="sb-item-title">前向传播与反向传播</span></a>
+        <a class="sb-item" href="../agent/03-zhu-yi-li-ji-zhi-yu-transformer-jia-gou.html"><span class="sb-item-num">03</span><span class="sb-item-title">注意力机制与 Transformer 架构</span></a>
+        <a class="sb-item" href="../agent/04-yu-xun-lian-rlhf-yu-cai-yang-kv-cache.html"><span class="sb-item-num">04</span><span class="sb-item-title">预训练、RLHF 与采样（KV Cache）</span></a>
+        <a class="sb-item" href="../agent/05-ben-di-mo-xing-yu-xiao-xi-jie-gou.html"><span class="sb-item-num">05</span><span class="sb-item-title">本地模型与消息结构</span></a>
+        <a class="sb-item" href="../agent/06-hui-hua-guan-li-yu-json-shu-chu.html"><span class="sb-item-num">06</span><span class="sb-item-title">会话管理与 JSON 输出</span></a>
+        <a class="sb-item" href="../agent/07-tool-calling-xie-yi-yu-feng-zhuang.html"><span class="sb-item-num">07</span><span class="sb-item-title">Tool Calling：协议与封装</span></a>
+        <a class="sb-item" href="../agent/08-react-mo-shi-yu-zhu-xun-huan.html"><span class="sb-item-num">08</span><span class="sb-item-title">ReAct 模式与主循环</span></a>
+        <a class="sb-item" href="../agent/09-shi-zhan-deep-research-agent.html"><span class="sb-item-num">09</span><span class="sb-item-title">实战：Deep Research Agent</span></a>
+        <a class="sb-item" href="../agent/10-skill-yu-jian-jin-shi-pi-lu.html"><span class="sb-item-num">10</span><span class="sb-item-title">Skill 与渐进式披露</span></a>
+        <a class="sb-item" href="../agent/11-mcp-quan-jing.html"><span class="sb-item-num">11</span><span class="sb-item-title">MCP 全景</span></a>
+        <a class="sb-item" href="../agent/12-duo-agent-yu-xuan-xing-ce-lve.html"><span class="sb-item-num">12</span><span class="sb-item-title">多 Agent 与选型策略</span></a>
+        <a class="sb-item" href="../agent/13-ti-shi-ci-gong-cheng-yu-shang-xia-wen-gong.html"><span class="sb-item-num">13</span><span class="sb-item-title">提示词工程与上下文工程</span></a>
+        <a class="sb-item" href="../agent/14-xun-huan-tu-yu-gu-jia-gong-cheng.html"><span class="sb-item-num">14</span><span class="sb-item-title">循环、图与骨架工程</span></a>
+        <a class="sb-item" href="../agent/15-ji-yi-quan-xian-yu-ping-ce.html"><span class="sb-item-num">15</span><span class="sb-item-title">记忆、权限与评测</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="langchain">
+      <a class="sb-group-title" href="../modules/langchain.html" data-toggle="langchain">
+        <span class="sb-num">03</span>
+        <span class="sb-group-text"><b>LangChain 指南</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langchain/01-ren-shi-langchain.html"><span class="sb-item-num">01</span><span class="sb-item-title">认识 LangChain</span></a>
+        <a class="sb-item" href="../langchain/02-ti-shi-ci-mu-ban-yu-xiao-xi.html"><span class="sb-item-num">02</span><span class="sb-item-title">提示词模板与消息</span></a>
+        <a class="sb-item" href="../langchain/03-lcel-yu-runnable.html"><span class="sb-item-num">03</span><span class="sb-item-title">LCEL 与 Runnable</span></a>
+        <a class="sb-item" href="../langchain/04-liu-shi-yu-bing-fa.html"><span class="sb-item-num">04</span><span class="sb-item-title">流式与并发</span></a>
+        <a class="sb-item" href="../langchain/05-shu-chu-jie-xi-qi.html"><span class="sb-item-num">05</span><span class="sb-item-title">输出解析器</span></a>
+        <a class="sb-item" href="../langchain/06-wen-dang-jia-zai-yu-qie-ge.html"><span class="sb-item-num">06</span><span class="sb-item-title">文档加载与切割</span></a>
+        <a class="sb-item" href="../langchain/07-qian-ru-yu-xiang-liang-ku.html"><span class="sb-item-num">07</span><span class="sb-item-title">嵌入与向量库</span></a>
+        <a class="sb-item" href="../langchain/08-jian-suo-yu-rag.html"><span class="sb-item-num">08</span><span class="sb-item-title">检索与RAG</span></a>
+        <a class="sb-item" href="../langchain/09-dui-hua-ji-yi.html"><span class="sb-item-num">09</span><span class="sb-item-title">对话记忆</span></a>
+        <a class="sb-item" href="../langchain/10-gong-ju-diao-yong.html"><span class="sb-item-num">10</span><span class="sb-item-title">工具调用</span></a>
+        <a class="sb-item" href="../langchain/11-agent.html"><span class="sb-item-num">11</span><span class="sb-item-title">Agent</span></a>
+        <a class="sb-item" href="../langchain/12-hui-diao-yu-tiao-shi-quan-ke-cheng-shou-guan.html"><span class="sb-item-num">12</span><span class="sb-item-title">回调与调试（全课程收官章）</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="langgraph">
+      <a class="sb-group-title" href="../modules/langgraph.html" data-toggle="langgraph">
+        <span class="sb-num">04</span>
+        <span class="sb-group-text"><b>LangGraph 框架指南</b><i>17 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langgraph/01-di-1-zhang-cong-yi-ge-shi-kong-de-jiao.html"><span class="sb-item-num">01</span><span class="sb-item-title">第 1 章 从一个失控的脚本说起</span></a>
+        <a class="sb-item" href="../langgraph/02-di-2-zhang-zui-xiao-ke-yun-xing-tu.html"><span class="sb-item-num">02</span><span class="sb-item-title">第 2 章 最小可运行图</span></a>
+        <a class="sb-item" href="../langgraph/03-di-3-zhang-zhuang-tai-tu-de-shu-ju-xin.html"><span class="sb-item-num">03</span><span class="sb-item-title">第 3 章 状态：图的数据心脏</span></a>
+        <a class="sb-item" href="../langgraph/04-di-4-zhang-rang-liu-cheng-xue-hui-jue-ce.html"><span class="sb-item-num">04</span><span class="sb-item-title">第 4 章 让流程学会决策</span></a>
+        <a class="sb-item" href="../langgraph/05-di-5-zhang-bing-xing-shi-jie-chao-bu-zhi.html"><span class="sb-item-num">05</span><span class="sb-item-title">第 5 章 并行世界：超步执行模型</span></a>
+        <a class="sb-item" href="../langgraph/06-di-6-zhang-command-ba-kong-zhi-quan-jiao-jin.html"><span class="sb-item-num">06</span><span class="sb-item-title">第 6 章 Command：把控制权交进节点</span></a>
+        <a class="sb-item" href="../langgraph/07-di-7-zhang-dong-tai-bing-xing-send-yu-mapreduce.html"><span class="sb-item-num">07</span><span class="sb-item-title">第 7 章 动态并行：Send 与 MapReduce</span></a>
+        <a class="sb-item" href="../langgraph/08-di-8-zhang-gei-tu-zhuang-shang-shou-jiao-gong.html"><span class="sb-item-num">08</span><span class="sb-item-title">第 8 章 给图装上手脚：工具调用</span></a>
+        <a class="sb-item" href="../langgraph/09-di-9-zhang-fu-yong-yu-feng-zhuang-zi-tu.html"><span class="sb-item-num">09</span><span class="sb-item-title">第 9 章 复用与封装：子图</span></a>
+        <a class="sb-item" href="../langgraph/10-di-10-zhang-cong-dan-tu-dao-tuan-dui-duo.html"><span class="sb-item-num">10</span><span class="sb-item-title">第 10 章 从单图到团队：多 Agent 架构</span></a>
+        <a class="sb-item" href="../langgraph/11-di-11-zhang-liu-shi-shu-chu.html"><span class="sb-item-num">11</span><span class="sb-item-title">第 11 章 流式输出</span></a>
+        <a class="sb-item" href="../langgraph/12-di-12-zhang-chi-jiu-hua-checkpointer-yu-xian-cheng.html"><span class="sb-item-num">12</span><span class="sb-item-title">第 12 章 持久化：Checkpointer 与线程</span></a>
+        <a class="sb-item" href="../langgraph/13-di-13-zhang-shi-jian-lv-xing.html"><span class="sb-item-num">13</span><span class="sb-item-title">第 13 章 时间旅行</span></a>
+        <a class="sb-item" href="../langgraph/14-di-14-zhang-zhong-duan-yu-ren-zai-hui-lu.html"><span class="sb-item-num">14</span><span class="sb-item-title">第 14 章 中断与人在回路</span></a>
+        <a class="sb-item" href="../langgraph/15-di-15-zhang-ji-yi-guan-li.html"><span class="sb-item-num">15</span><span class="sb-item-title">第 15 章 记忆管理</span></a>
+        <a class="sb-item" href="../langgraph/16-di-16-zhang-rong-cuo-zhong-shi-chao-shi-yu.html"><span class="sb-item-num">16</span><span class="sb-item-title">第 16 章 容错：重试、超时与兜底</span></a>
+        <a class="sb-item" href="../langgraph/17-di-17-zhang-quan-jing-hui-gu.html"><span class="sb-item-num">17</span><span class="sb-item-title">第 17 章 全景回顾</span></a>
+      </div>
+    </section>
+    <section class="sb-group open" data-mod="backend">
+      <a class="sb-group-title" href="../modules/backend.html" data-toggle="backend">
+        <span class="sb-num">05</span>
+        <span class="sb-group-text"><b>Python 框架指南</b><i>14 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../backend/01-fastapi-ru-men-yu-asgi.html"><span class="sb-item-num">01</span><span class="sb-item-title">FastAPI 入门与 ASGI</span></a>
+        <a class="sb-item" href="../backend/02-lu-you-yu-qing-qiu-xiang-ying.html"><span class="sb-item-num">02</span><span class="sb-item-title">路由与请求响应</span></a>
+        <a class="sb-item" href="../backend/03-pydantic-shu-ju-jiao-yan-yu-pei-zhi.html"><span class="sb-item-num">03</span><span class="sb-item-title">Pydantic 数据校验与配置</span></a>
+        <a class="sb-item" href="../backend/04-sqlalchemy-yi-bu-yin-qing-yu-hui-hua.html"><span class="sb-item-num">04</span><span class="sb-item-title">SQLAlchemy 异步引擎与会话</span></a>
+        <a class="sb-item" href="../backend/05-orm-jian-mo.html"><span class="sb-item-num">05</span><span class="sb-item-title">ORM 建模</span></a>
+        <a class="sb-item current" href="../backend/06-sql-biao-da-shi-yu-shu-ju-cao-zuo.html"><span class="sb-item-num">06</span><span class="sb-item-title">SQL 表达式与数据操作</span></a>
+        <a class="sb-item" href="../backend/07-alembic-shu-ju-qian-yi.html"><span class="sb-item-num">07</span><span class="sb-item-title">Alembic 数据迁移</span></a>
+        <a class="sb-item" href="../backend/08-yi-lai-zhu-ru.html"><span class="sb-item-num">08</span><span class="sb-item-title">依赖注入</span></a>
+        <a class="sb-item" href="../backend/09-tong-yi-yi-chang-chu-li.html"><span class="sb-item-num">09</span><span class="sb-item-title">统一异常处理</span></a>
+        <a class="sb-item" href="../backend/10-zhong-jian-jian.html"><span class="sb-item-num">10</span><span class="sb-item-title">中间件</span></a>
+        <a class="sb-item" href="../backend/11-ren-zheng-yu-jwt.html"><span class="sb-item-num">11</span><span class="sb-item-title">认证与 JWT</span></a>
+        <a class="sb-item" href="../backend/12-pytest-ce-shi.html"><span class="sb-item-num">12</span><span class="sb-item-title">pytest 测试</span></a>
+        <a class="sb-item" href="../backend/13-ri-zhi-loguru.html"><span class="sb-item-num">13</span><span class="sb-item-title">日志 loguru</span></a>
+        <a class="sb-item" href="../backend/14-liu-shi-xiang-ying-sse-yu-websocket.html"><span class="sb-item-num">14</span><span class="sb-item-title">流式响应 SSE 与 WebSocket</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="interview">
+      <a class="sb-group-title" href="../modules/interview.html" data-toggle="interview">
+        <span class="sb-num">06</span>
+        <span class="sb-group-text"><b>面试题库</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../interview/01-llm-yuan-li-pian.html"><span class="sb-item-num">01</span><span class="sb-item-title">LLM 原理篇</span></a>
+        <a class="sb-item" href="../interview/02-rag-yu-jian-suo-pian.html"><span class="sb-item-num">02</span><span class="sb-item-title">RAG 与检索篇</span></a>
+        <a class="sb-item" href="../interview/03-agent-he-xin-pian.html"><span class="sb-item-num">03</span><span class="sb-item-title">Agent 核心篇</span></a>
+        <a class="sb-item" href="../interview/04-langgraph-pian.html"><span class="sb-item-num">04</span><span class="sb-item-title">LangGraph 篇</span></a>
+        <a class="sb-item" href="../interview/05-langchain-pian.html"><span class="sb-item-num">05</span><span class="sb-item-title">LangChain 篇</span></a>
+        <a class="sb-item" href="../interview/06-xi-tong-she-ji-pian.html"><span class="sb-item-num">06</span><span class="sb-item-title">系统设计篇</span></a>
+        <a class="sb-item" href="../interview/07-xiang-mu-shen-wa-pian.html"><span class="sb-item-num">07</span><span class="sb-item-title">项目深挖篇</span></a>
+        <a class="sb-item" href="../interview/08-gu-zhang-pai-cha-pian.html"><span class="sb-item-num">08</span><span class="sb-item-title">故障排查篇</span></a>
+        <a class="sb-item" href="../interview/09-python-ji-chu-pian.html"><span class="sb-item-num">09</span><span class="sb-item-title">Python 基础篇</span></a>
+        <a class="sb-item" href="../interview/10-fastapi-yu-hou-duan-pian.html"><span class="sb-item-num">10</span><span class="sb-item-title">FastAPI 与后端篇</span></a>
+        <a class="sb-item" href="../interview/11-ti-shi-ci-gong-cheng-yu-an-quan-pian.html"><span class="sb-item-num">11</span><span class="sb-item-title">提示词工程与安全篇</span></a>
+        <a class="sb-item" href="../interview/12-mo-xing-xuan-xing-yu-jiang-ben-pian.html"><span class="sb-item-num">12</span><span class="sb-item-title">模型选型与降本篇</span></a>
+      </div>
+    </section>
+  </nav>
+</aside>
+  <main class="main">
+    <header class="topbar">
+      <button class="menu-btn" id="menuBtn" aria-label="目录">☰</button>
+      <div class="crumbs"><a href="../index.html">首页</a><span>/</span><a href="../modules/backend.html">Python 框架指南</a><span>/</span><span class="cur">SQL 表达式与数据操作</span></div>
+      <div class="topbar-actions">
+        <button class="icon-btn" id="themeBtn" title="切换深浅色" aria-label="切换深浅色">◐</button>
+      </div>
+    </header>
+    <div class="content">
+      <article class="article">
+
+<header class="page-head">
+  <div class="page-kicker">Python 框架指南 · 第 06 章</div>
+  <h1 class="page-title">SQL 表达式与数据操作</h1>
+  <p class="page-desc">本章你将学会
+
+ - select() 骨架与链式拼装：where / orderby / limit / offset
+ - 比较运算符全家桶：== 的真面目、like vs ilike、in、is(None)
+ - …</p>
+  <div class="page-meta">
+    <span>约 41 分钟</span><span>16,230 字</span><span>29 个代码示例</span>
+  </div>
+</header>
+<div class="md"><blockquote>
+<p><strong>本章你将学会</strong></p>
+<ul>
+<li>select() 骨架与链式拼装：where / order_by / limit / offset</li>
+<li>比较运算符全家桶：<code>==</code> 的真面目、like vs ilike、in_、is_(None)</li>
+<li>and_ / or_ / not_ 组条件，<code>&amp;</code> <code>|</code> <code>~</code> 的括号陷阱</li>
+<li>func 聚合：count / sum / avg + group_by / having</li>
+<li>update().values()（含 synchronize_session）与 delete().where()</li>
+<li>join / outerjoin、外键一对多、多对多 any() / contains() 查询</li>
+<li>execute / scalars / scalar_one 的返回值差异</li>
+<li>为什么 Core 表达式天然防 SQL 注入</li>
+</ul>
+</blockquote>
+<p>第 04 章用 <code>text()</code> 手写 SQL、第 05 章把五张表立了起来，当时都留了同一句话：<strong>SQL 表达式第 06 章细讲</strong>。现在兑现。这一章是纯用法手册：每个 API 按「作用 → 签名 → 最小示例 → 常见坑」过一遍，学完你就能把数据库当 Excel 一样盘。</p>
+<blockquote>
+<p>本章配套 demo（aiosqlite 上实测通过）：
+- <code>demo/demo_select.py</code>：查询全家桶——select / where / 排序分页 / 逻辑组合 / join / 关系条件 / 预加载
+- <code>demo/demo_write.py</code>：写操作——update / delete / 聚合分组 / 外键级联</p>
+<p>示例业务统一用「墨集 inkhub 内容平台」：<code>Channel</code> 栏目、<code>Article</code> 文章（channel_id 外键）、<code>Tag</code> 标签、<code>article_tag</code> 关联表、<code>ArticleVersion</code> 版本（version_no / word_count / status）——第 05 章建好的那五张表，本章只管用。</p>
+</blockquote>
+<hr />
+<h2 id="1-心智模型先拼积木再交翻译">1. 心智模型：先拼积木，再交翻译</h2>
+<p>先看同一件事的两种写法：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy</span><span class="w"> </span><span class="kn">import</span> <span class="n">select</span><span class="p">,</span> <span class="n">text</span>
+
+<span class="c1"># 写法一：text() —— SQL 已经是成品字符串，写歪了只有数据库知道</span>
+<span class="n">stmt</span> <span class="o">=</span> <span class="n">text</span><span class="p">(</span><span class="s2">"SELECT * FROM article WHERE channel_id = 1"</span><span class="p">)</span>
+
+<span class="c1"># 写法二：Core 表达式 —— 用 Python 对象拼 SQL，每一步都被检查</span>
+<span class="n">stmt</span> <span class="o">=</span> <span class="n">select</span><span class="p">(</span><span class="n">Article</span><span class="p">)</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">Article</span><span class="o">.</span><span class="n">channel_id</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span>
+</code></pre></div>
+<p>打个比方：<code>text()</code> 是捏橡皮泥——一整块捏成形，裂了歪了没人提醒；Core 是搭乐高——列、运算符、函数全是标准件，凸点对凹点，装错位置根本插不进去。把拼好的作品打印出来看看：</p>
+<div class="highlight"><pre><span></span><code><span class="nb">print</span><span class="p">(</span><span class="n">select</span><span class="p">(</span><span class="n">Article</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">Article</span><span class="o">.</span><span class="n">title</span><span class="p">)</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">Article</span><span class="o">.</span><span class="n">channel_id</span> <span class="o">==</span> <span class="mi">1</span><span class="p">))</span>
+<span class="c1"># SELECT article.id, article.title</span>
+<span class="c1"># FROM article</span>
+<span class="c1"># WHERE article.channel_id = :channel_id_1</span>
+</code></pre></div>
+<p>三个细节值得盯一眼：</p>
+<ol>
+<li><code>Article.channel_id == 1</code> 不是在「比较」，是在「构造」——列的运算符被重载，返回一个 SQL 表达式对象；</li>
+<li>值 1 被自动装进绑定参数 <code>:channel_id_1</code>，和 SQL 骨架分道扬镳——这是第 13 节「天然防注入」的根基；</li>
+<li>语句只是 Python 对象：不执行、不发网络，可以打印检查、可以反复执行。</li>
+</ol>
+<p>一句话记住本章的世界观：<strong>构建与执行分离</strong>。你负责拼乐高，引擎负责按数据库的方言翻译——同一份 <code>limit(10)</code>，PG、SQLite、MySQL 各拿各的说明书去执行。</p>
+<hr />
+<h2 id="2-select查询的骨架">2. select()：查询的骨架</h2>
+<p><strong>作用</strong>：创建 SELECT 语句，决定「查什么」。</p>
+<p><strong>签名</strong>：<code>select(*entities)</code>——entities 可以是模型类、列、聚合表达式，一个或多个。</p>
+<p><strong>最小示例</strong>——三种典型查法：</p>
+<div class="highlight"><pre><span></span><code><span class="n">select</span><span class="p">(</span><span class="n">Article</span><span class="p">)</span>                                <span class="c1"># 整个实体：配合 scalars() 拿模型对象</span>
+<span class="n">select</span><span class="p">(</span><span class="n">Article</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">Article</span><span class="o">.</span><span class="n">title</span><span class="p">)</span>              <span class="c1"># 挑列查：拿到一行行的 Row</span>
+<span class="n">select</span><span class="p">(</span><span class="n">Channel</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">func</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">Article</span><span class="o">.</span><span class="n">id</span><span class="p">))</span>   <span class="c1"># 混入聚合列：第 7 节</span>
+</code></pre></div>
+<p>链式拼装（每个方法返回语句的变形，随便往后接）：</p>
+<div class="highlight"><pre><span></span><code><span class="n">stmt</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">select</span><span class="p">(</span><span class="n">Article</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">Article</span><span class="o">.</span><span class="n">channel_id</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span>          <span class="c1"># 第 4 节</span>
+    <span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="n">Article</span><span class="o">.</span><span class="n">created_at</span><span class="o">.</span><span class="n">desc</span><span class="p">())</span>     <span class="c1"># 第 6 节</span>
+    <span class="o">.</span><span class="n">limit</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+<span class="p">)</span>
+</code></pre></div>
+<p><strong>常见坑</strong></p>
+<ul>
+<li><code>select(Article)</code> 和 <code>select(Article.title)</code> 查出来的东西<strong>类型不同</strong>：前者是模型对象流，后者是一行行的值——用混了取值方式，拿到的数据「能看不能摸」。第 3 节专门掰扯。</li>
+<li>多列 select 别接 <code>.scalars()</code>：它只抽<strong>第一列</strong>，其余列全丢。</li>
+<li>拼进 select 的模型必须已定义且被 import——第 05 章「档案柜」的规矩：没登记的图纸，这里直接 NameError。</li>
+</ul>
+<hr />
+<h2 id="3-取结果execute-scalars-scalar_one">3. 取结果：execute / scalars / scalar_one</h2>
+<p>第 04 章见过 <code>execute</code> + <code>scalars()</code> 的组合拳，这里把 Result 的家底一次摊开。先记这张层次图：</p>
+<div class="highlight"><pre><span></span><code>await session.execute(stmt)   →  Result          一行一个 Row（带列名的元组）
+        .scalars()             →  ScalarResult   只保留每行第一列
+        .scalar_one()          →  第一行第一列，且行数必须恰好 1
+</code></pre></div>
+<p><strong>最小示例</strong>——同一个查询的三种取法：</p>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">with</span> <span class="n">session_factory</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
+    <span class="c1"># ① execute：拿 Result，迭代出一行行的 Row（支持元组解包）</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">session</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+        <span class="n">select</span><span class="p">(</span><span class="n">Article</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">Article</span><span class="o">.</span><span class="n">title</span><span class="p">)</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">Article</span><span class="o">.</span><span class="n">channel_id</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="k">for</span> <span class="n">id_</span><span class="p">,</span> <span class="n">title</span> <span class="ow">in</span> <span class="n">result</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">id_</span><span class="p">,</span> <span class="n">title</span><span class="p">)</span>
+
+    <span class="c1"># ② session.scalars：直接要「第一列」流——实体查询即模型对象</span>
+    <span class="n">articles</span> <span class="o">=</span> <span class="p">(</span><span class="k">await</span> <span class="n">session</span><span class="o">.</span><span class="n">scalars</span><span class="p">(</span><span class="n">select</span><span class="p">(</span><span class="n">Article</span><span class="p">)))</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+
+    <span class="c1"># ③ scalar_one：单值，必须恰好一行一列</span>
+    <span class="n">title</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="k">await</span> <span class="n">session</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">select</span><span class="p">(</span><span class="n">Article</span><span class="o">.</span><span class="n">title</span><span class="p">)</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">Article</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="mi">2</span><span class="p">))</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">scalar_one</span><span class="p">()</span>
+</code></pre></div>
+<p>拆快递的比喻：<code>execute</code> 收到一整箱，每层一个 Row 包装；<code>scalars()</code> 是开箱直取——每层直接抽出第一件；<code>scalar_one()</code> 最苛刻——必须恰好一箱一层一件，多一件少一件当场报警。</p>
+<p><strong>取值方法矩阵</strong>（Result 与 ScalarResult 同名方法，行为一致）：</p>
+<table>
+<thead>
+<tr>
+<th>写法</th>
+<th>返回</th>
+<th>0 行时</th>
+<th>典型场景</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>.all()</code></td>
+<td>列表</td>
+<td><code>[]</code></td>
+<td>列表页</td>
+</tr>
+<tr>
+<td><code>.first()</code></td>
+<td>第一个或 <code>None</code></td>
+<td><code>None</code></td>
+<td>「随便挑一条」</td>
+</tr>
+<tr>
+<td><code>.one()</code></td>
+<td>恰好一个</td>
+<td>抛 <code>NoResultFound</code></td>
+<td>业务上必须存在</td>
+</tr>
+<tr>
+<td><code>.one_or_none()</code></td>
+<td>一个或 <code>None</code></td>
+<td><code>None</code></td>
+<td>查不到不算错</td>
+</tr>
+<tr>
+<td><code>.scalar_one()</code></td>
+<td>单值 / 单对象</td>
+<td>抛 <code>NoResultFound</code></td>
+<td>主键查询、count</td>
+</tr>
+<tr>
+<td><code>.scalar_one_or_none()</code></td>
+<td>单值或 <code>None</code></td>
+<td><code>None</code></td>
+<td>可空单值</td>
+</tr>
+</tbody>
+</table>
+<p><strong>常见坑</strong></p>
+<ul>
+<li>0 行、多行对 <code>one()</code> 家族是<strong>异常</strong>而不是返回 <code>None</code>：<code>scalar_one()</code> 查出两行直接抛 <code>MultipleResultsFound</code>——这不是它在找茬，是在帮你兜住「WHERE 条件不够唯一」的 bug。允许查不到的场景才用 <code>one_or_none()</code> / <code>first()</code>。</li>
+<li>Result 是<strong>一次性流</strong>：<code>for</code> 循环跑完再 <code>.all()</code>，得到的是空——结果要复用，第一次就存进变量。</li>
+<li><code>conn.execute(stmt)</code> 和 <code>session.execute(stmt)</code> 返回的都是 Result；区别是会话版附带 ORM 的增值服务（<code>scalars()</code>、关系加载、autoflush）。</li>
+</ul>
+<hr />
+<h2 id="4-where条件与比较运算符">4. where()：条件与比较运算符</h2>
+<p><strong>作用</strong>：给语句挂 WHERE，逐行筛选。</p>
+<p><strong>签名</strong>：<code>where(*条件)</code>——塞多个参数就是 AND（第 5 节展开），每个参数是一个布尔表达式对象。</p>
+<p><strong>运算符对照表</strong>（左 SQL，右 Core 写法）：</p>
+<table>
+<thead>
+<tr>
+<th>SQL</th>
+<th>Core 写法</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>=</code></td>
+<td><code>Article.channel_id == 1</code></td>
+<td>双等号！</td>
+</tr>
+<tr>
+<td><code>!=</code> / <code>&lt;&gt;</code></td>
+<td><code>Article.channel_id != 1</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>&gt;</code> <code>&gt;=</code> <code>&lt;</code> <code>&lt;=</code></td>
+<td>与 Python 一致</td>
+<td></td>
+</tr>
+<tr>
+<td><code>LIKE</code></td>
+<td><code>Article.title.like("FastAPI%")</code></td>
+<td><code>%</code> 任意串、<code>_</code> 单字符</td>
+</tr>
+<tr>
+<td><code>ILIKE</code></td>
+<td><code>Article.title.ilike("fastapi%")</code></td>
+<td>不区分大小写</td>
+</tr>
+<tr>
+<td><code>IN</code></td>
+<td><code>Article.channel_id.in_([1, 3])</code></td>
+<td>带下划线</td>
+</tr>
+<tr>
+<td><code>IS NULL</code></td>
+<td><code>Article.summary.is_(None)</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>IS NOT NULL</code></td>
+<td><code>Article.summary.is_not(None)</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>BETWEEN</code></td>
+<td><code>Article.id.between(3, 6)</code></td>
+<td>双闭区间</td>
+</tr>
+</tbody>
+</table>
+<p><strong>头号坑：<code>==</code> 的真面目</strong></p>
+<p><code>Article.channel_id == 1</code> 看着像比较，实际是<strong>构造</strong>——列对象重载了 <code>__eq__</code>，返回一个 SQL 表达式。两个直接后果：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># ① 单等号是赋值，Python 编译期直接拦（SyntaxError），这坑反而不常踩</span>
+<span class="n">select</span><span class="p">(</span><span class="n">Article</span><span class="p">)</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">Article</span><span class="o">.</span><span class="n">channel_id</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+
+<span class="c1"># ② 真正的坑：拿它当布尔判断——表达式对象永远 truthy</span>
+<span class="k">if</span> <span class="n">Article</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="s2">"draft"</span><span class="p">:</span>    <span class="c1"># 恒为 True！</span>
+    <span class="o">...</span>
+</code></pre></div>
+<p>写惯 Python 的人在第 ② 种翻车：判断「这篇文章的状态」应该用查出来的<strong>实例</strong> <code>article.status</code>，而不是<strong>类属性表达式</strong> <code>Article.status == "draft"</code>。前者是数据，后者是 SQL 零件——零件永远不为假。</p>
+<p><strong>like vs ilike：性格随数据库的一对兄弟</strong></p>
+<ul>
+<li><code>like</code>：是否区分大小写<strong>看数据库心情</strong>。PG 区分；SQLite 的 LIKE 对 ASCII 不区分（中文不受影响）。同一行代码换个库行为就变——「本地好好的、上线查不对」的经典来源。</li>
+<li><code>ilike</code>：明确不区分。PG 上生成原生 <code>ILIKE</code>；SQLite 这类没有 ILIKE 的库，自动降级编译成 <code>lower(title) LIKE lower(?)</code>。</li>
+</ul>
+<p>结论：语义上要「确定不区分大小写」就写 <code>ilike</code>，别赌 <code>like</code> 的方言行为。</p>
+<p>顺带认识 like 的快捷亲戚：<code>contains("入门")</code>、<code>startswith("Fast")</code>、<code>endswith("指南")</code>——自动帮你拼两边的 <code>%</code>，读起来也更像人话。</p>
+<p><strong>in_() 的坑</strong>：列表常来自用户勾选，可能是空的。<code>in_([])</code> 会被编译成 <code>1 != 1</code> 式的恒假子句（SQLAlchemy 2.0 的安全行为），一行都匹配不到；但<strong>业务语义要想清楚</strong>——「一个都没勾」是查不到东西，还是干脆跳过这个条件？前者保留 <code>in_</code>，后者判断空列表后别拼这个 where。真正危险的是拿 text() 手拼 <code>IN ({...})</code>，那是往注入的老路上走。</p>
+<p><strong>is_(None) 的坑</strong>：<code>Article.summary == None</code> 其实能跑（会被编译成 <code>IS NULL</code>），但 <code>== None</code> 会被 flake8 按 E711 拦下——Python 惯例与 None 比较用 <code>is</code>，写成 <code>==</code> 也容易让读代码的人误会。统一 <code>is_(None)</code> / <code>is_not(None)</code>，谁看了都不多想。</p>
+<hr />
+<h2 id="5-and_-or_-not_条件的布尔运算">5. and_ / or_ / not_：条件的布尔运算</h2>
+<p><strong>作用</strong>：把多个条件按与、或、非组合。</p>
+<p><strong>签名</strong>：<code>and_(*expr)</code>、<code>or_(*expr)</code>、<code>not_(expr)</code>，可任意嵌套。</p>
+<p><strong>最小示例</strong>——「标题带 fastapi」或「深度长文且写了摘要」的文章：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy</span><span class="w"> </span><span class="kn">import</span> <span class="n">and_</span><span class="p">,</span> <span class="n">not_</span><span class="p">,</span> <span class="n">or_</span>
+
+<span class="n">stmt</span> <span class="o">=</span> <span class="n">select</span><span class="p">(</span><span class="n">Article</span><span class="p">)</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
+    <span class="n">or_</span><span class="p">(</span>
+        <span class="n">Article</span><span class="o">.</span><span class="n">title</span><span class="o">.</span><span class="n">ilike</span><span class="p">(</span><span class="s2">"</span><span class="si">%f</span><span class="s2">astapi%"</span><span class="p">),</span>
+        <span class="n">and_</span><span class="p">(</span>
+            <span class="n">Article</span><span class="o">.</span><span class="n">channel_id</span> <span class="o">==</span> <span class="mi">2</span><span class="p">,</span>           <span class="c1"># 深度长文</span>
+            <span class="n">not_</span><span class="p">(</span><span class="n">Article</span><span class="o">.</span><span class="n">summary</span><span class="o">.</span><span class="n">is_</span><span class="p">(</span><span class="kc">None</span><span class="p">)),</span>   <span class="c1"># 且写了摘要</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+</code></pre></div>
+<p><strong>where 的隐藏语法糖</strong>：多个参数就是 AND——</p>
+<div class="highlight"><pre><span></span><code><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">Article</span><span class="o">.</span><span class="n">channel_id</span> <span class="o">==</span> <span class="mi">2</span><span class="p">,</span> <span class="n">Article</span><span class="o">.</span><span class="n">summary</span><span class="o">.</span><span class="n">is_not</span><span class="p">(</span><span class="kc">None</span><span class="p">))</span>
+<span class="c1"># 等价于</span>
+<span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">and_</span><span class="p">(</span><span class="n">Article</span><span class="o">.</span><span class="n">channel_id</span> <span class="o">==</span> <span class="mi">2</span><span class="p">,</span> <span class="n">Article</span><span class="o">.</span><span class="n">summary</span><span class="o">.</span><span class="n">is_not</span><span class="p">(</span><span class="kc">None</span><span class="p">)))</span>
+</code></pre></div>
+<p><strong><code>&amp;</code> <code>|</code> <code>~</code> 的括号陷阱</strong></p>
+<p>AND / OR / NOT 也能用位运算符写。但 Python 的位运算<strong>优先级高于比较运算符</strong>，所以：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># ❌ 想表达 (channel_id == 1) | (id == 2)</span>
+<span class="c1"># 实际解析成 Article.channel_id == (1 | Article.id) == 2 ——当场 TypeError</span>
+<span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">Article</span><span class="o">.</span><span class="n">channel_id</span> <span class="o">==</span> <span class="mi">1</span> <span class="o">|</span> <span class="n">Article</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="mi">2</span><span class="p">)</span>
+
+<span class="c1"># ✅ 用位运算符必须层层加括号</span>
+<span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">Article</span><span class="o">.</span><span class="n">channel_id</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">Article</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="mi">2</span><span class="p">))</span>
+</code></pre></div>
+<p>记不住优先级就老实用 <code>and_</code> / <code>or_</code> / <code>not_</code> 函数风格——永不歧义，本章 demo 全是这种写法。</p>
+<hr />
+<h2 id="6-order_by-limit-offset排序与分页">6. order_by / limit / offset：排序与分页</h2>
+<p><strong>作用</strong>：排序 + 截取，列表页接口的标配三件套。</p>
+<p><strong>签名</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="n">stmt</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">select</span><span class="p">(</span><span class="n">Article</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="n">Article</span><span class="o">.</span><span class="n">created_at</span><span class="o">.</span><span class="n">desc</span><span class="p">(),</span> <span class="n">Article</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>   <span class="c1"># ① 多键排序</span>
+    <span class="o">.</span><span class="n">limit</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>        <span class="c1"># ② 最多取 10 行</span>
+    <span class="o">.</span><span class="n">offset</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>       <span class="c1"># ③ 跳过前 20 行</span>
+<span class="p">)</span>
+</code></pre></div>
+<ul>
+<li><code>asc()</code> 是默认方向，<code>desc()</code> 倒序；多个键按书写顺序依次生效；</li>
+<li>分页公式：<code>offset = (page - 1) * per_page</code>——第 3 页、每页 10 条，就是 <code>limit(10).offset(20)</code>；</li>
+<li>这俩是方言适配的代表案例：PG / SQLite / MySQL 用 <code>LIMIT ... OFFSET ...</code>，SQL Server 得换 <code>OFFSET FETCH</code>——写 Core 的你不用管，引擎按方言翻译。</li>
+</ul>
+<p><strong>常见坑</strong></p>
+<ul>
+<li><strong>不带 order_by 就分页 = 抽盲盒</strong>。SQL 标准压根没承诺无 ORDER BY 时的返回顺序，数据库今天一个心情明天一个心情——第 1 页和第 2 页可能重叠、可能漏行。</li>
+<li><strong>排序键不唯一 = 翻页会抖</strong>。两篇文章 <code>created_at</code> 相同，谁排前面由数据库随手定——翻页时数据忽上忽下。药方：末尾补一个<strong>唯一列兜底</strong>，<code>.order_by(Article.created_at.desc(), Article.id)</code>。像运动会排名：成绩相同看编号，永远分得出高下。</li>
+<li><strong>深分页的性能账</strong>。<code>offset(100000)</code> 意味着数据库老老实实扫过并扔掉前 10 万行。后台系统翻到几万页越来越慢，元凶就是它——解法是游标分页（<code>where(Article.id &gt; 上一页最后一条).limit(20)</code>），进阶话题，先记住症状和方向。</li>
+</ul>
+<hr />
+<h2 id="7-func聚合与分组报表">7. func：聚合与分组报表</h2>
+<p><strong>作用</strong>：<code>func</code> 是 SQL 函数的万能转接台——<code>func.函数名(参数)</code> 能拼出任意函数调用，聚合（count / sum / avg / min / max）是它的头号业务。</p>
+<p><strong>最小示例</strong>——各栏目的文章数：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy</span><span class="w"> </span><span class="kn">import</span> <span class="n">func</span>
+
+<span class="n">stmt</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">select</span><span class="p">(</span><span class="n">Channel</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">func</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">Article</span><span class="o">.</span><span class="n">id</span><span class="p">)</span><span class="o">.</span><span class="n">label</span><span class="p">(</span><span class="s2">"articles"</span><span class="p">))</span>
+    <span class="o">.</span><span class="n">outerjoin</span><span class="p">(</span><span class="n">Article</span><span class="p">,</span> <span class="n">Channel</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="n">Article</span><span class="o">.</span><span class="n">channel_id</span><span class="p">)</span>   <span class="c1"># 空栏目也统计（第 8 节）</span>
+    <span class="o">.</span><span class="n">group_by</span><span class="p">(</span><span class="n">Channel</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>                                 <span class="c1"># 按栏目分桶</span>
+<span class="p">)</span>
+<span class="k">async</span> <span class="k">with</span> <span class="n">session_factory</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">cnt</span> <span class="ow">in</span> <span class="k">await</span> <span class="n">session</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">stmt</span><span class="p">):</span>   <span class="c1"># Row 也能直接解包</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">cnt</span><span class="p">)</span>
+</code></pre></div>
+<p><code>label()</code> 给聚合列起名：Row 按名字取值（<code>row.articles</code>），比 <code>row[1]</code> 可读一个量级。</p>
+<p>再上一档：<strong>sum / avg 多级统计</strong>——用 05 章 <code>ArticleVersion</code> 的 word_count / status 正好：</p>
+<div class="highlight"><pre><span></span><code><span class="n">stmt</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">select</span><span class="p">(</span>
+        <span class="n">ArticleVersion</span><span class="o">.</span><span class="n">status</span><span class="p">,</span>
+        <span class="n">func</span><span class="o">.</span><span class="n">count</span><span class="p">()</span><span class="o">.</span><span class="n">label</span><span class="p">(</span><span class="s2">"versions"</span><span class="p">),</span>                      <span class="c1"># count(*) 数行数</span>
+        <span class="n">func</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">ArticleVersion</span><span class="o">.</span><span class="n">word_count</span><span class="p">)</span><span class="o">.</span><span class="n">label</span><span class="p">(</span><span class="s2">"total"</span><span class="p">),</span>  <span class="c1"># 总字数</span>
+        <span class="n">func</span><span class="o">.</span><span class="n">avg</span><span class="p">(</span><span class="n">ArticleVersion</span><span class="o">.</span><span class="n">word_count</span><span class="p">)</span><span class="o">.</span><span class="n">label</span><span class="p">(</span><span class="s2">"avg"</span><span class="p">),</span>    <span class="c1"># 平均字数</span>
+    <span class="p">)</span>
+    <span class="o">.</span><span class="n">group_by</span><span class="p">(</span><span class="n">ArticleVersion</span><span class="o">.</span><span class="n">status</span><span class="p">)</span>
+<span class="p">)</span>
+</code></pre></div>
+<p><strong>having：给「组」加条件</strong></p>
+<div class="highlight"><pre><span></span><code><span class="n">stmt</span> <span class="o">=</span> <span class="n">stmt</span><span class="o">.</span><span class="n">having</span><span class="p">(</span><span class="n">func</span><span class="o">.</span><span class="n">count</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">)</span>   <span class="c1"># 只保留版本数 ≥ 2 的状态</span>
+</code></pre></div>
+<p>where 和 having 的分工，用招聘打比方：<strong>where 是初筛简历</strong>——不合格的人根本进不了统计；<strong>having 是按部门评优</strong>——先组队算完绩效，再淘汰整个部门。where 过滤<strong>行</strong>、发生在分组前；having 过滤<strong>组</strong>、发生在分组后——所以 having 里能用聚合值当条件，where 里不行。</p>
+<p><strong>常见坑</strong></p>
+<ul>
+<li><strong>select 了非聚合列却不 group_by 它</strong>：PG 直接报错（must appear in the GROUP BY clause）；SQLite 宽松放行、随便挑一行凑数。于是「本地好好的、上生产炸了」。规矩：select 里每个非聚合列都写进 group_by。</li>
+<li><strong>count(列) ≠ count(*)</strong>：<code>count(Article.summary)</code> 不统计该列为 NULL 的行。数「没写摘要的文章」用 <code>count() - count(Article.summary)</code>；数总行数用 <code>count()</code>（或主键列）。</li>
+<li><strong>count 永远返回一行</strong>：空表时它返回一行、值是 0，而不是零行——判断「有没有数据」看值，别看 <code>first() is None</code>。</li>
+<li><strong>avg 的返回类型看方言</strong>：SQLite 给 float；PG 对整数列求 avg 返回 Decimal。做除法或格式化前先 <code>float(...)</code> 兜一道，两种环境行为才一致。</li>
+</ul>
+<hr />
+<h2 id="8-join-outerjoin把两张表缝起来">8. join / outerjoin：把两张表缝起来</h2>
+<p><strong>作用</strong>：连接查询，让两表的行按条件两两配对。</p>
+<p><strong>签名</strong>：<code>.join(target, onclause=None)</code>——target 是模型或表；onclause 可省（ORM 能按外键 / relationship 自动推断）。<code>.outerjoin()</code> 是它的左外连接版。</p>
+<p><strong>最小示例</strong>——文章配栏目名：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 写法一：显式 on 条件</span>
+<span class="n">stmt</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">select</span><span class="p">(</span><span class="n">Article</span><span class="o">.</span><span class="n">title</span><span class="p">,</span> <span class="n">Channel</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">Channel</span><span class="p">,</span> <span class="n">Article</span><span class="o">.</span><span class="n">channel_id</span> <span class="o">==</span> <span class="n">Channel</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+<span class="p">)</span>
+
+<span class="c1"># 写法二：交给 relationship 自动推断（05 章建过 Article.channel 就能省）</span>
+<span class="n">stmt</span> <span class="o">=</span> <span class="n">select</span><span class="p">(</span><span class="n">Article</span><span class="o">.</span><span class="n">title</span><span class="p">,</span> <span class="n">Channel</span><span class="o">.</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">Article</span><span class="o">.</span><span class="n">channel</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>谁是左表</strong>？select 的第一个实体说了算：</p>
+<div class="highlight"><pre><span></span><code><span class="n">select</span><span class="p">(</span><span class="n">Article</span><span class="o">.</span><span class="n">title</span><span class="p">,</span> <span class="n">Channel</span><span class="o">.</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">Channel</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>   <span class="c1"># FROM article JOIN channel</span>
+<span class="n">select</span><span class="p">(</span><span class="n">Channel</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">Article</span><span class="o">.</span><span class="n">title</span><span class="p">)</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">Article</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>   <span class="c1"># FROM channel JOIN article</span>
+</code></pre></div>
+<p>想另立主语用 <code>select_from()</code>：<code>select(Channel.name).select_from(Article).join(Article.channel)</code>——FROM 从 article 起步。</p>
+<p><strong>outerjoin：左边的行一个都不丢</strong></p>
+<div class="highlight"><pre><span></span><code><span class="n">stmt</span> <span class="o">=</span> <span class="n">select</span><span class="p">(</span><span class="n">Channel</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">Article</span><span class="o">.</span><span class="n">title</span><span class="p">)</span><span class="o">.</span><span class="n">outerjoin</span><span class="p">(</span>
+    <span class="n">Article</span><span class="p">,</span> <span class="n">Channel</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="n">Article</span><span class="o">.</span><span class="n">channel_id</span>
+<span class="p">)</span>
+<span class="c1"># 没有文章的栏目照常出现，文章列补 NULL</span>
+</code></pre></div>
+<p>内连接像拉链两边<strong>齿齿咬合</strong>——配不上的行直接消失；左外连接是<strong>只保左排的齿</strong>——右齿缺位用 NULL 填空。统计「含空栏目」的报表（第 7 节的按栏目计数）必须用它，否则空栏目凭空消失。</p>
+<p><strong>常见坑</strong></p>
+<ul>
+<li><strong>两表的列都 select 了却忘了 join</strong>：生成笛卡尔积，行数 = 左行数 × 右行数。症状是结果暴涨、每条数据都似曾相识。看到重复组合，先查 join。</li>
+<li><code>join(目标)</code> 省略 onclause 的前提是外键<strong>能唯一推断</strong>：两表间有多个外键或不搭界时会直接抛错——老老实实把 onclause 写上。</li>
+<li>join 方向写反，查询逻辑就镜像了：<code>Article.channel</code> 与 <code>Channel.articles</code> 生成的是两条方向相反的 SQL——写之前想清楚「FROM 谁出发」。</li>
+</ul>
+<hr />
+<h2 id="9-关系当条件has-any-contains">9. 关系当条件：has() / any() / contains()</h2>
+<p>join 是手动挡；SQLAlchemy 还允许把 relationship 直接写进 where——join 自动补好。05 章建的关系，从这节开始回本。</p>
+<p><strong>口诀：单对象端用 has()，集合端用 any() / contains()。</strong>（拿单数属性 → has；拿复数属性 → any / contains）</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># has()：多对一端——「文章的栏目」满足条件（自动 JOIN channel）</span>
+<span class="n">select</span><span class="p">(</span><span class="n">Article</span><span class="p">)</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">Article</span><span class="o">.</span><span class="n">channel</span><span class="o">.</span><span class="n">has</span><span class="p">(</span><span class="n">Channel</span><span class="o">.</span><span class="n">slug</span> <span class="o">==</span> <span class="s2">"news"</span><span class="p">))</span>
+
+<span class="c1"># any()：集合端——「文章的标签」中存在满足条件的（自动 JOIN article_tag + tag）</span>
+<span class="n">select</span><span class="p">(</span><span class="n">Article</span><span class="p">)</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">Article</span><span class="o">.</span><span class="n">tags</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">Tag</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">"Python"</span><span class="p">))</span>
+
+<span class="c1"># contains()：集合端，入参是具体对象——标签集合里含有这个 Tag</span>
+<span class="n">select</span><span class="p">(</span><span class="n">Article</span><span class="p">)</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">Article</span><span class="o">.</span><span class="n">tags</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="n">python_tag</span><span class="p">))</span>
+</code></pre></div>
+<p><code>any()</code> 吃<strong>条件表达式</strong>，<code>contains()</code> 吃<strong>已入库的对象</strong>——后两句查出来是同一批文章，只是入参姿势不同。反方向照样能用：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 某篇文章都贴了哪些标签：Tag 的文章集合包含这篇文章</span>
+<span class="n">select</span><span class="p">(</span><span class="n">Tag</span><span class="p">)</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">Tag</span><span class="o">.</span><span class="n">articles</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="n">article_obj</span><span class="p">))</span>
+</code></pre></div>
+<p>多对一端还有个语法糖——<strong>外键列直接比对象</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 都翻译成 WHERE article.channel_id = :channel_id</span>
+<span class="n">select</span><span class="p">(</span><span class="n">Article</span><span class="p">)</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">Article</span><span class="o">.</span><span class="n">channel</span> <span class="o">==</span> <span class="n">channel_obj</span><span class="p">)</span>
+<span class="n">select</span><span class="p">(</span><span class="n">Article</span><span class="p">)</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">Article</span><span class="o">.</span><span class="n">channel_id</span> <span class="o">==</span> <span class="n">channel_obj</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>常见坑</strong></p>
+<ul>
+<li><code>contains()</code> 的对象必须<strong>已持久化</strong>（有主键）：传一个刚 <code>Tag(name="x")</code> 的内存对象，主键还是 None，条件无从定位行——先 add + flush 再用。</li>
+<li><code>has()</code> / <code>any()</code> 用反端会直接抛错。别死记，按语义想：<code>has</code> 问的是「那<strong>一个</strong>对象满足吗」，<code>any</code> 问的是「这堆里<strong>有没有</strong>满足的」。</li>
+<li>关系条件查出的实体，关系属性默认<strong>仍是未加载</strong>的——<code>article.tags</code> 想直接访问，还得靠下一节的预加载。</li>
+</ul>
+<hr />
+<h2 id="10-预加载补课selectinload-joinedload">10. 预加载补课：selectinload / joinedload</h2>
+<p>第 05 章挖的坑这里填上：异步会话里访问懒加载关系会抛 <code>MissingGreenlet</code>——SQLAlchemy 想在你读属性那一刻悄悄发 SQL，而 asyncio 容不下这种「背着你做 IO」。</p>
+<p><strong>作用</strong>：<code>.options()</code> 声明预加载，把关系的加载并进你看得见的查询计划。</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.orm</span><span class="w"> </span><span class="kn">import</span> <span class="n">selectinload</span>
+
+<span class="n">stmt</span> <span class="o">=</span> <span class="n">select</span><span class="p">(</span><span class="n">Article</span><span class="p">)</span><span class="o">.</span><span class="n">options</span><span class="p">(</span>
+    <span class="n">selectinload</span><span class="p">(</span><span class="n">Article</span><span class="o">.</span><span class="n">channel</span><span class="p">),</span>   <span class="c1"># 多对一</span>
+    <span class="n">selectinload</span><span class="p">(</span><span class="n">Article</span><span class="o">.</span><span class="n">tags</span><span class="p">),</span>      <span class="c1"># 多对多</span>
+<span class="p">)</span>
+<span class="n">articles</span> <span class="o">=</span> <span class="p">(</span><span class="k">await</span> <span class="n">session</span><span class="o">.</span><span class="n">scalars</span><span class="p">(</span><span class="n">stmt</span><span class="p">))</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">articles</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">channel</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="p">[</span><span class="n">t</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">a</span><span class="o">.</span><span class="n">tags</span><span class="p">])</span>   <span class="c1"># 已装好，随便读</span>
+</code></pre></div>
+<p>两位主角的分工（经验法则）：</p>
+<table>
+<thead>
+<tr>
+<th>加载器</th>
+<th>机制</th>
+<th>适合</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>selectinload</code></td>
+<td>主查询之后<strong>再发一条</strong> <code>IN (...)</code> 查询</td>
+<td>一对多 / 多对多<strong>集合</strong></td>
+</tr>
+<tr>
+<td><code>joinedload</code></td>
+<td>把 JOIN 并进<strong>同一条</strong>主查询</td>
+<td>多对一<strong>单对象</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>常见坑</strong></p>
+<ul>
+<li>报错名先认下：<code>sqlalchemy.exc.MissingGreenlet</code>——看到它，八成是忘了 options。注意 options 只装<strong>列出来的</strong>关系，访问没列的还是懒加载、还是炸。</li>
+<li>分页 + 集合关系的组合，社区习惯用 <code>selectinload</code>：<code>joinedload</code> 套集合时 SQLAlchemy 会自动包一层子查询来保证 LIMIT 语义正确（结果不会错），但 SQL 明显变绕；<code>selectinload</code> 的两条直白 SQL 更好读也好调。</li>
+</ul>
+<hr />
+<h2 id="11-updatevalues更新">11. update().values()：更新</h2>
+<p><strong>作用</strong>：构造 UPDATE 语句，按条件批量改列值。</p>
+<p><strong>签名</strong>：<code>update(实体).where(条件).values(列=值, ...)</code>。</p>
+<p><strong>最小示例</strong>——连接级（Core 最纯粹的形态）：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy</span><span class="w"> </span><span class="kn">import</span> <span class="n">update</span>
+
+<span class="k">async</span> <span class="k">with</span> <span class="n">engine</span><span class="o">.</span><span class="n">begin</span><span class="p">()</span> <span class="k">as</span> <span class="n">conn</span><span class="p">:</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+        <span class="n">update</span><span class="p">(</span><span class="n">ArticleVersion</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">ArticleVersion</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="s2">"review"</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">values</span><span class="p">(</span><span class="n">status</span><span class="o">=</span><span class="s2">"published"</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">rowcount</span><span class="p">)</span>   <span class="c1"># 实际改动了几行</span>
+</code></pre></div>
+<p><code>rowcount</code> 是 UPDATE / DELETE 的「战报」，写接口时直接当业务数字用。</p>
+<p><strong>values 的两种给法</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># ① Python 值：渲染成绑定参数 :status_1</span>
+<span class="o">.</span><span class="n">values</span><span class="p">(</span><span class="n">status</span><span class="o">=</span><span class="s2">"published"</span><span class="p">)</span>
+
+<span class="c1"># ② SQL 表达式：渲染成 article_version.word_count + 100，数据库端计算</span>
+<span class="o">.</span><span class="n">values</span><span class="p">(</span><span class="n">word_count</span><span class="o">=</span><span class="n">ArticleVersion</span><span class="o">.</span><span class="n">word_count</span> <span class="o">+</span> <span class="mi">100</span><span class="p">)</span>
+</code></pre></div>
+<p>第 ② 种常被忽略——想「全部加 100」，不是查出所有行在 Python 里逐个加，而是把表达式交给数据库一条 SQL 搞定（一百万行也只有一条语句）。</p>
+<p><strong>synchronize_session：会话里的对象跟不跟着变</strong></p>
+<p>在<strong>会话</strong>里执行 Core update（<code>await session.execute(update(...))</code>）时有个绕不开的问题：数据库的行变了，<strong>会话里已经加载过的对象</strong>怎么办？这正是 <code>synchronize_session</code> 管的事：</p>
+<table>
+<thead>
+<tr>
+<th>取值</th>
+<th>做法</th>
+<th>代价</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>"auto"</code>（默认）</td>
+<td>先试 <code>"evaluate"</code>，评估不了退 <code>"fetch"</code></td>
+<td>平衡</td>
+</tr>
+<tr>
+<td><code>"evaluate"</code></td>
+<td>在 Python 里对内存对象求值 where，命中的直接改属性</td>
+<td>最快；复杂条件评估不动</td>
+</tr>
+<tr>
+<td><code>"fetch"</code></td>
+<td>更新前先 SELECT 命中行的主键，回内存逐个对账</td>
+<td>多一次查询</td>
+</tr>
+<tr>
+<td><code>False</code></td>
+<td>完全不管内存对象</td>
+<td>最快；<strong>会话里的对象从此是旧闻</strong></td>
+</tr>
+</tbody>
+</table>
+<p>对比实验（<code>demo_write.py</code> 第 2 节实测）：</p>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">with</span> <span class="n">session_factory</span><span class="o">.</span><span class="n">begin</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
+    <span class="n">version</span> <span class="o">=</span> <span class="p">(</span><span class="k">await</span> <span class="n">session</span><span class="o">.</span><span class="n">scalars</span><span class="p">(</span><span class="n">select</span><span class="p">(</span><span class="n">ArticleVersion</span><span class="p">)</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="o">...</span><span class="p">)))</span><span class="o">.</span><span class="n">one</span><span class="p">()</span>
+
+    <span class="k">await</span> <span class="n">session</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+        <span class="n">update</span><span class="p">(</span><span class="n">ArticleVersion</span><span class="p">)</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="o">...</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">(</span><span class="n">status</span><span class="o">=</span><span class="s2">"archived"</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">version</span><span class="o">.</span><span class="n">status</span><span class="p">)</span>        <span class="c1"># 'archived'——默认 auto，内存对象已同步</span>
+
+    <span class="k">await</span> <span class="n">session</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+        <span class="n">update</span><span class="p">(</span><span class="n">ArticleVersion</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">values</span><span class="p">(</span><span class="n">status</span><span class="o">=</span><span class="s2">"archived"</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">execution_options</span><span class="p">(</span><span class="n">synchronize_session</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">version</span><span class="o">.</span><span class="n">status</span><span class="p">)</span>        <span class="c1"># 还是旧值——没人通知它</span>
+    <span class="k">await</span> <span class="n">session</span><span class="o">.</span><span class="n">refresh</span><span class="p">(</span><span class="n">version</span><span class="p">)</span>   <span class="c1"># 要新值：手动对账</span>
+</code></pre></div>
+<p>比喻：数据库是<strong>公告栏</strong>，会话里的对象是<strong>没看群的同事</strong>。公告栏换了通知（UPDATE），同事手里的旧通知单还在。<code>synchronize_session</code> 就是「改公告时顺手在群里 @所有人」；设成 <code>False</code> 就是「只换公告不吭声」——同事继续按旧通知干活，而且<strong>不报错</strong>。</p>
+<p><strong>常见坑</strong></p>
+<ul>
+<li><strong>不带 where = 全表更新</strong>。SQLAlchemy 不会拦（它认为你是故意的），也没有安全开关——养成「先写 where 再写 values」的肌肉记忆。</li>
+<li><code>synchronize_session=False</code> 后读旧值不报错，是最阴的坑：库里明明改了，日志打出来还是旧的。规则：关了同步就别信内存对象，要新值 <code>refresh()</code>。</li>
+<li><code>values(title=user_input.upper())</code> 是 <strong>Python 先算好</strong>再当绑定参数传；想数据库执行转换，得写 <code>values(title=func.upper(Article.title))</code>——中文场景未必用得上，英文数据清洗很顺手。</li>
+</ul>
+<hr />
+<h2 id="12-deletewhere删除">12. delete().where()：删除</h2>
+<p><strong>作用</strong>：构造 DELETE 语句，按条件批量删行。</p>
+<p><strong>签名</strong>：<code>delete(实体).where(条件)</code>。</p>
+<p><strong>最小示例</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy</span><span class="w"> </span><span class="kn">import</span> <span class="n">delete</span>
+
+<span class="k">async</span> <span class="k">with</span> <span class="n">engine</span><span class="o">.</span><span class="n">begin</span><span class="p">()</span> <span class="k">as</span> <span class="n">conn</span><span class="p">:</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+        <span class="n">delete</span><span class="p">(</span><span class="n">ArticleVersion</span><span class="p">)</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">ArticleVersion</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="s2">"draft"</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">rowcount</span><span class="p">)</span>   <span class="c1"># 删掉几行</span>
+</code></pre></div>
+<p><code>rowcount == 0</code> 就是「条件没删到东西」——REST 接口里标准的 404 语义，比抛异常再捕获干净：</p>
+<div class="highlight"><pre><span></span><code><span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">session</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">delete</span><span class="p">(</span><span class="n">Article</span><span class="p">)</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">Article</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="n">article_id</span><span class="p">))</span>
+<span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">rowcount</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="o">...</span>   <span class="c1"># 当 404 返回；统一成 HTTPException 是第 09 章的事</span>
+</code></pre></div>
+<p><strong>常见坑</strong></p>
+<ul>
+<li>和 update 一样：<strong>不带 where = 清空整张表</strong>，没有后悔药。</li>
+<li><strong>Core delete 与两套级联</strong>（05 章知识的实战验收）：</li>
+<li>ORM 级联 <code>relationship(cascade="all, delete-orphan")</code> 只对 <code>session.delete(obj)</code> 生效——ORM 逐条发 DELETE；</li>
+<li>数据库级联 <code>ForeignKey(ondelete="CASCADE")</code> 对 Core delete 和任何 SQL 都生效——<strong>前提是数据库真的执行外键</strong>（PG 默认执行；SQLite 要开 <code>PRAGMA foreign_keys=ON</code>）。</li>
+</ul>
+<p>换句话说：用 Core delete 删父行，ORM 级联根本不参与，级不级联全看数据库端的 ondelete。<code>demo_write.py</code> 第 5 节实测：删一篇文章，它的版本行被数据库的 <code>ON DELETE CASCADE</code> 连带清掉。
+- 删掉的行若还躺在某个会话的内存里，和 update 同款问题——内存对象不知道自己没了。同样支持 <code>synchronize_session</code>（默认 auto 即可），或者删完别再碰旧对象。</p>
+<hr />
+<h2 id="13-sql-注入的终点站core-为什么天然防">13. SQL 注入的终点站：Core 为什么天然防</h2>
+<p>第 04 章演示过拼接 SQL 的惨案：攻击串 <code>%' OR 1=1 --</code> 让全表裸奔。现在从机制上把话说透——<strong>Core 不是「更小心地防注入」，而是结构上就没给注入留门</strong>。</p>
+<p>惨案与解法并排看：</p>
+<div class="highlight"><pre><span></span><code><span class="n">keyword</span> <span class="o">=</span> <span class="s2">"' OR 1=1 --"</span>
+
+<span class="c1"># ❌ 拼接：数据混进了语句的「结构」——攻击串改变了 SQL 的语法意图</span>
+<span class="k">await</span> <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">text</span><span class="p">(</span><span class="sa">f</span><span class="s2">"SELECT * FROM article WHERE title LIKE '%</span><span class="si">{</span><span class="n">keyword</span><span class="si">}</span><span class="s2">%'"</span><span class="p">))</span>
+
+<span class="c1"># ✅ Core：值只走「参数」通道，结构一个字都没动</span>
+<span class="n">stmt</span> <span class="o">=</span> <span class="n">select</span><span class="p">(</span><span class="n">Article</span><span class="p">)</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">Article</span><span class="o">.</span><span class="n">title</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="n">keyword</span><span class="p">))</span>
+</code></pre></div>
+<p>编译结果揭示了原理：</p>
+<div class="highlight"><pre><span></span><code><span class="nb">print</span><span class="p">(</span><span class="n">select</span><span class="p">(</span><span class="n">Article</span><span class="p">)</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">Article</span><span class="o">.</span><span class="n">channel_id</span> <span class="o">==</span> <span class="mi">1</span><span class="p">))</span>
+<span class="c1"># SELECT ... FROM article WHERE article.channel_id = :channel_id_1</span>
+</code></pre></div>
+<p>你给的值，在<strong>构建表达式的那一刻</strong>就被装进绑定参数——SQL 骨架（结构）和参数值（数据）从出生起就是两条通道，分开递给数据库。数据库先解析骨架，再把参数当<strong>纯文本</strong>填进坑里——填什么，都改变不了骨架的形状。攻击串里的引号、OR、注释符，到这里全成了普通字符。</p>
+<p>对比一下 <code>text()</code>：它的安全靠<strong>自觉</strong>（记得写 <code>:占位符</code>，管住 f-string 的手）；Core 的安全靠<strong>构造</strong>——<code>Article.title == kw</code> 这种写法里，kw 想混进结构都没有入口。<strong>想不安全都难，这才叫「天然防」。</strong></p>
+<p><strong>最后一个角落：LIKE 的通配符</strong></p>
+<p>防注入防的是「数据变成指令」；但 <code>%</code> 和 <code>_</code> 在 LIKE 里<strong>本来就是指令</strong>（通配符）。用户在搜索框输入 <code>%</code>，不会被当 SQL 执行，却会让 LIKE 匹配<strong>所有行</strong>——结构没泄，全量数据泄了，算半个注入：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># autoescape=True：自动转义用户输入里的 % 和 _</span>
+<span class="c1"># 生成 LIKE '%' || :param || '%' ESCAPE '/'</span>
+<span class="n">select</span><span class="p">(</span><span class="n">Article</span><span class="p">)</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">Article</span><span class="o">.</span><span class="n">title</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="n">keyword</span><span class="p">,</span> <span class="n">autoescape</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+</code></pre></div>
+<p>做搜索框的同学记这一条就够：<code>contains(kw, autoescape=True)</code>。<code>like</code> / <code>ilike</code> / <code>startswith</code> / <code>endswith</code> 全家族都支持 <code>autoescape</code>。</p>
+<hr />
+<h2 id="14-本章速查表">14. 本章速查表</h2>
+<table>
+<thead>
+<tr>
+<th>需求</th>
+<th>写法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>查全表</td>
+<td><code>select(Article)</code> + <code>scalars()</code></td>
+</tr>
+<tr>
+<td>挑列查</td>
+<td><code>select(Article.id, Article.title)</code> → Row</td>
+</tr>
+<tr>
+<td>单条必存在</td>
+<td><code>.scalar_one()</code> / <code>.one()</code>；查不到要 None 用 <code>one_or_none()</code></td>
+</tr>
+<tr>
+<td>等值 / 区间</td>
+<td><code>==</code>、<code>!=</code>、<code>between(a, b)</code></td>
+</tr>
+<tr>
+<td>模糊</td>
+<td><code>like</code> / <code>ilike</code>；搜索框用 <code>contains(kw, autoescape=True)</code></td>
+</tr>
+<tr>
+<td>集合</td>
+<td><code>.in_([...])</code>（空列表 = 恒假）</td>
+</tr>
+<tr>
+<td>判空</td>
+<td><code>.is_(None)</code> / <code>.is_not(None)</code></td>
+</tr>
+<tr>
+<td>与或非</td>
+<td><code>and_</code> / <code>or_</code> / <code>not_</code>（或括号齐全的 <code>&amp;</code> <code>\|</code> <code>~</code>）</td>
+</tr>
+<tr>
+<td>排序分页</td>
+<td><code>.order_by(X.desc(), Article.id).limit(n).offset(m)</code></td>
+</tr>
+<tr>
+<td>聚合分组</td>
+<td><code>func.count / sum / avg</code> + <code>group_by</code> + <code>having</code></td>
+</tr>
+<tr>
+<td>连接</td>
+<td><code>.join(目标, on条件)</code>；保左表用 <code>.outerjoin()</code></td>
+</tr>
+<tr>
+<td>关系条件</td>
+<td>单对象端 <code>has()</code>；集合端 <code>any(条件)</code> / <code>contains(对象)</code></td>
+</tr>
+<tr>
+<td>预加载</td>
+<td><code>options(selectinload(集合), joinedload(单对象))</code></td>
+</tr>
+<tr>
+<td>更新</td>
+<td><code>update(实体).where(...).values(...)</code>；<code>rowcount</code> 看战果</td>
+</tr>
+<tr>
+<td>会话同步</td>
+<td><code>synchronize_session</code>：<code>auto</code> / <code>evaluate</code> / <code>fetch</code> / <code>False</code></td>
+</tr>
+<tr>
+<td>删除</td>
+<td><code>delete(实体).where(...)</code>；<code>rowcount == 0</code> → 404 语义</td>
+</tr>
+<tr>
+<td>防注入</td>
+<td>值自动走绑定参数；搜索框加 <code>autoescape=True</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>自测三问</strong></p>
+<ol>
+<li><code>execute()</code>、<code>session.scalars()</code>、<code>scalar_one()</code> 各拿到什么？后两个在 0 行、多行时分别发生什么？</li>
+<li><code>where</code> 和 <code>having</code> 各在什么阶段、对什么对象生效？为什么 having 里能拿 <code>count()</code> 当条件而 where 里不能？</li>
+<li>会话里用 <code>synchronize_session=False</code> 执行 update 后，内存对象读到的是什么？两种补救姿势分别是什么？</li>
+</ol>
+<p>到这里，「查、改、删」三板斧凑齐，SQL 表达式的用法手册翻完。剩最后一块拼图：表结构本身要演进——加列、改约束、回滚错误决策，<code>create_all</code> 指望不上（05 章的结论），得请带施工日志的正规军 Alembic 了。</p>
+<hr />
+<p><strong>下一章</strong>：<a href="../backend/07-alembic-shu-ju-qian-yi.html">07 · Alembic 数据迁移</a></p></div>
+
+      </article>
+<nav class="pager"><a class="pg-card pg-prev" href="../backend/05-orm-jian-mo.html"><span class="pg-label">← 上一篇</span><span class="pg-title">ORM 建模</span><span class="pg-mod">Python 框架指南</span></a><a class="pg-card pg-next" href="../backend/07-alembic-shu-ju-qian-yi.html"><span class="pg-label">下一篇 →</span><span class="pg-title">Alembic 数据迁移</span><span class="pg-mod">Python 框架指南</span></a></nav>
+    </div>
+    <footer class="foot">
+      <span>深栈 DeepStack · AI Agent 工程师转型训练营配套文档</span>
+    </footer>
+  </main>
+<nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#1-心智模型先拼积木再交翻译">1. 心智模型：先拼积木，再交翻译</a><a class="toc-link toc-h2" href="#2-select查询的骨架">2. select()：查询的骨架</a><a class="toc-link toc-h2" href="#3-取结果execute-scalars-scalar_one">3. 取结果：execute / scalars / scalar_one</a><a class="toc-link toc-h2" href="#4-where条件与比较运算符">4. where()：条件与比较运算符</a><a class="toc-link toc-h2" href="#5-and_-or_-not_条件的布尔运算">5. and_ / or_ / not_：条件的布尔运算</a><a class="toc-link toc-h2" href="#6-order_by-limit-offset排序与分页">6. order_by / limit / offset：排序与分页</a><a class="toc-link toc-h2" href="#7-func聚合与分组报表">7. func：聚合与分组报表</a><a class="toc-link toc-h2" href="#8-join-outerjoin把两张表缝起来">8. join / outerjoin：把两张表缝起来</a><a class="toc-link toc-h2" href="#9-关系当条件has-any-contains">9. 关系当条件：has() / any() / contains()</a><a class="toc-link toc-h2" href="#10-预加载补课selectinload-joinedload">10. 预加载补课：selectinload / joinedload</a><a class="toc-link toc-h2" href="#11-updatevalues更新">11. update().values()：更新</a><a class="toc-link toc-h2" href="#12-deletewhere删除">12. delete().where()：删除</a><a class="toc-link toc-h2" href="#13-sql-注入的终点站core-为什么天然防">13. SQL 注入的终点站：Core 为什么天然防</a><a class="toc-link toc-h2" href="#14-本章速查表">14. 本章速查表</a></nav>
+</div>
+<div class="sb-mask" id="sbMask"></div>
+<script src="../assets/app.js"></script>
+</body>
+</html>

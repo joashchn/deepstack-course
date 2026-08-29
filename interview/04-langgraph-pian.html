@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>04 · LangGraph 篇 · 深栈 DeepStack 课程文档</title>
+<meta name="description" content="对应课件：langgraph框架指南/01-17。LangGraph 题在面试里的作用是证明你真的搭过 Agent 工作流，而不只是调过 API。面试官通常从&quot;为什么用图&quot;开始，沿&quot;状态 → 并行 → 扇出 → 持久化&quot;…">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%23d9c39a' text-anchor='middle'%3EDS%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+<div class="progress" id="progress"></div>
+
+<div class="layout">
+<aside class="sidebar" id="sidebar">
+  <div class="sb-head">
+    <a class="brand" href="../index.html">
+      <span class="brand-mark">DS</span>
+      <span class="brand-text"><b>深栈 DeepStack</b><i>AI Agent 工程师转型训练营</i></span>
+    </a>
+    <button class="sb-close" id="sbClose" aria-label="关闭目录">✕</button>
+  </div>
+  <div class="sb-search"><input type="search" id="searchInput" placeholder="搜索 123 篇文档… ( / )" autocomplete="off">
+    <div class="sb-results" id="searchResults"></div></div>
+  <nav class="sb-nav">
+    <section class="sb-group" data-mod="python">
+      <a class="sb-group-title" href="../modules/python.html" data-toggle="python">
+        <span class="sb-num">01</span>
+        <span class="sb-group-text"><b>Python 与数据实践</b><i>31 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../python/01-huan-jing-da-jian-yu-ban-ben-guan-li.html"><span class="sb-item-num">01</span><span class="sb-item-title">环境搭建与版本管理</span></a>
+        <a class="sb-item" href="../python/02-bian-liang-biao-da-shi-yu-liu-cheng-kong-zhi.html"><span class="sb-item-num">02</span><span class="sb-item-title">变量、表达式与流程控制</span></a>
+        <a class="sb-item" href="../python/03-xu-lie-zi-dian-yu-ji-he.html"><span class="sb-item-num">03</span><span class="sb-item-title">序列、字典与集合</span></a>
+        <a class="sb-item" href="../python/04-han-shu-she-ji-yu-lambda.html"><span class="sb-item-num">04</span><span class="sb-item-title">函数设计与 lambda</span></a>
+        <a class="sb-item" href="../python/05-zuo-yong-yu-gui-ze-yu-bi-bao.html"><span class="sb-item-num">05</span><span class="sb-item-title">作用域规则与闭包</span></a>
+        <a class="sb-item" href="../python/06-lei-de-ding-yi-yu-shi-li-hua.html"><span class="sb-item-num">06</span><span class="sb-item-title">类的定义与实例化</span></a>
+        <a class="sb-item" href="../python/07-lei-xing-pan-ding-yu-chou-xiang-ji-lei.html"><span class="sb-item-num">07</span><span class="sb-item-title">类型判定与抽象基类</span></a>
+        <a class="sb-item" href="../python/08-mo-shu-fang-fa-quan-jing.html"><span class="sb-item-num">08</span><span class="sb-item-title">魔术方法全景</span></a>
+        <a class="sb-item" href="../python/09-miao-shu-fu-yu-yuan-lei.html"><span class="sb-item-num">09</span><span class="sb-item-title">描述符与元类</span></a>
+        <a class="sb-item" href="../python/10-zhuang-shi-qi.html"><span class="sb-item-num">10</span><span class="sb-item-title">装饰器</span></a>
+        <a class="sb-item" href="../python/11-die-dai-xie-yi-yu-sheng-cheng-qi.html"><span class="sb-item-num">11</span><span class="sb-item-title">迭代协议与生成器</span></a>
+        <a class="sb-item" href="../python/12-with-yu-shang-xia-wen-xie-yi.html"><span class="sb-item-num">12</span><span class="sb-item-title">with 与上下文协议</span></a>
+        <a class="sb-item" href="../python/13-yi-chang-ti-xi-yu-chu-li.html"><span class="sb-item-num">13</span><span class="sb-item-title">异常体系与处理</span></a>
+        <a class="sb-item" href="../python/14-lei-xing-biao-zhu.html"><span class="sb-item-num">14</span><span class="sb-item-title">类型标注</span></a>
+        <a class="sb-item" href="../python/15-mo-kuai-yu-bao-de-zu-zhi.html"><span class="sb-item-num">15</span><span class="sb-item-title">模块与包的组织</span></a>
+        <a class="sb-item" href="../python/16-biao-zhun-ku-xun-li.html"><span class="sb-item-num">16</span><span class="sb-item-title">标准库巡礼</span></a>
+        <a class="sb-item" href="../python/17-yi-lai-guan-li-yu-di-san-fang-ku.html"><span class="sb-item-num">17</span><span class="sb-item-title">依赖管理与第三方库</span></a>
+        <a class="sb-item" href="../python/18-xian-cheng-yu-jin-cheng.html"><span class="sb-item-num">18</span><span class="sb-item-title">线程与进程</span></a>
+        <a class="sb-item" href="../python/19-shi-jian-xun-huan.html"><span class="sb-item-num">19</span><span class="sb-item-title">事件循环</span></a>
+        <a class="sb-item" href="../python/20-future-yu-xie-cheng.html"><span class="sb-item-num">20</span><span class="sb-item-title">Future 与协程</span></a>
+        <a class="sb-item" href="../python/21-asyncio-shi-zhan.html"><span class="sb-item-num">21</span><span class="sb-item-title">asyncio 实战</span></a>
+        <a class="sb-item" href="../python/22-gou-jian-yu-fa-bu.html"><span class="sb-item-num">22</span><span class="sb-item-title">构建与发布</span></a>
+        <a class="sb-item" href="../python/23-gong-cheng-hua-gong-ju-lian.html"><span class="sb-item-num">23</span><span class="sb-item-title">工程化工具链</span></a>
+        <a class="sb-item" href="../python/24-monorepo-yu-tiao-shi.html"><span class="sb-item-num">24</span><span class="sb-item-title">monorepo 与调试</span></a>
+        <a class="sb-item" href="../python/25-jupyter-jiao-hu-huan-jing.html"><span class="sb-item-num">25</span><span class="sb-item-title">Jupyter 交互环境</span></a>
+        <a class="sb-item" href="../python/26-numpy-shu-zu-yu-xiang-liang-hua.html"><span class="sb-item-num">26</span><span class="sb-item-title">NumPy 数组与向量化</span></a>
+        <a class="sb-item" href="../python/27-pandas-shu-ju-jie-gou.html"><span class="sb-item-num">27</span><span class="sb-item-title">Pandas 数据结构</span></a>
+        <a class="sb-item" href="../python/28-pandas-shu-ju-qing-xi.html"><span class="sb-item-num">28</span><span class="sb-item-title">Pandas 数据清洗</span></a>
+        <a class="sb-item" href="../python/29-matplotlib-hui-tu-ti-xi.html"><span class="sb-item-num">29</span><span class="sb-item-title">Matplotlib 绘图体系</span></a>
+        <a class="sb-item" href="../python/30-matplotlib-dong-hua-yu-jiao-hu.html"><span class="sb-item-num">30</span><span class="sb-item-title">Matplotlib 动画与交互</span></a>
+        <a class="sb-item" href="../python/31-seaborn-tong-ji-ke-shi-hua.html"><span class="sb-item-num">31</span><span class="sb-item-title">Seaborn 统计可视化</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="agent">
+      <a class="sb-group-title" href="../modules/agent.html" data-toggle="agent">
+        <span class="sb-num">02</span>
+        <span class="sb-group-text"><b>Agent 核心</b><i>15 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../agent/01-token-yu-ci-qian-ru.html"><span class="sb-item-num">01</span><span class="sb-item-title">Token 与词嵌入</span></a>
+        <a class="sb-item" href="../agent/02-qian-xiang-chuan-bo-yu-fan-xiang-chuan-bo.html"><span class="sb-item-num">02</span><span class="sb-item-title">前向传播与反向传播</span></a>
+        <a class="sb-item" href="../agent/03-zhu-yi-li-ji-zhi-yu-transformer-jia-gou.html"><span class="sb-item-num">03</span><span class="sb-item-title">注意力机制与 Transformer 架构</span></a>
+        <a class="sb-item" href="../agent/04-yu-xun-lian-rlhf-yu-cai-yang-kv-cache.html"><span class="sb-item-num">04</span><span class="sb-item-title">预训练、RLHF 与采样（KV Cache）</span></a>
+        <a class="sb-item" href="../agent/05-ben-di-mo-xing-yu-xiao-xi-jie-gou.html"><span class="sb-item-num">05</span><span class="sb-item-title">本地模型与消息结构</span></a>
+        <a class="sb-item" href="../agent/06-hui-hua-guan-li-yu-json-shu-chu.html"><span class="sb-item-num">06</span><span class="sb-item-title">会话管理与 JSON 输出</span></a>
+        <a class="sb-item" href="../agent/07-tool-calling-xie-yi-yu-feng-zhuang.html"><span class="sb-item-num">07</span><span class="sb-item-title">Tool Calling：协议与封装</span></a>
+        <a class="sb-item" href="../agent/08-react-mo-shi-yu-zhu-xun-huan.html"><span class="sb-item-num">08</span><span class="sb-item-title">ReAct 模式与主循环</span></a>
+        <a class="sb-item" href="../agent/09-shi-zhan-deep-research-agent.html"><span class="sb-item-num">09</span><span class="sb-item-title">实战：Deep Research Agent</span></a>
+        <a class="sb-item" href="../agent/10-skill-yu-jian-jin-shi-pi-lu.html"><span class="sb-item-num">10</span><span class="sb-item-title">Skill 与渐进式披露</span></a>
+        <a class="sb-item" href="../agent/11-mcp-quan-jing.html"><span class="sb-item-num">11</span><span class="sb-item-title">MCP 全景</span></a>
+        <a class="sb-item" href="../agent/12-duo-agent-yu-xuan-xing-ce-lve.html"><span class="sb-item-num">12</span><span class="sb-item-title">多 Agent 与选型策略</span></a>
+        <a class="sb-item" href="../agent/13-ti-shi-ci-gong-cheng-yu-shang-xia-wen-gong.html"><span class="sb-item-num">13</span><span class="sb-item-title">提示词工程与上下文工程</span></a>
+        <a class="sb-item" href="../agent/14-xun-huan-tu-yu-gu-jia-gong-cheng.html"><span class="sb-item-num">14</span><span class="sb-item-title">循环、图与骨架工程</span></a>
+        <a class="sb-item" href="../agent/15-ji-yi-quan-xian-yu-ping-ce.html"><span class="sb-item-num">15</span><span class="sb-item-title">记忆、权限与评测</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="langchain">
+      <a class="sb-group-title" href="../modules/langchain.html" data-toggle="langchain">
+        <span class="sb-num">03</span>
+        <span class="sb-group-text"><b>LangChain 指南</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langchain/01-ren-shi-langchain.html"><span class="sb-item-num">01</span><span class="sb-item-title">认识 LangChain</span></a>
+        <a class="sb-item" href="../langchain/02-ti-shi-ci-mu-ban-yu-xiao-xi.html"><span class="sb-item-num">02</span><span class="sb-item-title">提示词模板与消息</span></a>
+        <a class="sb-item" href="../langchain/03-lcel-yu-runnable.html"><span class="sb-item-num">03</span><span class="sb-item-title">LCEL 与 Runnable</span></a>
+        <a class="sb-item" href="../langchain/04-liu-shi-yu-bing-fa.html"><span class="sb-item-num">04</span><span class="sb-item-title">流式与并发</span></a>
+        <a class="sb-item" href="../langchain/05-shu-chu-jie-xi-qi.html"><span class="sb-item-num">05</span><span class="sb-item-title">输出解析器</span></a>
+        <a class="sb-item" href="../langchain/06-wen-dang-jia-zai-yu-qie-ge.html"><span class="sb-item-num">06</span><span class="sb-item-title">文档加载与切割</span></a>
+        <a class="sb-item" href="../langchain/07-qian-ru-yu-xiang-liang-ku.html"><span class="sb-item-num">07</span><span class="sb-item-title">嵌入与向量库</span></a>
+        <a class="sb-item" href="../langchain/08-jian-suo-yu-rag.html"><span class="sb-item-num">08</span><span class="sb-item-title">检索与RAG</span></a>
+        <a class="sb-item" href="../langchain/09-dui-hua-ji-yi.html"><span class="sb-item-num">09</span><span class="sb-item-title">对话记忆</span></a>
+        <a class="sb-item" href="../langchain/10-gong-ju-diao-yong.html"><span class="sb-item-num">10</span><span class="sb-item-title">工具调用</span></a>
+        <a class="sb-item" href="../langchain/11-agent.html"><span class="sb-item-num">11</span><span class="sb-item-title">Agent</span></a>
+        <a class="sb-item" href="../langchain/12-hui-diao-yu-tiao-shi-quan-ke-cheng-shou-guan.html"><span class="sb-item-num">12</span><span class="sb-item-title">回调与调试（全课程收官章）</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="langgraph">
+      <a class="sb-group-title" href="../modules/langgraph.html" data-toggle="langgraph">
+        <span class="sb-num">04</span>
+        <span class="sb-group-text"><b>LangGraph 框架指南</b><i>17 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langgraph/01-di-1-zhang-cong-yi-ge-shi-kong-de-jiao.html"><span class="sb-item-num">01</span><span class="sb-item-title">第 1 章 从一个失控的脚本说起</span></a>
+        <a class="sb-item" href="../langgraph/02-di-2-zhang-zui-xiao-ke-yun-xing-tu.html"><span class="sb-item-num">02</span><span class="sb-item-title">第 2 章 最小可运行图</span></a>
+        <a class="sb-item" href="../langgraph/03-di-3-zhang-zhuang-tai-tu-de-shu-ju-xin.html"><span class="sb-item-num">03</span><span class="sb-item-title">第 3 章 状态：图的数据心脏</span></a>
+        <a class="sb-item" href="../langgraph/04-di-4-zhang-rang-liu-cheng-xue-hui-jue-ce.html"><span class="sb-item-num">04</span><span class="sb-item-title">第 4 章 让流程学会决策</span></a>
+        <a class="sb-item" href="../langgraph/05-di-5-zhang-bing-xing-shi-jie-chao-bu-zhi.html"><span class="sb-item-num">05</span><span class="sb-item-title">第 5 章 并行世界：超步执行模型</span></a>
+        <a class="sb-item" href="../langgraph/06-di-6-zhang-command-ba-kong-zhi-quan-jiao-jin.html"><span class="sb-item-num">06</span><span class="sb-item-title">第 6 章 Command：把控制权交进节点</span></a>
+        <a class="sb-item" href="../langgraph/07-di-7-zhang-dong-tai-bing-xing-send-yu-mapreduce.html"><span class="sb-item-num">07</span><span class="sb-item-title">第 7 章 动态并行：Send 与 MapReduce</span></a>
+        <a class="sb-item" href="../langgraph/08-di-8-zhang-gei-tu-zhuang-shang-shou-jiao-gong.html"><span class="sb-item-num">08</span><span class="sb-item-title">第 8 章 给图装上手脚：工具调用</span></a>
+        <a class="sb-item" href="../langgraph/09-di-9-zhang-fu-yong-yu-feng-zhuang-zi-tu.html"><span class="sb-item-num">09</span><span class="sb-item-title">第 9 章 复用与封装：子图</span></a>
+        <a class="sb-item" href="../langgraph/10-di-10-zhang-cong-dan-tu-dao-tuan-dui-duo.html"><span class="sb-item-num">10</span><span class="sb-item-title">第 10 章 从单图到团队：多 Agent 架构</span></a>
+        <a class="sb-item" href="../langgraph/11-di-11-zhang-liu-shi-shu-chu.html"><span class="sb-item-num">11</span><span class="sb-item-title">第 11 章 流式输出</span></a>
+        <a class="sb-item" href="../langgraph/12-di-12-zhang-chi-jiu-hua-checkpointer-yu-xian-cheng.html"><span class="sb-item-num">12</span><span class="sb-item-title">第 12 章 持久化：Checkpointer 与线程</span></a>
+        <a class="sb-item" href="../langgraph/13-di-13-zhang-shi-jian-lv-xing.html"><span class="sb-item-num">13</span><span class="sb-item-title">第 13 章 时间旅行</span></a>
+        <a class="sb-item" href="../langgraph/14-di-14-zhang-zhong-duan-yu-ren-zai-hui-lu.html"><span class="sb-item-num">14</span><span class="sb-item-title">第 14 章 中断与人在回路</span></a>
+        <a class="sb-item" href="../langgraph/15-di-15-zhang-ji-yi-guan-li.html"><span class="sb-item-num">15</span><span class="sb-item-title">第 15 章 记忆管理</span></a>
+        <a class="sb-item" href="../langgraph/16-di-16-zhang-rong-cuo-zhong-shi-chao-shi-yu.html"><span class="sb-item-num">16</span><span class="sb-item-title">第 16 章 容错：重试、超时与兜底</span></a>
+        <a class="sb-item" href="../langgraph/17-di-17-zhang-quan-jing-hui-gu.html"><span class="sb-item-num">17</span><span class="sb-item-title">第 17 章 全景回顾</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="backend">
+      <a class="sb-group-title" href="../modules/backend.html" data-toggle="backend">
+        <span class="sb-num">05</span>
+        <span class="sb-group-text"><b>Python 框架指南</b><i>14 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../backend/01-fastapi-ru-men-yu-asgi.html"><span class="sb-item-num">01</span><span class="sb-item-title">FastAPI 入门与 ASGI</span></a>
+        <a class="sb-item" href="../backend/02-lu-you-yu-qing-qiu-xiang-ying.html"><span class="sb-item-num">02</span><span class="sb-item-title">路由与请求响应</span></a>
+        <a class="sb-item" href="../backend/03-pydantic-shu-ju-jiao-yan-yu-pei-zhi.html"><span class="sb-item-num">03</span><span class="sb-item-title">Pydantic 数据校验与配置</span></a>
+        <a class="sb-item" href="../backend/04-sqlalchemy-yi-bu-yin-qing-yu-hui-hua.html"><span class="sb-item-num">04</span><span class="sb-item-title">SQLAlchemy 异步引擎与会话</span></a>
+        <a class="sb-item" href="../backend/05-orm-jian-mo.html"><span class="sb-item-num">05</span><span class="sb-item-title">ORM 建模</span></a>
+        <a class="sb-item" href="../backend/06-sql-biao-da-shi-yu-shu-ju-cao-zuo.html"><span class="sb-item-num">06</span><span class="sb-item-title">SQL 表达式与数据操作</span></a>
+        <a class="sb-item" href="../backend/07-alembic-shu-ju-qian-yi.html"><span class="sb-item-num">07</span><span class="sb-item-title">Alembic 数据迁移</span></a>
+        <a class="sb-item" href="../backend/08-yi-lai-zhu-ru.html"><span class="sb-item-num">08</span><span class="sb-item-title">依赖注入</span></a>
+        <a class="sb-item" href="../backend/09-tong-yi-yi-chang-chu-li.html"><span class="sb-item-num">09</span><span class="sb-item-title">统一异常处理</span></a>
+        <a class="sb-item" href="../backend/10-zhong-jian-jian.html"><span class="sb-item-num">10</span><span class="sb-item-title">中间件</span></a>
+        <a class="sb-item" href="../backend/11-ren-zheng-yu-jwt.html"><span class="sb-item-num">11</span><span class="sb-item-title">认证与 JWT</span></a>
+        <a class="sb-item" href="../backend/12-pytest-ce-shi.html"><span class="sb-item-num">12</span><span class="sb-item-title">pytest 测试</span></a>
+        <a class="sb-item" href="../backend/13-ri-zhi-loguru.html"><span class="sb-item-num">13</span><span class="sb-item-title">日志 loguru</span></a>
+        <a class="sb-item" href="../backend/14-liu-shi-xiang-ying-sse-yu-websocket.html"><span class="sb-item-num">14</span><span class="sb-item-title">流式响应 SSE 与 WebSocket</span></a>
+      </div>
+    </section>
+    <section class="sb-group open" data-mod="interview">
+      <a class="sb-group-title" href="../modules/interview.html" data-toggle="interview">
+        <span class="sb-num">06</span>
+        <span class="sb-group-text"><b>面试题库</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../interview/01-llm-yuan-li-pian.html"><span class="sb-item-num">01</span><span class="sb-item-title">LLM 原理篇</span></a>
+        <a class="sb-item" href="../interview/02-rag-yu-jian-suo-pian.html"><span class="sb-item-num">02</span><span class="sb-item-title">RAG 与检索篇</span></a>
+        <a class="sb-item" href="../interview/03-agent-he-xin-pian.html"><span class="sb-item-num">03</span><span class="sb-item-title">Agent 核心篇</span></a>
+        <a class="sb-item current" href="../interview/04-langgraph-pian.html"><span class="sb-item-num">04</span><span class="sb-item-title">LangGraph 篇</span></a>
+        <a class="sb-item" href="../interview/05-langchain-pian.html"><span class="sb-item-num">05</span><span class="sb-item-title">LangChain 篇</span></a>
+        <a class="sb-item" href="../interview/06-xi-tong-she-ji-pian.html"><span class="sb-item-num">06</span><span class="sb-item-title">系统设计篇</span></a>
+        <a class="sb-item" href="../interview/07-xiang-mu-shen-wa-pian.html"><span class="sb-item-num">07</span><span class="sb-item-title">项目深挖篇</span></a>
+        <a class="sb-item" href="../interview/08-gu-zhang-pai-cha-pian.html"><span class="sb-item-num">08</span><span class="sb-item-title">故障排查篇</span></a>
+        <a class="sb-item" href="../interview/09-python-ji-chu-pian.html"><span class="sb-item-num">09</span><span class="sb-item-title">Python 基础篇</span></a>
+        <a class="sb-item" href="../interview/10-fastapi-yu-hou-duan-pian.html"><span class="sb-item-num">10</span><span class="sb-item-title">FastAPI 与后端篇</span></a>
+        <a class="sb-item" href="../interview/11-ti-shi-ci-gong-cheng-yu-an-quan-pian.html"><span class="sb-item-num">11</span><span class="sb-item-title">提示词工程与安全篇</span></a>
+        <a class="sb-item" href="../interview/12-mo-xing-xuan-xing-yu-jiang-ben-pian.html"><span class="sb-item-num">12</span><span class="sb-item-title">模型选型与降本篇</span></a>
+      </div>
+    </section>
+  </nav>
+</aside>
+  <main class="main">
+    <header class="topbar">
+      <button class="menu-btn" id="menuBtn" aria-label="目录">☰</button>
+      <div class="crumbs"><a href="../index.html">首页</a><span>/</span><a href="../modules/interview.html">面试题库</a><span>/</span><span class="cur">LangGraph 篇</span></div>
+      <div class="topbar-actions">
+        <button class="icon-btn" id="themeBtn" title="切换深浅色" aria-label="切换深浅色">◐</button>
+      </div>
+    </header>
+    <div class="content">
+      <article class="article">
+
+<header class="page-head">
+  <div class="page-kicker">面试题库 · 第 04 章</div>
+  <h1 class="page-title">LangGraph 篇</h1>
+  <p class="page-desc">对应课件：langgraph框架指南/01-17。LangGraph 题在面试里的作用是证明你真的搭过 Agent 工作流，而不只是调过 API。面试官通常从&quot;为什么用图&quot;开始，沿&quot;状态 → 并行 → 扇出 → 持久化&quot;…</p>
+  <div class="page-meta">
+    <span>约 20 分钟</span><span>7,812 字</span><span>0 个代码示例</span>
+  </div>
+</header>
+<div class="md"><blockquote>
+<p>对应课件：langgraph框架指南/01-17。LangGraph 题在面试里的作用是证明你<strong>真的搭过 Agent 工作流</strong>，而不只是调过 API。面试官通常从"为什么用图"开始，沿"状态 → 并行 → 扇出 → 持久化"一路深挖。本篇 6 题按这个真实追问路径组织。</p>
+</blockquote>
+<hr />
+<h2 id="q01-为什么需要-langgraph裸写-while-循环不行吗">Q01 · 为什么需要 LangGraph？裸写 while 循环不行吗？</h2>
+<blockquote>
+<p>难度：★★★ ｜ 频率：高 ｜ 对应课件：langgraph框架指南/01、02</p>
+</blockquote>
+<p><strong>面试官</strong>：Agent 主循环几十行 Python 就能写出来，为什么要引入 LangGraph 这种图框架？</p>
+<p><strong>第 1 层追问：裸脚本失控在哪</strong></p>
+<blockquote>
+<p>先说说"失控的脚本"是什么状态。</p>
+</blockquote>
+<p>参考回答：裸 while 循环在 Demo 阶段没问题，演化下去必然失控：<strong>一，流程固化在代码里</strong>——想加一个"先查知识库、没有再联网"的分支，改的是层层嵌套的 if-else；流程一复杂，代码结构就开始扭曲。<strong>二，状态散落各处</strong>——变量 + 全局对象 + 消息列表，谁改了什么全靠人脑跟踪。<strong>三，没法中断恢复</strong>——跑到第 8 轮崩了，用户等了几十秒的进度全部作废，只能从头再来。<strong>四，不可观测</strong>——中间发生了什么，只有翻日志猜。一句话：<strong>流程复杂度超过两层分支后，命令式代码的维护成本指数上升</strong>。</p>
+<p><strong>第 2 层追问：图怎么解决？</strong></p>
+<blockquote>
+<p>LangGraph 给了什么对应物？</p>
+</blockquote>
+<p>参考回答：四个对应物。<strong>StateGraph</strong>：把流程声明为"节点 + 边"的图——<strong>执行计划从代码逻辑变成数据结构</strong>，加分支 = 加一条边，不再动已有代码。<strong>状态集中</strong>：全图共享一个 State，节点只读写它。<strong>Checkpointer/Thread</strong>：每步自动存档，崩溃可恢复、可回放。<strong>Superstep/Send</strong>：内置并行执行模型和动态扇出原语。本质变化是<strong>从"我指挥每一步"变成"我声明结构，引擎执行"</strong>——声明式工作流对复杂流程的收益，和 SQL 之于手写查询是一样的。</p>
+<p><strong>第 3 层追问：什么情况反而不要用？</strong></p>
+<blockquote>
+<p>图框架不是银弹吧？</p>
+</blockquote>
+<p>参考回答：三个不用/慎用的信号。<strong>流程简单</strong>——单 Agent 直来直去的循环，裸写反而清爽，上图是过度工程。<strong>不需要恢复/回放</strong>——一次性短任务，Checkpointer 的存档开销是纯成本。<strong>团队没学习成本预算</strong>——图的调试思维方式（看执行轨迹而不是打断点）有门槛。务实路径和上篇一致：<strong>从脚本起步，出现第二个分支或第一次"跑一半想恢复"的需求时，再迁到图</strong>——LangGraph 的迁移成本不高，因为核心就是"状态 + 节点函数"。</p>
+<h3 id="考察意图与踩坑点">考察意图与踩坑点</h3>
+<ul>
+<li>考察意图：考引入框架的<strong>成本收益判断</strong>。"因为流行所以用"是减分答案；能说出裸脚本的具体失控形态（对应课程第一章的叙事）说明真思考过。</li>
+<li>踩坑点：把 LangGraph 说成"LangChain 的新版本"——它是独立的图编排框架（可独立使用）；只会说"可视化流程"。</li>
+<li>一句话总结：流程复杂度超过两层分支，命令式就失控——图把执行计划从代码变成数据，换声明式 + 持久化 + 并行原语。</li>
+</ul>
+<hr />
+<h2 id="q02-langgraph-的状态为什么不是普通字典reducer-是干什么的">Q02 · LangGraph 的状态为什么不是普通字典？reducer 是干什么的？</h2>
+<blockquote>
+<p>难度：★★★★ ｜ 频率：高 ｜ 对应课件：langgraph框架指南/02、03</p>
+</blockquote>
+<p><strong>面试官</strong>：你写 LangGraph 时定义 State，为什么有的字段要加 <code>Annotated[..., operator.add]</code>？这个机制在防什么？</p>
+<p><strong>第 1 层追问：补丁语义</strong></p>
+<blockquote>
+<p>节点 return 的东西是什么？</p>
+</blockquote>
+<p>参考回答：<strong>节点返回的不是新状态，是"补丁"（patch）</strong>。比如 State 有 <code>messages</code> 字段，节点 <code>return {"messages": [一条新消息]}</code>——这<strong>不是覆盖 messages，而是增量追加</strong>。默认语义是覆盖（你 return 什么字段就替换什么字段），但消息列表这类字段必须声明为追加语义。这是为并行做的根本设计：<strong>如果节点写全量状态，两个并行节点必然互相覆盖；返回补丁 + 各自合并规则，并行才安全</strong>。</p>
+<p><strong>第 2 层追问：reducer 机制</strong></p>
+<blockquote>
+<p>追加语义怎么声明的？底层机制叫什么？</p>
+</blockquote>
+<p>参考回答：用 <code>Annotated</code> 类型标注挂 reducer：<code>messages: Annotated[list, add_messages]</code>、<code>count: Annotated[int, operator.add]</code>。<strong>状态的真实身份是"通道（channel）+ reducer"</strong>：通道是存储槽，reducer 是"新值来了怎么和旧值合并"的函数——列表追加、整数累加、或自定义的 dict 合并。执行时引擎把节点的补丁按字段路由到各通道，各走各的 reducer 结算。"reducer"这个名字借自 MapReduce 的 shuffle-merge：<strong>多路写入、统一合并</strong>，正是并行场景的需求本质。</p>
+<p><strong>第 3 层追问：踩过什么坑？</strong></p>
+<blockquote>
+<p>这个机制上有什么真实的坑？</p>
+</blockquote>
+<p>参考回答：三个高频坑。<strong>一，忘挂 reducer</strong>：并行节点都写 <code>count</code> 字段，默认覆盖语义下结果取决于结算顺序——<strong>不确定性的来源</strong>；两个 Send 扇出的节点写同一字段，没有 reducer 直接报 InvalidUpdateError。<strong>二，误以为 return 会替换整个 State</strong>：只 return 变化的字段（补丁思维），全量 return 冗余且容易把别的字段误覆盖成默认值。<strong>三，reducer 的副作用语义</strong>：<code>operator.add</code> 对 list 是拼接——想要"替换式更新"的列表反而要故意用默认覆盖或不挂。<strong>先想清"这个字段会有几路并发写入"，再定 reducer</strong>——这是状态设计的第一问。</p>
+<h3 id="考察意图与踩坑点_1">考察意图与踩坑点</h3>
+<ul>
+<li>考察意图：这是 LangGraph 面试的<strong>核心区分题</strong>——答出"通道 + reducer"和"补丁不是全量"两个概念，就证明不是照抄教程拼的图。</li>
+<li>踩坑点：说"Annotated 只是类型提示没有功能"；不知道默认语义是覆盖；解释不了"为什么并行需要 reducer"。</li>
+<li>一句话总结：节点返回补丁不返回状态；字段 = 通道 + reducer；并发写入的字段必须先想合并规则。</li>
+</ul>
+<hr />
+<h2 id="q03-讲讲超步superstep并行节点是怎么执行的汇合有什么坑">Q03 · 讲讲超步（superstep）。并行节点是怎么执行的？"汇合"有什么坑？</h2>
+<blockquote>
+<p>难度：★★★★ ｜ 频率：中（区分度极高）｜ 对应课件：langgraph框架指南/04、05</p>
+</blockquote>
+<p><strong>面试官</strong>：LangGraph 说自己的执行模型是"超步"。两个节点并行执行，一个先完成，它能看到另一个的结果吗？</p>
+<p><strong>第 1 层追问：超步是什么</strong></p>
+<blockquote>
+<p>先定义超步。</p>
+</blockquote>
+<p>参考回答：<strong>超步（superstep）是图引擎的原子执行周期</strong>，来自 Pregel 图计算模型（Google 大规模图计算论文）。执行规则三条：<strong>一，快照</strong>：超步开始时，本步要执行的节点各自拿到当前状态快照。<strong>二，补丁缓冲</strong>：节点执行期间返回的补丁先缓冲、不立即生效——所以<strong>同超步内先完成的节点看不到后完成节点的写入</strong>，反之亦然。<strong>三，边触发结算</strong>：本步所有节点完成后，缓冲的补丁统一走 reducer 结算进全局状态，再根据边的条件决定下一批执行的节点。<strong>同超步内彼此不可见、跨超步才可见</strong>——这就是并行的安全边界。</p>
+<p><strong>第 2 层追问：汇合节点为什么可能执行两次？</strong></p>
+<blockquote>
+<p>两个并行分支都汇到同一个节点，会发生什么？</p>
+</blockquote>
+<p>参考回答：经典陷阱。A、B 并行跑完都指向 C，如果 C 在 A 完成时被调度一次、B 完成时又被调度一次——<strong>C 执行两次</strong>，第二次拿着合并后的状态又算一遍。LangGraph 的处理是"边触发 + 去重"（barrier 语义）：同超步内到达的边合并为一次触发，但<strong>跨超步到达的边仍会各自触发</strong>。所以正确设计里，汇合节点要么用 reducer 天然幂等（结果与执行次数无关），要么把"是否该执行"做成条件边显式判断，要么给汇合节点加"只执行一次"的哨兵字段。</p>
+<p><strong>第 3 层追问：怎么验证自己对执行模型的理解？</strong></p>
+<blockquote>
+<p>你怎么确认自己图的实际执行顺序符合预期？</p>
+</blockquote>
+<p>参考回答：靠<strong>轨迹而不是直觉</strong>。两个工具：<code>stream()</code> 逐超步吐出 <code>updates</code>（本步哪些节点跑了、补丁是什么）——肉眼比对执行计划；<code>get_state()</code> 查看任一时刻的通道值和 <code>next</code>（下一步待执行节点）。课程里的实操法：<strong>先在纸上写预期超步序列，再跑 stream 对照</strong>，不一致就是理解偏差或图设计有坑。这个习惯在调试"为什么这个节点跑了两次/为什么这个分支没执行"时救命。</p>
+<h3 id="考察意图与踩坑点_2">考察意图与踩坑点</h3>
+<ul>
+<li>考察意图：超步是 LangGraph 深度理解的试纸——能讲清"同超步不可见"和"汇合多次触发"，直接进入"读过引擎语义"档位，这在候选人里不到一成。</li>
+<li>踩坑点：以为并行节点能互相看到对方的实时写入；把 superstep 说成"一步一个节点"；没听说过汇合重复执行问题。</li>
+<li>一句话总结：快照 → 补丁缓冲 → 边触发结算；同超步互不可见；汇合点要防重复触发（幂等/条件边/哨兵）。</li>
+</ul>
+<hr />
+<h2 id="q04-条件边commandsend-分别什么时候用">Q04 · 条件边、Command、Send 分别什么时候用？</h2>
+<blockquote>
+<p>难度：★★★★ ｜ 频率：中 ｜ 对应课件：langgraph框架指南/04、06、07</p>
+</blockquote>
+<p><strong>面试官</strong>：LangGraph 有好几种控制流机制：条件边、Command、Send。什么时候用哪个？</p>
+<p><strong>第 1 层追问：三个机制的定位</strong></p>
+<blockquote>
+<p>先一句话各是什么。</p>
+</blockquote>
+<p>参考回答：<strong>条件边</strong>：静态图的动态选择——边上加路由函数，按状态决定下一条边走哪，<strong>去向必须在编译期可枚举</strong>（从预定义的边里挑）。<strong>Command</strong>：节点内部的反悔机制——执行到一半决定"我要跳到 X"并携带状态更新，<code>Command(goto=...)</code>；跳转目标同样要预先声明。<strong>Send</strong>：<strong>运行时动态扇出</strong>——一条边一次返回 N 个 <code>Send(节点, 私有载荷)</code>，让同一个节点以不同输入并行跑 N 份，<strong>执行计划在运行时才确定数量</strong>。三者的表达力层级：条件边 &lt; Command &lt; Send，本质区别是<strong>分支数量在编译期定还是在运行时定</strong>。</p>
+<p><strong>第 2 层追问：Send 的典型场景</strong></p>
+<blockquote>
+<p>Send 解决什么实际问题？</p>
+</blockquote>
+<p>参考回答：典型场景是<strong>map-reduce</strong>：把一个大任务拆成 N 个子任务并行处理。例如"对比 5 个数据库框架的优劣"——一个节点读完列表，边函数返回 5 个 <code>Send("研究子节点", {"目标": "框架A"})</code>、<code>Send(..., {"目标": "框架B"})</code>……5 份并行研究，各自返回补丁汇入 reducer（比如往 <code>findings</code> 列表里追加），之后一个汇合节点做汇总。关键细节：<strong>被 Send 的节点只拿到私有载荷</strong>（不是全局状态——避免每个并行分支都背全量上下文），<strong>它写入的字段必须有 reducer</strong>（5 路并发写 <code>findings</code>，没有 reducer 直接崩）。</p>
+<p><strong>第 3 层追问：既然 Command 更灵活，为什么不全用 Command？</strong></p>
+<blockquote>
+<p>Command 看起来无所不能。</p>
+</blockquote>
+<p>参考回答：因为<strong>自由度和可预测性成反比</strong>。条件边让执行计划在编译期就摊开在图上——看图即懂流程、引擎能提前优化；Command 的 goto 散落在各节点函数内部——<strong>图结构不再完整描述执行流</strong>，读代码要追每个节点的 goto 分支，等于又回到命令式。所以选型纪律：<strong>能用条件边不用 Command，能用 Command 不用 Send</strong>，按需升级表达力。例外是"跳转决策强依赖节点内部计算"的场景（执行中才产生决策依据）——那是 Command 的正当主场。</p>
+<h3 id="考察意图与踩坑点_3">考察意图与踩坑点</h3>
+<ul>
+<li>考察意图：考对三种原语的<strong>选择纪律</strong>——很多教程只会各写一个 Demo，能说出"表达力阶梯 + 何时不用"的人是真理解。</li>
+<li>踩坑点：把 Send 当条件边用（扇出数量固定时纯属浪费）；不知道 Send 载荷是私有的；全图 goto 到处飞还自称最佳实践。</li>
+<li>一句话总结：条件边（编译期枚举）→ Command（节点内反悔）→ Send（运行时扇出）；表达力递增，可预测性递减，按需最低配。</li>
+</ul>
+<hr />
+<h2 id="q05-checkpointer-和-thread-是什么关系人在回路怎么实现">Q05 · Checkpointer 和 Thread 是什么关系？人在回路怎么实现？</h2>
+<blockquote>
+<p>难度：★★★ ｜ 频率：高 ｜ 对应课件：langgraph框架指南/12、14</p>
+</blockquote>
+<p><strong>面试官</strong>：你说 LangGraph 支持中断恢复和人工审批。底层靠什么？Thread 和 Checkpointer 是什么关系？</p>
+<p><strong>第 1 层追问：两个概念</strong></p>
+<blockquote>
+<p>先分清 Checkpointer 和 Thread。</p>
+</blockquote>
+<p>参考回答：<strong>Checkpointer 是存档引擎</strong>——每个超步结束把全量状态（通道值 + 执行位置）持久化到存储（SQLite/Postgres/Redis），是图引擎的可插拔组件。<strong>Thread 是归档的命名空间</strong>——一次完整的会话/工作流实例对应一个 thread_id，同一 thread 的所有 checkpoint 归在一起、按序号排列。关系一句话：<strong>Checkpointer 负责怎么存，Thread 负责存在哪条线</strong>。带上 thread_id 调用 <code>invoke</code>，引擎自动从该线程最新 checkpoint 恢复接着跑——这就是"中断恢复"的全部原理：没有魔法，只有存档点。</p>
+<p><strong>第 2 层追问：人在回路（HITL）</strong></p>
+<blockquote>
+<p>人工审批具体怎么落地？</p>
+</blockquote>
+<p>参考回答：用 <strong>interrupt 机制</strong>。两种层级：<strong>节点级 <code>interrupt()</code></strong>——节点内调用它，图立即暂停，状态存档，控制权返回给应用；人工在界面审批后，应用用 <code>Command(resume=决定值)</code> 恢复执行，节点从断点拿到决定值继续。<strong>图级静态断点</strong>——<code>compile(interrupt_before=["敏感节点"])</code>，在指定节点前必停。典型流程：Agent 决定要执行"转账"工具 → interrupt 暂停 → 前端展示"模型想调 transfer(amount=500)，批准吗？" → 人点批准 → <code>Command(resume=True)</code> → 继续执行。<strong>Agent 的概率行为 + 写操作 = 必须上人在回路</strong>，这是权限控制的最后一道闸。</p>
+<p><strong>第 3 层追问：恢复时的坑？</strong></p>
+<blockquote>
+<p>人工审批挂了一小时才批，恢复时有什么要注意？</p>
+</blockquote>
+<p>参考回答：三个实战坑。<strong>一，恢复时的状态漂移</strong>：暂停期间外部世界变了（账户余额变了、文档被改了），恢复后节点拿到的是<strong>一小时前的快照</strong>——写操作前要重新校验当前事实，不能信任快照里的旧数据。<strong>二，超时与补偿</strong>：HITL 要设审批超时，超时走取消/降级路径，不能让 thread 永久挂起占资源。<strong>三，并发恢复</strong>：同一 thread 被双击触发了两次 resume——要幂等保护（或依赖引擎的单线程约束）。人工环节不是"停下来等人"，是<strong>状态机的一个长驻态</strong>，要按分布式系统的标准设计它。</p>
+<h3 id="考察意图与踩坑点_4">考察意图与踩坑点</h3>
+<ul>
+<li>考察意图：HITL 是 Agent 落地企业的<strong>必备能力</strong>（写操作审批），有这题经验的人说明碰过真实的合规需求。</li>
+<li>踩坑点：把 Thread 说成"操作系统的线程"；不知道 interrupt 有节点级/图级两种；答不出"恢复时外部已变"的校验意识。</li>
+<li>一句话总结：Checkpointer 存档、Thread 归档线；interrupt 暂停 + Command(resume) 恢复；恢复前先校验外部世界。</li>
+</ul>
+<hr />
+<h2 id="q06-时间旅行是什么replay-和-fork-有什么区别">Q06 · 时间旅行是什么？replay 和 fork 有什么区别？</h2>
+<blockquote>
+<p>难度：★★★★ ｜ 频率：中（答好是亮点）｜ 对应课件：langgraph框架指南/13、16</p>
+</blockquote>
+<p><strong>面试官</strong>：LangGraph 有"时间旅行"能力。这是营销词还是有真实用途？replay 和 fork 你分得清吗？</p>
+<p><strong>第 1 层追问：原理基础</strong></p>
+<blockquote>
+<p>先说这功能靠什么实现。</p>
+</blockquote>
+<p>参考回答：不是新魔法，是 <strong>Checkpointer 的副产品</strong>。既然每个超步都有完整存档（状态 + 执行位置），那"回到第 N 步"只是<strong>从历史 checkpoint 重新加载</strong>——前提是存档全量、不可变。这就引出两条路线：<strong>replay（重看）</strong>——从历史点<strong>重跑后续</strong>，历史记录本身不动；<strong>fork（改写）</strong>——在历史点上<strong>修改状态</strong>再续跑，长出新分支。关键性质：<strong>两种都不改写原始记录</strong>——修改产生新 checkpoint，旧时间线完整保留，可回溯审计。</p>
+<p><strong>第 2 层追问：真实用途</strong></p>
+<blockquote>
+<p>生产里拿来干什么？</p>
+</blockquote>
+<p>参考回答：replay 的用途：<strong>复现 bug</strong>——用户投诉"那次回答错了"，拿 thread 的历史 checkpoint 重跑，逐超步看状态演化，这是 Agent 调试的核武器；<strong>换模型重跑</strong>——同一状态换新模型版本继续，对比行为差异。fork 的用途：<strong>改历史重试</strong>——跑到第 5 步发现第 2 步参数选错了，fork 到第 2 步的 checkpoint，<code>update_state</code> 改参数，从那里长出修正线；<strong>A/B 分支</strong>——同一前缀跑两种策略对比。操作要点：replay <strong>不会重跑已完成节点</strong>（只是恢复状态后跑"未来"）；fork 用 <code>update_state</code> 改状态时，<strong>reducer 字段仍走 reducer 合并</strong>——想"替换"一个 list 要理解它会被 add 语义合并，这是经典坑。</p>
+<p><strong>第 3 层追问：和容错的关系？</strong></p>
+<blockquote>
+<p>这套机制对容错有什么贡献？</p>
+</blockquote>
+<p>参考回答：三点联动。<strong>一，崩溃恢复</strong>：进程挂了，从最新 checkpoint 续跑——LLM 调用幂等性差，<strong>重试敏感的节点要配"跳过已成功步骤"</strong>（从检查点恢复天然做到）。<strong>二，容错降级</strong>（第 16 章主题）：节点失败可以配置重试策略 + 备用分支，失败超限走兜底路径而不是整图报废。<strong>三，审计合规</strong>：不可变时间线就是天然的操作日志——"模型当时看到了什么、做了什么决定"全程可回放，这在金融/医疗场景是合规刚需。<strong>时间旅行的本质价值：把"概率系统的行为"变成可复查、可对照实验的记录</strong>——这是 Agent 走向生产的关键基建。</p>
+<h3 id="考察意图与踩坑点_5">考察意图与踩坑点</h3>
+<ul>
+<li>考察意图：时间旅行是 LangGraph 的高级特性，知道的人不少，能说清 <strong>replay/fork 差异 + 不改写原则 + 生产用途</strong> 的很少——答好即是"深入研读过框架"的信号。</li>
+<li>踩坑点：以为 fork 会覆盖历史（丢审计）；不知道 update_state 走 reducer；说不出一个真实使用场景（纯背概念）。</li>
+<li>一句话总结：checkpoint 全量存档的副产品——replay 重看历史、fork 改写分叉，原始记录永不改写；调试复现 + 审计合规是真实价值。</li>
+</ul>
+<hr />
+<h2 id="本篇速记卡">本篇速记卡</h2>
+<table>
+<thead>
+<tr>
+<th>题</th>
+<th>一句话核心</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Q01 为什么图</td>
+<td>两层分支后命令式失控；图 = 执行计划变数据 + 存档 + 并行原语</td>
+</tr>
+<tr>
+<td>Q02 状态/reducer</td>
+<td>字段 = 通道 + reducer；节点返回补丁；并发写入先想合并规则</td>
+</tr>
+<tr>
+<td>Q03 超步</td>
+<td>快照 → 缓冲 → 边触发结算；同超步互不可见；汇合防重复触发</td>
+</tr>
+<tr>
+<td>Q04 控制流三原语</td>
+<td>条件边 → Command → Send 表达力递增；按最低配原则选</td>
+</tr>
+<tr>
+<td>Q05 持久化/HITL</td>
+<td>Checkpointer 存、Thread 归线；interrupt + resume；恢复前校验外部</td>
+</tr>
+<tr>
+<td>Q06 时间旅行</td>
+<td>replay 重看、fork 改写分叉；原始记录不可变 = 审计刚需</td>
+</tr>
+</tbody>
+</table></div>
+
+      </article>
+<nav class="pager"><a class="pg-card pg-prev" href="../interview/03-agent-he-xin-pian.html"><span class="pg-label">← 上一篇</span><span class="pg-title">Agent 核心篇</span><span class="pg-mod">面试题库</span></a><a class="pg-card pg-next" href="../interview/05-langchain-pian.html"><span class="pg-label">下一篇 →</span><span class="pg-title">LangChain 篇</span><span class="pg-mod">面试题库</span></a></nav>
+    </div>
+    <footer class="foot">
+      <span>深栈 DeepStack · AI Agent 工程师转型训练营配套文档</span>
+    </footer>
+  </main>
+<nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#q01-为什么需要-langgraph裸写-while-循环不行吗">Q01 · 为什么需要 LangGraph？裸写 while 循环不行吗？</a><a class="toc-link toc-h3" href="#考察意图与踩坑点">考察意图与踩坑点</a><a class="toc-link toc-h2" href="#q02-langgraph-的状态为什么不是普通字典reducer-是干什么的">Q02 · LangGraph 的状态为什么不是普通字典？reducer 是干什么的？</a><a class="toc-link toc-h3" href="#考察意图与踩坑点_1">考察意图与踩坑点</a><a class="toc-link toc-h2" href="#q03-讲讲超步superstep并行节点是怎么执行的汇合有什么坑">Q03 · 讲讲超步（superstep）。并行节点是怎么执行的？&quot;汇合&quot;有什么坑？</a><a class="toc-link toc-h3" href="#考察意图与踩坑点_2">考察意图与踩坑点</a><a class="toc-link toc-h2" href="#q04-条件边commandsend-分别什么时候用">Q04 · 条件边、Command、Send 分别什么时候用？</a><a class="toc-link toc-h3" href="#考察意图与踩坑点_3">考察意图与踩坑点</a><a class="toc-link toc-h2" href="#q05-checkpointer-和-thread-是什么关系人在回路怎么实现">Q05 · Checkpointer 和 Thread 是什么关系？人在回路怎么实现？</a><a class="toc-link toc-h3" href="#考察意图与踩坑点_4">考察意图与踩坑点</a><a class="toc-link toc-h2" href="#q06-时间旅行是什么replay-和-fork-有什么区别">Q06 · 时间旅行是什么？replay 和 fork 有什么区别？</a><a class="toc-link toc-h3" href="#考察意图与踩坑点_5">考察意图与踩坑点</a><a class="toc-link toc-h2" href="#本篇速记卡">本篇速记卡</a></nav>
+</div>
+<div class="sb-mask" id="sbMask"></div>
+<script src="../assets/app.js"></script>
+</body>
+</html>

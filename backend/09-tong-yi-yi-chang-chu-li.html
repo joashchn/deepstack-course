@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>09 · 统一异常处理 · 深栈 DeepStack 课程文档</title>
+<meta name="description" content="前面你已经见过两种错误出口：02 章的 422 校验错误、路由函数里随手抛的 HTTPException。服务小的时候，各管各的没事；服务一大，错误出口就成了「八国联军」——有的接口回 {&quot;detail&quot;: ...}，有…">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%23d9c39a' text-anchor='middle'%3EDS%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+<div class="progress" id="progress"></div>
+
+<div class="layout">
+<aside class="sidebar" id="sidebar">
+  <div class="sb-head">
+    <a class="brand" href="../index.html">
+      <span class="brand-mark">DS</span>
+      <span class="brand-text"><b>深栈 DeepStack</b><i>AI Agent 工程师转型训练营</i></span>
+    </a>
+    <button class="sb-close" id="sbClose" aria-label="关闭目录">✕</button>
+  </div>
+  <div class="sb-search"><input type="search" id="searchInput" placeholder="搜索 123 篇文档… ( / )" autocomplete="off">
+    <div class="sb-results" id="searchResults"></div></div>
+  <nav class="sb-nav">
+    <section class="sb-group" data-mod="python">
+      <a class="sb-group-title" href="../modules/python.html" data-toggle="python">
+        <span class="sb-num">01</span>
+        <span class="sb-group-text"><b>Python 与数据实践</b><i>31 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../python/01-huan-jing-da-jian-yu-ban-ben-guan-li.html"><span class="sb-item-num">01</span><span class="sb-item-title">环境搭建与版本管理</span></a>
+        <a class="sb-item" href="../python/02-bian-liang-biao-da-shi-yu-liu-cheng-kong-zhi.html"><span class="sb-item-num">02</span><span class="sb-item-title">变量、表达式与流程控制</span></a>
+        <a class="sb-item" href="../python/03-xu-lie-zi-dian-yu-ji-he.html"><span class="sb-item-num">03</span><span class="sb-item-title">序列、字典与集合</span></a>
+        <a class="sb-item" href="../python/04-han-shu-she-ji-yu-lambda.html"><span class="sb-item-num">04</span><span class="sb-item-title">函数设计与 lambda</span></a>
+        <a class="sb-item" href="../python/05-zuo-yong-yu-gui-ze-yu-bi-bao.html"><span class="sb-item-num">05</span><span class="sb-item-title">作用域规则与闭包</span></a>
+        <a class="sb-item" href="../python/06-lei-de-ding-yi-yu-shi-li-hua.html"><span class="sb-item-num">06</span><span class="sb-item-title">类的定义与实例化</span></a>
+        <a class="sb-item" href="../python/07-lei-xing-pan-ding-yu-chou-xiang-ji-lei.html"><span class="sb-item-num">07</span><span class="sb-item-title">类型判定与抽象基类</span></a>
+        <a class="sb-item" href="../python/08-mo-shu-fang-fa-quan-jing.html"><span class="sb-item-num">08</span><span class="sb-item-title">魔术方法全景</span></a>
+        <a class="sb-item" href="../python/09-miao-shu-fu-yu-yuan-lei.html"><span class="sb-item-num">09</span><span class="sb-item-title">描述符与元类</span></a>
+        <a class="sb-item" href="../python/10-zhuang-shi-qi.html"><span class="sb-item-num">10</span><span class="sb-item-title">装饰器</span></a>
+        <a class="sb-item" href="../python/11-die-dai-xie-yi-yu-sheng-cheng-qi.html"><span class="sb-item-num">11</span><span class="sb-item-title">迭代协议与生成器</span></a>
+        <a class="sb-item" href="../python/12-with-yu-shang-xia-wen-xie-yi.html"><span class="sb-item-num">12</span><span class="sb-item-title">with 与上下文协议</span></a>
+        <a class="sb-item" href="../python/13-yi-chang-ti-xi-yu-chu-li.html"><span class="sb-item-num">13</span><span class="sb-item-title">异常体系与处理</span></a>
+        <a class="sb-item" href="../python/14-lei-xing-biao-zhu.html"><span class="sb-item-num">14</span><span class="sb-item-title">类型标注</span></a>
+        <a class="sb-item" href="../python/15-mo-kuai-yu-bao-de-zu-zhi.html"><span class="sb-item-num">15</span><span class="sb-item-title">模块与包的组织</span></a>
+        <a class="sb-item" href="../python/16-biao-zhun-ku-xun-li.html"><span class="sb-item-num">16</span><span class="sb-item-title">标准库巡礼</span></a>
+        <a class="sb-item" href="../python/17-yi-lai-guan-li-yu-di-san-fang-ku.html"><span class="sb-item-num">17</span><span class="sb-item-title">依赖管理与第三方库</span></a>
+        <a class="sb-item" href="../python/18-xian-cheng-yu-jin-cheng.html"><span class="sb-item-num">18</span><span class="sb-item-title">线程与进程</span></a>
+        <a class="sb-item" href="../python/19-shi-jian-xun-huan.html"><span class="sb-item-num">19</span><span class="sb-item-title">事件循环</span></a>
+        <a class="sb-item" href="../python/20-future-yu-xie-cheng.html"><span class="sb-item-num">20</span><span class="sb-item-title">Future 与协程</span></a>
+        <a class="sb-item" href="../python/21-asyncio-shi-zhan.html"><span class="sb-item-num">21</span><span class="sb-item-title">asyncio 实战</span></a>
+        <a class="sb-item" href="../python/22-gou-jian-yu-fa-bu.html"><span class="sb-item-num">22</span><span class="sb-item-title">构建与发布</span></a>
+        <a class="sb-item" href="../python/23-gong-cheng-hua-gong-ju-lian.html"><span class="sb-item-num">23</span><span class="sb-item-title">工程化工具链</span></a>
+        <a class="sb-item" href="../python/24-monorepo-yu-tiao-shi.html"><span class="sb-item-num">24</span><span class="sb-item-title">monorepo 与调试</span></a>
+        <a class="sb-item" href="../python/25-jupyter-jiao-hu-huan-jing.html"><span class="sb-item-num">25</span><span class="sb-item-title">Jupyter 交互环境</span></a>
+        <a class="sb-item" href="../python/26-numpy-shu-zu-yu-xiang-liang-hua.html"><span class="sb-item-num">26</span><span class="sb-item-title">NumPy 数组与向量化</span></a>
+        <a class="sb-item" href="../python/27-pandas-shu-ju-jie-gou.html"><span class="sb-item-num">27</span><span class="sb-item-title">Pandas 数据结构</span></a>
+        <a class="sb-item" href="../python/28-pandas-shu-ju-qing-xi.html"><span class="sb-item-num">28</span><span class="sb-item-title">Pandas 数据清洗</span></a>
+        <a class="sb-item" href="../python/29-matplotlib-hui-tu-ti-xi.html"><span class="sb-item-num">29</span><span class="sb-item-title">Matplotlib 绘图体系</span></a>
+        <a class="sb-item" href="../python/30-matplotlib-dong-hua-yu-jiao-hu.html"><span class="sb-item-num">30</span><span class="sb-item-title">Matplotlib 动画与交互</span></a>
+        <a class="sb-item" href="../python/31-seaborn-tong-ji-ke-shi-hua.html"><span class="sb-item-num">31</span><span class="sb-item-title">Seaborn 统计可视化</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="agent">
+      <a class="sb-group-title" href="../modules/agent.html" data-toggle="agent">
+        <span class="sb-num">02</span>
+        <span class="sb-group-text"><b>Agent 核心</b><i>15 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../agent/01-token-yu-ci-qian-ru.html"><span class="sb-item-num">01</span><span class="sb-item-title">Token 与词嵌入</span></a>
+        <a class="sb-item" href="../agent/02-qian-xiang-chuan-bo-yu-fan-xiang-chuan-bo.html"><span class="sb-item-num">02</span><span class="sb-item-title">前向传播与反向传播</span></a>
+        <a class="sb-item" href="../agent/03-zhu-yi-li-ji-zhi-yu-transformer-jia-gou.html"><span class="sb-item-num">03</span><span class="sb-item-title">注意力机制与 Transformer 架构</span></a>
+        <a class="sb-item" href="../agent/04-yu-xun-lian-rlhf-yu-cai-yang-kv-cache.html"><span class="sb-item-num">04</span><span class="sb-item-title">预训练、RLHF 与采样（KV Cache）</span></a>
+        <a class="sb-item" href="../agent/05-ben-di-mo-xing-yu-xiao-xi-jie-gou.html"><span class="sb-item-num">05</span><span class="sb-item-title">本地模型与消息结构</span></a>
+        <a class="sb-item" href="../agent/06-hui-hua-guan-li-yu-json-shu-chu.html"><span class="sb-item-num">06</span><span class="sb-item-title">会话管理与 JSON 输出</span></a>
+        <a class="sb-item" href="../agent/07-tool-calling-xie-yi-yu-feng-zhuang.html"><span class="sb-item-num">07</span><span class="sb-item-title">Tool Calling：协议与封装</span></a>
+        <a class="sb-item" href="../agent/08-react-mo-shi-yu-zhu-xun-huan.html"><span class="sb-item-num">08</span><span class="sb-item-title">ReAct 模式与主循环</span></a>
+        <a class="sb-item" href="../agent/09-shi-zhan-deep-research-agent.html"><span class="sb-item-num">09</span><span class="sb-item-title">实战：Deep Research Agent</span></a>
+        <a class="sb-item" href="../agent/10-skill-yu-jian-jin-shi-pi-lu.html"><span class="sb-item-num">10</span><span class="sb-item-title">Skill 与渐进式披露</span></a>
+        <a class="sb-item" href="../agent/11-mcp-quan-jing.html"><span class="sb-item-num">11</span><span class="sb-item-title">MCP 全景</span></a>
+        <a class="sb-item" href="../agent/12-duo-agent-yu-xuan-xing-ce-lve.html"><span class="sb-item-num">12</span><span class="sb-item-title">多 Agent 与选型策略</span></a>
+        <a class="sb-item" href="../agent/13-ti-shi-ci-gong-cheng-yu-shang-xia-wen-gong.html"><span class="sb-item-num">13</span><span class="sb-item-title">提示词工程与上下文工程</span></a>
+        <a class="sb-item" href="../agent/14-xun-huan-tu-yu-gu-jia-gong-cheng.html"><span class="sb-item-num">14</span><span class="sb-item-title">循环、图与骨架工程</span></a>
+        <a class="sb-item" href="../agent/15-ji-yi-quan-xian-yu-ping-ce.html"><span class="sb-item-num">15</span><span class="sb-item-title">记忆、权限与评测</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="langchain">
+      <a class="sb-group-title" href="../modules/langchain.html" data-toggle="langchain">
+        <span class="sb-num">03</span>
+        <span class="sb-group-text"><b>LangChain 指南</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langchain/01-ren-shi-langchain.html"><span class="sb-item-num">01</span><span class="sb-item-title">认识 LangChain</span></a>
+        <a class="sb-item" href="../langchain/02-ti-shi-ci-mu-ban-yu-xiao-xi.html"><span class="sb-item-num">02</span><span class="sb-item-title">提示词模板与消息</span></a>
+        <a class="sb-item" href="../langchain/03-lcel-yu-runnable.html"><span class="sb-item-num">03</span><span class="sb-item-title">LCEL 与 Runnable</span></a>
+        <a class="sb-item" href="../langchain/04-liu-shi-yu-bing-fa.html"><span class="sb-item-num">04</span><span class="sb-item-title">流式与并发</span></a>
+        <a class="sb-item" href="../langchain/05-shu-chu-jie-xi-qi.html"><span class="sb-item-num">05</span><span class="sb-item-title">输出解析器</span></a>
+        <a class="sb-item" href="../langchain/06-wen-dang-jia-zai-yu-qie-ge.html"><span class="sb-item-num">06</span><span class="sb-item-title">文档加载与切割</span></a>
+        <a class="sb-item" href="../langchain/07-qian-ru-yu-xiang-liang-ku.html"><span class="sb-item-num">07</span><span class="sb-item-title">嵌入与向量库</span></a>
+        <a class="sb-item" href="../langchain/08-jian-suo-yu-rag.html"><span class="sb-item-num">08</span><span class="sb-item-title">检索与RAG</span></a>
+        <a class="sb-item" href="../langchain/09-dui-hua-ji-yi.html"><span class="sb-item-num">09</span><span class="sb-item-title">对话记忆</span></a>
+        <a class="sb-item" href="../langchain/10-gong-ju-diao-yong.html"><span class="sb-item-num">10</span><span class="sb-item-title">工具调用</span></a>
+        <a class="sb-item" href="../langchain/11-agent.html"><span class="sb-item-num">11</span><span class="sb-item-title">Agent</span></a>
+        <a class="sb-item" href="../langchain/12-hui-diao-yu-tiao-shi-quan-ke-cheng-shou-guan.html"><span class="sb-item-num">12</span><span class="sb-item-title">回调与调试（全课程收官章）</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="langgraph">
+      <a class="sb-group-title" href="../modules/langgraph.html" data-toggle="langgraph">
+        <span class="sb-num">04</span>
+        <span class="sb-group-text"><b>LangGraph 框架指南</b><i>17 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langgraph/01-di-1-zhang-cong-yi-ge-shi-kong-de-jiao.html"><span class="sb-item-num">01</span><span class="sb-item-title">第 1 章 从一个失控的脚本说起</span></a>
+        <a class="sb-item" href="../langgraph/02-di-2-zhang-zui-xiao-ke-yun-xing-tu.html"><span class="sb-item-num">02</span><span class="sb-item-title">第 2 章 最小可运行图</span></a>
+        <a class="sb-item" href="../langgraph/03-di-3-zhang-zhuang-tai-tu-de-shu-ju-xin.html"><span class="sb-item-num">03</span><span class="sb-item-title">第 3 章 状态：图的数据心脏</span></a>
+        <a class="sb-item" href="../langgraph/04-di-4-zhang-rang-liu-cheng-xue-hui-jue-ce.html"><span class="sb-item-num">04</span><span class="sb-item-title">第 4 章 让流程学会决策</span></a>
+        <a class="sb-item" href="../langgraph/05-di-5-zhang-bing-xing-shi-jie-chao-bu-zhi.html"><span class="sb-item-num">05</span><span class="sb-item-title">第 5 章 并行世界：超步执行模型</span></a>
+        <a class="sb-item" href="../langgraph/06-di-6-zhang-command-ba-kong-zhi-quan-jiao-jin.html"><span class="sb-item-num">06</span><span class="sb-item-title">第 6 章 Command：把控制权交进节点</span></a>
+        <a class="sb-item" href="../langgraph/07-di-7-zhang-dong-tai-bing-xing-send-yu-mapreduce.html"><span class="sb-item-num">07</span><span class="sb-item-title">第 7 章 动态并行：Send 与 MapReduce</span></a>
+        <a class="sb-item" href="../langgraph/08-di-8-zhang-gei-tu-zhuang-shang-shou-jiao-gong.html"><span class="sb-item-num">08</span><span class="sb-item-title">第 8 章 给图装上手脚：工具调用</span></a>
+        <a class="sb-item" href="../langgraph/09-di-9-zhang-fu-yong-yu-feng-zhuang-zi-tu.html"><span class="sb-item-num">09</span><span class="sb-item-title">第 9 章 复用与封装：子图</span></a>
+        <a class="sb-item" href="../langgraph/10-di-10-zhang-cong-dan-tu-dao-tuan-dui-duo.html"><span class="sb-item-num">10</span><span class="sb-item-title">第 10 章 从单图到团队：多 Agent 架构</span></a>
+        <a class="sb-item" href="../langgraph/11-di-11-zhang-liu-shi-shu-chu.html"><span class="sb-item-num">11</span><span class="sb-item-title">第 11 章 流式输出</span></a>
+        <a class="sb-item" href="../langgraph/12-di-12-zhang-chi-jiu-hua-checkpointer-yu-xian-cheng.html"><span class="sb-item-num">12</span><span class="sb-item-title">第 12 章 持久化：Checkpointer 与线程</span></a>
+        <a class="sb-item" href="../langgraph/13-di-13-zhang-shi-jian-lv-xing.html"><span class="sb-item-num">13</span><span class="sb-item-title">第 13 章 时间旅行</span></a>
+        <a class="sb-item" href="../langgraph/14-di-14-zhang-zhong-duan-yu-ren-zai-hui-lu.html"><span class="sb-item-num">14</span><span class="sb-item-title">第 14 章 中断与人在回路</span></a>
+        <a class="sb-item" href="../langgraph/15-di-15-zhang-ji-yi-guan-li.html"><span class="sb-item-num">15</span><span class="sb-item-title">第 15 章 记忆管理</span></a>
+        <a class="sb-item" href="../langgraph/16-di-16-zhang-rong-cuo-zhong-shi-chao-shi-yu.html"><span class="sb-item-num">16</span><span class="sb-item-title">第 16 章 容错：重试、超时与兜底</span></a>
+        <a class="sb-item" href="../langgraph/17-di-17-zhang-quan-jing-hui-gu.html"><span class="sb-item-num">17</span><span class="sb-item-title">第 17 章 全景回顾</span></a>
+      </div>
+    </section>
+    <section class="sb-group open" data-mod="backend">
+      <a class="sb-group-title" href="../modules/backend.html" data-toggle="backend">
+        <span class="sb-num">05</span>
+        <span class="sb-group-text"><b>Python 框架指南</b><i>14 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../backend/01-fastapi-ru-men-yu-asgi.html"><span class="sb-item-num">01</span><span class="sb-item-title">FastAPI 入门与 ASGI</span></a>
+        <a class="sb-item" href="../backend/02-lu-you-yu-qing-qiu-xiang-ying.html"><span class="sb-item-num">02</span><span class="sb-item-title">路由与请求响应</span></a>
+        <a class="sb-item" href="../backend/03-pydantic-shu-ju-jiao-yan-yu-pei-zhi.html"><span class="sb-item-num">03</span><span class="sb-item-title">Pydantic 数据校验与配置</span></a>
+        <a class="sb-item" href="../backend/04-sqlalchemy-yi-bu-yin-qing-yu-hui-hua.html"><span class="sb-item-num">04</span><span class="sb-item-title">SQLAlchemy 异步引擎与会话</span></a>
+        <a class="sb-item" href="../backend/05-orm-jian-mo.html"><span class="sb-item-num">05</span><span class="sb-item-title">ORM 建模</span></a>
+        <a class="sb-item" href="../backend/06-sql-biao-da-shi-yu-shu-ju-cao-zuo.html"><span class="sb-item-num">06</span><span class="sb-item-title">SQL 表达式与数据操作</span></a>
+        <a class="sb-item" href="../backend/07-alembic-shu-ju-qian-yi.html"><span class="sb-item-num">07</span><span class="sb-item-title">Alembic 数据迁移</span></a>
+        <a class="sb-item" href="../backend/08-yi-lai-zhu-ru.html"><span class="sb-item-num">08</span><span class="sb-item-title">依赖注入</span></a>
+        <a class="sb-item current" href="../backend/09-tong-yi-yi-chang-chu-li.html"><span class="sb-item-num">09</span><span class="sb-item-title">统一异常处理</span></a>
+        <a class="sb-item" href="../backend/10-zhong-jian-jian.html"><span class="sb-item-num">10</span><span class="sb-item-title">中间件</span></a>
+        <a class="sb-item" href="../backend/11-ren-zheng-yu-jwt.html"><span class="sb-item-num">11</span><span class="sb-item-title">认证与 JWT</span></a>
+        <a class="sb-item" href="../backend/12-pytest-ce-shi.html"><span class="sb-item-num">12</span><span class="sb-item-title">pytest 测试</span></a>
+        <a class="sb-item" href="../backend/13-ri-zhi-loguru.html"><span class="sb-item-num">13</span><span class="sb-item-title">日志 loguru</span></a>
+        <a class="sb-item" href="../backend/14-liu-shi-xiang-ying-sse-yu-websocket.html"><span class="sb-item-num">14</span><span class="sb-item-title">流式响应 SSE 与 WebSocket</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="interview">
+      <a class="sb-group-title" href="../modules/interview.html" data-toggle="interview">
+        <span class="sb-num">06</span>
+        <span class="sb-group-text"><b>面试题库</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../interview/01-llm-yuan-li-pian.html"><span class="sb-item-num">01</span><span class="sb-item-title">LLM 原理篇</span></a>
+        <a class="sb-item" href="../interview/02-rag-yu-jian-suo-pian.html"><span class="sb-item-num">02</span><span class="sb-item-title">RAG 与检索篇</span></a>
+        <a class="sb-item" href="../interview/03-agent-he-xin-pian.html"><span class="sb-item-num">03</span><span class="sb-item-title">Agent 核心篇</span></a>
+        <a class="sb-item" href="../interview/04-langgraph-pian.html"><span class="sb-item-num">04</span><span class="sb-item-title">LangGraph 篇</span></a>
+        <a class="sb-item" href="../interview/05-langchain-pian.html"><span class="sb-item-num">05</span><span class="sb-item-title">LangChain 篇</span></a>
+        <a class="sb-item" href="../interview/06-xi-tong-she-ji-pian.html"><span class="sb-item-num">06</span><span class="sb-item-title">系统设计篇</span></a>
+        <a class="sb-item" href="../interview/07-xiang-mu-shen-wa-pian.html"><span class="sb-item-num">07</span><span class="sb-item-title">项目深挖篇</span></a>
+        <a class="sb-item" href="../interview/08-gu-zhang-pai-cha-pian.html"><span class="sb-item-num">08</span><span class="sb-item-title">故障排查篇</span></a>
+        <a class="sb-item" href="../interview/09-python-ji-chu-pian.html"><span class="sb-item-num">09</span><span class="sb-item-title">Python 基础篇</span></a>
+        <a class="sb-item" href="../interview/10-fastapi-yu-hou-duan-pian.html"><span class="sb-item-num">10</span><span class="sb-item-title">FastAPI 与后端篇</span></a>
+        <a class="sb-item" href="../interview/11-ti-shi-ci-gong-cheng-yu-an-quan-pian.html"><span class="sb-item-num">11</span><span class="sb-item-title">提示词工程与安全篇</span></a>
+        <a class="sb-item" href="../interview/12-mo-xing-xuan-xing-yu-jiang-ben-pian.html"><span class="sb-item-num">12</span><span class="sb-item-title">模型选型与降本篇</span></a>
+      </div>
+    </section>
+  </nav>
+</aside>
+  <main class="main">
+    <header class="topbar">
+      <button class="menu-btn" id="menuBtn" aria-label="目录">☰</button>
+      <div class="crumbs"><a href="../index.html">首页</a><span>/</span><a href="../modules/backend.html">Python 框架指南</a><span>/</span><span class="cur">统一异常处理</span></div>
+      <div class="topbar-actions">
+        <button class="icon-btn" id="themeBtn" title="切换深浅色" aria-label="切换深浅色">◐</button>
+      </div>
+    </header>
+    <div class="content">
+      <article class="article">
+
+<header class="page-head">
+  <div class="page-kicker">Python 框架指南 · 第 09 章</div>
+  <h1 class="page-title">统一异常处理</h1>
+  <p class="page-desc">前面你已经见过两种错误出口：02 章的 422 校验错误、路由函数里随手抛的 HTTPException。服务小的时候，各管各的没事；服务一大，错误出口就成了「八国联军」——有的接口回 {&quot;detail&quot;: ...}，有…</p>
+  <div class="page-meta">
+    <span>约 36 分钟</span><span>14,331 字</span><span>18 个代码示例</span>
+  </div>
+</header>
+<div class="md"><blockquote>
+<p>前面你已经见过两种错误出口：02 章的 422 校验错误、路由函数里随手抛的 <code>HTTPException</code>。服务小的时候，各管各的没事；服务一大，错误出口就成了「八国联军」——有的接口回 <code>{"detail": ...}</code>，有的回 <code>{"detail": [...]}</code>，有的直接一句纯文本 <code>Internal Server Error</code>，前端得为每种格式写一套解析。本章的任务：<strong>把所有异常收拢到一个出口，让每个错误都开成同一张「病历单」</strong>。</p>
+<p>示例场景仍是<strong>墨集 inkhub 内容平台</strong>——栏目、文章、版本的世界里，错误同样无处不在。</p>
+</blockquote>
+<h2 id="本章你会用到的东西">本章你会用到的东西</h2>
+<ul>
+<li>服务端异常处理的三条家规（不裸奔、不泄密、一个出口）</li>
+<li>FastAPI 默认异常链路：<code>HTTPException</code> / <code>RequestValidationError</code> / 未捕获 <code>Exception</code></li>
+<li><code>@app.exception_handler</code>：接管某类异常的出口</li>
+<li><code>BusinessException</code> 基类：<code>code</code> / <code>message</code> / <code>default_message</code> / <code>http_status</code></li>
+<li>子类异常体系：三行代码新增一种错误</li>
+<li>错误码设计：HTTP 状态码 + 序号（楼层 + 房间号）</li>
+<li>SQLAlchemy <code>IntegrityError</code> 转译成人话</li>
+<li>注册中心：一处注册，全家生效</li>
+<li>错误码表自动注入 <code>/docs</code></li>
+</ul>
+<hr />
+<h2 id="91-三条家规出了错先守规矩">9.1 三条家规：出了错，先守规矩</h2>
+<p><strong>是什么</strong>：把服务端异常处理想象成医院的<strong>急诊分诊台</strong>。后厨（业务代码）哪个环节炸锅都行，但端到病人面前的，必须是分诊台开出的标准病历单。动手写代码之前，先立好三条家规。</p>
+<p><strong>家规一：不裸奔</strong>。任何异常都不能把服务器干崩——一个请求炸了，服务本身还得活着接下一个；同时客户端不该看到堆栈，<code>Internal Server Error</code> 这种纯文本对用户毫无价值。</p>
+<p><strong>家规二：不泄密</strong>。堆栈、SQL 语句、表名、约束名、内部路径，统统不许出现在响应里。数据库报错原文经常长这样：<code>duplicate key value violates unique constraint "uq_article_slug"</code>——这句话里泄露的信息够攻击者画半张系统结构图。</p>
+<p><strong>家规三：一个出口</strong>。所有错误响应只有一个形状：HTTP 状态码 + 业务错误码 <code>code</code> + 人话 <code>message</code>。不管错误从哪来，出了门都长一个样。</p>
+<p>顺带分清两类异常，后面所有设计都围绕这个区分展开：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>业务异常</th>
+<th>系统异常</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>例子</td>
+<td>文章不存在、slug 已被占用、栏目已下架</td>
+<td>数据库断连、代码 bug、磁盘满</td>
+</tr>
+<tr>
+<td>谁能懂</td>
+<td>用户能看懂，能照着提示行动</td>
+<td>只有开发者能懂，用户看了也白看</td>
+</tr>
+<tr>
+<td>分诊台怎么处理</td>
+<td>直接告诉病人：「挂这个科」</td>
+<td>关门抢救，家属只收到「正在处理，请稍候」</td>
+</tr>
+<tr>
+<td>响应里的 message</td>
+<td>具体的人话（<code>文章不存在</code>）</td>
+<td>笼统的话（<code>服务器开小差了，请稍后重试</code>）</td>
+</tr>
+<tr>
+<td>堆栈</td>
+<td>一般没有</td>
+<td>进服务端日志，绝不进响应</td>
+</tr>
+</tbody>
+</table>
+<p><strong>常见坑</strong>：</p>
+<ol>
+<li><code>FastAPI(debug=True)</code> 会在 500 响应里直接返回完整堆栈——开发利器，生产环境<strong>必须关掉</strong>，这是家规二的头号违反者。</li>
+<li>「全接口 200，错误写在 body 里」的反模式（02 章提过）在本章有了另一半解法：错误走状态码 + 统一格式，成功怎么统一是下一章中间件的事。</li>
+</ol>
+<hr />
+<h2 id="92-默认异常链路fastapi-出错时都发生了什么">9.2 默认异常链路：FastAPI 出错时都发生了什么</h2>
+<p><strong>是什么</strong>：一条请求进到 FastAPI，路上有三道关卡会抛异常。不接管它们之前，得先知道框架默认把每类异常送到了哪个出口。</p>
+<p><strong>三道关卡</strong>：</p>
+<ol>
+<li><strong>路由匹配关</strong>：路径不存在 → 框架抛 <code>HTTPException(404)</code>；方法不对（对 <code>/articles</code> 发 DELETE）→ 抛 <code>HTTPException(405)</code>。</li>
+<li><strong>参数校验关</strong>：Pydantic 校验失败 → 抛 <code>RequestValidationError</code> → 422。02 章你反复见过的那个 422 就是它。</li>
+<li><strong>你的函数关</strong>：你写的代码里抛什么，就是什么——<code>HTTPException</code>、自定义异常、或者一个没人管的 <code>AttributeError</code>。</li>
+</ol>
+<p><strong>默认出口对照表</strong>（接管前，四种异常四种长相）：</p>
+<table>
+<thead>
+<tr>
+<th>异常</th>
+<th>谁抛的</th>
+<th>状态码</th>
+<th>默认响应体</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>HTTPException</code></td>
+<td><strong>你</strong>主动抛</td>
+<td>你指定的</td>
+<td><code>{"detail": "你给的消息"}</code></td>
+</tr>
+<tr>
+<td><code>RequestValidationError</code></td>
+<td>框架（校验失败）</td>
+<td>422</td>
+<td><code>{"detail": [{"type": ..., "loc": [...], "msg": ...}, ...]}</code></td>
+</tr>
+<tr>
+<td><code>HTTPException</code></td>
+<td>框架（路由/方法不匹配）</td>
+<td>404 / 405</td>
+<td><code>{"detail": "Not Found"}</code></td>
+</tr>
+<tr>
+<td>其他一切 <code>Exception</code></td>
+<td>不可预期（bug、断连）</td>
+<td>500</td>
+<td>纯文本 <code>Internal Server Error</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>最小实验</strong>：写一个没有任何异常处理的 app，三个请求看三种出口。</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">fastapi</span><span class="w"> </span><span class="kn">import</span> <span class="n">FastAPI</span><span class="p">,</span> <span class="n">HTTPException</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">Field</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">FastAPI</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">"墨集 inkhub 内容平台"</span><span class="p">)</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">ArticleIn</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">title</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">min_length</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"/articles/</span><span class="si">{article_id}</span><span class="s2">"</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_article</span><span class="p">(</span><span class="n">article_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+    <span class="k">if</span> <span class="n">article_id</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">404</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="s2">"文章不存在"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">"article_id"</span><span class="p">:</span> <span class="n">article_id</span><span class="p">}</span>
+
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">"/articles"</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_article</span><span class="p">(</span><span class="n">article</span><span class="p">:</span> <span class="n">ArticleIn</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">"title"</span><span class="p">:</span> <span class="n">article</span><span class="o">.</span><span class="n">title</span><span class="p">}</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>curl<span class="w"> </span>http://127.0.0.1:8000/articles/2
+<span class="c1"># 404 → {"detail":"文章不存在"}</span>
+
+curl<span class="w"> </span>http://127.0.0.1:8000/articles/abc
+<span class="c1"># 422 → {"detail":[{"type":"int_parsing","loc":["path","article_id"],"msg":"Input should be a valid integer, ...", ...}]}</span>
+
+curl<span class="w"> </span>http://127.0.0.1:8000/no/such/path
+<span class="c1"># 404 → {"detail":"Not Found"}</span>
+</code></pre></div>
+<p>三种出口三种格式：<code>detail</code> 一会儿是字符串、一会儿是数组，第三个干脆是英文黑话。这就是要统一的东西。</p>
+<p><strong>常见坑</strong>：</p>
+<ol>
+<li>500 的堆栈去哪了？——在 <strong>uvicorn 终端日志</strong>里（<code>Exception in ASGI application</code> 后面跟完整 traceback），响应里没有。排查 500 先看终端，别盯着响应猜。</li>
+<li><code>fastapi.HTTPException</code> 和 <code>starlette.exceptions.HTTPException</code> 是父子关系（前者继承后者）。框架自己抛的 404/405 是 Starlette 那个，这个细节在 9.3 节会坑到人。</li>
+</ol>
+<hr />
+<h2 id="93-appexception_handler接管异常出口">9.3 <code>@app.exception_handler</code>：接管异常出口</h2>
+<p><strong>作用</strong>：告诉 FastAPI「这类异常归我管，响应我自己写」。注册之后，框架默认的出口就被你的函数替换掉了。</p>
+<p><strong>签名</strong>（两种写法，效果完全相同）：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">fastapi</span><span class="w"> </span><span class="kn">import</span> <span class="n">FastAPI</span><span class="p">,</span> <span class="n">Request</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fastapi.responses</span><span class="w"> </span><span class="kn">import</span> <span class="n">JSONResponse</span>
+
+<span class="c1"># 写法一：装饰器</span>
+<span class="nd">@app</span><span class="o">.</span><span class="n">exception_handler</span><span class="p">(</span><span class="n">异常类</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">any_name</span><span class="p">(</span><span class="n">request</span><span class="p">:</span> <span class="n">Request</span><span class="p">,</span> <span class="n">exc</span><span class="p">:</span> <span class="n">异常类</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JSONResponse</span><span class="p">:</span>
+    <span class="o">...</span>  <span class="c1"># 返回任意 Response 对象</span>
+
+<span class="c1"># 写法二：方法调用（适合集中注册，见 9.8 节）</span>
+<span class="n">app</span><span class="o">.</span><span class="n">add_exception_handler</span><span class="p">(</span><span class="n">异常类</span><span class="p">,</span> <span class="n">any_name</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>最小示例</strong>：接管 <code>RequestValidationError</code>，把 422 换成自己的格式。</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">fastapi</span><span class="w"> </span><span class="kn">import</span> <span class="n">FastAPI</span><span class="p">,</span> <span class="n">Request</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fastapi.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">RequestValidationError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fastapi.responses</span><span class="w"> </span><span class="kn">import</span> <span class="n">JSONResponse</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">FastAPI</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">"墨集 inkhub 内容平台"</span><span class="p">)</span>
+
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">exception_handler</span><span class="p">(</span><span class="n">RequestValidationError</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">validation_handler</span><span class="p">(</span><span class="n">request</span><span class="p">:</span> <span class="n">Request</span><span class="p">,</span> <span class="n">exc</span><span class="p">:</span> <span class="n">RequestValidationError</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JSONResponse</span><span class="p">:</span>
+    <span class="c1"># exc.errors() 拿到错误列表，每条含 type / loc / msg</span>
+    <span class="n">parts</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="s1">'.'</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">p</span><span class="p">)</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">p</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">err</span><span class="p">[</span><span class="s1">'loc'</span><span class="p">])</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">err</span><span class="p">[</span><span class="s1">'msg'</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span>
+        <span class="k">for</span> <span class="n">err</span> <span class="ow">in</span> <span class="n">exc</span><span class="o">.</span><span class="n">errors</span><span class="p">()</span>
+    <span class="p">]</span>
+    <span class="k">return</span> <span class="n">JSONResponse</span><span class="p">(</span>
+        <span class="n">status_code</span><span class="o">=</span><span class="mi">422</span><span class="p">,</span>
+        <span class="n">content</span><span class="o">=</span><span class="p">{</span><span class="s2">"code"</span><span class="p">:</span> <span class="s2">"422000"</span><span class="p">,</span> <span class="s2">"message"</span><span class="p">:</span> <span class="s2">"；"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parts</span><span class="p">)},</span>
+    <span class="p">)</span>
+</code></pre></div>
+<p><code>loc</code> 是错误位置的路径元组：<code>("body", "title")</code> 说明请求体的 <code>title</code> 字段挂了，<code>("path", "article_id")</code> 说明路径参数挂了——拼进 message，前端一眼定位。</p>
+<p><strong>匹配规则（本章的地基）</strong>：异常发生时，Starlette 拿着 <code>type(exc).__mro__</code>（异常类的继承链，从具体到一般）挨个问「这个类注册过 handler 吗」，命中第一个就用。翻译成人话：</p>
+<blockquote>
+<p><strong>给基类注册 handler，全体子类自动生效。</strong></p>
+</blockquote>
+<p><code>raise ArticleNotFound()</code> 时，处理器列表里没有 <code>ArticleNotFound</code>，但它的继承链上有 <code>BusinessException</code>——命中。这就是后面「一处注册，全家生效」的底层依据。</p>
+<p><strong>常见坑</strong>：</p>
+<ol>
+<li>handler 必须<strong>返回 <code>Response</code> 对象</strong>（<code>JSONResponse</code> 等）。<code>return {"code": ...}</code> 这种 dict 不会帮你序列化，会直接炸出一个新异常。</li>
+<li>要接管框架自己抛的 404/405，注册的必须是 <strong><code>starlette.exceptions.HTTPException</code></strong>（父类）。只注册 <code>fastapi.HTTPException</code> 的话，MRO 查找对不上号——Starlette 抛的异常的继承链里没有 fastapi 那个子类，会被漏掉。</li>
+<li>注册 <code>Exception</code> 兜底后，<strong>uvicorn 终端照样打完整堆栈</strong>——Starlette 处理完会把异常再抛给服务器记录。客户端看不到、日志还在，这是设计不是 bug。</li>
+<li>同一异常类注册两次，后注册的覆盖先注册的（就是个字典赋值）。</li>
+<li>exception_handler 只管「请求处理过程」中的异常；<code>lifespan</code>（启动/关闭钩子）里抛的异常不走这套机制。handler 自己也别再抛异常——出口处再炸，就真没有出口了。</li>
+</ol>
+<hr />
+<h2 id="94-businessexception给业务异常发工牌">9.4 <code>BusinessException</code>：给业务异常发工牌</h2>
+<p><strong>作用</strong>：业务层抛异常时，不应该操心「这事儿对应 404 还是 409」——那是异常类自己的事。基类把 <strong>HTTP 状态码、业务错误码、默认消息</strong>做成三张缝在工服上的工牌，谁抛异常就穿谁的工服，处理时照牌办事。</p>
+<p><strong>签名</strong>（完整基类，可以直接抄走）：</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">BusinessException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""业务异常基类：所有「能向用户解释」的错误都从它派生。"""</span>
+
+    <span class="n">http_status</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">400</span>                  <span class="c1"># 映射的 HTTP 状态码</span>
+    <span class="n">code</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"400000"</span>                    <span class="c1"># 业务错误码</span>
+    <span class="n">default_message</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"业务处理失败"</span>     <span class="c1"># 默认人话消息</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">detail</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># 不传消息 → 用类上的 default_message，raise 处一行搞定</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="n">message</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_message</span>
+        <span class="c1"># detail 是写给开发者的内部线索：只进日志，绝不进响应</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">detail</span> <span class="o">=</span> <span class="n">detail</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>最小示例</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="k">raise</span> <span class="n">BusinessException</span><span class="p">()</span>                       <span class="c1"># 400 / 400000 / 业务处理失败</span>
+<span class="k">raise</span> <span class="n">BusinessException</span><span class="p">(</span><span class="s2">"专栏订阅数已达上限"</span><span class="p">)</span>     <span class="c1"># 临时覆盖消息</span>
+</code></pre></div>
+<p><strong>为什么不直接用 <code>HTTPException</code> 干到底</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th><code>HTTPException</code></th>
+<th><code>BusinessException</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>词汇</td>
+<td>协议词汇（404、409、detail）</td>
+<td>业务词汇（文章不存在、slug 冲突）</td>
+</tr>
+<tr>
+<td>消息</td>
+<td>每次抛都要手写 detail</td>
+<td><code>default_message</code> 兜底，可省略</td>
+</tr>
+<tr>
+<td>错误码</td>
+<td>只有 HTTP 状态码，不够分</td>
+<td>自带业务 <code>code</code></td>
+</tr>
+<tr>
+<td>可扩展</td>
+<td>没法继承定制</td>
+<td>子类体系，三行代码一种新错误（9.5 节）</td>
+</tr>
+<tr>
+<td>适合的层</td>
+<td>路由层、简单场景</td>
+<td>业务层、服务层</td>
+</tr>
+</tbody>
+</table>
+<p>一句话：<code>HTTPException</code> 说的是「协议上该回什么」，<code>BusinessException</code> 说的是「业务上发生了什么」。服务复杂之后，业务层不该懂协议。</p>
+<p><strong>常见坑</strong>：</p>
+<ol>
+<li>忘写 <code>super().__init__(self.message)</code>——异常的基本功能（<code>str(exc)</code>、日志打印）会残缺。</li>
+<li>把 <code>message</code> 设成必传参数，害得每个 <code>raise</code> 都得憋一句话。默认机制的价值就在于：<strong>类上写一次，抛处零负担</strong>。</li>
+<li><code>detail</code> 和 <code>message</code> 别搞混：<code>message</code> 给用户看，<code>detail</code> 给日志看。<code>detail</code> 里的内容（比如数据库报错原文）永远不出现在响应里。</li>
+</ol>
+<hr />
+<h2 id="95-子类体系与-default_message三行代码新增一种错误">9.5 子类体系与 <code>default_message</code>：三行代码新增一种错误</h2>
+<p><strong>是什么</strong>：基类定调，子类只改牌子。每个子类覆盖 <code>code</code> 和 <code>default_message</code>，<code>http_status</code> 能继承就继承——这就是 <code>default_message</code> 机制的全部内容。</p>
+<p><strong>墨集的异常树</strong>：</p>
+<div class="highlight"><pre><span></span><code>BusinessException               # 400 / 400000 / 业务处理失败
+├── NotFoundError               # 404 / 404000 / 资源不存在
+│   ├── ArticleNotFound         # 404 / 404001 / 文章不存在
+│   ├── ChannelNotFound         # 404 / 404002 / 栏目不存在
+│   └── VersionNotFound         # 404 / 404003 / 文章版本不存在
+└── ConflictError               # 409 / 409000 / 数据冲突
+    └── ArticleSlugExists       # 409 / 409001 / 文章 slug 已被占用
+</code></pre></div>
+<p><strong>最小示例</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">NotFoundError</span><span class="p">(</span><span class="n">BusinessException</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""「资源不存在」家族：404 楼层的通用房间。"""</span>
+
+    <span class="n">http_status</span> <span class="o">=</span> <span class="mi">404</span>
+    <span class="n">code</span> <span class="o">=</span> <span class="s2">"404000"</span>
+    <span class="n">default_message</span> <span class="o">=</span> <span class="s2">"资源不存在"</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">ArticleNotFound</span><span class="p">(</span><span class="n">NotFoundError</span><span class="p">):</span>
+    <span class="n">code</span> <span class="o">=</span> <span class="s2">"404001"</span>                 <span class="c1"># 只需要两行：换房间号、换默认消息</span>
+    <span class="n">default_message</span> <span class="o">=</span> <span class="s2">"文章不存在"</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">ChannelNotFound</span><span class="p">(</span><span class="n">NotFoundError</span><span class="p">):</span>
+    <span class="n">code</span> <span class="o">=</span> <span class="s2">"404002"</span>
+    <span class="n">default_message</span> <span class="o">=</span> <span class="s2">"栏目不存在"</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">VersionNotFound</span><span class="p">(</span><span class="n">NotFoundError</span><span class="p">):</span>
+    <span class="n">code</span> <span class="o">=</span> <span class="s2">"404003"</span>
+    <span class="n">default_message</span> <span class="o">=</span> <span class="s2">"文章版本不存在"</span>
+</code></pre></div>
+<p><strong>raise 的三种姿势</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="k">raise</span> <span class="n">ArticleNotFound</span><span class="p">()</span>                            <span class="c1"># 用默认消息</span>
+<span class="k">raise</span> <span class="n">ArticleNotFound</span><span class="p">(</span><span class="s2">"文章不存在或已被作者删除"</span><span class="p">)</span>     <span class="c1"># 临时覆盖：同一种错误，场景化提示</span>
+<span class="k">raise</span> <span class="n">ArticleSlugExists</span><span class="p">(</span><span class="n">detail</span><span class="o">=</span><span class="s2">"dup key: fastapi-exception"</span><span class="p">)</span>  <span class="c1"># 带内部线索，只进日志</span>
+</code></pre></div>
+<p><strong>handler 只写一次</strong>。因为 9.3 节的 MRO 规则，一个针对 <code>BusinessException</code> 的处理器接住整棵树：</p>
+<div class="highlight"><pre><span></span><code><span class="nd">@app</span><span class="o">.</span><span class="n">exception_handler</span><span class="p">(</span><span class="n">BusinessException</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">business_handler</span><span class="p">(</span><span class="n">request</span><span class="p">:</span> <span class="n">Request</span><span class="p">,</span> <span class="n">exc</span><span class="p">:</span> <span class="n">BusinessException</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JSONResponse</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">JSONResponse</span><span class="p">(</span>
+        <span class="n">status_code</span><span class="o">=</span><span class="n">exc</span><span class="o">.</span><span class="n">http_status</span><span class="p">,</span>
+        <span class="n">content</span><span class="o">=</span><span class="p">{</span><span class="s2">"code"</span><span class="p">:</span> <span class="n">exc</span><span class="o">.</span><span class="n">code</span><span class="p">,</span> <span class="s2">"message"</span><span class="p">:</span> <span class="n">exc</span><span class="o">.</span><span class="n">message</span><span class="p">},</span>
+    <span class="p">)</span>
+</code></pre></div>
+<p>以后新增 <code>AuthorNotFound</code>、<code>TagNotFound</code>……只加异常类，handler 一字不改。</p>
+<p><strong>常见坑</strong>：</p>
+<ol>
+<li>子类忘了改 <code>code</code>，两种异常共用一个码——前端拿到 <code>404001</code> 分不清是文章没了还是栏目没了。</li>
+<li><code>default_message</code> 是<strong>类属性</strong>，直接在类体里赋值就行，别搬进 <code>__init__</code>（那是每个实例的活儿，白白多写代码）。</li>
+<li>异常类名要见名知义：<code>ArticleNotFound</code> 自带说明书，<code>MyError1</code> 谁也看不懂。</li>
+<li>中间层（<code>NotFoundError</code>）不是多余的：它让「家族通用兜底」成为可能——某处只关心「是不是不存在」时，<code>except NotFoundError</code> 一网打尽。</li>
+</ol>
+<hr />
+<h2 id="96-错误码设计楼层-房间号">9.6 错误码设计：楼层 + 房间号</h2>
+<p><strong>是什么</strong>：<code>code</code> 的编码规则。把 HTTP 状态码想象成<strong>楼层号</strong>，把三位序号想象成<strong>房间号</strong>：</p>
+<div class="highlight"><pre><span></span><code>404001
+└┬┘└┬┘
+ │ └── 房间号：404 楼下的第 1 号场景（文章不存在）
+ └─── 楼层号：HTTP 404
+</code></pre></div>
+<p><strong>墨集的错误码表</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>错误码</th>
+<th>HTTP 状态码</th>
+<th>场景</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>404000</code></td>
+<td>404</td>
+<td>资源不存在（家族通用）</td>
+</tr>
+<tr>
+<td><code>404001</code></td>
+<td>404</td>
+<td>文章不存在</td>
+</tr>
+<tr>
+<td><code>404002</code></td>
+<td>404</td>
+<td>栏目不存在</td>
+</tr>
+<tr>
+<td><code>404003</code></td>
+<td>404</td>
+<td>文章版本不存在</td>
+</tr>
+<tr>
+<td><code>409000</code></td>
+<td>409</td>
+<td>数据冲突（家族通用）</td>
+</tr>
+<tr>
+<td><code>409001</code></td>
+<td>409</td>
+<td>文章 slug 已被占用</td>
+</tr>
+<tr>
+<td><code>422000</code></td>
+<td>422</td>
+<td>请求校验失败（框架异常，见 9.8 节的注册中心）</td>
+</tr>
+<tr>
+<td><code>500000</code></td>
+<td>500</td>
+<td>服务器内部错误（兜底）</td>
+</tr>
+<tr>
+<td><code>404</code> / <code>405</code> / …</td>
+<td>原状态码</td>
+<td>协议层错误（路径不存在、方法不允许）</td>
+</tr>
+</tbody>
+</table>
+<p>注意最后一行：<strong>协议层错误不带房间号</strong>，<code>code</code> 直接用状态码本身。这样客户端一眼区分两种 404——<code>code: "404"</code> 是「你请求的路径本身不存在」（URL 写错了），<code>code: "404001"</code> 是「路径存在，但资源没了」（正常业务状况）。前者找前端，后者找用户。</p>
+<p><strong>为什么必须有 code</strong>：HTTP 状态码总共就几十个，业务场景成百上千；前端要按 code 弹精确提示、做埋点统计，日志系统要按 code 聚合报警。状态码管「大类」，code 管「细节」。</p>
+<p><strong>常见坑</strong>：</p>
+<ol>
+<li>全局自增码（<code>10001</code>、<code>10002</code>……）看不出类别，排障时对着一张千行对照表找号，不如楼层房间号直观。</li>
+<li>code 一旦发布就是<strong>客户端契约</strong>，中途改动等于毁约。宁可一开始多想一步，也别发布后再改。</li>
+<li>别编码过多语义搞出 <code>404001101</code> 这种长码——三段（状态码 + 三位序号）够用到大部分服务退役。</li>
+</ol>
+<hr />
+<h2 id="97-integrityerror-转译数据库黑话翻译官">9.7 <code>IntegrityError</code> 转译：数据库黑话翻译官</h2>
+<p><strong>是什么</strong>：数据库的报错是「方言」——<code>IntegrityError</code> 的原文里全是 SQL 语句、表名、约束名。按家规二，这些不能出门。转译 = 让 <code>sqlalchemy.exc.IntegrityError</code> 在服务层就被翻译成业务异常。</p>
+<p><strong>场景</strong>：文章的 <code>slug</code> 建了唯一约束。并发场景下，两个请求同时插入同一个 slug，应用层的 <code>if</code> 检查会双双通过（都查到「不存在」），最后由数据库约束兜住，抛出 <code>IntegrityError</code>。</p>
+<p><strong>姿势一（推荐）：服务层转译</strong>——能区分具体场景。</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.exc</span><span class="w"> </span><span class="kn">import</span> <span class="n">IntegrityError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.ext.asyncio</span><span class="w"> </span><span class="kn">import</span> <span class="n">AsyncSession</span>
+
+
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">create_article</span><span class="p">(</span><span class="n">article</span><span class="p">:</span> <span class="n">ArticleIn</span><span class="p">,</span> <span class="n">session</span><span class="p">:</span> <span class="n">AsyncSession</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Article</span><span class="p">(</span><span class="o">**</span><span class="n">article</span><span class="o">.</span><span class="n">model_dump</span><span class="p">()))</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">await</span> <span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+    <span class="k">except</span> <span class="n">IntegrityError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+        <span class="c1"># 数据库黑话 → 人话；原文挂到 detail，只进日志</span>
+        <span class="k">raise</span> <span class="n">ArticleSlugExists</span><span class="p">(</span><span class="n">detail</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">exc</span><span class="o">.</span><span class="n">orig</span><span class="p">))</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span>
+</code></pre></div>
+<p><strong>姿势二（保底）：全局 handler 兜底</strong>——防漏网之鱼。</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.exc</span><span class="w"> </span><span class="kn">import</span> <span class="n">IntegrityError</span>
+
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">exception_handler</span><span class="p">(</span><span class="n">IntegrityError</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">integrity_handler</span><span class="p">(</span><span class="n">request</span><span class="p">:</span> <span class="n">Request</span><span class="p">,</span> <span class="n">exc</span><span class="p">:</span> <span class="n">IntegrityError</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JSONResponse</span><span class="p">:</span>
+    <span class="c1"># 分不清具体是哪种约束冲突，只能给家族通用的笼统话</span>
+    <span class="k">return</span> <span class="n">JSONResponse</span><span class="p">(</span>
+        <span class="n">status_code</span><span class="o">=</span><span class="mi">409</span><span class="p">,</span>
+        <span class="n">content</span><span class="o">=</span><span class="p">{</span><span class="s2">"code"</span><span class="p">:</span> <span class="s2">"409000"</span><span class="p">,</span> <span class="s2">"message"</span><span class="p">:</span> <span class="s2">"数据冲突"</span><span class="p">},</span>
+    <span class="p">)</span>
+</code></pre></div>
+<p><strong>两种姿势怎么选</strong>：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>服务层转译</th>
+<th>全局兜底</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>消息精度</td>
+<td>精确（<code>slug 已被占用</code>）</td>
+<td>笼统（<code>数据冲突</code>）</td>
+</tr>
+<tr>
+<td>错误码精度</td>
+<td>具体（<code>409001</code>）</td>
+<td>家族通用（<code>409000</code>）</td>
+</tr>
+<tr>
+<td>覆盖面</td>
+<td>只覆盖写了 try/except 的地方</td>
+<td>所有落库操作</td>
+</tr>
+<tr>
+<td>定位</td>
+<td><strong>主力</strong></td>
+<td><strong>保险</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>常见坑</strong>：</p>
+<ol>
+<li><code>IntegrityError</code> 是一大类：唯一约束、外键约束、非空约束撞了全是它。全局兜底只能给笼统消息，想精确就得在服务层按场景转译。</li>
+<li>转译时千万别把原始报错塞进 <code>message</code>——<code>str(exc.orig)</code> 里带着完整 SQL 和表结构，进响应就是泄密事故；它属于 <code>detail</code>，属于日志。</li>
+<li><code>raise ... from exc</code> 保留异常因果链，日志里能看到「业务异常 ← 数据库异常」的完整链条，别丢。</li>
+</ol>
+<hr />
+<h2 id="98-注册中心一处注册全家生效">9.8 注册中心：一处注册，全家生效</h2>
+<p><strong>是什么</strong>：把所有 exception_handler 的注册收拢到一个函数里，<code>main.py</code> 一行调用。相当于分诊台只设一个总机——所有分机的登记都在总机这一处完成，别每层楼各开一个小前台。</p>
+<p><strong>最小示例</strong>（本章 demo 的实际写法）：</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">register_exception_handlers</span><span class="p">(</span><span class="n">app</span><span class="p">:</span> <span class="n">FastAPI</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""给 app 装上全套异常处理器：四个出口，一种形状。"""</span>
+
+    <span class="nd">@app</span><span class="o">.</span><span class="n">exception_handler</span><span class="p">(</span><span class="n">BusinessException</span><span class="p">)</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">handle_business_exception</span><span class="p">(</span>
+        <span class="n">request</span><span class="p">:</span> <span class="n">Request</span><span class="p">,</span> <span class="n">exc</span><span class="p">:</span> <span class="n">BusinessException</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JSONResponse</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">error_response</span><span class="p">(</span><span class="n">exc</span><span class="o">.</span><span class="n">code</span><span class="p">,</span> <span class="n">exc</span><span class="o">.</span><span class="n">message</span><span class="p">,</span> <span class="n">exc</span><span class="o">.</span><span class="n">http_status</span><span class="p">)</span>
+
+    <span class="nd">@app</span><span class="o">.</span><span class="n">exception_handler</span><span class="p">(</span><span class="n">RequestValidationError</span><span class="p">)</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">handle_validation_exception</span><span class="p">(</span>
+        <span class="n">request</span><span class="p">:</span> <span class="n">Request</span><span class="p">,</span> <span class="n">exc</span><span class="p">:</span> <span class="n">RequestValidationError</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JSONResponse</span><span class="p">:</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="n">_format_validation_message</span><span class="p">(</span><span class="n">exc</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">"请求数据校验失败"</span>
+        <span class="k">return</span> <span class="n">error_response</span><span class="p">(</span><span class="s2">"422000"</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="mi">422</span><span class="p">)</span>
+
+    <span class="nd">@app</span><span class="o">.</span><span class="n">exception_handler</span><span class="p">(</span><span class="n">HTTPException</span><span class="p">)</span>          <span class="c1"># starlette 的那个！</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">handle_http_exception</span><span class="p">(</span><span class="n">request</span><span class="p">:</span> <span class="n">Request</span><span class="p">,</span> <span class="n">exc</span><span class="p">:</span> <span class="n">HTTPException</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JSONResponse</span><span class="p">:</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="n">PROTOCOL_MESSAGES</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">exc</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">exc</span><span class="o">.</span><span class="n">detail</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">error_response</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">exc</span><span class="o">.</span><span class="n">status_code</span><span class="p">),</span> <span class="n">message</span><span class="p">,</span> <span class="n">exc</span><span class="o">.</span><span class="n">status_code</span><span class="p">)</span>
+
+    <span class="nd">@app</span><span class="o">.</span><span class="n">exception_handler</span><span class="p">(</span><span class="ne">Exception</span><span class="p">)</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">handle_unknown_exception</span><span class="p">(</span><span class="n">request</span><span class="p">:</span> <span class="n">Request</span><span class="p">,</span> <span class="n">exc</span><span class="p">:</span> <span class="ne">Exception</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JSONResponse</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">error_response</span><span class="p">(</span><span class="s2">"500000"</span><span class="p">,</span> <span class="s2">"服务器开小差了，请稍后重试"</span><span class="p">,</span> <span class="mi">500</span><span class="p">)</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="c1"># main.py</span>
+<span class="n">app</span> <span class="o">=</span> <span class="n">FastAPI</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">"墨集 inkhub 内容平台"</span><span class="p">)</span>
+<span class="n">register_exception_handlers</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>     <span class="c1"># 就这一行</span>
+</code></pre></div>
+<p>四个出口对应四种来路，出门全是 <code>{"code": ..., "message": ...}</code>：</p>
+<table>
+<thead>
+<tr>
+<th>出口</th>
+<th>接住谁</th>
+<th>code 从哪来</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>业务异常 handler</td>
+<td><code>BusinessException</code> 全家</td>
+<td>异常类自带的 <code>code</code></td>
+</tr>
+<tr>
+<td>校验异常 handler</td>
+<td><code>RequestValidationError</code></td>
+<td>固定 <code>422000</code></td>
+</tr>
+<tr>
+<td>协议异常 handler</td>
+<td><code>HTTPException</code>（含框架抛的）</td>
+<td>状态码本身（<code>"404"</code>）</td>
+</tr>
+<tr>
+<td>兜底 handler</td>
+<td>一切漏网异常</td>
+<td>固定 <code>500000</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>常见坑</strong>：</p>
+<ol>
+<li>漏注册 <code>Exception</code> 兜底，未知异常就回到纯文本 <code>Internal Server Error</code> 时代——四个出口一个都不能少。</li>
+<li>注册时机放在 <code>app</code> 创建后尽早调用（对路由注册顺序不敏感，但统一放最前面，避免「以为注册了其实没有」的错觉）。</li>
+<li>handler 里别做重活——出口要快。一个慢出口会把「报错」拖成「事故」。</li>
+</ol>
+<hr />
+<h2 id="99-错误码表自动进-docs">9.9 错误码表自动进 <code>/docs</code></h2>
+<p><strong>是什么</strong>：错误码表不该躺在外部 wiki 里吃灰。用 <code>FastAPI(description=...)</code> 把它渲染进 <code>/docs</code> 首页，而且<strong>从异常类自动生成</strong>——新增一个异常类，文档表格自动多一行，永不失联。</p>
+<p><strong>原理</strong>：<code>description</code> 支持 Markdown（表格直接渲染）；<code>cls.__subclasses__()</code> 能列出子类，递归一层就能走完整棵异常树。</p>
+<p><strong>最小示例</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Iterator</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_iter_exception_tree</span><span class="p">(</span><span class="bp">cls</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">BusinessException</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">type</span><span class="p">[</span><span class="n">BusinessException</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">"""递归遍历所有子类：__subclasses__() 只给直接子类，孙类要自己往下挖。"""</span>
+    <span class="k">for</span> <span class="n">sub</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">__subclasses__</span><span class="p">():</span>
+        <span class="k">yield</span> <span class="n">sub</span>
+        <span class="k">yield from</span> <span class="n">_iter_exception_tree</span><span class="p">(</span><span class="n">sub</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">build_error_docs</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="n">lines</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s2">"统一错误响应格式：`{</span><span class="se">\"</span><span class="s2">code</span><span class="se">\"</span><span class="s2">: </span><span class="se">\"</span><span class="s2">业务错误码</span><span class="se">\"</span><span class="s2">, </span><span class="se">\"</span><span class="s2">message</span><span class="se">\"</span><span class="s2">: </span><span class="se">\"</span><span class="s2">人话消息</span><span class="se">\"</span><span class="s2">}`。"</span><span class="p">,</span>
+        <span class="s2">""</span><span class="p">,</span>
+        <span class="s2">"| 错误码 | HTTP 状态码 | 默认消息 | 异常类 |"</span><span class="p">,</span>
+        <span class="s2">"| --- | --- | --- | --- |"</span><span class="p">,</span>
+    <span class="p">]</span>
+    <span class="k">for</span> <span class="n">exc_type</span> <span class="ow">in</span> <span class="n">_iter_exception_tree</span><span class="p">(</span><span class="n">BusinessException</span><span class="p">):</span>
+        <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"| </span><span class="si">{</span><span class="n">exc_type</span><span class="o">.</span><span class="n">code</span><span class="si">}</span><span class="s2"> | </span><span class="si">{</span><span class="n">exc_type</span><span class="o">.</span><span class="n">http_status</span><span class="si">}</span><span class="s2"> | "</span>
+            <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">exc_type</span><span class="o">.</span><span class="n">default_message</span><span class="si">}</span><span class="s2"> | </span><span class="si">{</span><span class="n">exc_type</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> |"</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
+
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">FastAPI</span><span class="p">(</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">"墨集 inkhub 内容平台"</span><span class="p">,</span>
+    <span class="n">description</span><span class="o">=</span><span class="s2">"统一异常处理演示。</span><span class="se">\n\n</span><span class="s2">"</span> <span class="o">+</span> <span class="n">build_error_docs</span><span class="p">(),</span>
+<span class="p">)</span>
+</code></pre></div>
+<p><strong>实际渲染效果</strong>（打开 <code>/docs</code> 首页就能看到）：</p>
+<table>
+<thead>
+<tr>
+<th>错误码</th>
+<th>HTTP 状态码</th>
+<th>默认消息</th>
+<th>异常类</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>404000</td>
+<td>404</td>
+<td>资源不存在</td>
+<td>NotFoundError</td>
+</tr>
+<tr>
+<td>404001</td>
+<td>404</td>
+<td>文章不存在</td>
+<td>ArticleNotFound</td>
+</tr>
+<tr>
+<td>404002</td>
+<td>404</td>
+<td>栏目不存在</td>
+<td>ChannelNotFound</td>
+</tr>
+<tr>
+<td>404003</td>
+<td>404</td>
+<td>文章版本不存在</td>
+<td>VersionNotFound</td>
+</tr>
+<tr>
+<td>409000</td>
+<td>409</td>
+<td>数据冲突</td>
+<td>ConflictError</td>
+</tr>
+<tr>
+<td>409001</td>
+<td>409</td>
+<td>文章 slug 已被占用</td>
+<td>ArticleSlugExists</td>
+</tr>
+</tbody>
+</table>
+<p><strong>常见坑</strong>：</p>
+<ol>
+<li><code>__subclasses__()</code> 只列<strong>直接</strong>子类，<code>BusinessException</code> 下面的孙类（<code>ArticleNotFound</code>）必须递归才能拿到。</li>
+<li>单个接口的 404/409 说明还可以用装饰器的 <code>responses={"404": {"description": "文章不存在"}}</code> 补充（02 章的写法），和首页的码表是总分关系，不冲突。</li>
+</ol>
+<hr />
+<h2 id="910-小结速查">9.10 小结速查</h2>
+<table>
+<thead>
+<tr>
+<th>你想做什么</th>
+<th>用什么</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>接管某类异常的响应</td>
+<td><code>@app.exception_handler(异常类)</code> 或 <code>app.add_exception_handler(...)</code></td>
+</tr>
+<tr>
+<td>让全体子类异常共用一个 handler</td>
+<td>给基类注册（MRO 查找，从具体到一般）</td>
+</tr>
+<tr>
+<td>接管框架抛的 404/405</td>
+<td>注册 <code>starlette.exceptions.HTTPException</code></td>
+</tr>
+<tr>
+<td>业务异常基类</td>
+<td><code>BusinessException</code>：<code>http_status</code> / <code>code</code> / <code>default_message</code></td>
+</tr>
+<tr>
+<td>新增一种业务错误</td>
+<td>子类覆盖 <code>code</code> + <code>default_message</code>，三行搞定</td>
+</tr>
+<tr>
+<td>错误码规则</td>
+<td>前 3 位 HTTP 状态码 + 3 位序号（<code>404001</code>）</td>
+</tr>
+<tr>
+<td>数据库约束冲突转人话</td>
+<td>服务层 <code>except IntegrityError</code> → 业务异常 + <code>from exc</code></td>
+</tr>
+<tr>
+<td>集中注册</td>
+<td><code>register_exception_handlers(app)</code>，main 里一行</td>
+</tr>
+<tr>
+<td>错误码表进文档</td>
+<td><code>__subclasses__()</code> 递归生成 → <code>FastAPI(description=...)</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>配套代码</strong>：<code>demo/demo_exception.py</code>——单文件演示完整链路：异常体系 + 四个 handler + 统一错误响应 + 错误码表进文档，内嵌 uvicorn，注释里写全了 curl 示例。</p>
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span>demo
+python<span class="w"> </span>demo_exception.py
+</code></pre></div>
+<p>三种返回的真实对比（以下输出全部实测）：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># ① 合法请求 → 200</span>
+curl<span class="w"> </span>-i<span class="w"> </span>http://127.0.0.1:8000/articles/1
+<span class="c1"># {"id":1,"title":"FastAPI 异常处理指南","slug":"fastapi-exception","channel_id":1,"author_id":1}</span>
+
+<span class="c1"># ② 文章不存在 → 404</span>
+curl<span class="w"> </span>-i<span class="w"> </span>http://127.0.0.1:8000/articles/999
+<span class="c1"># {"code":"404001","message":"文章不存在"}</span>
+
+<span class="c1"># ③ 校验失败 → 422（路径参数 abc 过不了 int 校验）</span>
+curl<span class="w"> </span>-i<span class="w"> </span>http://127.0.0.1:8000/articles/abc
+<span class="c1"># {"code":"422000","message":"path.article_id: Input should be a valid integer, unable to parse string as an integer"}</span>
+</code></pre></div>
+<p>demo 里还埋了几个「彩蛋接口」，分别验证：栏目/版本的 <code>404002</code>/<code>404003</code>、slug 冲突的 <code>409001</code>、请求体校验的字段级明细、协议错误 <code>code:"404"</code>、毒丸数据触发的未知异常兜底 <code>500000</code>——每个坑位在文件头部的 curl 清单里都有对应命令。</p>
+<h3 id="作业">作业</h3>
+<ol>
+<li>FastAPI 默认的三种异常出口（<code>HTTPException</code> / <code>RequestValidationError</code> / 未捕获异常），响应格式分别长什么样？为什么说它们「不统一」？</li>
+<li>给 <code>BusinessException</code> 注册一个 handler，为什么 <code>ArticleNotFound</code> 也能被接住？背后的查找规则是什么？</li>
+<li>注册 <code>HTTPException</code> 的 handler 时，为什么要导入 <code>starlette.exceptions.HTTPException</code> 而不是 <code>fastapi.HTTPException</code>？</li>
+<li>错误码 <code>404002</code> 怎么读？它和 <code>code</code> 为 <code>"404"</code> 的响应有什么区别？各自指向谁的责任？</li>
+<li>未知异常兜底 handler 返回统一格式后，完整堆栈去哪了？开发时应该去哪看？</li>
+</ol>
+<hr />
+<p>本章统一了<strong>出错时怎么说话</strong>。那成功的时候呢？——响应格式同样需要统一信封（<code>{"code": 0, "data": ..., "message": "ok"}</code> 这类包装），那活儿不适合在每个接口里手写，适合在一个所有请求都会路过的地方统一做。</p>
+<p><strong>下一章</strong>：<a href="../backend/10-zhong-jian-jian.html">10 · 中间件</a></p></div>
+
+      </article>
+<nav class="pager"><a class="pg-card pg-prev" href="../backend/08-yi-lai-zhu-ru.html"><span class="pg-label">← 上一篇</span><span class="pg-title">依赖注入</span><span class="pg-mod">Python 框架指南</span></a><a class="pg-card pg-next" href="../backend/10-zhong-jian-jian.html"><span class="pg-label">下一篇 →</span><span class="pg-title">中间件</span><span class="pg-mod">Python 框架指南</span></a></nav>
+    </div>
+    <footer class="foot">
+      <span>深栈 DeepStack · AI Agent 工程师转型训练营配套文档</span>
+    </footer>
+  </main>
+<nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#本章你会用到的东西">本章你会用到的东西</a><a class="toc-link toc-h2" href="#91-三条家规出了错先守规矩">9.1 三条家规：出了错，先守规矩</a><a class="toc-link toc-h2" href="#92-默认异常链路fastapi-出错时都发生了什么">9.2 默认异常链路：FastAPI 出错时都发生了什么</a><a class="toc-link toc-h2" href="#93-appexception_handler接管异常出口">9.3 @app.exception_handler：接管异常出口</a><a class="toc-link toc-h2" href="#94-businessexception给业务异常发工牌">9.4 BusinessException：给业务异常发工牌</a><a class="toc-link toc-h2" href="#95-子类体系与-default_message三行代码新增一种错误">9.5 子类体系与 default_message：三行代码新增一种错误</a><a class="toc-link toc-h2" href="#96-错误码设计楼层-房间号">9.6 错误码设计：楼层 + 房间号</a><a class="toc-link toc-h2" href="#97-integrityerror-转译数据库黑话翻译官">9.7 IntegrityError 转译：数据库黑话翻译官</a><a class="toc-link toc-h2" href="#98-注册中心一处注册全家生效">9.8 注册中心：一处注册，全家生效</a><a class="toc-link toc-h2" href="#99-错误码表自动进-docs">9.9 错误码表自动进 /docs</a><a class="toc-link toc-h2" href="#910-小结速查">9.10 小结速查</a><a class="toc-link toc-h3" href="#作业">作业</a></nav>
+</div>
+<div class="sb-mask" id="sbMask"></div>
+<script src="../assets/app.js"></script>
+</body>
+</html>

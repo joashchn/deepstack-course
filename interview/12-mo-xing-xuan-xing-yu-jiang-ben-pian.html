@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>12 · 模型选型与降本篇 · 深栈 DeepStack 课程文档</title>
+<meta name="description" content="对应课件：agent核心/05（本地模型）、06（会话管理与缓存命中）、15（评测）。国内 AI 应用面试的特色必考区：面试官几乎一定会问&quot;怎么选模型&quot;和&quot;怎么省钱&quot;——因为这是团队每天真实的决策。本篇 5 题从选型框架…">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%23d9c39a' text-anchor='middle'%3EDS%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+<div class="progress" id="progress"></div>
+
+<div class="layout">
+<aside class="sidebar" id="sidebar">
+  <div class="sb-head">
+    <a class="brand" href="../index.html">
+      <span class="brand-mark">DS</span>
+      <span class="brand-text"><b>深栈 DeepStack</b><i>AI Agent 工程师转型训练营</i></span>
+    </a>
+    <button class="sb-close" id="sbClose" aria-label="关闭目录">✕</button>
+  </div>
+  <div class="sb-search"><input type="search" id="searchInput" placeholder="搜索 123 篇文档… ( / )" autocomplete="off">
+    <div class="sb-results" id="searchResults"></div></div>
+  <nav class="sb-nav">
+    <section class="sb-group" data-mod="python">
+      <a class="sb-group-title" href="../modules/python.html" data-toggle="python">
+        <span class="sb-num">01</span>
+        <span class="sb-group-text"><b>Python 与数据实践</b><i>31 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../python/01-huan-jing-da-jian-yu-ban-ben-guan-li.html"><span class="sb-item-num">01</span><span class="sb-item-title">环境搭建与版本管理</span></a>
+        <a class="sb-item" href="../python/02-bian-liang-biao-da-shi-yu-liu-cheng-kong-zhi.html"><span class="sb-item-num">02</span><span class="sb-item-title">变量、表达式与流程控制</span></a>
+        <a class="sb-item" href="../python/03-xu-lie-zi-dian-yu-ji-he.html"><span class="sb-item-num">03</span><span class="sb-item-title">序列、字典与集合</span></a>
+        <a class="sb-item" href="../python/04-han-shu-she-ji-yu-lambda.html"><span class="sb-item-num">04</span><span class="sb-item-title">函数设计与 lambda</span></a>
+        <a class="sb-item" href="../python/05-zuo-yong-yu-gui-ze-yu-bi-bao.html"><span class="sb-item-num">05</span><span class="sb-item-title">作用域规则与闭包</span></a>
+        <a class="sb-item" href="../python/06-lei-de-ding-yi-yu-shi-li-hua.html"><span class="sb-item-num">06</span><span class="sb-item-title">类的定义与实例化</span></a>
+        <a class="sb-item" href="../python/07-lei-xing-pan-ding-yu-chou-xiang-ji-lei.html"><span class="sb-item-num">07</span><span class="sb-item-title">类型判定与抽象基类</span></a>
+        <a class="sb-item" href="../python/08-mo-shu-fang-fa-quan-jing.html"><span class="sb-item-num">08</span><span class="sb-item-title">魔术方法全景</span></a>
+        <a class="sb-item" href="../python/09-miao-shu-fu-yu-yuan-lei.html"><span class="sb-item-num">09</span><span class="sb-item-title">描述符与元类</span></a>
+        <a class="sb-item" href="../python/10-zhuang-shi-qi.html"><span class="sb-item-num">10</span><span class="sb-item-title">装饰器</span></a>
+        <a class="sb-item" href="../python/11-die-dai-xie-yi-yu-sheng-cheng-qi.html"><span class="sb-item-num">11</span><span class="sb-item-title">迭代协议与生成器</span></a>
+        <a class="sb-item" href="../python/12-with-yu-shang-xia-wen-xie-yi.html"><span class="sb-item-num">12</span><span class="sb-item-title">with 与上下文协议</span></a>
+        <a class="sb-item" href="../python/13-yi-chang-ti-xi-yu-chu-li.html"><span class="sb-item-num">13</span><span class="sb-item-title">异常体系与处理</span></a>
+        <a class="sb-item" href="../python/14-lei-xing-biao-zhu.html"><span class="sb-item-num">14</span><span class="sb-item-title">类型标注</span></a>
+        <a class="sb-item" href="../python/15-mo-kuai-yu-bao-de-zu-zhi.html"><span class="sb-item-num">15</span><span class="sb-item-title">模块与包的组织</span></a>
+        <a class="sb-item" href="../python/16-biao-zhun-ku-xun-li.html"><span class="sb-item-num">16</span><span class="sb-item-title">标准库巡礼</span></a>
+        <a class="sb-item" href="../python/17-yi-lai-guan-li-yu-di-san-fang-ku.html"><span class="sb-item-num">17</span><span class="sb-item-title">依赖管理与第三方库</span></a>
+        <a class="sb-item" href="../python/18-xian-cheng-yu-jin-cheng.html"><span class="sb-item-num">18</span><span class="sb-item-title">线程与进程</span></a>
+        <a class="sb-item" href="../python/19-shi-jian-xun-huan.html"><span class="sb-item-num">19</span><span class="sb-item-title">事件循环</span></a>
+        <a class="sb-item" href="../python/20-future-yu-xie-cheng.html"><span class="sb-item-num">20</span><span class="sb-item-title">Future 与协程</span></a>
+        <a class="sb-item" href="../python/21-asyncio-shi-zhan.html"><span class="sb-item-num">21</span><span class="sb-item-title">asyncio 实战</span></a>
+        <a class="sb-item" href="../python/22-gou-jian-yu-fa-bu.html"><span class="sb-item-num">22</span><span class="sb-item-title">构建与发布</span></a>
+        <a class="sb-item" href="../python/23-gong-cheng-hua-gong-ju-lian.html"><span class="sb-item-num">23</span><span class="sb-item-title">工程化工具链</span></a>
+        <a class="sb-item" href="../python/24-monorepo-yu-tiao-shi.html"><span class="sb-item-num">24</span><span class="sb-item-title">monorepo 与调试</span></a>
+        <a class="sb-item" href="../python/25-jupyter-jiao-hu-huan-jing.html"><span class="sb-item-num">25</span><span class="sb-item-title">Jupyter 交互环境</span></a>
+        <a class="sb-item" href="../python/26-numpy-shu-zu-yu-xiang-liang-hua.html"><span class="sb-item-num">26</span><span class="sb-item-title">NumPy 数组与向量化</span></a>
+        <a class="sb-item" href="../python/27-pandas-shu-ju-jie-gou.html"><span class="sb-item-num">27</span><span class="sb-item-title">Pandas 数据结构</span></a>
+        <a class="sb-item" href="../python/28-pandas-shu-ju-qing-xi.html"><span class="sb-item-num">28</span><span class="sb-item-title">Pandas 数据清洗</span></a>
+        <a class="sb-item" href="../python/29-matplotlib-hui-tu-ti-xi.html"><span class="sb-item-num">29</span><span class="sb-item-title">Matplotlib 绘图体系</span></a>
+        <a class="sb-item" href="../python/30-matplotlib-dong-hua-yu-jiao-hu.html"><span class="sb-item-num">30</span><span class="sb-item-title">Matplotlib 动画与交互</span></a>
+        <a class="sb-item" href="../python/31-seaborn-tong-ji-ke-shi-hua.html"><span class="sb-item-num">31</span><span class="sb-item-title">Seaborn 统计可视化</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="agent">
+      <a class="sb-group-title" href="../modules/agent.html" data-toggle="agent">
+        <span class="sb-num">02</span>
+        <span class="sb-group-text"><b>Agent 核心</b><i>15 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../agent/01-token-yu-ci-qian-ru.html"><span class="sb-item-num">01</span><span class="sb-item-title">Token 与词嵌入</span></a>
+        <a class="sb-item" href="../agent/02-qian-xiang-chuan-bo-yu-fan-xiang-chuan-bo.html"><span class="sb-item-num">02</span><span class="sb-item-title">前向传播与反向传播</span></a>
+        <a class="sb-item" href="../agent/03-zhu-yi-li-ji-zhi-yu-transformer-jia-gou.html"><span class="sb-item-num">03</span><span class="sb-item-title">注意力机制与 Transformer 架构</span></a>
+        <a class="sb-item" href="../agent/04-yu-xun-lian-rlhf-yu-cai-yang-kv-cache.html"><span class="sb-item-num">04</span><span class="sb-item-title">预训练、RLHF 与采样（KV Cache）</span></a>
+        <a class="sb-item" href="../agent/05-ben-di-mo-xing-yu-xiao-xi-jie-gou.html"><span class="sb-item-num">05</span><span class="sb-item-title">本地模型与消息结构</span></a>
+        <a class="sb-item" href="../agent/06-hui-hua-guan-li-yu-json-shu-chu.html"><span class="sb-item-num">06</span><span class="sb-item-title">会话管理与 JSON 输出</span></a>
+        <a class="sb-item" href="../agent/07-tool-calling-xie-yi-yu-feng-zhuang.html"><span class="sb-item-num">07</span><span class="sb-item-title">Tool Calling：协议与封装</span></a>
+        <a class="sb-item" href="../agent/08-react-mo-shi-yu-zhu-xun-huan.html"><span class="sb-item-num">08</span><span class="sb-item-title">ReAct 模式与主循环</span></a>
+        <a class="sb-item" href="../agent/09-shi-zhan-deep-research-agent.html"><span class="sb-item-num">09</span><span class="sb-item-title">实战：Deep Research Agent</span></a>
+        <a class="sb-item" href="../agent/10-skill-yu-jian-jin-shi-pi-lu.html"><span class="sb-item-num">10</span><span class="sb-item-title">Skill 与渐进式披露</span></a>
+        <a class="sb-item" href="../agent/11-mcp-quan-jing.html"><span class="sb-item-num">11</span><span class="sb-item-title">MCP 全景</span></a>
+        <a class="sb-item" href="../agent/12-duo-agent-yu-xuan-xing-ce-lve.html"><span class="sb-item-num">12</span><span class="sb-item-title">多 Agent 与选型策略</span></a>
+        <a class="sb-item" href="../agent/13-ti-shi-ci-gong-cheng-yu-shang-xia-wen-gong.html"><span class="sb-item-num">13</span><span class="sb-item-title">提示词工程与上下文工程</span></a>
+        <a class="sb-item" href="../agent/14-xun-huan-tu-yu-gu-jia-gong-cheng.html"><span class="sb-item-num">14</span><span class="sb-item-title">循环、图与骨架工程</span></a>
+        <a class="sb-item" href="../agent/15-ji-yi-quan-xian-yu-ping-ce.html"><span class="sb-item-num">15</span><span class="sb-item-title">记忆、权限与评测</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="langchain">
+      <a class="sb-group-title" href="../modules/langchain.html" data-toggle="langchain">
+        <span class="sb-num">03</span>
+        <span class="sb-group-text"><b>LangChain 指南</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langchain/01-ren-shi-langchain.html"><span class="sb-item-num">01</span><span class="sb-item-title">认识 LangChain</span></a>
+        <a class="sb-item" href="../langchain/02-ti-shi-ci-mu-ban-yu-xiao-xi.html"><span class="sb-item-num">02</span><span class="sb-item-title">提示词模板与消息</span></a>
+        <a class="sb-item" href="../langchain/03-lcel-yu-runnable.html"><span class="sb-item-num">03</span><span class="sb-item-title">LCEL 与 Runnable</span></a>
+        <a class="sb-item" href="../langchain/04-liu-shi-yu-bing-fa.html"><span class="sb-item-num">04</span><span class="sb-item-title">流式与并发</span></a>
+        <a class="sb-item" href="../langchain/05-shu-chu-jie-xi-qi.html"><span class="sb-item-num">05</span><span class="sb-item-title">输出解析器</span></a>
+        <a class="sb-item" href="../langchain/06-wen-dang-jia-zai-yu-qie-ge.html"><span class="sb-item-num">06</span><span class="sb-item-title">文档加载与切割</span></a>
+        <a class="sb-item" href="../langchain/07-qian-ru-yu-xiang-liang-ku.html"><span class="sb-item-num">07</span><span class="sb-item-title">嵌入与向量库</span></a>
+        <a class="sb-item" href="../langchain/08-jian-suo-yu-rag.html"><span class="sb-item-num">08</span><span class="sb-item-title">检索与RAG</span></a>
+        <a class="sb-item" href="../langchain/09-dui-hua-ji-yi.html"><span class="sb-item-num">09</span><span class="sb-item-title">对话记忆</span></a>
+        <a class="sb-item" href="../langchain/10-gong-ju-diao-yong.html"><span class="sb-item-num">10</span><span class="sb-item-title">工具调用</span></a>
+        <a class="sb-item" href="../langchain/11-agent.html"><span class="sb-item-num">11</span><span class="sb-item-title">Agent</span></a>
+        <a class="sb-item" href="../langchain/12-hui-diao-yu-tiao-shi-quan-ke-cheng-shou-guan.html"><span class="sb-item-num">12</span><span class="sb-item-title">回调与调试（全课程收官章）</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="langgraph">
+      <a class="sb-group-title" href="../modules/langgraph.html" data-toggle="langgraph">
+        <span class="sb-num">04</span>
+        <span class="sb-group-text"><b>LangGraph 框架指南</b><i>17 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langgraph/01-di-1-zhang-cong-yi-ge-shi-kong-de-jiao.html"><span class="sb-item-num">01</span><span class="sb-item-title">第 1 章 从一个失控的脚本说起</span></a>
+        <a class="sb-item" href="../langgraph/02-di-2-zhang-zui-xiao-ke-yun-xing-tu.html"><span class="sb-item-num">02</span><span class="sb-item-title">第 2 章 最小可运行图</span></a>
+        <a class="sb-item" href="../langgraph/03-di-3-zhang-zhuang-tai-tu-de-shu-ju-xin.html"><span class="sb-item-num">03</span><span class="sb-item-title">第 3 章 状态：图的数据心脏</span></a>
+        <a class="sb-item" href="../langgraph/04-di-4-zhang-rang-liu-cheng-xue-hui-jue-ce.html"><span class="sb-item-num">04</span><span class="sb-item-title">第 4 章 让流程学会决策</span></a>
+        <a class="sb-item" href="../langgraph/05-di-5-zhang-bing-xing-shi-jie-chao-bu-zhi.html"><span class="sb-item-num">05</span><span class="sb-item-title">第 5 章 并行世界：超步执行模型</span></a>
+        <a class="sb-item" href="../langgraph/06-di-6-zhang-command-ba-kong-zhi-quan-jiao-jin.html"><span class="sb-item-num">06</span><span class="sb-item-title">第 6 章 Command：把控制权交进节点</span></a>
+        <a class="sb-item" href="../langgraph/07-di-7-zhang-dong-tai-bing-xing-send-yu-mapreduce.html"><span class="sb-item-num">07</span><span class="sb-item-title">第 7 章 动态并行：Send 与 MapReduce</span></a>
+        <a class="sb-item" href="../langgraph/08-di-8-zhang-gei-tu-zhuang-shang-shou-jiao-gong.html"><span class="sb-item-num">08</span><span class="sb-item-title">第 8 章 给图装上手脚：工具调用</span></a>
+        <a class="sb-item" href="../langgraph/09-di-9-zhang-fu-yong-yu-feng-zhuang-zi-tu.html"><span class="sb-item-num">09</span><span class="sb-item-title">第 9 章 复用与封装：子图</span></a>
+        <a class="sb-item" href="../langgraph/10-di-10-zhang-cong-dan-tu-dao-tuan-dui-duo.html"><span class="sb-item-num">10</span><span class="sb-item-title">第 10 章 从单图到团队：多 Agent 架构</span></a>
+        <a class="sb-item" href="../langgraph/11-di-11-zhang-liu-shi-shu-chu.html"><span class="sb-item-num">11</span><span class="sb-item-title">第 11 章 流式输出</span></a>
+        <a class="sb-item" href="../langgraph/12-di-12-zhang-chi-jiu-hua-checkpointer-yu-xian-cheng.html"><span class="sb-item-num">12</span><span class="sb-item-title">第 12 章 持久化：Checkpointer 与线程</span></a>
+        <a class="sb-item" href="../langgraph/13-di-13-zhang-shi-jian-lv-xing.html"><span class="sb-item-num">13</span><span class="sb-item-title">第 13 章 时间旅行</span></a>
+        <a class="sb-item" href="../langgraph/14-di-14-zhang-zhong-duan-yu-ren-zai-hui-lu.html"><span class="sb-item-num">14</span><span class="sb-item-title">第 14 章 中断与人在回路</span></a>
+        <a class="sb-item" href="../langgraph/15-di-15-zhang-ji-yi-guan-li.html"><span class="sb-item-num">15</span><span class="sb-item-title">第 15 章 记忆管理</span></a>
+        <a class="sb-item" href="../langgraph/16-di-16-zhang-rong-cuo-zhong-shi-chao-shi-yu.html"><span class="sb-item-num">16</span><span class="sb-item-title">第 16 章 容错：重试、超时与兜底</span></a>
+        <a class="sb-item" href="../langgraph/17-di-17-zhang-quan-jing-hui-gu.html"><span class="sb-item-num">17</span><span class="sb-item-title">第 17 章 全景回顾</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="backend">
+      <a class="sb-group-title" href="../modules/backend.html" data-toggle="backend">
+        <span class="sb-num">05</span>
+        <span class="sb-group-text"><b>Python 框架指南</b><i>14 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../backend/01-fastapi-ru-men-yu-asgi.html"><span class="sb-item-num">01</span><span class="sb-item-title">FastAPI 入门与 ASGI</span></a>
+        <a class="sb-item" href="../backend/02-lu-you-yu-qing-qiu-xiang-ying.html"><span class="sb-item-num">02</span><span class="sb-item-title">路由与请求响应</span></a>
+        <a class="sb-item" href="../backend/03-pydantic-shu-ju-jiao-yan-yu-pei-zhi.html"><span class="sb-item-num">03</span><span class="sb-item-title">Pydantic 数据校验与配置</span></a>
+        <a class="sb-item" href="../backend/04-sqlalchemy-yi-bu-yin-qing-yu-hui-hua.html"><span class="sb-item-num">04</span><span class="sb-item-title">SQLAlchemy 异步引擎与会话</span></a>
+        <a class="sb-item" href="../backend/05-orm-jian-mo.html"><span class="sb-item-num">05</span><span class="sb-item-title">ORM 建模</span></a>
+        <a class="sb-item" href="../backend/06-sql-biao-da-shi-yu-shu-ju-cao-zuo.html"><span class="sb-item-num">06</span><span class="sb-item-title">SQL 表达式与数据操作</span></a>
+        <a class="sb-item" href="../backend/07-alembic-shu-ju-qian-yi.html"><span class="sb-item-num">07</span><span class="sb-item-title">Alembic 数据迁移</span></a>
+        <a class="sb-item" href="../backend/08-yi-lai-zhu-ru.html"><span class="sb-item-num">08</span><span class="sb-item-title">依赖注入</span></a>
+        <a class="sb-item" href="../backend/09-tong-yi-yi-chang-chu-li.html"><span class="sb-item-num">09</span><span class="sb-item-title">统一异常处理</span></a>
+        <a class="sb-item" href="../backend/10-zhong-jian-jian.html"><span class="sb-item-num">10</span><span class="sb-item-title">中间件</span></a>
+        <a class="sb-item" href="../backend/11-ren-zheng-yu-jwt.html"><span class="sb-item-num">11</span><span class="sb-item-title">认证与 JWT</span></a>
+        <a class="sb-item" href="../backend/12-pytest-ce-shi.html"><span class="sb-item-num">12</span><span class="sb-item-title">pytest 测试</span></a>
+        <a class="sb-item" href="../backend/13-ri-zhi-loguru.html"><span class="sb-item-num">13</span><span class="sb-item-title">日志 loguru</span></a>
+        <a class="sb-item" href="../backend/14-liu-shi-xiang-ying-sse-yu-websocket.html"><span class="sb-item-num">14</span><span class="sb-item-title">流式响应 SSE 与 WebSocket</span></a>
+      </div>
+    </section>
+    <section class="sb-group open" data-mod="interview">
+      <a class="sb-group-title" href="../modules/interview.html" data-toggle="interview">
+        <span class="sb-num">06</span>
+        <span class="sb-group-text"><b>面试题库</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../interview/01-llm-yuan-li-pian.html"><span class="sb-item-num">01</span><span class="sb-item-title">LLM 原理篇</span></a>
+        <a class="sb-item" href="../interview/02-rag-yu-jian-suo-pian.html"><span class="sb-item-num">02</span><span class="sb-item-title">RAG 与检索篇</span></a>
+        <a class="sb-item" href="../interview/03-agent-he-xin-pian.html"><span class="sb-item-num">03</span><span class="sb-item-title">Agent 核心篇</span></a>
+        <a class="sb-item" href="../interview/04-langgraph-pian.html"><span class="sb-item-num">04</span><span class="sb-item-title">LangGraph 篇</span></a>
+        <a class="sb-item" href="../interview/05-langchain-pian.html"><span class="sb-item-num">05</span><span class="sb-item-title">LangChain 篇</span></a>
+        <a class="sb-item" href="../interview/06-xi-tong-she-ji-pian.html"><span class="sb-item-num">06</span><span class="sb-item-title">系统设计篇</span></a>
+        <a class="sb-item" href="../interview/07-xiang-mu-shen-wa-pian.html"><span class="sb-item-num">07</span><span class="sb-item-title">项目深挖篇</span></a>
+        <a class="sb-item" href="../interview/08-gu-zhang-pai-cha-pian.html"><span class="sb-item-num">08</span><span class="sb-item-title">故障排查篇</span></a>
+        <a class="sb-item" href="../interview/09-python-ji-chu-pian.html"><span class="sb-item-num">09</span><span class="sb-item-title">Python 基础篇</span></a>
+        <a class="sb-item" href="../interview/10-fastapi-yu-hou-duan-pian.html"><span class="sb-item-num">10</span><span class="sb-item-title">FastAPI 与后端篇</span></a>
+        <a class="sb-item" href="../interview/11-ti-shi-ci-gong-cheng-yu-an-quan-pian.html"><span class="sb-item-num">11</span><span class="sb-item-title">提示词工程与安全篇</span></a>
+        <a class="sb-item current" href="../interview/12-mo-xing-xuan-xing-yu-jiang-ben-pian.html"><span class="sb-item-num">12</span><span class="sb-item-title">模型选型与降本篇</span></a>
+      </div>
+    </section>
+  </nav>
+</aside>
+  <main class="main">
+    <header class="topbar">
+      <button class="menu-btn" id="menuBtn" aria-label="目录">☰</button>
+      <div class="crumbs"><a href="../index.html">首页</a><span>/</span><a href="../modules/interview.html">面试题库</a><span>/</span><span class="cur">模型选型与降本篇</span></div>
+      <div class="topbar-actions">
+        <button class="icon-btn" id="themeBtn" title="切换深浅色" aria-label="切换深浅色">◐</button>
+      </div>
+    </header>
+    <div class="content">
+      <article class="article">
+
+<header class="page-head">
+  <div class="page-kicker">面试题库 · 第 12 章</div>
+  <h1 class="page-title">模型选型与降本篇</h1>
+  <p class="page-desc">对应课件：agent核心/05（本地模型）、06（会话管理与缓存命中）、15（评测）。国内 AI 应用面试的特色必考区：面试官几乎一定会问&quot;怎么选模型&quot;和&quot;怎么省钱&quot;——因为这是团队每天真实的决策。本篇 5 题从选型框架…</p>
+  <div class="page-meta">
+    <span>约 23 分钟</span><span>9,217 字</span><span>0 个代码示例</span>
+  </div>
+</header>
+<div class="md"><blockquote>
+<p>对应课件：agent核心/05（本地模型）、06（会话管理与缓存命中）、15（评测）。国内 AI 应用面试的<strong>特色必考区</strong>：面试官几乎一定会问"怎么选模型"和"怎么省钱"——因为这是团队每天真实的决策。本篇 5 题从选型框架一路打到成本治理：<strong>选型、开源与本地化、降本组合拳、语义缓存、模型升级管理</strong>。</p>
+</blockquote>
+<hr />
+<h2 id="q01-给你一个新项目模型怎么选">Q01 · 给你一个新项目，模型怎么选？</h2>
+<blockquote>
+<p>难度：★★★ ｜ 频率：极高 ｜ 对应课件：agent核心/05、15</p>
+</blockquote>
+<p><strong>面试官</strong>：新起一个 LLM 应用项目（比如企业问答机器人），模型选型你走什么流程？直接挑最强的吗？</p>
+<p><strong>第 1 层追问：选型维度</strong></p>
+<blockquote>
+<p>先给你的评估框架。</p>
+</blockquote>
+<p>参考回答：五个维度按序评估。<strong>一，任务能力</strong>：结构化输出、Tool Calling、长上下文——<strong>先列任务刚需再对模型</strong>（要 Agent 的项目选不支持 function calling 的模型是起步就错）。<strong>二，中文能力</strong>：中文场景要用中文语料占比高的模型实测（英文榜单排名不迁移——中文分词、成语、公文风格是另一套功底）。<strong>三，延迟</strong>：交互场景盯<strong>首 token 延迟</strong>（TTFT），批处理场景盯吞吐。<strong>四，成本</strong>：按预估调用量算月账单（单价 × token 量 × 轮数——<strong>Agent 场景要乘上多轮放大系数</strong>，这一步常被漏算）。<strong>五，合规与部署</strong>：数据出不了域 → 本地部署硬约束（Q02 展开）。<strong>框架的用法是"约束先筛、指标再比"</strong>：合规一票筛掉一批，剩下的按任务实测比。</p>
+<p><strong>第 2 层追问：评测定夺</strong></p>
+<blockquote>
+<p>说了维度，最后怎么拍板？</p>
+</blockquote>
+<p>参考回答：<strong>跑评测而不是看榜单</strong>——评测题在排行榜上刷得再高，不代表在你的任务分布上强。选型评测三步：<strong>一，构造 20-50 条自家任务题</strong>（真实用户问题抽样，含负例和边界）；<strong>二，候选模型同条件跑</strong>（同提示词、同温度设定、每题 5 次看分布——Agent 场景还要看<strong>轨迹质量</strong>：工具选对没、轮次合理没，不只是最终答案）；<strong>三，按业务指标裁定</strong>：正确率、格式全对率、拒答准确率、<strong>单任务平均成本</strong>（轮次 × 单价——模型 A 正确率高 3% 但单任务贵 5 倍，多数业务选便宜的）。<strong>榜单的正确用法是初筛</strong>（Top 30 里挑 3 个候选），<strong>不是终审</strong>。</p>
+<p><strong>第 3 层追问：组合策略</strong></p>
+<blockquote>
+<p>一定要全项目用一个模型吗？</p>
+</blockquote>
+<p>参考回答：<strong>分层混用是常态</strong>（降本篇 Q03 的伏笔）。典型分法：<strong>主力模型</strong>（复杂生成、Agent 主循环——中高档）；<strong>轻量模型</strong>（分类、路由、简单抽取——小模型，便宜一个数量级）；<strong>本地模型</strong>（敏感数据处理、开发调试——Q02）。<strong>配套要求</strong>：路由层决定谁接哪个活（简单分类别烧大模型）、<strong>提示词按模型档位分别调</strong>（小模型需要更结构化更少隐式推理的提示——同一个提示词在不同档位的表现差异巨大，提示词篇 Q06 的变体矩阵）。<strong>单一模型的反例</strong>：全用旗舰模型，成本失控；全用小模型，复杂任务质量塌——<strong>"按任务难度分配算力"是成本治理的第一原则</strong>。</p>
+<p><strong>第 4 层追问：动态视角</strong></p>
+<blockquote>
+<p>选完就完了？</p>
+</blockquote>
+<p>参考回答：选型是<strong>持续决策不是一次性决定</strong>。三个动因：<strong>新模型发布</strong>（半年一代的节奏，要定期重评——Q05 展开）；<strong>价格变动</strong>（API 降价、新供应商入局，成本维度权重变了）；<strong>任务演化</strong>（业务从问答长成 Agent，能力需求升级）。<strong>但换模型有真实成本</strong>：回归测试、提示词适配、边缘 case 重新踩坑——所以纪律是"<strong>触发式重评，不追新式换血</strong>"：成本降 X%、能力需求变化、季度例行——三选一触发才评估。<strong>把"选型"答成"一次性选个最好的"是初级信号，答成"建立持续评估机制"是资深信号</strong>。</p>
+<h3 id="考察意图与踩坑点">考察意图与踩坑点</h3>
+<ul>
+<li>考察意图：这是国内 AI 应用岗的<strong>开场必考题</strong>；考察有没有"约束→评测→分层→持续"的完整决策链，而不是"我听说 GPT 最强"。</li>
+<li>踩坑点：报榜单排名当依据；不算 Agent 的多轮放大成本；全项目单模型；选完就不看了。</li>
+<li>一句话总结：约束先筛（合规/能力）→ 自家任务实测拍板（榜单只配初筛）→ 分层混用按难度分配算力 → 触发式重评不追新。</li>
+</ul>
+<hr />
+<h2 id="q02-什么时候用开源模型本地部署ollama-做了什么">Q02 · 什么时候用开源模型本地部署？Ollama 做了什么？</h2>
+<blockquote>
+<p>难度：★★★ ｜ 频率：高 ｜ 对应课件：agent核心/05-本地模型与消息结构</p>
+</blockquote>
+<p><strong>面试官</strong>：什么场景你会选本地部署而不是调 API？Ollama 跑的模型和原版一样吗？"量化"是什么？</p>
+<p><strong>第 1 层追问：场景判断</strong></p>
+<blockquote>
+<p>本地化的真实动因。</p>
+</blockquote>
+<p>参考回答：四个动因，重要性递减。<strong>一，数据合规</strong>（最硬）：医疗、金融、政务的数据出不了域——这不是成本问题是<strong>合规红线</strong>，本地部署是唯一选项。<strong>二，成本结构</strong>：超大量调用（每天千万级 token）时 API 费用超过自持算力成本——<strong>但要把运维人力算进去</strong>（自建 = 买卡 + 电费 + 运维 + 容量规划，隐性成本常被低估）。<strong>三，低延迟</strong>：内网推理省去公网往返，对实时交互场景有价值。<strong>四，可控性</strong>：离线可用、不受供应商限流/停服影响。<strong>反向清单</strong>（什么时候别本地化）：团队没 ML 运维能力、调用量小（API 便宜得多）、要最新最强的模型能力——<strong>本地化的合理默认是"合规驱动"，性能和成本驱动的要算总账</strong>。</p>
+<p><strong>第 2 层追问：量化</strong></p>
+<blockquote>
+<p>本地模型"和原版一样吗"——量化说清楚。</p>
+</blockquote>
+<p>参考回答：<strong>不一样，量化是有损压缩</strong>。原理：原始权重是 16 位浮点（FP16），<strong>量化把权重压到更低精度</strong>（8 位、4 位）——显存近乎成比例下降（7B 模型 FP16 要 14GB+，4-bit 只要 4-5GB，<strong>消费级显卡就能跑</strong>）。代价：数值精度损失带来<strong>能力轻微下降</strong>——通用能力（对话流畅度）几乎无损，<strong>精细能力（复杂推理、长上下文注意力）在低量化档位可测地退化</strong>。档位直觉：<strong>Q8 接近无损、Q5/Q4 是甜点（体积能力比最优）、Q3 以下明显变笨</strong>。工程结论要诚实：<strong>本地小模型 + 量化 ≈ 中等能力 + 完全可控</strong>，对"分类、抽取、简单对话"绰绰有余，对"复杂推理 Agent"不够——<strong>任务难度决定本地化可行性，量化只是让硬件门槛降下来</strong>。</p>
+<p><strong>第 3 层追问：Ollama 的角色</strong></p>
+<blockquote>
+<p>Ollama 到底做了什么？</p>
+</blockquote>
+<p>参考回答：<strong>Ollama 把"本地跑模型"从研究级操作变成一条命令</strong>——<code>ollama run qwen3:4b</code> 背后它干了四件事：<strong>一，模型管理</strong>：拉取预打包的量化模型（GGUF 格式——llama.cpp 生态的标准：单文件包含权重+分词器+配置，可移植）；<strong>二，推理引擎</strong>：内嵌 llama.cpp（CPU/GPU 自动调度）；<strong>三，服务化</strong>：起本地 HTTP 服务，<strong>暴露 OpenAI 兼容的 chat 接口</strong>——你写的 OpenAI 客户端代码改个 base_url 就能跑本地模型（这正是课程 agent核心/05 的用法：<strong>开发期用本地模型省 API 费，代码零改动切线上</strong>）；<strong>四，简化运维</strong>：模型版本管理、内存/显存自动卸载策略。<strong>定位</strong>：个人开发和小团队的本地推理<strong>入口</strong>；生产级（并发、弹性、多机）要 vLLM/TGI 这类专业推理服务——<strong>Ollama 是开发态工具，不是生产态方案</strong>，这个区分要主动讲。</p>
+<p><strong>第 4 层追问：混合架构</strong></p>
+<blockquote>
+<p>实际系统里本地和 API 怎么共存？</p>
+</blockquote>
+<p>参考回答：成熟形态是<strong>三层混合</strong>。<strong>一，敏感层（本地）</strong>：涉及用户隐私/内部数据的预处理（脱敏分类、敏感实体抽取）——数据不出域的前提下完成粗加工。<strong>二，公开层（API）</strong>：通用生成、复杂推理——传出去的内容已脱敏。<strong>三，开发态（本地）</strong>：团队的日常开发调试全走本地小模型（<strong>省钱 + 快 + 无限流</strong>），CI 的回归评测也跑本地（评测用固定小模型成本低且稳定）；上线前的质量评测再跑目标模型。<strong>配套纪律</strong>：接口层统一抽象（OpenAI 兼容协议），<strong>切换靠配置不靠改代码</strong>——这同时是防供应商锁定的架构（Q05 呼应）。<strong>"本地不是 API 的替代，是分层架构的一层"</strong>——这个架构观是答案的加分收尾。</p>
+<h3 id="考察意图与踩坑点_1">考察意图与踩坑点</h3>
+<ul>
+<li>考察意图：本地化是<strong>国内特色高频题</strong>（合规驱动），量化考基本概念；"Ollama 是开发态不是生产态"的定位区分能筛出真用过的人。</li>
+<li>踩坑点：把量化说成"压缩文件"（是精度压缩不是 zip）；认为本地永远更便宜（不算运维账）；拿 Ollama 直接扛生产并发。</li>
+<li>一句话总结：合规是本地化最硬的理由；量化 = 有损压精度（Q4/Q5 是甜点），能力上限仍由模型大小定；Ollama = GGUF + llama.cpp + OpenAI 兼容服务的开发态封装；生产走本地+API 混合分层。</li>
+</ul>
+<hr />
+<h2 id="q03-llm-应用的成本怎么降给一套降本组合拳">Q03 · LLM 应用的成本怎么降？给一套降本组合拳</h2>
+<blockquote>
+<p>难度：★★★★ ｜ 频率：极高（国内特色必考）｜ 对应课件：agent核心/06、13</p>
+</blockquote>
+<p><strong>面试官</strong>：账单每月 5 万美金，老板让你把成本砍到 2 万。别只说"换便宜模型"，给一套有优先级的组合拳。</p>
+<p><strong>第 1 层追问：先算账</strong></p>
+<blockquote>
+<p>动手前先做什么？</p>
+</blockquote>
+<p>参考回答：<strong>先拆账单，不看账单的降本全是瞎打</strong>。按两个维度分解：<strong>按环节</strong>（哪类任务烧的——通常 80% 成本来自 20% 的调用类型）；<strong>按结构</strong>（输入 token vs 输出 token 的比例——<strong>输入占大头</strong>的系统降输入（砍上下文、压缩历史），输出占大头的降输出（限制生成长度））。两个常被漏算的放大器：<strong>Agent 的多轮系数</strong>（一次任务 10 轮 = 上下文重发 10 次，历史越滚越贵——<strong>上下文每轮重发是 Agent 成本的隐形大头</strong>）；<strong>缓存命中情况</strong>（有没有吃前缀缓存）。<strong>拆完账的降本才是外科手术：找到大头、算每招的预期收益、按 ROI 排序</strong>。</p>
+<p><strong>第 2 层追问：组合拳</strong></p>
+<blockquote>
+<p>出招，按优先级。</p>
+</blockquote>
+<p>参考回答：六招按 ROI 降序：<strong>一，前缀缓存</strong>（最便宜的一招）：稳定内容（system prompt、工具定义、历史）放前缀命中 KV 缓存——<strong>架构调整小、部分服务商缓存价格差一个数量级</strong>（LLM 原理篇 Q07 的落地）。<strong>二，上下文裁剪与压缩</strong>：裁历史（摘要+保近期）、<strong>砍工具返回的原始大文本</strong>（网页清洗截断——Agent 里最大的隐形输入）、工具只挂必要的（tools schema 每轮都计费）。<strong>三，语义缓存</strong>：高频相似问题直接回缓存答案（Q04 专讲）。<strong>四，小模型路由</strong>：分类/抽取/改写这类简单活切小模型——<strong>一个数量级的单价差</strong>。<strong>五，模型降档重评</strong>：现在用的旗舰，跑评测看<strong>中档模型是不是 95 分和 99 分的区别</strong>（多数任务配得上中档）。<strong>六，输出约束</strong>：max_tokens 限制、要求简洁的提示词调整——输出 token 通常比输入贵，<strong>生成长度减半成本近乎减半</strong>。</p>
+<p><strong>第 3 层追问：防降本降质</strong></p>
+<blockquote>
+<p>砍成本把质量砍塌了怎么办？</p>
+</blockquote>
+<p>参考回答：<strong>每招都要有质量护栏</strong>，这是降本的工程纪律。<strong>降本前</strong>：固定评测集（含负例）+ 记录基线分——<strong>没有基线就没有"没降质"的证据</strong>。<strong>降本中</strong>：逐招灰度——每招单独上、单独测（<strong>组合上线无法归因哪招伤质量</strong>）。<strong>降本后</strong>：线上指标盯回退——正确率、拒答率、用户负反馈率（08 篇的分维监控）。<strong>典型 tradeoff 心里有数</strong>：上下文砍太狠 → 长会话失忆（用户抱怨"忘记我说过什么"）；小模型路由切太多 → 复杂任务质量塌（路由阈值要保守）；输出限制太死 → 答案截断（格式任务碎掉）。<strong>降本的本质是"用可量化的质量损耗换成本"——把损耗控制在用户感知不到的水位，是砍到 2 万而不是砍塌的秘诀</strong>。</p>
+<p><strong>第 4 层追问：从架构级想</strong></p>
+<blockquote>
+<p>更高一层怎么根治？</p>
+</blockquote>
+<p>参考回答：三个架构级答案（组合拳之上的终局）。<strong>一，改产品形态</strong>：最贵的调用是"开放生成"——把部分生成改成<strong>模板+填空</strong>（报告类输出用模板骨架，模型只填分析段落）、<strong>缓存复用</strong>（FAQ 类问题预生成）——<strong>需求侧省的钱比供给侧调参大一个数量级</strong>。<strong>二，异步化削峰</strong>：实时调用量中很多可转异步（批处理窗口、夜间批量跑非紧急任务——<strong>批处理接口通常有折扣</strong>）。<strong>三，成本可见性进组织</strong>：<strong>成本按 feature/团队打标签归集</strong>（每个功能烧多少钱看得见），让产品决策带着价格标签做——"这个炫酷功能月费 8000，砍不砍"变成数据决策。<strong>最高级的降本不是抠参数，是让"每一次模型调用都物有所值"变成组织的默认判断</strong>。</p>
+<h3 id="考察意图与踩坑点_2">考察意图与踩坑点</h3>
+<ul>
+<li>考察意图：<strong>国内面试的特色压轴题</strong>——考察有没有真实算过账、知不知道 ROI 排序；只答"换便宜模型"是零分答案，答出六招+质量护栏+架构层是满分结构。</li>
+<li>踩坑点：不拆账直接开药；不知道 Agent 上下文重发是大头；降本不看质量基线；想不出参数层之外的任何手段。</li>
+<li>一句话总结：先拆账找大头；前缀缓存→裁剪→语义缓存→小模型路由→降档→限输出按 ROI 出招；每招配质量护栏灰度归因；终局是需求侧改造+成本归集进组织。</li>
+</ul>
+<hr />
+<h2 id="q04-语义缓存怎么设计误命中怎么办">Q04 · 语义缓存怎么设计？误命中怎么办？</h2>
+<blockquote>
+<p>难度：★★★★ ｜ 频率：高 ｜ 对应课件：agent核心/06（缓存命中）、LangChain指南/07（嵌入）</p>
+</blockquote>
+<p><strong>面试官</strong>：降本方案里你提到语义缓存。展开讲：怎么判断"两个问题算同一个"？误命中把错误答案给了用户，这个风险怎么控制？</p>
+<p><strong>第 1 层追问：原理与结构</strong></p>
+<blockquote>
+<p>先讲机制。</p>
+</blockquote>
+<p>参考回答：<strong>语义缓存 = 用"意思相近"代替"字面相同"做缓存键</strong>。精确缓存（字典 key）对 LLM 无用——"退款政策"和"怎么退货"字面不同但意图同，命中率趋近零。语义缓存的结构：<strong>问题 → embedding → 在缓存库里做相似度检索</strong>（就是一个迷你 RAG：缓存的"知识"是历史问答对）——相似度超过阈值就返回缓存答案。<strong>一个真实数据要先给</strong>：高频业务问题呈<strong>头部集中分布</strong>（Top 20% 的问题占 80% 的流量——FAQ 型产品尤其极端）——这就是语义缓存收益的统计学根基：<strong>命中一次省一次完整生成</strong>（延迟和成本双省，首字延迟从秒级降到毫秒级）。</p>
+<p><strong>第 2 层追问：核心权衡</strong></p>
+<blockquote>
+<p>"意思相近"的阈值怎么定？误命中呢？</p>
+</blockquote>
+<p>参考回答：<strong>这是语义缓存的核心 tradeoff，必须摊开讲</strong>：<strong>阈值高</strong> → 命中率低（省不了钱）但安全；<strong>阈值低</strong> → 命中率高但<strong>误命中</strong>——把"怎么退货"的答案给了"退货要多久"，<strong>用户收到答非所问，比慢更伤体验</strong>。治理三件：<strong>一，阈值分场景调</strong>：闲聊/FAQ 类可以激进（0.9），事实/个性化类保守（0.95+）或干脆不缓存（带用户 ID、带上下文的问答<strong>必须键入个性化维度</strong>——"我的订单"对每个人答案不同，<strong>个性化请求禁用语义缓存</strong>是铁律）。<strong>二，命中也给退路</strong>：返回缓存答案时标注"为您找到相似问题的回答"+ 提供重问入口——<strong>把误命中的伤害从"错误答案"降级为"不太对口但可纠正"</strong>。<strong>三，向量+关键词双重校验</strong>：相似度高 + 关键实体一致（订单/退款/政策词重叠）才命中——双条件降误命中。</p>
+<p><strong>第 3 层追问：失效问题</strong></p>
+<blockquote>
+<p>答案变了缓存还旧着呢？</p>
+</blockquote>
+<p>参考回答：<strong>失效是运维级难题，四个失效源各有对策</strong>。<strong>一，知识更新</strong>（RAG 知识库改版）→ <strong>缓存条目关联知识版本号</strong>，库更新批量失效相关条目（按来源打标）；<strong>二，提示词/模型变更</strong>（提示词一改，历史答案的生成条件全变）→ <strong>提示词 hash 进缓存键</strong>，版本变更全量失效（02 篇故障里"静默退化"的教训对称适用：<strong>缓存不清 = 改了等于没改</strong>）；<strong>三，时间敏感答案</strong>（"今天有什么活动"）→ TTL 短设或不缓存；<strong>四，业务规则变更</strong>（价格改了）→ 规则版本号进键。<strong>架构上的诚实结论</strong>：失效做不干净的语义缓存是负资产（<strong>用户拿旧答案，比慢更糟</strong>）——宁可命中率低也别旧数据久留。</p>
+<p><strong>第 4 层追问：监控与演进</strong></p>
+<blockquote>
+<p>怎么知道缓存干得好不好？</p>
+</blockquote>
+<p>参考回答：三个指标一组告警。<strong>命中率</strong>（总收益的直接指标——低于预期说明头部集中假设不成立，产品形态不适合）；<strong>误命中反馈率</strong>（用户对缓存答案点"不对/重新回答"的比例——<strong>这是误命中的直接探测器</strong>，超过 1-2% 就该收紧阈值）；<strong>平均相似度分布</strong>（观察实际请求的相似度直方图，阈值应该卡在"双峰之间"——同义问题和不同问题在分布上分离，阈值卡在谷底）。<strong>演进方向</strong>：缓存条目带 TTL+LRU 淘汰（容量控制）；<strong>只缓存"高价值答案"</strong>（生成成本高、时效长、通用性强的问题——不是什么都值得缓存）；<strong>缓存命中也写日志</strong>（可回溯"用户什么时候拿到了缓存的什么答案"——出问题能审计）。语义缓存是<strong>降本里技术含量最高的一招</strong>——答好这题 = 嵌入检索 + 缓存工程 + 风险治理的复合能力证明。</p>
+<h3 id="考察意图与踩坑点_3">考察意图与踩坑点</h3>
+<ul>
+<li>考察意图：语义缓存是 RAG 技术在成本域的<strong>复用题</strong>，面试官爱用它一箭双雕（考嵌入应用 + 考风险意识）；"个性化请求禁缓存"和"失效管理"两个深水区答得出就是做过的人。</li>
+<li>踩坑点：不知道误命中风险（只吹收益）；个性化问题也缓存（数据事故）；失效不管（旧答案满天飞）；没有"重问"退路设计。</li>
+<li>一句话总结：语义缓存 = 问题级迷你 RAG；阈值是命中率与误命中的权衡，个性化禁用；版本号进键管失效；命中率+误命中反馈率+相似度分布三指标监控。</li>
+</ul>
+<hr />
+<h2 id="q05-生产环境怎么升级模型版本换模型的隐藏成本">Q05 · 生产环境怎么升级模型版本？换模型的隐藏成本？</h2>
+<blockquote>
+<p>难度：★★★ ｜ 频率：中（答好极加分）｜ 对应课件：agent核心/15（评测）、06</p>
+</blockquote>
+<p><strong>面试官</strong>：新模型发布了，你们直接把 API 的 model 参数改了上线吗？说一次你经历/设想的模型升级流程。另外，"供应商锁定"你们怎么防？</p>
+<p><strong>第 1 层追问：为什么不能直接换</strong></p>
+<blockquote>
+<p>直接改参数会出什么事？</p>
+</blockquote>
+<p>参考回答：<strong>换模型不是改一个字符串，是换一个概率系统</strong>。四个风险：<strong>一，行为漂移</strong>：同一提示词在不同模型上的行为分布不同——格式全对率、拒答率、工具选择习惯全变（<strong>提示词对旧模型的精细调优对新模型可能失效甚至反效果</strong>——提示词篇 Q06 的变体矩阵：每档模型配自己的提示词版本）。<strong>二，Agent 行为放大</strong>：单轮差 2% 的工具选择错误率，多轮 Agent 端到端成功率掉 10%+（概率连乘，03 篇 Q08 的教训）——<strong>对话机器人换模型可能只测单轮，Agent 换模型必须测全轨迹</strong>。<strong>三，隐性接口差异</strong>：tool calling 的细节行为、JSON mode 的严格度、思考 token 的处理——协议兼容但行为细节不保证。<strong>四，成本结构变化</strong>：新模型单价、缓存策略不同，月账单悄悄变。<strong>结论：升级 = 一次完整的回归工程</strong>。</p>
+<p><strong>第 2 层追问：升级流程</strong></p>
+<blockquote>
+<p>给一个安全的升级流程。</p>
+</blockquote>
+<p>参考回答：五步。<strong>一，评测先行</strong>：新模型跑全量评测集（质量基线对比）+ <strong>Agent 任务跑轨迹评测</strong>（成功率、轮次、成本——三件套，不能只看答案对错）。<strong>二，提示词适配</strong>：新模型配新变体提示词，分别调优（不是拿旧提示词硬跑）。<strong>三，灰度双跑</strong>：按流量切 5% → 25% → 100%，<strong>新旧模型并跑对照</strong>——线上指标（正确率代理指标、负反馈率、成本、延迟）逐级确认无回退再放量（LangGraph 的 fork 思想在生产路由层的应用：同输入分叉两模型对比）。<strong>四，回滚预案</strong>：配置化切换（模型是配置不是代码），<strong>分钟级能退回旧版</strong>——出问题不回滚的原因通常是"没设计回滚"。<strong>五，成本与监控复核</strong>：新模型的账单结构、限流行为、错误率全要重看（不同供应商的 429 行为都不同）。<strong>全程的核心资产还是那套评测集</strong>——没有它，升级就是赌博。</p>
+<p><strong>第 3 层追问：供应商锁定</strong></p>
+<blockquote>
+<p>怎么防被一家锁死？</p>
+</blockquote>
+<p>参考回答：三层解耦。<strong>一，接口抽象层</strong>：业务代码只依赖自家的 LLM 网关/客户端接口（或 OpenAI 兼容协议这层事实标准），<strong>具体供应商在配置层</strong>——换供应商 = 改配置不改代码（系统设计篇 Q05 的网关、本篇 Q02 的混合架构是同一主题）。<strong>二，防"功能锁定"</strong>：各家的私有特性（特有的 tool calling 行为、缓存 API）是锁定的隐形钩子——<strong>用到私有特性要有意识地封装隔离</strong>，别让业务代码直接长在某个供应商的方言上。<strong>三，评测集是迁移资本</strong>：换供应商的成本主要在重调提示词和验证行为——<strong>评测集+提示词变体的存在让"换"从大工程变成中等工程</strong>。诚实边界：解耦不等于可无痛切换——各家行为差异仍要适配，<strong>防锁定的目标是"换得起"，不是"换无痛"</strong>。</p>
+<p><strong>第 4 层追问：组织视角</strong></p>
+<blockquote>
+<p>多久升一次合适？</p>
+</blockquote>
+<p>参考回答：<strong>按触发不按日历</strong>。触发器：<strong>成本触发</strong>（新供应商价格差 30%+）、<strong>能力触发</strong>（业务需要的能力现有模型达不到）、<strong>质量触发</strong>（竞品体验明显超出）、<strong>风险触发</strong>（供应商停服/限流/政策变化）。<strong>节奏纪律</strong>：每次升级都是一次回归工程（有真实人力成本）——<strong>"新模型必升"是错误策略</strong>，要算"升级成本 vs 收益差"（评测集分数涨 1 分但回归工程花两周，多数业务不划算）。<strong>反面教材</strong>：追新式升级——每个新模型都上，团队疲于回归，线上质量反而抖动（频繁换模型 = 频繁引入未验证行为）。<strong>高级答案的收尾</strong>：模型升级管理的本质是<strong>把"概率系统的行为变更"纳入变更管理</strong>——和代码发布同级的纪律（评测门禁、灰度、回滚），<strong>很多团队吃过"只改了个模型名，线上崩了"的亏才知道这一点</strong>。</p>
+<h3 id="考察意图与踩坑点_4">考察意图与踩坑点</h3>
+<ul>
+<li>考察意图：模型升级是<strong>"做过生产 LLM 应用"的活体证明题</strong>——没守过线上的人答不出灰度/回滚/轨迹评测这套；供应商锁定考架构前瞻性。</li>
+<li>踩坑点：直接改 model 参数上线（真实事故来源）；Agent 升级只测单轮；没有回滚预案；"新模型必升"的追新心态。</li>
+<li>一句话总结：换模型 = 换概率系统：全量评测+轨迹测试+提示词适配+灰度双跑+配置化回滚；抽象层防锁定（换得起≠换无痛）；按触发升级不按日历。</li>
+</ul>
+<hr />
+<h2 id="本篇速记卡">本篇速记卡</h2>
+<table>
+<thead>
+<tr>
+<th>题</th>
+<th>一句话核心</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Q01 选型</td>
+<td>约束先筛、自家任务实测、榜单只配初筛；分层混用；触发式重评</td>
+</tr>
+<tr>
+<td>Q02 本地化</td>
+<td>合规是最硬理由；量化 = 有损压精度（Q4/Q5 甜点）；Ollama 开发态、生产混合分层</td>
+</tr>
+<tr>
+<td>Q03 降本</td>
+<td>先拆账；缓存→裁剪→语义缓存→路由→降档→限输出按 ROI；每招配质量护栏</td>
+</tr>
+<tr>
+<td>Q04 语义缓存</td>
+<td>问题级迷你 RAG；阈值权衡误命中、个性化禁用、版本号进键管失效</td>
+</tr>
+<tr>
+<td>Q05 升级</td>
+<td>换模型 = 换概率系统：评测+灰度+回滚；抽象层防锁定；按触发升级不追新</td>
+</tr>
+</tbody>
+</table></div>
+
+      </article>
+<nav class="pager"><a class="pg-card pg-prev" href="../interview/11-ti-shi-ci-gong-cheng-yu-an-quan-pian.html"><span class="pg-label">← 上一篇</span><span class="pg-title">提示词工程与安全篇</span><span class="pg-mod">面试题库</span></a><span class="pg-card pg-empty"></span></nav>
+    </div>
+    <footer class="foot">
+      <span>深栈 DeepStack · AI Agent 工程师转型训练营配套文档</span>
+    </footer>
+  </main>
+<nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#q01-给你一个新项目模型怎么选">Q01 · 给你一个新项目，模型怎么选？</a><a class="toc-link toc-h3" href="#考察意图与踩坑点">考察意图与踩坑点</a><a class="toc-link toc-h2" href="#q02-什么时候用开源模型本地部署ollama-做了什么">Q02 · 什么时候用开源模型本地部署？Ollama 做了什么？</a><a class="toc-link toc-h3" href="#考察意图与踩坑点_1">考察意图与踩坑点</a><a class="toc-link toc-h2" href="#q03-llm-应用的成本怎么降给一套降本组合拳">Q03 · LLM 应用的成本怎么降？给一套降本组合拳</a><a class="toc-link toc-h3" href="#考察意图与踩坑点_2">考察意图与踩坑点</a><a class="toc-link toc-h2" href="#q04-语义缓存怎么设计误命中怎么办">Q04 · 语义缓存怎么设计？误命中怎么办？</a><a class="toc-link toc-h3" href="#考察意图与踩坑点_3">考察意图与踩坑点</a><a class="toc-link toc-h2" href="#q05-生产环境怎么升级模型版本换模型的隐藏成本">Q05 · 生产环境怎么升级模型版本？换模型的隐藏成本？</a><a class="toc-link toc-h3" href="#考察意图与踩坑点_4">考察意图与踩坑点</a><a class="toc-link toc-h2" href="#本篇速记卡">本篇速记卡</a></nav>
+</div>
+<div class="sb-mask" id="sbMask"></div>
+<script src="../assets/app.js"></script>
+</body>
+</html>

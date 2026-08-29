@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>11 · MCP 全景 · 深栈 DeepStack 课程文档</title>
+<meta name="description" content="第 10 章的 Skill 证明了一件事：一份写得清楚的说明书，就能让模型获得一项新技能。但文档型能力有自己的边界——它教模型「怎么把一件事做好」，模型的手还是原来那双。想让任意 Agent 都能直接查天气、读数据库、操…">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%23d9c39a' text-anchor='middle'%3EDS%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+<div class="progress" id="progress"></div>
+
+<div class="layout">
+<aside class="sidebar" id="sidebar">
+  <div class="sb-head">
+    <a class="brand" href="../index.html">
+      <span class="brand-mark">DS</span>
+      <span class="brand-text"><b>深栈 DeepStack</b><i>AI Agent 工程师转型训练营</i></span>
+    </a>
+    <button class="sb-close" id="sbClose" aria-label="关闭目录">✕</button>
+  </div>
+  <div class="sb-search"><input type="search" id="searchInput" placeholder="搜索 123 篇文档… ( / )" autocomplete="off">
+    <div class="sb-results" id="searchResults"></div></div>
+  <nav class="sb-nav">
+    <section class="sb-group" data-mod="python">
+      <a class="sb-group-title" href="../modules/python.html" data-toggle="python">
+        <span class="sb-num">01</span>
+        <span class="sb-group-text"><b>Python 与数据实践</b><i>31 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../python/01-huan-jing-da-jian-yu-ban-ben-guan-li.html"><span class="sb-item-num">01</span><span class="sb-item-title">环境搭建与版本管理</span></a>
+        <a class="sb-item" href="../python/02-bian-liang-biao-da-shi-yu-liu-cheng-kong-zhi.html"><span class="sb-item-num">02</span><span class="sb-item-title">变量、表达式与流程控制</span></a>
+        <a class="sb-item" href="../python/03-xu-lie-zi-dian-yu-ji-he.html"><span class="sb-item-num">03</span><span class="sb-item-title">序列、字典与集合</span></a>
+        <a class="sb-item" href="../python/04-han-shu-she-ji-yu-lambda.html"><span class="sb-item-num">04</span><span class="sb-item-title">函数设计与 lambda</span></a>
+        <a class="sb-item" href="../python/05-zuo-yong-yu-gui-ze-yu-bi-bao.html"><span class="sb-item-num">05</span><span class="sb-item-title">作用域规则与闭包</span></a>
+        <a class="sb-item" href="../python/06-lei-de-ding-yi-yu-shi-li-hua.html"><span class="sb-item-num">06</span><span class="sb-item-title">类的定义与实例化</span></a>
+        <a class="sb-item" href="../python/07-lei-xing-pan-ding-yu-chou-xiang-ji-lei.html"><span class="sb-item-num">07</span><span class="sb-item-title">类型判定与抽象基类</span></a>
+        <a class="sb-item" href="../python/08-mo-shu-fang-fa-quan-jing.html"><span class="sb-item-num">08</span><span class="sb-item-title">魔术方法全景</span></a>
+        <a class="sb-item" href="../python/09-miao-shu-fu-yu-yuan-lei.html"><span class="sb-item-num">09</span><span class="sb-item-title">描述符与元类</span></a>
+        <a class="sb-item" href="../python/10-zhuang-shi-qi.html"><span class="sb-item-num">10</span><span class="sb-item-title">装饰器</span></a>
+        <a class="sb-item" href="../python/11-die-dai-xie-yi-yu-sheng-cheng-qi.html"><span class="sb-item-num">11</span><span class="sb-item-title">迭代协议与生成器</span></a>
+        <a class="sb-item" href="../python/12-with-yu-shang-xia-wen-xie-yi.html"><span class="sb-item-num">12</span><span class="sb-item-title">with 与上下文协议</span></a>
+        <a class="sb-item" href="../python/13-yi-chang-ti-xi-yu-chu-li.html"><span class="sb-item-num">13</span><span class="sb-item-title">异常体系与处理</span></a>
+        <a class="sb-item" href="../python/14-lei-xing-biao-zhu.html"><span class="sb-item-num">14</span><span class="sb-item-title">类型标注</span></a>
+        <a class="sb-item" href="../python/15-mo-kuai-yu-bao-de-zu-zhi.html"><span class="sb-item-num">15</span><span class="sb-item-title">模块与包的组织</span></a>
+        <a class="sb-item" href="../python/16-biao-zhun-ku-xun-li.html"><span class="sb-item-num">16</span><span class="sb-item-title">标准库巡礼</span></a>
+        <a class="sb-item" href="../python/17-yi-lai-guan-li-yu-di-san-fang-ku.html"><span class="sb-item-num">17</span><span class="sb-item-title">依赖管理与第三方库</span></a>
+        <a class="sb-item" href="../python/18-xian-cheng-yu-jin-cheng.html"><span class="sb-item-num">18</span><span class="sb-item-title">线程与进程</span></a>
+        <a class="sb-item" href="../python/19-shi-jian-xun-huan.html"><span class="sb-item-num">19</span><span class="sb-item-title">事件循环</span></a>
+        <a class="sb-item" href="../python/20-future-yu-xie-cheng.html"><span class="sb-item-num">20</span><span class="sb-item-title">Future 与协程</span></a>
+        <a class="sb-item" href="../python/21-asyncio-shi-zhan.html"><span class="sb-item-num">21</span><span class="sb-item-title">asyncio 实战</span></a>
+        <a class="sb-item" href="../python/22-gou-jian-yu-fa-bu.html"><span class="sb-item-num">22</span><span class="sb-item-title">构建与发布</span></a>
+        <a class="sb-item" href="../python/23-gong-cheng-hua-gong-ju-lian.html"><span class="sb-item-num">23</span><span class="sb-item-title">工程化工具链</span></a>
+        <a class="sb-item" href="../python/24-monorepo-yu-tiao-shi.html"><span class="sb-item-num">24</span><span class="sb-item-title">monorepo 与调试</span></a>
+        <a class="sb-item" href="../python/25-jupyter-jiao-hu-huan-jing.html"><span class="sb-item-num">25</span><span class="sb-item-title">Jupyter 交互环境</span></a>
+        <a class="sb-item" href="../python/26-numpy-shu-zu-yu-xiang-liang-hua.html"><span class="sb-item-num">26</span><span class="sb-item-title">NumPy 数组与向量化</span></a>
+        <a class="sb-item" href="../python/27-pandas-shu-ju-jie-gou.html"><span class="sb-item-num">27</span><span class="sb-item-title">Pandas 数据结构</span></a>
+        <a class="sb-item" href="../python/28-pandas-shu-ju-qing-xi.html"><span class="sb-item-num">28</span><span class="sb-item-title">Pandas 数据清洗</span></a>
+        <a class="sb-item" href="../python/29-matplotlib-hui-tu-ti-xi.html"><span class="sb-item-num">29</span><span class="sb-item-title">Matplotlib 绘图体系</span></a>
+        <a class="sb-item" href="../python/30-matplotlib-dong-hua-yu-jiao-hu.html"><span class="sb-item-num">30</span><span class="sb-item-title">Matplotlib 动画与交互</span></a>
+        <a class="sb-item" href="../python/31-seaborn-tong-ji-ke-shi-hua.html"><span class="sb-item-num">31</span><span class="sb-item-title">Seaborn 统计可视化</span></a>
+      </div>
+    </section>
+    <section class="sb-group open" data-mod="agent">
+      <a class="sb-group-title" href="../modules/agent.html" data-toggle="agent">
+        <span class="sb-num">02</span>
+        <span class="sb-group-text"><b>Agent 核心</b><i>15 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../agent/01-token-yu-ci-qian-ru.html"><span class="sb-item-num">01</span><span class="sb-item-title">Token 与词嵌入</span></a>
+        <a class="sb-item" href="../agent/02-qian-xiang-chuan-bo-yu-fan-xiang-chuan-bo.html"><span class="sb-item-num">02</span><span class="sb-item-title">前向传播与反向传播</span></a>
+        <a class="sb-item" href="../agent/03-zhu-yi-li-ji-zhi-yu-transformer-jia-gou.html"><span class="sb-item-num">03</span><span class="sb-item-title">注意力机制与 Transformer 架构</span></a>
+        <a class="sb-item" href="../agent/04-yu-xun-lian-rlhf-yu-cai-yang-kv-cache.html"><span class="sb-item-num">04</span><span class="sb-item-title">预训练、RLHF 与采样（KV Cache）</span></a>
+        <a class="sb-item" href="../agent/05-ben-di-mo-xing-yu-xiao-xi-jie-gou.html"><span class="sb-item-num">05</span><span class="sb-item-title">本地模型与消息结构</span></a>
+        <a class="sb-item" href="../agent/06-hui-hua-guan-li-yu-json-shu-chu.html"><span class="sb-item-num">06</span><span class="sb-item-title">会话管理与 JSON 输出</span></a>
+        <a class="sb-item" href="../agent/07-tool-calling-xie-yi-yu-feng-zhuang.html"><span class="sb-item-num">07</span><span class="sb-item-title">Tool Calling：协议与封装</span></a>
+        <a class="sb-item" href="../agent/08-react-mo-shi-yu-zhu-xun-huan.html"><span class="sb-item-num">08</span><span class="sb-item-title">ReAct 模式与主循环</span></a>
+        <a class="sb-item" href="../agent/09-shi-zhan-deep-research-agent.html"><span class="sb-item-num">09</span><span class="sb-item-title">实战：Deep Research Agent</span></a>
+        <a class="sb-item" href="../agent/10-skill-yu-jian-jin-shi-pi-lu.html"><span class="sb-item-num">10</span><span class="sb-item-title">Skill 与渐进式披露</span></a>
+        <a class="sb-item current" href="../agent/11-mcp-quan-jing.html"><span class="sb-item-num">11</span><span class="sb-item-title">MCP 全景</span></a>
+        <a class="sb-item" href="../agent/12-duo-agent-yu-xuan-xing-ce-lve.html"><span class="sb-item-num">12</span><span class="sb-item-title">多 Agent 与选型策略</span></a>
+        <a class="sb-item" href="../agent/13-ti-shi-ci-gong-cheng-yu-shang-xia-wen-gong.html"><span class="sb-item-num">13</span><span class="sb-item-title">提示词工程与上下文工程</span></a>
+        <a class="sb-item" href="../agent/14-xun-huan-tu-yu-gu-jia-gong-cheng.html"><span class="sb-item-num">14</span><span class="sb-item-title">循环、图与骨架工程</span></a>
+        <a class="sb-item" href="../agent/15-ji-yi-quan-xian-yu-ping-ce.html"><span class="sb-item-num">15</span><span class="sb-item-title">记忆、权限与评测</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="langchain">
+      <a class="sb-group-title" href="../modules/langchain.html" data-toggle="langchain">
+        <span class="sb-num">03</span>
+        <span class="sb-group-text"><b>LangChain 指南</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langchain/01-ren-shi-langchain.html"><span class="sb-item-num">01</span><span class="sb-item-title">认识 LangChain</span></a>
+        <a class="sb-item" href="../langchain/02-ti-shi-ci-mu-ban-yu-xiao-xi.html"><span class="sb-item-num">02</span><span class="sb-item-title">提示词模板与消息</span></a>
+        <a class="sb-item" href="../langchain/03-lcel-yu-runnable.html"><span class="sb-item-num">03</span><span class="sb-item-title">LCEL 与 Runnable</span></a>
+        <a class="sb-item" href="../langchain/04-liu-shi-yu-bing-fa.html"><span class="sb-item-num">04</span><span class="sb-item-title">流式与并发</span></a>
+        <a class="sb-item" href="../langchain/05-shu-chu-jie-xi-qi.html"><span class="sb-item-num">05</span><span class="sb-item-title">输出解析器</span></a>
+        <a class="sb-item" href="../langchain/06-wen-dang-jia-zai-yu-qie-ge.html"><span class="sb-item-num">06</span><span class="sb-item-title">文档加载与切割</span></a>
+        <a class="sb-item" href="../langchain/07-qian-ru-yu-xiang-liang-ku.html"><span class="sb-item-num">07</span><span class="sb-item-title">嵌入与向量库</span></a>
+        <a class="sb-item" href="../langchain/08-jian-suo-yu-rag.html"><span class="sb-item-num">08</span><span class="sb-item-title">检索与RAG</span></a>
+        <a class="sb-item" href="../langchain/09-dui-hua-ji-yi.html"><span class="sb-item-num">09</span><span class="sb-item-title">对话记忆</span></a>
+        <a class="sb-item" href="../langchain/10-gong-ju-diao-yong.html"><span class="sb-item-num">10</span><span class="sb-item-title">工具调用</span></a>
+        <a class="sb-item" href="../langchain/11-agent.html"><span class="sb-item-num">11</span><span class="sb-item-title">Agent</span></a>
+        <a class="sb-item" href="../langchain/12-hui-diao-yu-tiao-shi-quan-ke-cheng-shou-guan.html"><span class="sb-item-num">12</span><span class="sb-item-title">回调与调试（全课程收官章）</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="langgraph">
+      <a class="sb-group-title" href="../modules/langgraph.html" data-toggle="langgraph">
+        <span class="sb-num">04</span>
+        <span class="sb-group-text"><b>LangGraph 框架指南</b><i>17 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langgraph/01-di-1-zhang-cong-yi-ge-shi-kong-de-jiao.html"><span class="sb-item-num">01</span><span class="sb-item-title">第 1 章 从一个失控的脚本说起</span></a>
+        <a class="sb-item" href="../langgraph/02-di-2-zhang-zui-xiao-ke-yun-xing-tu.html"><span class="sb-item-num">02</span><span class="sb-item-title">第 2 章 最小可运行图</span></a>
+        <a class="sb-item" href="../langgraph/03-di-3-zhang-zhuang-tai-tu-de-shu-ju-xin.html"><span class="sb-item-num">03</span><span class="sb-item-title">第 3 章 状态：图的数据心脏</span></a>
+        <a class="sb-item" href="../langgraph/04-di-4-zhang-rang-liu-cheng-xue-hui-jue-ce.html"><span class="sb-item-num">04</span><span class="sb-item-title">第 4 章 让流程学会决策</span></a>
+        <a class="sb-item" href="../langgraph/05-di-5-zhang-bing-xing-shi-jie-chao-bu-zhi.html"><span class="sb-item-num">05</span><span class="sb-item-title">第 5 章 并行世界：超步执行模型</span></a>
+        <a class="sb-item" href="../langgraph/06-di-6-zhang-command-ba-kong-zhi-quan-jiao-jin.html"><span class="sb-item-num">06</span><span class="sb-item-title">第 6 章 Command：把控制权交进节点</span></a>
+        <a class="sb-item" href="../langgraph/07-di-7-zhang-dong-tai-bing-xing-send-yu-mapreduce.html"><span class="sb-item-num">07</span><span class="sb-item-title">第 7 章 动态并行：Send 与 MapReduce</span></a>
+        <a class="sb-item" href="../langgraph/08-di-8-zhang-gei-tu-zhuang-shang-shou-jiao-gong.html"><span class="sb-item-num">08</span><span class="sb-item-title">第 8 章 给图装上手脚：工具调用</span></a>
+        <a class="sb-item" href="../langgraph/09-di-9-zhang-fu-yong-yu-feng-zhuang-zi-tu.html"><span class="sb-item-num">09</span><span class="sb-item-title">第 9 章 复用与封装：子图</span></a>
+        <a class="sb-item" href="../langgraph/10-di-10-zhang-cong-dan-tu-dao-tuan-dui-duo.html"><span class="sb-item-num">10</span><span class="sb-item-title">第 10 章 从单图到团队：多 Agent 架构</span></a>
+        <a class="sb-item" href="../langgraph/11-di-11-zhang-liu-shi-shu-chu.html"><span class="sb-item-num">11</span><span class="sb-item-title">第 11 章 流式输出</span></a>
+        <a class="sb-item" href="../langgraph/12-di-12-zhang-chi-jiu-hua-checkpointer-yu-xian-cheng.html"><span class="sb-item-num">12</span><span class="sb-item-title">第 12 章 持久化：Checkpointer 与线程</span></a>
+        <a class="sb-item" href="../langgraph/13-di-13-zhang-shi-jian-lv-xing.html"><span class="sb-item-num">13</span><span class="sb-item-title">第 13 章 时间旅行</span></a>
+        <a class="sb-item" href="../langgraph/14-di-14-zhang-zhong-duan-yu-ren-zai-hui-lu.html"><span class="sb-item-num">14</span><span class="sb-item-title">第 14 章 中断与人在回路</span></a>
+        <a class="sb-item" href="../langgraph/15-di-15-zhang-ji-yi-guan-li.html"><span class="sb-item-num">15</span><span class="sb-item-title">第 15 章 记忆管理</span></a>
+        <a class="sb-item" href="../langgraph/16-di-16-zhang-rong-cuo-zhong-shi-chao-shi-yu.html"><span class="sb-item-num">16</span><span class="sb-item-title">第 16 章 容错：重试、超时与兜底</span></a>
+        <a class="sb-item" href="../langgraph/17-di-17-zhang-quan-jing-hui-gu.html"><span class="sb-item-num">17</span><span class="sb-item-title">第 17 章 全景回顾</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="backend">
+      <a class="sb-group-title" href="../modules/backend.html" data-toggle="backend">
+        <span class="sb-num">05</span>
+        <span class="sb-group-text"><b>Python 框架指南</b><i>14 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../backend/01-fastapi-ru-men-yu-asgi.html"><span class="sb-item-num">01</span><span class="sb-item-title">FastAPI 入门与 ASGI</span></a>
+        <a class="sb-item" href="../backend/02-lu-you-yu-qing-qiu-xiang-ying.html"><span class="sb-item-num">02</span><span class="sb-item-title">路由与请求响应</span></a>
+        <a class="sb-item" href="../backend/03-pydantic-shu-ju-jiao-yan-yu-pei-zhi.html"><span class="sb-item-num">03</span><span class="sb-item-title">Pydantic 数据校验与配置</span></a>
+        <a class="sb-item" href="../backend/04-sqlalchemy-yi-bu-yin-qing-yu-hui-hua.html"><span class="sb-item-num">04</span><span class="sb-item-title">SQLAlchemy 异步引擎与会话</span></a>
+        <a class="sb-item" href="../backend/05-orm-jian-mo.html"><span class="sb-item-num">05</span><span class="sb-item-title">ORM 建模</span></a>
+        <a class="sb-item" href="../backend/06-sql-biao-da-shi-yu-shu-ju-cao-zuo.html"><span class="sb-item-num">06</span><span class="sb-item-title">SQL 表达式与数据操作</span></a>
+        <a class="sb-item" href="../backend/07-alembic-shu-ju-qian-yi.html"><span class="sb-item-num">07</span><span class="sb-item-title">Alembic 数据迁移</span></a>
+        <a class="sb-item" href="../backend/08-yi-lai-zhu-ru.html"><span class="sb-item-num">08</span><span class="sb-item-title">依赖注入</span></a>
+        <a class="sb-item" href="../backend/09-tong-yi-yi-chang-chu-li.html"><span class="sb-item-num">09</span><span class="sb-item-title">统一异常处理</span></a>
+        <a class="sb-item" href="../backend/10-zhong-jian-jian.html"><span class="sb-item-num">10</span><span class="sb-item-title">中间件</span></a>
+        <a class="sb-item" href="../backend/11-ren-zheng-yu-jwt.html"><span class="sb-item-num">11</span><span class="sb-item-title">认证与 JWT</span></a>
+        <a class="sb-item" href="../backend/12-pytest-ce-shi.html"><span class="sb-item-num">12</span><span class="sb-item-title">pytest 测试</span></a>
+        <a class="sb-item" href="../backend/13-ri-zhi-loguru.html"><span class="sb-item-num">13</span><span class="sb-item-title">日志 loguru</span></a>
+        <a class="sb-item" href="../backend/14-liu-shi-xiang-ying-sse-yu-websocket.html"><span class="sb-item-num">14</span><span class="sb-item-title">流式响应 SSE 与 WebSocket</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="interview">
+      <a class="sb-group-title" href="../modules/interview.html" data-toggle="interview">
+        <span class="sb-num">06</span>
+        <span class="sb-group-text"><b>面试题库</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../interview/01-llm-yuan-li-pian.html"><span class="sb-item-num">01</span><span class="sb-item-title">LLM 原理篇</span></a>
+        <a class="sb-item" href="../interview/02-rag-yu-jian-suo-pian.html"><span class="sb-item-num">02</span><span class="sb-item-title">RAG 与检索篇</span></a>
+        <a class="sb-item" href="../interview/03-agent-he-xin-pian.html"><span class="sb-item-num">03</span><span class="sb-item-title">Agent 核心篇</span></a>
+        <a class="sb-item" href="../interview/04-langgraph-pian.html"><span class="sb-item-num">04</span><span class="sb-item-title">LangGraph 篇</span></a>
+        <a class="sb-item" href="../interview/05-langchain-pian.html"><span class="sb-item-num">05</span><span class="sb-item-title">LangChain 篇</span></a>
+        <a class="sb-item" href="../interview/06-xi-tong-she-ji-pian.html"><span class="sb-item-num">06</span><span class="sb-item-title">系统设计篇</span></a>
+        <a class="sb-item" href="../interview/07-xiang-mu-shen-wa-pian.html"><span class="sb-item-num">07</span><span class="sb-item-title">项目深挖篇</span></a>
+        <a class="sb-item" href="../interview/08-gu-zhang-pai-cha-pian.html"><span class="sb-item-num">08</span><span class="sb-item-title">故障排查篇</span></a>
+        <a class="sb-item" href="../interview/09-python-ji-chu-pian.html"><span class="sb-item-num">09</span><span class="sb-item-title">Python 基础篇</span></a>
+        <a class="sb-item" href="../interview/10-fastapi-yu-hou-duan-pian.html"><span class="sb-item-num">10</span><span class="sb-item-title">FastAPI 与后端篇</span></a>
+        <a class="sb-item" href="../interview/11-ti-shi-ci-gong-cheng-yu-an-quan-pian.html"><span class="sb-item-num">11</span><span class="sb-item-title">提示词工程与安全篇</span></a>
+        <a class="sb-item" href="../interview/12-mo-xing-xuan-xing-yu-jiang-ben-pian.html"><span class="sb-item-num">12</span><span class="sb-item-title">模型选型与降本篇</span></a>
+      </div>
+    </section>
+  </nav>
+</aside>
+  <main class="main">
+    <header class="topbar">
+      <button class="menu-btn" id="menuBtn" aria-label="目录">☰</button>
+      <div class="crumbs"><a href="../index.html">首页</a><span>/</span><a href="../modules/agent.html">Agent 核心</a><span>/</span><span class="cur">MCP 全景</span></div>
+      <div class="topbar-actions">
+        <button class="icon-btn" id="themeBtn" title="切换深浅色" aria-label="切换深浅色">◐</button>
+      </div>
+    </header>
+    <div class="content">
+      <article class="article">
+
+<header class="page-head">
+  <div class="page-kicker">Agent 核心 · 第 11 章</div>
+  <h1 class="page-title">MCP 全景</h1>
+  <p class="page-desc">第 10 章的 Skill 证明了一件事：一份写得清楚的说明书，就能让模型获得一项新技能。但文档型能力有自己的边界——它教模型「怎么把一件事做好」，模型的手还是原来那双。想让任意 Agent 都能直接查天气、读数据库、操…</p>
+  <div class="page-meta">
+    <span>约 49 分钟</span><span>19,560 字</span><span>28 个代码示例</span>
+  </div>
+</header>
+<div class="md"><blockquote>
+<p>第 10 章的 Skill 证明了一件事：一份写得清楚的说明书，就能让模型获得一项新技能。但文档型能力有自己的边界——它教模型「怎么把一件事做好」，模型的手还是原来那双。想让任意 Agent 都能直接查天气、读数据库、操作 GitHub，靠一家家对接是不现实的：每家服务方一套私有接口，每个客户端一套适配代码，全行业都在重复劳动。MCP（Model Context Protocol）解决的就是「工具的标准化互通」——让工具像 USB-C 一样，任何 Server 接任何 Client。这一章是一条四段的长路：先解剖协议本身（M×N 问题、三个角色、报文格式、三大原语），然后换到提供方视角写一个自己的 Server，再换到消费方视角手写一个 Client，最后总装——让 Agent 不改一行代码就动态获得整个生态的工具。</p>
+</blockquote>
+<h2 id="第一部分协议本身">第一部分：协议本身</h2>
+<h3 id="11-mn-问题">1.1 M×N 问题</h3>
+<p>MCP 诞生（2024 年 11 月，Anthropic 发起）前的世界是这样的：</p>
+<div class="highlight"><pre><span></span><code>8 个模型客户端（Claude、Trae、Cursor、自研 Agent……）
+× 10 个服务提供方（GitHub、数据库、天气、Slack……）
+= 80 份适配代码
+</code></pre></div>
+<p>每家客户端一套私有工具格式，每个服务方一份接入文档。谁都没错，但全行业加起来在做大量重复劳动。</p>
+<p>USB-C 的类比很好用：以前每个手机品牌一个充电口，现在一个标准接口，任何线插任何设备。MCP 就是"Agent 界的 USB-C"：</p>
+<div class="highlight"><pre><span></span><code>M 个客户端 × N 个服务 → M + N 份实现（各自面向协议编程）
+</code></pre></div>
+<p>这个模式的先例是 LSP（Language Server Protocol，编辑器语言服务协议）：VS Code 定标准后，所有编辑器和所有语言共享生态。MCP 走的是同一条路，所以常被称作"AI 应用的 LSP 时刻"。</p>
+<h3 id="12-协议内核三个角色">1.2 协议内核：三个角色</h3>
+<p>MCP 世界只有两种程序（第 7 章的 Agent 在这里正式获得协议身份）：</p>
+<table>
+<thead>
+<tr>
+<th>角色</th>
+<th>是谁</th>
+<th>职责</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Host</strong></td>
+<td>宿主应用</td>
+<td>用户直接面对的产品（Trae、Claude Desktop、你的程序）</td>
+</tr>
+<tr>
+<td><strong>Client</strong></td>
+<td>宿主内的连接器</td>
+<td>与单个 Server 维持一对一连接，负责协议翻译</td>
+</tr>
+<tr>
+<td><strong>Server</strong></td>
+<td>工具提供方</td>
+<td>暴露能力：查天气、读数据库、操作 GitHub</td>
+</tr>
+</tbody>
+</table>
+<p>Host 里可以同时跑多个 Client（一个对应一个 Server）。比如 Trae 同时连着 GitHub server 和数据库 server。</p>
+<h3 id="13-两种传输">1.3 两种传输</h3>
+<table>
+<thead>
+<tr>
+<th>传输方式</th>
+<th>机制</th>
+<th>适用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>stdio</strong></td>
+<td>子进程的 stdin/stdout</td>
+<td>本地运行：同机启动，随宿主启停，零网络开销</td>
+</tr>
+<tr>
+<td><strong>Streamable HTTP</strong></td>
+<td>HTTP（可升级 SSE）</td>
+<td>远程服务：跨机器、可鉴权、可多路复用</td>
+</tr>
+</tbody>
+</table>
+<p>本地场景默认 stdio：宿主把 server 当子进程拉起（<code>uvx mcp-server-time</code> 这类命令），用管道通信——部署最简单，没有端口管理问题。</p>
+<h3 id="14-报文格式json-rpc-20">1.4 报文格式：JSON-RPC 2.0</h3>
+<p>所有交互都是 JSON-RPC 2.0 报文（所以第 7 章说 tool calling 的 arguments 是 JSON——整个生态的底座都是可序列化结构）：</p>
+<div class="highlight"><pre><span></span><code><span class="c1">// 请求（客户端 → 服务端）</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="nt">"jsonrpc"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2.0"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"req-42"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"method"</span><span class="p">:</span><span class="w"> </span><span class="s2">"tools/call"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"params"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"get_weather"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"arguments"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">"city"</span><span class="p">:</span><span class="w"> </span><span class="s2">"北京"</span><span class="w"> </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// 响应（服务端 → 客户端）</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="nt">"jsonrpc"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2.0"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"req-42"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"result"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"content"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">      </span><span class="p">{</span><span class="w"> </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"text"</span><span class="p">,</span><span class="w"> </span><span class="nt">"text"</span><span class="p">:</span><span class="w"> </span><span class="s2">"北京 12°C 晴"</span><span class="w"> </span><span class="p">}</span>
+<span class="w">    </span><span class="p">]</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>三种报文类型：</p>
+<ul>
+<li><strong>Request</strong>：带 <code>id</code>，等回复（如 <code>tools/call</code>）</li>
+<li><strong>Notification</strong>：不带 <code>id</code>，不等回复（如 <code>notifications/initialized</code>）</li>
+<li><strong>Response</strong>：对 Request 的答复，<code>result</code> 或 <code>error</code> 二选一</li>
+</ul>
+<h3 id="15-会话生命周期">1.5 会话生命周期</h3>
+<p>一次完整的连接：</p>
+<div class="highlight"><pre><span></span><code>Client                          Server
+  │ ── initialize ──────────────→ │   ① 握手：交换版本、能力清单
+  │ ←─ initialize result ────── │
+  │ ── initialized ────────────→ │   ② 确认（notification）
+  │                              │
+  │ ── tools/list ─────────────→ │   ③ 发现工具
+  │ ←─ 工具清单 + schema ────── │
+  │                              │
+  │ ── tools/call ────────────→ │   ④ 调用（可重复任意次）
+  │ ←─ 执行结果 ──────────────── │
+  │                              │
+  │ ── （循环：list/call） ──────→ │
+</code></pre></div>
+<p>①② 是所有连接的固定开场——先协商协议版本、互报能力（支持哪些可选特性），避免版本不匹配。这是所有 RPC 协议的标准动作。</p>
+<h3 id="16-三大原语">1.6 三大原语</h3>
+<p>MCP 不只暴露工具，它有三种能力类型：</p>
+<table>
+<thead>
+<tr>
+<th>原语</th>
+<th>语义</th>
+<th>谁控制</th>
+<th>典型用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Tools</strong></td>
+<td>可执行的动作</td>
+<td>模型决定调用</td>
+<td>查天气、写数据库</td>
+</tr>
+<tr>
+<td><strong>Resources</strong></td>
+<td>可读取的数据</td>
+<td>应用程序决定读取</td>
+<td>文件内容、数据库 schema</td>
+</tr>
+<tr>
+<td><strong>Prompts</strong></td>
+<td>预置的提示词模板</td>
+<td>用户主动触发</td>
+<td>"/review 代码评审" 斜杠命令</td>
+</tr>
+</tbody>
+</table>
+<p>区分的关键是<strong>控制权</strong>（对齐第 7 章"模型只表达意向"的原则）：</p>
+<ul>
+<li>Tool：<strong>模型</strong>在推理时自主决定要不要调</li>
+<li>Resource：<strong>宿主应用</strong>在构建上下文时决定要不要塞（第 13 章 Context Engineering 的外挂数据源）</li>
+<li>Prompt：<strong>用户</strong>显式调用（通常是 UI 上的斜杠命令）</li>
+</ul>
+<p>这三种控制权分别对应 LLM 应用的三个输入来源——模型、应用、用户。一个成熟的协议设计必然把三者分开。</p>
+<p>进阶特性了解即可：<em>sampling</em>（server 反向请求客户端的模型补全，形成双向能力协商）、<em>roots</em>（客户端告知可访问的文件系统范围）、<em>elicitation</em>（server 反向请求用户输入）。</p>
+<h3 id="17-生态现状">1.7 生态现状</h3>
+<p>server 靠聚合站检索（找工具就像找 npm 包）：</p>
+<ul>
+<li><strong>官方参考实现</strong>：<a href="https://github.com/modelcontextprotocol/servers">modelcontextprotocol/servers</a>——filesystem、git、time 等教科书级示例</li>
+<li><strong>聚合站</strong>：mcp.so、smithery.ai、glama.ai、awesome-mcp-servers</li>
+</ul>
+<p>客户端支持情况：Trae、Cursor、Claude Desktop、Zed 等均已原生支持；协议规范与 SDK（Python/TypeScript 等）在 <a href="https://modelcontextprotocol.io">modelcontextprotocol.io</a> 开放维护。</p>
+<p>本地快速体验一个 server（配合官方调试器）：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 时间服务（官方示例，uvx 直接拉起）</span>
+uvx<span class="w"> </span>mcp-server-time
+
+<span class="c1"># MCP Inspector：官方调试客户端，图形化查看通信全过程</span>
+npx<span class="w"> </span>-y<span class="w"> </span>@modelcontextprotocol/inspector
+</code></pre></div>
+<p>Inspector 的价值值得强调：它把 initialize、tools/list、tools/call 的每一步报文都摊开给你看——<strong>学协议最有效的方式就是亲眼看着报文往返</strong>（第 8 章"文本协议摊开看"的同一哲学）。</p>
+<h3 id="18-一个澄清mcp-不是什么">1.8 一个澄清：MCP 不是什么</h3>
+<p>三个常见误解，提前打掉：</p>
+<p><strong>① MCP 不是工具调用协议的替代品</strong>。它不替代第 7 章的 tool calling——模型那侧的协议完全不变。MCP 解决的是"工具从哪来"：客户端从 server 动态拉取工具清单，<strong>转换成</strong>第 7 章的 tools 参数喂给模型。模型对此毫无感知。</p>
+<p><strong>② MCP 不是 Agent 框架</strong>。它不提供循环、记忆、规划（第 8 章的那些）——它只管"工具的分发与调用"这一层。你的 Agent 该怎么写还怎么写，MCP 只是让 Registry 里多了来自外部的工具。</p>
+<p><strong>③ MCP 不解决安全问题</strong>。协议提供了能力协商的结构（比如工具可声明只读/破坏性），但"允许这个 server 干什么"的权限决策留给宿主。第 15 章会看到这带来的攻击面。</p>
+<p>协议图纸看完了。接下来动手——但先选一条更划算的路线：<strong>先当提供方，写一个自己的 Server</strong>。理由很实际：官方 SDK 把 Server 侧的脏活全包了，几十行代码就能把能力暴露给全生态，是体验"M+N 效益"最快的路径。写完 Server 再手写 Client，两边对上，协议就真正长在身上了。</p>
+<h2 id="第二部分先当提供方写一个自己的-server">第二部分：先当提供方——写一个自己的 Server</h2>
+<p>把手里的能力（第 7 章的工具、第 10 章的 Skill）封装成标准 MCP Server，一次实现，全生态可用——Trae、Claude Desktop、以及你自己的 Agent 都能直接连。最后再补齐配置文件这一环，打通"接入"的全部细节。</p>
+<h3 id="21-最小-server三个方法">2.1 最小 Server：三个方法</h3>
+<p>MCP Server 的最小实现要响应三类请求（本章第三部分实现 Client 时，我们会从另一侧亲手发出这些报文）：</p>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>干什么</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>initialize</code></td>
+<td>握手：报版本和能力</td>
+</tr>
+<tr>
+<td><code>tools/list</code></td>
+<td>返回工具清单（名称+描述+schema）</td>
+</tr>
+<tr>
+<td><code>tools/call</code></td>
+<td>执行指定工具，返回结果</td>
+</tr>
+</tbody>
+</table>
+<p>对照第 7 章的 <code>Tool/Registry</code>：<strong>Server 本质就是把 Registry 从"进程内调用"改造成"跨进程服务"</strong>。逻辑一行不变，交互从函数调用变成 JSON-RPC。</p>
+<p>用官方 Python SDK（FastMCP 风格）实现，先做一个最简单的回声服务感受全貌：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># uv add "mcp[cli]"</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">mcp.server.fastmcp</span><span class="w"> </span><span class="kn">import</span> <span class="n">FastMCP</span>
+
+<span class="n">mcp</span> <span class="o">=</span> <span class="n">FastMCP</span><span class="p">(</span><span class="s2">"demo-server"</span><span class="p">)</span>          <span class="c1"># 参数是 server 名称</span>
+
+<span class="nd">@mcp</span><span class="o">.</span><span class="n">tool</span><span class="p">()</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">add</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""计算两个整数之和"""</span>
+    <span class="k">return</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
+    <span class="n">mcp</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>                          <span class="c1"># 默认 stdio 传输</span>
+</code></pre></div>
+<p>就这么多。<code>@mcp.tool()</code> 装饰器做了第 6、7 章我们手写的全部事情：</p>
+<ul>
+<li>从<strong>类型注解</strong>生成 <code>inputSchema</code>（Pydantic 同源）</li>
+<li>从 <strong>docstring</strong> 生成 description（第 7 章的"说明书"原则）</li>
+<li>注册到工具表，响应 <code>tools/list</code> 和 <code>tools/call</code></li>
+</ul>
+<p>可以用本章第三部分将要手写的 Client 验证（或直接用 Inspector）：</p>
+<div class="highlight"><pre><span></span><code>npx<span class="w"> </span>-y<span class="w"> </span>@modelcontextprotocol/inspector<span class="w"> </span>uv<span class="w"> </span>run<span class="w"> </span>server.py
+<span class="c1"># Inspector 界面里：Connect → Tools → List Tools → 就能看到 add 了</span>
+</code></pre></div>
+<h3 id="22-做一个有用的文件助手-server">2.2 做一个有用的：文件助手 Server</h3>
+<p>把第 7 章的 read_file/write_file 工具产品化——做成一个可复用的 MCP Server（这就是"把能力变成服务"的完整练习）：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># file_server.py</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">mcp.server.fastmcp</span><span class="w"> </span><span class="kn">import</span> <span class="n">FastMCP</span>
+
+<span class="c1"># 允许访问的根目录：把权限写死在 server 侧（第 15 章的最小权限原则预演）</span>
+<span class="n">ALLOWED_ROOT</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">"/Users/you/sandbox"</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span>
+
+<span class="n">mcp</span> <span class="o">=</span> <span class="n">FastMCP</span><span class="p">(</span><span class="s2">"file-assistant"</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_safe_path</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""路径安全检查：禁止逃逸出允许的目录"""</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="p">(</span><span class="n">ALLOWED_ROOT</span> <span class="o">/</span> <span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">(</span><span class="n">p</span><span class="p">)</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">ALLOWED_ROOT</span><span class="p">)):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"禁止访问沙箱外的路径：</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">p</span>
+
+<span class="nd">@mcp</span><span class="o">.</span><span class="n">tool</span><span class="p">()</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">read_file</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">max_chars</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4000</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""读取沙箱内文本文件的内容。文件过大时自动截断。</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        path: 相对沙箱根目录的文件路径</span>
+<span class="sd">        max_chars: 最多返回的字符数</span>
+<span class="sd">    """</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">_safe_path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">p</span><span class="o">.</span><span class="n">is_file</span><span class="p">():</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">"文件不存在：</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">"</span>
+    <span class="n">content</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">read_text</span><span class="p">(</span><span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">content</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">max_chars</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">content</span><span class="p">[:</span><span class="n">max_chars</span><span class="p">]</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="s2">...(已截断，共 </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">content</span><span class="p">)</span><span class="si">}</span><span class="s2"> 字符)"</span>
+    <span class="k">return</span> <span class="n">content</span>
+
+<span class="nd">@mcp</span><span class="o">.</span><span class="n">tool</span><span class="p">()</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">write_file</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">content</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""将文本内容写入沙箱内的文件（覆盖写入）。</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        path: 相对沙箱根目录的目标路径</span>
+<span class="sd">        content: 要写入的完整内容</span>
+<span class="sd">    """</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">_safe_path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">content</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">"已写入 </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">（</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">content</span><span class="p">)</span><span class="si">}</span><span class="s2"> 字符）"</span>
+
+<span class="nd">@mcp</span><span class="o">.</span><span class="n">tool</span><span class="p">()</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">list_dir</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"."</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""列出沙箱内指定目录的文件和子目录。"""</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">_safe_path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">p</span><span class="o">.</span><span class="n">is_dir</span><span class="p">():</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">"目录不存在：</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">"</span>
+    <span class="n">entries</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">iterdir</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+    <span class="n">lines</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="s1">'[dir] '</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">e</span><span class="o">.</span><span class="n">is_dir</span><span class="p">()</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">'      '</span><span class="si">}{</span><span class="n">e</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">"</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">entries</span><span class="p">]</span>
+    <span class="k">return</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">"（空目录）"</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
+    <span class="n">mcp</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</code></pre></div>
+<p>对比第 7 章的裸工具，注意三个升级：</p>
+<ol>
+<li><strong>docstring 写得更满</strong>——Args 段落会被提取进工具描述。description 现在不只是"给模型看"，是"给全生态所有潜在客户端的模型看"</li>
+<li><strong><code>_safe_path</code> 沙箱检查</strong>——工具一旦通过 MCP 暴露，调用方就不只是你自己的代码了，防御从"可选"变成"必选"</li>
+<li><strong>错误仍是返回字符串</strong>——第 7 章"run 永不抛异常"的原则跨进程依然成立：给模型的错误必须可读、可行动</li>
+</ol>
+<h3 id="23-resources-和-prompts-也能暴露">2.3 Resources 和 Prompts 也能暴露</h3>
+<p>FastMCP 支持三原语（本章第一部分的控制权分类）：</p>
+<div class="highlight"><pre><span></span><code><span class="nd">@mcp</span><span class="o">.</span><span class="n">resource</span><span class="p">(</span><span class="s2">"config://app"</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_config</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""应用配置（应用程序控制何时读取）"""</span>
+    <span class="k">return</span> <span class="s2">"当前环境: 生产</span><span class="se">\n</span><span class="s2">版本: 2.3.1"</span>
+
+<span class="nd">@mcp</span><span class="o">.</span><span class="n">prompt</span><span class="p">()</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">review_code</span><span class="p">(</span><span class="n">code</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""代码评审提示词模板（用户通过斜杠命令触发）"""</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">"请评审以下代码，关注安全性和可读性：</span><span class="se">\n\n</span><span class="si">{</span><span class="n">code</span><span class="si">}</span><span class="s2">"</span>
+</code></pre></div>
+<p>选择原则回顾本章第一部分的表格：<strong>模型自主决定的做成 tool，应用决定的做成 resource，用户触发的做成 prompt</strong>。一个能力该走哪条路，取决于"谁在什么时候需要它"。</p>
+<h3 id="24-配置文件接入的最后一公里">2.4 配置文件：接入的最后一公里</h3>
+<p>Server 写好后，客户端怎么连？各家宿主的配置格式略有差异但结构同源。Trae 的 <code>mcp.json</code>：</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">"mcpServers"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"file-assistant"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">"command"</span><span class="p">:</span><span class="w"> </span><span class="s2">"uv"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"args"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"run"</span><span class="p">,</span><span class="w"> </span><span class="s2">"--directory"</span><span class="p">,</span><span class="w"> </span><span class="s2">"/path/to/project"</span><span class="p">,</span><span class="w"> </span><span class="s2">"file_server.py"</span><span class="p">]</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">"time"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">"command"</span><span class="p">:</span><span class="w"> </span><span class="s2">"uvx"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"args"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"mcp-server-time"</span><span class="p">]</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>三个工程要点：</p>
+<ul>
+<li><strong>command 必须绝对可执行</strong>：写 <code>uv</code>/<code>uvx</code> 的绝对路径最稳（<code>/Users/you/.local/bin/uv</code>），否则宿主启动子进程时可能 PATH 不一致</li>
+<li><strong>stdio server 由宿主管理生命周期</strong>：配置里的 command 就是本章第三部分 StdioTransport 将要拉起的子进程命令——宿主启动时 spawn、退出时 kill</li>
+<li><strong>远程 server 用 url 字段</strong>：<code>{"mcpServers": {"name": {"url": "https://..."}}}</code>，走 Streamable HTTP</li>
+</ul>
+<p>配置生效后，宿主的 Agent 就拥有了你的工具——<strong>没有改一行 Agent 代码</strong>。这就是第一部分 M+N 效益的亲身体验。</p>
+<h3 id="25-分发形态">2.5 分发形态</h3>
+<p>Server 写完怎么给别人用？三种交付形态：</p>
+<table>
+<thead>
+<tr>
+<th>形态</th>
+<th>做法</th>
+<th>适合</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>源码仓库</td>
+<td>clone 后配 command</td>
+<td>内部团队</td>
+</tr>
+<tr>
+<td>PyPI 包</td>
+<td><code>uvx your-package</code> 一键拉起</td>
+<td>公开生态（官方 servers 都这样）</td>
+</tr>
+<tr>
+<td>Docker 镜像</td>
+<td><code>docker run</code> 作为 command</td>
+<td>带重依赖（数据库驱动等）</td>
+</tr>
+</tbody>
+</table>
+<p>PyPI 形态的工程要求：<code>pyproject.toml</code> 里声明入口（<code>[project.scripts]</code>），保证 <code>uvx</code> 能找到启动函数。命名建议 <code>mcp-server-xxx</code>（生态惯例，聚合站靠前缀识别）。</p>
+<p>提供方这条路走通了。现在换到桌子的另一侧：<strong>当消费方，实现一个 Client</strong>。这次反着来——不用官方 SDK，从子进程管道开始手搓。你会发现所谓协议，不过是按顺序发对几条 JSON；而且手写完再看第二部分的 Server，两侧的报文刚好对上。</p>
+<h2 id="第三部分再当消费方实现一个能发现和调用工具的-client">第三部分：再当消费方——实现一个能发现和调用工具的 Client</h2>
+<p>不用官方 SDK，直接基于子进程管道手写一个 MCP Client——initialize 握手、工具发现、工具调用逐级实现。你会获得两样东西：对协议的肌肉记忆，以及一个能塞进第 8 章 Agent 的"外挂工具源"。</p>
+<h3 id="31-为什么不用-sdk-先手写">3.1 为什么不用 SDK 先手写</h3>
+<p>官方 SDK（<code>mcp</code> Python 包）几行代码就能连上 server，但黑盒会让你错过三个关键理解：</p>
+<ol>
+<li><strong>协议的顺序性</strong>：不握手就 list、不 list 就 call，server 直接拒绝——生命周期不是建议是硬约束</li>
+<li><strong>能力的载体是消息</strong>：所谓"发现工具"，就是收到了一条含 JSON Schema 数组的响应（第 6 章的知识在协议层的复现）</li>
+<li><strong>转换层的位置</strong>：MCP 工具 → OpenAI tools 格式，中间就是一段普通的字典变换（第一部分"模型对 MCP 无感知"的证明）</li>
+</ol>
+<p>所以这一节是第 8 章"手搓文本协议"传统的延续：<strong>先用裸消息看清骨架，再用 SDK 提效</strong>。</p>
+<h3 id="32-底座进程管理">3.2 底座：进程管理</h3>
+<p>stdio 传输的 MCP Client 本质是：<strong>拉起一个子进程，往 stdin 写 JSON，从 stdout 读 JSON</strong>。先解决进程管理：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">StdioTransport</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""MCP stdio 传输层：管理子进程和 JSON-RPC 报文读写"""</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">command</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">command</span> <span class="o">=</span> <span class="n">command</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">process</span><span class="p">:</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">subprocess</span><span class="o">.</span><span class="n">Process</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_next_id</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">process</span> <span class="o">=</span> <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">create_subprocess_exec</span><span class="p">(</span>
+            <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">command</span><span class="p">,</span>
+            <span class="n">stdin</span><span class="o">=</span><span class="n">asyncio</span><span class="o">.</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
+            <span class="n">stdout</span><span class="o">=</span><span class="n">asyncio</span><span class="o">.</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
+            <span class="n">stderr</span><span class="o">=</span><span class="n">asyncio</span><span class="o">.</span><span class="n">subprocess</span><span class="o">.</span><span class="n">DEVNULL</span><span class="p">,</span>   <span class="c1"># server 的日志不混入协议流</span>
+        <span class="p">)</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">send</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""发一条 Request 并等待对应 id 的 Response"""</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_next_id</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">req_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_next_id</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"jsonrpc"</span><span class="p">:</span> <span class="s2">"2.0"</span><span class="p">,</span> <span class="s2">"id"</span><span class="p">:</span> <span class="n">req_id</span><span class="p">,</span> <span class="s2">"method"</span><span class="p">:</span> <span class="n">method</span><span class="p">,</span>
+                   <span class="s2">"params"</span><span class="p">:</span> <span class="n">params</span> <span class="ow">or</span> <span class="p">{}}</span>
+        <span class="c1"># 按行分帧：官方 SDK 默认用 Content-Length 头分帧（同 LSP）；</span>
+        <span class="c1"># 自实现按行分帧更直观，但要求 server 也支持——官方 Python SDK</span>
+        <span class="c1"># 的 stdio server 同时兼容两种，所以能跑通。若连接其他实现，</span>
+        <span class="c1"># 以对方文档为准（用官方 SDK 客户端则完全无需关心）</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">process</span><span class="o">.</span><span class="n">stdin</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">process</span><span class="o">.</span><span class="n">stdin</span><span class="o">.</span><span class="n">drain</span><span class="p">()</span>
+        <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_response</span><span class="p">(</span><span class="n">req_id</span><span class="p">)</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">notify</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""发一条 Notification（不等待回复）"""</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"jsonrpc"</span><span class="p">:</span> <span class="s2">"2.0"</span><span class="p">,</span> <span class="s2">"method"</span><span class="p">:</span> <span class="n">method</span><span class="p">,</span> <span class="s2">"params"</span><span class="p">:</span> <span class="n">params</span> <span class="ow">or</span> <span class="p">{}}</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">process</span><span class="o">.</span><span class="n">stdin</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">process</span><span class="o">.</span><span class="n">stdin</span><span class="o">.</span><span class="n">drain</span><span class="p">()</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_read_response</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">raw</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">process</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">raw</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ConnectionError</span><span class="p">(</span><span class="s2">"server 进程已退出"</span><span class="p">)</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">raw</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"id"</span><span class="p">)</span> <span class="o">==</span> <span class="n">req_id</span><span class="p">:</span>        <span class="c1"># 跳过通知等无关消息</span>
+                <span class="k">if</span> <span class="s2">"error"</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"MCP 错误：</span><span class="si">{</span><span class="n">data</span><span class="p">[</span><span class="s1">'error'</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">data</span><span class="p">[</span><span class="s2">"result"</span><span class="p">]</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">process</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">process</span><span class="o">.</span><span class="n">terminate</span><span class="p">()</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">process</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+</code></pre></div>
+<p>三个实现细节：</p>
+<ul>
+<li><strong>stderr 丢弃</strong>：server 进程的日志走 stderr，和协议流（stdout）分离——混在一起 JSON 解析必炸</li>
+<li><strong>id 匹配</strong>：响应可能乱序到达，按 <code>id</code> 配对而不是"读到就算"</li>
+<li><strong>按行分帧</strong>：官方 SDK 用 Content-Length 头分帧（和 LSP 一致）；自实现用换行分帧，要求 server 配合（Python SDK 默认支持按行）。真实项目用 SDK 就不用操心这个</li>
+</ul>
+<h3 id="33-协议层client">3.3 协议层：Client</h3>
+<p>在传输层上实现本章第一部分的生命周期：</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">McpClient</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">command</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">transport</span> <span class="o">=</span> <span class="n">StdioTransport</span><span class="p">(</span><span class="n">command</span><span class="p">)</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">connect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""① initialize 握手 ② initialized 确认"""</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">transport</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">transport</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="s2">"initialize"</span><span class="p">,</span> <span class="p">{</span>
+            <span class="s2">"protocolVersion"</span><span class="p">:</span> <span class="s2">"2025-06-18"</span><span class="p">,</span>
+            <span class="s2">"capabilities"</span><span class="p">:</span> <span class="p">{},</span>                  <span class="c1"># 客户端能力：不声明任何高级特性</span>
+            <span class="s2">"clientInfo"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"name"</span><span class="p">:</span> <span class="s2">"handmade-client"</span><span class="p">,</span> <span class="s2">"version"</span><span class="p">:</span> <span class="s2">"0.1.0"</span><span class="p">},</span>
+        <span class="p">})</span>
+        <span class="c1"># result 里有 server 的能力声明，可按需保存</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">transport</span><span class="o">.</span><span class="n">notify</span><span class="p">(</span><span class="s2">"notifications/initialized"</span><span class="p">)</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">list_tools</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""③ 发现工具"""</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">transport</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="s2">"tools/list"</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="k">return</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"tools"</span><span class="p">,</span> <span class="p">[])</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">call_tool</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">arguments</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""④ 调用工具"""</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">transport</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="s2">"tools/call"</span><span class="p">,</span> <span class="p">{</span>
+            <span class="s2">"name"</span><span class="p">:</span> <span class="n">name</span><span class="p">,</span> <span class="s2">"arguments"</span><span class="p">:</span> <span class="n">arguments</span><span class="p">,</span>
+        <span class="p">})</span>
+        <span class="c1"># 结果是 content 数组，取全部 text 拼接</span>
+        <span class="n">parts</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"text"</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"content"</span><span class="p">,</span> <span class="p">[])</span>
+                 <span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"type"</span><span class="p">)</span> <span class="o">==</span> <span class="s2">"text"</span><span class="p">]</span>
+        <span class="k">return</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">str</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">transport</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</code></pre></div>
+<p>连官方 time server 实测：</p>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
+    <span class="n">client</span> <span class="o">=</span> <span class="n">McpClient</span><span class="p">([</span><span class="s2">"uvx"</span><span class="p">,</span> <span class="s2">"mcp-server-time"</span><span class="p">])</span>
+
+    <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+    <span class="n">tools</span> <span class="o">=</span> <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">list_tools</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">tools</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"- </span><span class="si">{</span><span class="n">t</span><span class="p">[</span><span class="s1">'name'</span><span class="p">]</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">t</span><span class="p">[</span><span class="s1">'description'</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">call_tool</span><span class="p">(</span><span class="s2">"get_current_time"</span><span class="p">,</span> <span class="p">{</span><span class="s2">"timezone"</span><span class="p">:</span> <span class="s2">"Asia/Shanghai"</span><span class="p">})</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+
+    <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+<span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">main</span><span class="p">())</span>
+</code></pre></div>
+<p>输出：</p>
+<div class="highlight"><pre><span></span><code>- get_current_time: Get current time in a specific timezone
+- convert_time: Convert time between timezones
+当前时间: 2026-08-26T15:30:00+08:00 (Asia/Shanghai)
+</code></pre></div>
+<p>四条报文，一个完整的协议会话。<strong>你现在可以对着本章第一部分的生命周期图逐条打勾了。</strong></p>
+<h3 id="34-关键一步mcp-工具转-openai-格式">3.4 关键一步：MCP 工具转 OpenAI 格式</h3>
+<p><code>list_tools</code> 返回的工具描述长这样：</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+    <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"get_current_time"</span><span class="p">,</span>
+    <span class="s2">"description"</span><span class="p">:</span> <span class="s2">"Get current time in a specific timezone"</span><span class="p">,</span>
+    <span class="s2">"inputSchema"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"type"</span><span class="p">:</span> <span class="s2">"object"</span><span class="p">,</span>
+                    <span class="s2">"properties"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"timezone"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"type"</span><span class="p">:</span> <span class="s2">"string"</span><span class="p">}},</span>
+                    <span class="s2">"required"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"timezone"</span><span class="p">]},</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>而第 7 章喂给模型的 <code>tools</code> 参数长这样：</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+    <span class="s2">"type"</span><span class="p">:</span> <span class="s2">"function"</span><span class="p">,</span>
+    <span class="s2">"function"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"get_current_time"</span><span class="p">,</span>
+        <span class="s2">"description"</span><span class="p">:</span> <span class="s2">"Get current time in a specific timezone"</span><span class="p">,</span>
+        <span class="s2">"parameters"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"type"</span><span class="p">:</span> <span class="s2">"object"</span><span class="p">,</span>
+                       <span class="s2">"properties"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"timezone"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"type"</span><span class="p">:</span> <span class="s2">"string"</span><span class="p">}},</span>
+                       <span class="s2">"required"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"timezone"</span><span class="p">]},</span>
+    <span class="p">},</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>转换函数一层窗户纸：</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">mcp_to_openai</span><span class="p">(</span><span class="n">mcp_tool</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">server_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""MCP 工具 → OpenAI tools 格式；加 server 前缀防重名"""</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">"type"</span><span class="p">:</span> <span class="s2">"function"</span><span class="p">,</span>
+        <span class="s2">"function"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">"name"</span><span class="p">:</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">server_name</span><span class="si">}</span><span class="s2">__</span><span class="si">{</span><span class="n">mcp_tool</span><span class="p">[</span><span class="s1">'name'</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>   <span class="c1"># 前缀：多个 server 同名工具不冲突</span>
+            <span class="s2">"description"</span><span class="p">:</span> <span class="n">mcp_tool</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"description"</span><span class="p">,</span> <span class="s2">""</span><span class="p">),</span>
+            <span class="s2">"parameters"</span><span class="p">:</span> <span class="n">mcp_tool</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"inputSchema"</span><span class="p">,</span> <span class="p">{}),</span>
+        <span class="p">},</span>
+    <span class="p">}</span>
+</code></pre></div>
+<p>这个转换层就是第一部分"模型对 MCP 无感知"的最终证明——模型看到的只是普通的 tools 列表，调用了也只是一个普通函数调用，<strong>由你的代码把调用转发到 MCP 管道</strong>。</p>
+<h3 id="35-塞进-agent外部工具源">3.5 塞进 Agent：外部工具源</h3>
+<p>把 McpClient 接到第 7 章的 Registry（对 Agent 完全透明）：</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">McpRegistry</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""聚合多个 MCP server 的工具注册器（实现 Registry 同构接口）"""</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">servers</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">McpClient</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tools</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>   <span class="c1"># 工具全名 → (server名, 原名)</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">add_server</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">command</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
+        <span class="n">client</span> <span class="o">=</span> <span class="n">McpClient</span><span class="p">(</span><span class="n">command</span><span class="p">)</span>
+        <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">servers</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">client</span>
+        <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">list_tools</span><span class="p">():</span>
+            <span class="n">full_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">__</span><span class="si">{</span><span class="n">t</span><span class="p">[</span><span class="s1">'name'</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tools</span><span class="p">[</span><span class="n">full_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">t</span><span class="p">[</span><span class="s2">"name"</span><span class="p">])</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">schemas</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
+        <span class="c1"># 把所有 server 的工具转成 OpenAI 格式（此处省略 inputSchema 缓存细节）</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">mcp_to_openai_cached</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="o">...</span><span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">dispatch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">full_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">arguments_json</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="n">server_name</span><span class="p">,</span> <span class="n">original</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tools</span><span class="p">[</span><span class="n">full_name</span><span class="p">]</span>
+        <span class="n">client</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">servers</span><span class="p">[</span><span class="n">server_name</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">client</span><span class="o">.</span><span class="n">call_tool</span><span class="p">(</span>
+            <span class="n">original</span><span class="p">,</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">arguments_json</span><span class="p">)))</span>
+</code></pre></div>
+<p>使用（第 8 章的 Agent 原样复用）：</p>
+<div class="highlight"><pre><span></span><code><span class="n">registry</span> <span class="o">=</span> <span class="n">McpRegistry</span><span class="p">()</span>
+<span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">registry</span><span class="o">.</span><span class="n">add_server</span><span class="p">(</span><span class="s2">"time"</span><span class="p">,</span> <span class="p">[</span><span class="s2">"uvx"</span><span class="p">,</span> <span class="s2">"mcp-server-time"</span><span class="p">]))</span>
+<span class="c1"># 现在模型可以用 time__get_current_time 等工具了</span>
+<span class="n">agent</span> <span class="o">=</span> <span class="n">Agent</span><span class="p">(</span><span class="n">system</span><span class="o">=</span><span class="s2">"你可以查询各时区的时间。"</span><span class="p">,</span> <span class="n">registry</span><span class="o">=</span><span class="n">registry</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">agent</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="s2">"现在上海几点？"</span><span class="p">))</span>
+</code></pre></div>
+<p><strong>模型不知道也不需要知道 MCP 的存在</strong>——它以为自己只是在调用一个名字带下划线的普通工具。架构分层就此完成：</p>
+<div class="highlight"><pre><span></span><code>模型 ←(OpenAI tools 格式)→ Agent 循环 ←(JSON-RPC)→ MCP servers
+        ↑ 第 7 章的协议            ↑ MCP 协议（本章第一部分）
+</code></pre></div>
+<h3 id="36-用官方-sdk-重写生产做法">3.6 用官方 SDK 重写（生产做法）</h3>
+<p>理解原理后，生产直接用 SDK（价值对比手写版：健壮的分帧、错误重试、HTTP 传输、生态兼容）：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># uv add mcp</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">mcp</span><span class="w"> </span><span class="kn">import</span> <span class="n">ClientSession</span><span class="p">,</span> <span class="n">StdioServerParameters</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">mcp.client.stdio</span><span class="w"> </span><span class="kn">import</span> <span class="n">stdio_client</span>
+
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">with_sdk</span><span class="p">():</span>
+    <span class="n">params</span> <span class="o">=</span> <span class="n">StdioServerParameters</span><span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="s2">"uvx"</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">[</span><span class="s2">"mcp-server-time"</span><span class="p">])</span>
+    <span class="k">async</span> <span class="k">with</span> <span class="n">stdio_client</span><span class="p">(</span><span class="n">params</span><span class="p">)</span> <span class="k">as</span> <span class="p">(</span><span class="n">read</span><span class="p">,</span> <span class="n">write</span><span class="p">):</span>
+        <span class="k">async</span> <span class="k">with</span> <span class="n">ClientSession</span><span class="p">(</span><span class="n">read</span><span class="p">,</span> <span class="n">write</span><span class="p">)</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
+            <span class="k">await</span> <span class="n">session</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
+            <span class="n">tools</span> <span class="o">=</span> <span class="k">await</span> <span class="n">session</span><span class="o">.</span><span class="n">list_tools</span><span class="p">()</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">session</span><span class="o">.</span><span class="n">call_tool</span><span class="p">(</span>
+                <span class="s2">"get_current_time"</span><span class="p">,</span> <span class="p">{</span><span class="s2">"timezone"</span><span class="p">:</span> <span class="s2">"Asia/Shanghai"</span><span class="p">})</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">content</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+
+<span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">with_sdk</span><span class="p">())</span>
+</code></pre></div>
+<p>同样的四步，SDK 把传输细节、版本协商、分帧全接管了。<strong>先手写后 SDK 的路线在此闭环</strong>——你现在知道每个抽象背后是什么了。</p>
+<p>现在两个方向都通了：能写 Server 把自己的能力贡献出去（第二部分），能写 Client 接别人的工具（本部分）。最后一步是总装——回到我们的主场，让 Agent 同时用上本地工具和远程 MCP 工具，在一条流水线上并行。</p>
+<h2 id="第四部分整合让-agent-动态获得生态工具">第四部分：整合——让 Agent 动态获得生态工具</h2>
+<p>各零件齐了：第 8 章的 Agent 引擎、本章第二部分的 Server、第三部分的 Client。这一部分做总装——让 Agent 同时使用本地工具（进程内）和 MCP 工具（跨进程），用一份 mcp.json 管理配置。完成后你会看清一个重要观点：<strong>MCP 只是 Registry 的一个工具来源，Agent 的架构不需要为它改变</strong>。</p>
+<h3 id="41-目标形态">4.1 目标形态</h3>
+<p>总装后的结构：</p>
+<div class="highlight"><pre><span></span><code>              ┌────────────────────────────┐
+              │      Agent 主循环(第8章)     │
+              │   tools = local + remote   │
+              └──────────┬─────────────────┘
+                         │ dispatch(名字, 参数)
+              ┌──────────▼─────────────────┐
+              │      混合 Registry          │
+              │  ┌─────────┐ ┌──────────┐ │      ┌──────────────┐
+              │  │本地工具表│ │MCP 工具表 │ │ stdio│ mcp-server-A │
+              │  └─────────┘ └────┬─────┘ │─────→└──────────────┘
+              └───────────────────┼───────┘ stdio┌──────────────┐
+                                  │─────────────→│ mcp-server-B │
+                                                 └──────────────┘
+</code></pre></div>
+<p>关键设计决策：<strong>Agent 循环一行不改</strong>。MCP 的接入发生在 Registry 层——对上（模型）提供统一的 schemas 和 dispatch，对下（工具）不管来源。这就是分层的价值：第 8 章写循环时没考虑过 MCP，但接入不需要动它。</p>
+<h3 id="42-配置加载与连接管理">4.2 配置加载与连接管理</h3>
+<p>配置文件沿用生态惯例（第二部分的 mcp.json 格式）：</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">"mcpServers"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"time"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">"command"</span><span class="p">:</span><span class="w"> </span><span class="s2">"uvx"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"args"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"mcp-server-time"</span><span class="p">]</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">"file-assistant"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">"command"</span><span class="p">:</span><span class="w"> </span><span class="s2">"uv"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"args"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"run"</span><span class="p">,</span><span class="w"> </span><span class="s2">"--directory"</span><span class="p">,</span><span class="w"> </span><span class="s2">"/path/to/project"</span><span class="p">,</span><span class="w"> </span><span class="s2">"file_server.py"</span><span class="p">]</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>加载与连接管理：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">McpManager</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""管理所有 MCP server 的连接生命周期"""</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">config</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">config_path</span><span class="p">)</span><span class="o">.</span><span class="n">read_text</span><span class="p">(</span><span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">servers_cfg</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"mcpServers"</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sessions</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="s2">"ClientSession"</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tool_index</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>    <span class="c1"># 全名 → 工具元数据</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">connect_all</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">mcp</span><span class="w"> </span><span class="kn">import</span> <span class="n">ClientSession</span><span class="p">,</span> <span class="n">StdioServerParameters</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">mcp.client.stdio</span><span class="w"> </span><span class="kn">import</span> <span class="n">stdio_client</span>
+
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">cfg</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">servers_cfg</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">params</span> <span class="o">=</span> <span class="n">StdioServerParameters</span><span class="p">(</span>
+                <span class="n">command</span><span class="o">=</span><span class="n">cfg</span><span class="p">[</span><span class="s2">"command"</span><span class="p">],</span> <span class="n">args</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"args"</span><span class="p">,</span> <span class="p">[]),</span>
+                <span class="n">env</span><span class="o">=</span><span class="n">cfg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"env"</span><span class="p">),</span>
+            <span class="p">)</span>
+            <span class="c1"># 注意：stdio_client 返回的异步上下文管理器必须保持存活</span>
+            <span class="c1"># （存住 CM 对象本身，防止流被提前关闭）。这里写法偏底层，</span>
+            <span class="c1"># 生产建议把整个 Agent 跑在一个事件循环里用 async with。</span>
+            <span class="n">cm</span> <span class="o">=</span> <span class="n">stdio_client</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+            <span class="n">read</span><span class="p">,</span> <span class="n">write</span> <span class="o">=</span> <span class="k">await</span> <span class="n">cm</span><span class="o">.</span><span class="fm">__aenter__</span><span class="p">()</span>
+            <span class="n">session_cm</span> <span class="o">=</span> <span class="n">ClientSession</span><span class="p">(</span><span class="n">read</span><span class="p">,</span> <span class="n">write</span><span class="p">)</span>
+            <span class="n">session</span> <span class="o">=</span> <span class="k">await</span> <span class="n">session_cm</span><span class="o">.</span><span class="fm">__aenter__</span><span class="p">()</span>
+            <span class="k">await</span> <span class="n">session</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
+
+            <span class="n">tools</span> <span class="o">=</span> <span class="k">await</span> <span class="n">session</span><span class="o">.</span><span class="n">list_tools</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">tools</span><span class="o">.</span><span class="n">tools</span><span class="p">:</span>
+                <span class="n">full_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">__</span><span class="si">{</span><span class="n">t</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">"</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">tool_index</span><span class="p">[</span><span class="n">full_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="s2">"server"</span><span class="p">:</span> <span class="n">name</span><span class="p">,</span>
+                    <span class="s2">"original"</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                    <span class="s2">"schema"</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">inputSchema</span><span class="p">,</span>
+                    <span class="s2">"description"</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">description</span> <span class="ow">or</span> <span class="s2">""</span><span class="p">,</span>
+                <span class="p">}</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sessions</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">session</span>
+            <span class="c1"># 生产代码还应保存 cm / session_cm 以便退出时 __aexit__</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">schemas</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""全部 MCP 工具 → OpenAI tools 格式（第三部分的转换思路）"""</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">full_name</span><span class="p">,</span> <span class="n">meta</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tool_index</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+                <span class="s2">"type"</span><span class="p">:</span> <span class="s2">"function"</span><span class="p">,</span>
+                <span class="s2">"function"</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">"name"</span><span class="p">:</span> <span class="n">full_name</span><span class="p">,</span>
+                    <span class="s2">"description"</span><span class="p">:</span> <span class="n">meta</span><span class="p">[</span><span class="s2">"description"</span><span class="p">],</span>
+                    <span class="s2">"parameters"</span><span class="p">:</span> <span class="n">meta</span><span class="p">[</span><span class="s2">"schema"</span><span class="p">],</span>
+                <span class="p">},</span>
+            <span class="p">})</span>
+        <span class="k">return</span> <span class="n">result</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">dispatch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">full_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">arguments_json</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""按前缀路由到对应 server 执行"""</span>
+        <span class="n">meta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tool_index</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">full_name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">meta</span><span class="p">:</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s2">"错误：不存在工具 </span><span class="si">{</span><span class="n">full_name</span><span class="si">}</span><span class="s2">"</span>
+        <span class="n">session</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sessions</span><span class="p">[</span><span class="n">meta</span><span class="p">[</span><span class="s2">"server"</span><span class="p">]]</span>
+        <span class="c1"># 注意：同一线程内 asyncio.run 不可重入（嵌套调用会报错）。</span>
+        <span class="c1"># 示例为求简洁；生产做法见 4.5 节的说明。</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">session</span><span class="o">.</span><span class="n">call_tool</span><span class="p">(</span>
+            <span class="n">meta</span><span class="p">[</span><span class="s2">"original"</span><span class="p">],</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">arguments_json</span><span class="p">)))</span>
+        <span class="k">return</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="n">c</span><span class="o">.</span><span class="n">text</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">content</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="s2">"text"</span><span class="p">))</span>
+</code></pre></div>
+<h3 id="43-混合-registry两个工具源合一">4.3 混合 Registry：两个工具源合一</h3>
+<p>Agent 需要<strong>同时</strong>看到本地工具（第 7 章的进程内函数）和 MCP 工具。合体的方式朴素得动人——把两个来源的接口对齐：</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">HybridRegistry</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""本地工具 + MCP 工具的统一注册器"""</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">local</span><span class="p">:</span> <span class="n">Registry</span><span class="p">,</span> <span class="n">mcp</span><span class="p">:</span> <span class="n">McpManager</span> <span class="o">|</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">local</span> <span class="o">=</span> <span class="n">local</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mcp</span> <span class="o">=</span> <span class="n">mcp</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">schemas</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">local</span><span class="o">.</span><span class="n">schemas</span><span class="p">()</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">local</span> <span class="k">else</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mcp</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mcp</span><span class="o">.</span><span class="n">schemas</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">result</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">dispatch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">arguments_json</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="c1"># MCP 工具名带 server 前缀（time__get_current_time）</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mcp</span> <span class="ow">and</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">mcp</span><span class="o">.</span><span class="n">tool_index</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">mcp</span><span class="o">.</span><span class="n">dispatch</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">arguments_json</span><span class="p">)</span>
+        <span class="c1"># 本地工具原样分发（第 7 章的 Registry 接口）</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">local</span><span class="o">.</span><span class="n">dispatch</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">arguments_json</span><span class="p">)</span>
+</code></pre></div>
+<p>路由规则一目了然：<strong>名字带双下划线前缀的走 MCP，其余走本地</strong>。名字前缀（第三部分引入的）在这里从"防重名"升级为"路由键"。</p>
+<h3 id="44-启动并运行">4.4 启动并运行</h3>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
+    <span class="c1"># 本地工具（第 7 章）</span>
+    <span class="n">local</span> <span class="o">=</span> <span class="n">Registry</span><span class="p">()</span>
+    <span class="n">local</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Tool</span><span class="p">(</span><span class="n">calculate</span><span class="p">,</span> <span class="n">CalculateArgs</span><span class="p">,</span>
+        <span class="s2">"精确计算算术表达式。任何数学计算都必须用本工具。"</span><span class="p">))</span>
+
+    <span class="c1"># MCP 工具</span>
+    <span class="n">mcp</span> <span class="o">=</span> <span class="n">McpManager</span><span class="p">(</span><span class="s2">"mcp.json"</span><span class="p">)</span>
+    <span class="k">await</span> <span class="n">mcp</span><span class="o">.</span><span class="n">connect_all</span><span class="p">()</span>
+
+    <span class="c1"># 合体</span>
+    <span class="n">registry</span> <span class="o">=</span> <span class="n">HybridRegistry</span><span class="p">(</span><span class="n">local</span><span class="o">=</span><span class="n">local</span><span class="p">,</span> <span class="n">mcp</span><span class="o">=</span><span class="n">mcp</span><span class="p">)</span>
+
+    <span class="n">agent</span> <span class="o">=</span> <span class="n">Agent</span><span class="p">(</span>
+        <span class="n">system</span><span class="o">=</span><span class="s2">"你是一个实用助手，能精确计算、查询全球时间。"</span><span class="p">,</span>
+        <span class="n">registry</span><span class="o">=</span><span class="n">registry</span><span class="p">,</span>
+        <span class="n">max_rounds</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">agent</span><span class="o">.</span><span class="n">on</span><span class="p">(</span><span class="n">logger</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">agent</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="s2">"帮我算 987 * 654，再告诉我现在纽约几点"</span><span class="p">))</span>
+
+    <span class="c1"># 关闭连接（真实代码应处理优雅退出，这里示意）</span>
+
+<span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">main</span><span class="p">())</span>
+</code></pre></div>
+<p>一次运行轨迹（dispatch 的同步桥接做了简化，按前文说明理解）：</p>
+<div class="highlight"><pre><span></span><code>  ⚙ calculate({"expression": "987*654"})
+  ↳ 645498
+  ⚙ time__get_current_time({"timezone": "America/New_York"})
+  ↳ 当前时间: 2026-08-26T03:30:00-04:00 (America/New_York)
+  ✔ 2 轮完成
+</code></pre></div>
+<p>模型在同一轮里分别调用了<strong>进程内函数</strong>和<strong>另一个进程里的 MCP 工具</strong>——它对两者的差异毫无感知，因为工具定义的格式完全一致（第三部分转换层的功劳）。</p>
+<h3 id="45-接入后的工程问题">4.5 接入后的工程问题</h3>
+<p>真实跑起来会遇到的事，按发生频率排序：</p>
+<p><strong>① 生命周期管理</strong>。stdio server 是子进程：Agent 启动时要拉起、退出时要收割。<code>asyncio.run</code> 每次调用创建新事件循环的设计在长驻进程里会出问题（本章第三部分和第四部分的示例代码都做了此简化，生产应让 Agent 整体跑在一个事件循环里，或用专用线程管理 MCP 会话）。</p>
+<p><strong>② 失败隔离</strong>。某个 server 挂了不该拖死整个 Agent：</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">dispatch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">full_name</span><span class="p">,</span> <span class="n">arguments_json</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">mcp</span><span class="o">.</span><span class="n">dispatch</span><span class="p">(</span><span class="n">full_name</span><span class="p">,</span> <span class="n">arguments_json</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">"MCP 工具调用失败（</span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">）。可告知用户该能力暂不可用。"</span>
+</code></pre></div>
+<p>第 7 章"错误是给模型的信息"原则的又一次应用——模型收到失败信息后，通常会自己决定换路（告诉用户、改用别的工具）。</p>
+<p><strong>③ 工具数量失控</strong>。三个 server 各带 10 个工具，加上本地工具，30+ 个工具的 schema 又回到了第 7 章的困境（选择困难 + 窗口税）。对策照旧：按 Agent 职责控制接入面；或给 Agent 一个"连接管理"工具让它按需启停 server（进阶玩法，注意安全面）。</p>
+<p><strong>④ 同步异步的边界</strong>。Agent 循环是同步的（简单），MCP 是异步的（协议特性）。这里用 <code>asyncio.run</code> 做桥接适合示例和脚本；长驻服务建议整体异步化。</p>
+<h3 id="46-站远一点看">4.6 站远一点看</h3>
+<p>回看这个架构，一个值得内化的观点：</p>
+<blockquote>
+<p><strong>MCP 没有改变 Agent 的形状，它只是丰富了 Registry 的进货渠道。</strong></p>
+</blockquote>
+<p>第 8 章的循环、第 7 章的协议、第 5 章的提示词工程——这些 Agent 的核心构件对 MCP 一无所知。协议解决的是<strong>供应链问题</strong>（工具从哪来），不是<strong>构造问题</strong>（Agent 怎么运作）。所以学习顺序也应该如此：先懂 Agent 怎么运转（第 7、8 章），再学工具生态怎么组织（第 10-12 章）。反过来先学 MCP，容易把协议当地基，实际它只是插座。</p>
+<h2 id="本章小结">本章小结</h2>
+<ul>
+<li><strong>协议层</strong>：MCP 解决 M×N 适配问题，客户端和服务方各自面向协议编程（USB-C/LSP 类比）；三角色 Host（产品）/Client（连接器）/Server（工具方）；两种传输 stdio（本地）/ Streamable HTTP（远程）；报文是 JSON-RPC 2.0，生命周期为 initialize 握手 → 工具发现 → 调用循环；三原语按控制权分：Tools（模型控）/Resources（应用控）/Prompts（用户控）；三个"不是"：不替代 tool calling、不是框架、不管安全</li>
+<li><strong>Server 侧</strong>：FastMCP 三件套——<code>@mcp.tool()</code> 从注解生成 schema、docstring 生成 description、装饰器自动注册；第 7 章的 Tool/Registry 到 MCP Server 是"进程内调用 → 跨进程服务"的形态变化，逻辑不变；暴露即防御——沙箱路径检查从可选变必选，错误仍要"可读可行动"；配置文件是最后一公里——绝对路径 command、宿主管理生命周期、远程用 url</li>
+<li><strong>Client 侧</strong>：手写路径 StdioTransport（进程+分帧+id 配对）→ McpClient（握手/发现/调用）→ 转换层（MCP→OpenAI 格式）→ Registry 接入；关键理解——模型对 MCP 无感知，转换层只是字典变换 + 名字加前缀；生命周期是硬约束——不握手不能 list，顺序不可乱；stdio 的工程细节——stderr 分离、id 配对、分帧方式；生产用官方 SDK——同样的流程，健壮性全托管</li>
+<li><strong>总装侧</strong>：Agent 循环零改动，MCP 接入全部发生在 Registry 层；HybridRegistry 用名字前缀做路由——双下划线走 MCP，其余走本地；McpManager 管生命周期——配置加载、批量连接、索引构建；工程四件事——生命周期管理、失败隔离（错误信息回传）、工具数量控制、同步异步桥接</li>
+</ul>
+<p>工具生态的两大机制（Skill、MCP）都讲完了。它们是竞争关系吗？各管什么？怎么混合使用？下一章正面对决。</p>
+<p><strong>下一篇</strong>：<a href="../agent/12-duo-agent-yu-xuan-xing-ce-lve.html">12 · 多 Agent 与选型策略</a></p></div>
+
+      </article>
+<nav class="pager"><a class="pg-card pg-prev" href="../agent/10-skill-yu-jian-jin-shi-pi-lu.html"><span class="pg-label">← 上一篇</span><span class="pg-title">Skill 与渐进式披露</span><span class="pg-mod">Agent 核心</span></a><a class="pg-card pg-next" href="../agent/12-duo-agent-yu-xuan-xing-ce-lve.html"><span class="pg-label">下一篇 →</span><span class="pg-title">多 Agent 与选型策略</span><span class="pg-mod">Agent 核心</span></a></nav>
+    </div>
+    <footer class="foot">
+      <span>深栈 DeepStack · AI Agent 工程师转型训练营配套文档</span>
+    </footer>
+  </main>
+<nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#第一部分协议本身">第一部分：协议本身</a><a class="toc-link toc-h3" href="#11-mn-问题">1.1 M×N 问题</a><a class="toc-link toc-h3" href="#12-协议内核三个角色">1.2 协议内核：三个角色</a><a class="toc-link toc-h3" href="#13-两种传输">1.3 两种传输</a><a class="toc-link toc-h3" href="#14-报文格式json-rpc-20">1.4 报文格式：JSON-RPC 2.0</a><a class="toc-link toc-h3" href="#15-会话生命周期">1.5 会话生命周期</a><a class="toc-link toc-h3" href="#16-三大原语">1.6 三大原语</a><a class="toc-link toc-h3" href="#17-生态现状">1.7 生态现状</a><a class="toc-link toc-h3" href="#18-一个澄清mcp-不是什么">1.8 一个澄清：MCP 不是什么</a><a class="toc-link toc-h2" href="#第二部分先当提供方写一个自己的-server">第二部分：先当提供方——写一个自己的 Server</a><a class="toc-link toc-h3" href="#21-最小-server三个方法">2.1 最小 Server：三个方法</a><a class="toc-link toc-h3" href="#22-做一个有用的文件助手-server">2.2 做一个有用的：文件助手 Server</a><a class="toc-link toc-h3" href="#23-resources-和-prompts-也能暴露">2.3 Resources 和 Prompts 也能暴露</a><a class="toc-link toc-h3" href="#24-配置文件接入的最后一公里">2.4 配置文件：接入的最后一公里</a><a class="toc-link toc-h3" href="#25-分发形态">2.5 分发形态</a><a class="toc-link toc-h2" href="#第三部分再当消费方实现一个能发现和调用工具的-client">第三部分：再当消费方——实现一个能发现和调用工具的 Client</a><a class="toc-link toc-h3" href="#31-为什么不用-sdk-先手写">3.1 为什么不用 SDK 先手写</a><a class="toc-link toc-h3" href="#32-底座进程管理">3.2 底座：进程管理</a><a class="toc-link toc-h3" href="#33-协议层client">3.3 协议层：Client</a><a class="toc-link toc-h3" href="#34-关键一步mcp-工具转-openai-格式">3.4 关键一步：MCP 工具转 OpenAI 格式</a><a class="toc-link toc-h3" href="#35-塞进-agent外部工具源">3.5 塞进 Agent：外部工具源</a><a class="toc-link toc-h3" href="#36-用官方-sdk-重写生产做法">3.6 用官方 SDK 重写（生产做法）</a><a class="toc-link toc-h2" href="#第四部分整合让-agent-动态获得生态工具">第四部分：整合——让 Agent 动态获得生态工具</a><a class="toc-link toc-h3" href="#41-目标形态">4.1 目标形态</a><a class="toc-link toc-h3" href="#42-配置加载与连接管理">4.2 配置加载与连接管理</a><a class="toc-link toc-h3" href="#43-混合-registry两个工具源合一">4.3 混合 Registry：两个工具源合一</a><a class="toc-link toc-h3" href="#44-启动并运行">4.4 启动并运行</a><a class="toc-link toc-h3" href="#45-接入后的工程问题">4.5 接入后的工程问题</a><a class="toc-link toc-h3" href="#46-站远一点看">4.6 站远一点看</a><a class="toc-link toc-h2" href="#本章小结">本章小结</a></nav>
+</div>
+<div class="sb-mask" id="sbMask"></div>
+<script src="../assets/app.js"></script>
+</body>
+</html>
