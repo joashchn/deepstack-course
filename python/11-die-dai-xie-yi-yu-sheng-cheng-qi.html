@@ -6,7 +6,7 @@
 <title>11 · 迭代协议与生成器 · InfiSpace 课程文档</title>
 <meta name="description" content="for 循环你从第 02 章用到现在，早就成了肌肉记忆。但你有没有追问过一句：for 凭什么知道&quot;下一个值&quot;是谁？凭什么列表、字符串、字典、文件都能往 for 里塞，一个数字却会被当场拒绝？这一章我们就把 for 的机箱…">
 <link rel="stylesheet" href="../assets/style.css">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%232DD4D4' text-anchor='middle'%3E%E2%88%9E%3C/text%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%23D9C39A' text-anchor='middle'%3E%E2%88%9E%3C/text%3E%3C/svg%3E">
 </head>
 <body>
 <div class="progress" id="progress"></div>
@@ -15,8 +15,7 @@
 <aside class="sidebar" id="sidebar">
   <div class="sb-head">
     <a class="brand" href="../index.html">
-      <img class="brand-mark" src="../assets/infispace-logo-1.png" alt="InfiSpace">
-      <span class="brand-text"><b>InfiSpace</b><i>AI Agent 工程师转型训练营</i></span>
+      <img class="brand-mark" src="../assets/infispace-logo-nav-dark.png" alt="InfiSpace">
     </a>
     <button class="sb-close" id="sbClose" aria-label="关闭目录">✕</button>
   </div>
@@ -687,7 +686,7 @@
 <nav class="pager"><a class="pg-card pg-prev" href="../python/10-zhuang-shi-qi.html"><span class="pg-label">← 上一篇</span><span class="pg-title">装饰器</span><span class="pg-mod">Python 与数据实践</span></a><a class="pg-card pg-next" href="../python/12-with-yu-shang-xia-wen-xie-yi.html"><span class="pg-label">下一篇 →</span><span class="pg-title">with 与上下文协议</span><span class="pg-mod">Python 与数据实践</span></a></nav>
     </div>
     <footer class="foot">
-      <span>InfiSpace · AI Agent 工程师转型训练营配套文档</span>
+      <span>AI Agent 工程师转型训练营配套文档</span>
     </footer>
   </main>
 <nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#1-可迭代对象for-眼里的合格供应商">1. 可迭代对象：for 眼里的合格供应商</a><a class="toc-link toc-h2" href="#2-迭代器真正吐值的角色">2. 迭代器：真正吐值的角色</a><a class="toc-link toc-h3" href="#应用造一条停不下来的序列">应用：造一条停不下来的序列</a><a class="toc-link toc-h2" href="#3-各司其职可迭代对象配一个专职迭代器">3. 各司其职：可迭代对象配一个专职迭代器</a><a class="toc-link toc-h2" href="#4-隐形的消费者谁在替你调-iter-和-next">4. 隐形的消费者：谁在替你调 iter 和 next</a><a class="toc-link toc-h3" href="#41-for-循环">4.1 for 循环</a><a class="toc-link toc-h3" href="#42-listtupleset-构造函数">4.2 list()、tuple()、set() 构造函数</a><a class="toc-link toc-h3" href="#43-解包">4.3 * 解包</a><a class="toc-link toc-h3" href="#44-in-成员判断">4.4 in 成员判断</a><a class="toc-link toc-h3" href="#45-summaxmin">4.5 sum()、max()、min()</a><a class="toc-link toc-h3" href="#46-zipmapfilter">4.6 zip()、map()、filter()</a><a class="toc-link toc-h3" href="#47-anyall">4.7 any()、all()</a><a class="toc-link toc-h2" href="#5-range天天用未必真懂">5. range：天天用，未必真懂</a><a class="toc-link toc-h2" href="#6-推导式一行代码顶一小段循环">6. 推导式：一行代码顶一小段循环</a><a class="toc-link toc-h3" href="#61-列表推导式">6.1 列表推导式</a><a class="toc-link toc-h3" href="#62-字典推导式">6.2 字典推导式</a><a class="toc-link toc-h3" href="#63-集合推导式">6.3 集合推导式</a><a class="toc-link toc-h3" href="#64-嵌套推导式">6.4 嵌套推导式</a><a class="toc-link toc-h3" href="#65-没有元组推导式这回事">6.5 没有元组推导式这回事</a><a class="toc-link toc-h3" href="#66-推导式与循环怎么选">6.6 推导式与循环怎么选</a><a class="toc-link toc-h2" href="#7-生成器函数会踩刹车的函数">7. 生成器函数：会踩刹车的函数</a><a class="toc-link toc-h2" href="#8-yield-from把产量外包出去">8. yield from：把产量外包出去</a><a class="toc-link toc-h2" href="#9-send不仅会吐还会收">9. send：不仅会吐，还会收</a><a class="toc-link toc-h2" href="#10-生成器表达式换一对括号立刻变懒">10. 生成器表达式：换一对括号，立刻变懒</a><a class="toc-link toc-h2" href="#11-itertools标准库自带的迭代工具箱">11. itertools：标准库自带的迭代工具箱</a><a class="toc-link toc-h2" href="#12-作业">12. 作业</a><a class="toc-link toc-h3" href="#一多层储物清单摊平">一、多层储物清单摊平</a><a class="toc-link toc-h3" href="#二模拟分批拉取记录">二、模拟分批拉取记录</a><a class="toc-link toc-h3" href="#三思考题">三、思考题</a></nav>

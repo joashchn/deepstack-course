@@ -6,7 +6,7 @@
 <title>03 · 注意力机制与 Transformer 架构 · InfiSpace 课程文档</title>
 <meta name="description" content="第 2 章搭好的神经网络已经就位：它有了嵌入表和可训练的权重。但一个先天缺陷还没解决——嵌入表是一词一向量，静态不变的。&quot;苹果发布了新手机&quot;和&quot;我吃了个苹果&quot;里，&quot;苹果&quot;查的是嵌入表的同一行，含义却天差地别。本章讲 Tr…">
 <link rel="stylesheet" href="../assets/style.css">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%232DD4D4' text-anchor='middle'%3E%E2%88%9E%3C/text%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%23D9C39A' text-anchor='middle'%3E%E2%88%9E%3C/text%3E%3C/svg%3E">
 </head>
 <body>
 <div class="progress" id="progress"></div>
@@ -15,8 +15,7 @@
 <aside class="sidebar" id="sidebar">
   <div class="sb-head">
     <a class="brand" href="../index.html">
-      <img class="brand-mark" src="../assets/infispace-logo-1.png" alt="InfiSpace">
-      <span class="brand-text"><b>InfiSpace</b><i>AI Agent 工程师转型训练营</i></span>
+      <img class="brand-mark" src="../assets/infispace-logo-nav-dark.png" alt="InfiSpace">
     </a>
     <button class="sb-close" id="sbClose" aria-label="关闭目录">✕</button>
   </div>
@@ -524,7 +523,7 @@ $$</p>
 <nav class="pager"><a class="pg-card pg-prev" href="../agent/02-qian-xiang-chuan-bo-yu-fan-xiang-chuan-bo.html"><span class="pg-label">← 上一篇</span><span class="pg-title">前向传播与反向传播</span><span class="pg-mod">Agent 核心</span></a><a class="pg-card pg-next" href="../agent/04-yu-xun-lian-rlhf-yu-cai-yang-kv-cache.html"><span class="pg-label">下一篇 →</span><span class="pg-title">预训练、RLHF 与采样（KV Cache）</span><span class="pg-mod">Agent 核心</span></a></nav>
     </div>
     <footer class="foot">
-      <span>InfiSpace · AI Agent 工程师转型训练营配套文档</span>
+      <span>AI Agent 工程师转型训练营配套文档</span>
     </footer>
   </main>
 <nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#1-问题静态向量不够用">1. 问题：静态向量不够用</a><a class="toc-link toc-h2" href="#2-直觉一场信息撮合会">2. 直觉：一场信息撮合会</a><a class="toc-link toc-h2" href="#3-数学一次软性加权平均">3. 数学：一次软性加权平均</a><a class="toc-link toc-h2" href="#4-动手手写一遍注意力">4. 动手：手写一遍注意力</a><a class="toc-link toc-h2" href="#5-因果掩码只许看过去">5. 因果掩码：只许看过去</a><a class="toc-link toc-h2" href="#6-多头注意力多视角并行">6. 多头注意力：多视角并行</a><a class="toc-link toc-h2" href="#7-位置编码注意力不知道顺序">7. 位置编码：注意力不知道顺序</a><a class="toc-link toc-h2" href="#8-一个-transformer-层的全貌">8. 一个 Transformer 层的全貌</a><a class="toc-link toc-h2" href="#9-前馈网络-ffn两层矩阵-激活">9. 前馈网络 FFN：两层矩阵 + 激活</a><a class="toc-link toc-h2" href="#10-残差连接深度的生命线">10. 残差连接：深度的生命线</a><a class="toc-link toc-h2" href="#11-层归一化-layernorm">11. 层归一化 LayerNorm</a><a class="toc-link toc-h2" href="#12-动手拼一个最小-transformer">12. 动手：拼一个最小 Transformer</a><a class="toc-link toc-h2" href="#13-为什么-decoder-only-赢了">13. 为什么 decoder-only 赢了</a><a class="toc-link toc-h2" href="#14-参数都花在哪了">14. 参数都花在哪了</a><a class="toc-link toc-h2" href="#本章小结">本章小结</a></nav>

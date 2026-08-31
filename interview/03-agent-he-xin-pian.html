@@ -6,7 +6,7 @@
 <title>03 · Agent 核心篇 · InfiSpace 课程文档</title>
 <meta name="description" content="对应课件：agent核心/07-15。Agent 是当前 AI 应用岗的核心差异化考点——面试官想确认你不是&quot;跑通了 Demo&quot;，而是理解它为什么这样运转、在哪里会失控、怎么让它值得托付。本篇 11 题覆盖从协议到多 A…">
 <link rel="stylesheet" href="../assets/style.css">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%232DD4D4' text-anchor='middle'%3E%E2%88%9E%3C/text%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%23D9C39A' text-anchor='middle'%3E%E2%88%9E%3C/text%3E%3C/svg%3E">
 </head>
 <body>
 <div class="progress" id="progress"></div>
@@ -15,8 +15,7 @@
 <aside class="sidebar" id="sidebar">
   <div class="sb-head">
     <a class="brand" href="../index.html">
-      <img class="brand-mark" src="../assets/infispace-logo-1.png" alt="InfiSpace">
-      <span class="brand-text"><b>InfiSpace</b><i>AI Agent 工程师转型训练营</i></span>
+      <img class="brand-mark" src="../assets/infispace-logo-nav-dark.png" alt="InfiSpace">
     </a>
     <button class="sb-close" id="sbClose" aria-label="关闭目录">✕</button>
   </div>
@@ -601,7 +600,7 @@
 <nav class="pager"><a class="pg-card pg-prev" href="../interview/02-rag-yu-jian-suo-pian.html"><span class="pg-label">← 上一篇</span><span class="pg-title">RAG 与检索篇</span><span class="pg-mod">面试题库</span></a><a class="pg-card pg-next" href="../interview/04-langgraph-pian.html"><span class="pg-label">下一篇 →</span><span class="pg-title">LangGraph 篇</span><span class="pg-mod">面试题库</span></a></nav>
     </div>
     <footer class="foot">
-      <span>InfiSpace · AI Agent 工程师转型训练营配套文档</span>
+      <span>AI Agent 工程师转型训练营配套文档</span>
     </footer>
   </main>
 <nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#q01-tool-calling-的原理是什么模型真的执行了函数吗">Q01 · Tool Calling 的原理是什么？模型真的&quot;执行&quot;了函数吗？</a><a class="toc-link toc-h3" href="#考察意图与踩坑点">考察意图与踩坑点</a><a class="toc-link toc-h2" href="#q02-讲讲-react它和普通的链式调用差在哪">Q02 · 讲讲 ReAct。它和普通的&quot;链式调用&quot;差在哪？</a><a class="toc-link toc-h3" href="#考察意图与踩坑点_1">考察意图与踩坑点</a><a class="toc-link toc-h2" href="#q03-你的-agent-陷入死循环怎么办">Q03 · 你的 Agent 陷入死循环怎么办？</a><a class="toc-link toc-h3" href="#考察意图与踩坑点_2">考察意图与踩坑点</a><a class="toc-link toc-h2" href="#q04-什么任务该用-agent什么任务不该">Q04 · 什么任务该用 Agent？什么任务不该？</a><a class="toc-link toc-h3" href="#考察意图与踩坑点_3">考察意图与踩坑点</a><a class="toc-link toc-h2" href="#q05-怎么设计一个好用的工具工具越多越好吗">Q05 · 怎么设计一个好用的工具？工具越多越好吗？</a><a class="toc-link toc-h3" href="#考察意图与踩坑点_4">考察意图与踩坑点</a><a class="toc-link toc-h2" href="#q06-mcp-是什么和直接写函数有什么区别什么时候用-skill-多-agent">Q06 · MCP 是什么？和直接写函数有什么区别？什么时候用 Skill / 多 Agent？</a><a class="toc-link toc-h3" href="#考察意图与踩坑点_5">考察意图与踩坑点</a><a class="toc-link toc-h2" href="#q07-上下文工程是什么和提示词工程什么关系">Q07 · 上下文工程是什么？和提示词工程什么关系？</a><a class="toc-link toc-h3" href="#考察意图与踩坑点_6">考察意图与踩坑点</a><a class="toc-link toc-h2" href="#q08-agent-上线前怎么评测上线后怎么知道它健康">Q08 · Agent 上线前怎么评测？上线后怎么知道它健康？</a><a class="toc-link toc-h3" href="#考察意图与踩坑点_7">考察意图与踩坑点</a><a class="toc-link toc-h2" href="#q09-agent-的记忆怎么设计把历史全塞进上下文为什么不行">Q09 · Agent 的记忆怎么设计？&quot;把历史全塞进上下文&quot;为什么不行？</a><a class="toc-link toc-h3" href="#考察意图与踩坑点_8">考察意图与踩坑点</a><a class="toc-link toc-h2" href="#q10-为什么用-langchainlanggraph自己裸写不行吗">Q10 · 为什么用 LangChain/LangGraph？自己裸写不行吗？</a><a class="toc-link toc-h3" href="#考察意图与踩坑点_9">考察意图与踩坑点</a><a class="toc-link toc-h2" href="#q11-多-agent-系统怎么设计子代理和普通工具有什么本质区别">Q11 · 多 Agent 系统怎么设计？子代理和普通工具有什么本质区别？</a><a class="toc-link toc-h3" href="#考察意图与踩坑点_10">考察意图与踩坑点</a><a class="toc-link toc-h2" href="#本篇速记卡">本篇速记卡</a></nav>

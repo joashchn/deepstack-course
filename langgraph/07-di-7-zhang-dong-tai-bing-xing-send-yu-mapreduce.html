@@ -6,7 +6,7 @@
 <title>07 · 第 7 章 动态并行：Send 与 MapReduce · InfiSpace 课程文档</title>
 <meta name="description" content="本章目标：掌握 Send——LangGraph 中&quot;运行时才知道并行几路&quot;的扇出机制。学完本章，你能实现标准的 MapReduce 工作流：N 份输入并行处理、结果自动归并，而 N 在编译期完全未知">
 <link rel="stylesheet" href="../assets/style.css">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%232DD4D4' text-anchor='middle'%3E%E2%88%9E%3C/text%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%23D9C39A' text-anchor='middle'%3E%E2%88%9E%3C/text%3E%3C/svg%3E">
 </head>
 <body>
 <div class="progress" id="progress"></div>
@@ -15,8 +15,7 @@
 <aside class="sidebar" id="sidebar">
   <div class="sb-head">
     <a class="brand" href="../index.html">
-      <img class="brand-mark" src="../assets/infispace-logo-1.png" alt="InfiSpace">
-      <span class="brand-text"><b>InfiSpace</b><i>AI Agent 工程师转型训练营</i></span>
+      <img class="brand-mark" src="../assets/infispace-logo-nav-dark.png" alt="InfiSpace">
     </a>
     <button class="sb-close" id="sbClose" aria-label="关闭目录">✕</button>
   </div>
@@ -458,7 +457,7 @@
 <nav class="pager"><a class="pg-card pg-prev" href="../langgraph/06-di-6-zhang-command-ba-kong-zhi-quan-jiao-jin.html"><span class="pg-label">← 上一篇</span><span class="pg-title">第 6 章 Command：把控制权交进节点</span><span class="pg-mod">LangGraph 框架指南</span></a><a class="pg-card pg-next" href="../langgraph/08-di-8-zhang-gei-tu-zhuang-shang-shou-jiao-gong.html"><span class="pg-label">下一篇 →</span><span class="pg-title">第 8 章 给图装上手脚：工具调用</span><span class="pg-mod">LangGraph 框架指南</span></a></nav>
     </div>
     <footer class="foot">
-      <span>InfiSpace · AI Agent 工程师转型训练营配套文档</span>
+      <span>AI Agent 工程师转型训练营配套文档</span>
     </footer>
   </main>
 <nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#71-需求升级批次评估">7.1 需求升级：批次评估</a><a class="toc-link toc-h2" href="#72-send把执行计划变成数据">7.2 Send：把执行计划变成数据</a><a class="toc-link toc-h2" href="#73-完整-demo批次简历评估">7.3 完整 demo：批次简历评估</a><a class="toc-link toc-h2" href="#74-send-的两条关键语义">7.4 Send 的两条关键语义</a><a class="toc-link toc-h2" href="#75-mapreduce-视角">7.5 MapReduce 视角</a><a class="toc-link toc-h2" href="#76-载荷是独立的别共享可变对象">7.6 载荷是独立的，别共享可变对象</a><a class="toc-link toc-h2" href="#常见坑与排错">常见坑与排错</a><a class="toc-link toc-h2" href="#动手练习">动手练习</a><a class="toc-link toc-h2" href="#本章速查">本章速查</a></nav>

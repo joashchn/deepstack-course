@@ -6,7 +6,7 @@
 <title>04 · 预训练、RLHF 与采样（KV Cache） · InfiSpace 课程文档</title>
 <meta name="description" content="第 3 章拼出了完整的架构，但一台随机初始化的模型只会输出乱码——把它变成能对话、能推理、能调用工具的助手，要经过一条两级流水线：预训练（学知识）+ 后训练（学做人）。这是模型的&quot;前半生&quot;。&quot;后半生&quot;则是每次你按下回车后…">
 <link rel="stylesheet" href="../assets/style.css">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%232DD4D4' text-anchor='middle'%3E%E2%88%9E%3C/text%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%23D9C39A' text-anchor='middle'%3E%E2%88%9E%3C/text%3E%3C/svg%3E">
 </head>
 <body>
 <div class="progress" id="progress"></div>
@@ -15,8 +15,7 @@
 <aside class="sidebar" id="sidebar">
   <div class="sb-head">
     <a class="brand" href="../index.html">
-      <img class="brand-mark" src="../assets/infispace-logo-1.png" alt="InfiSpace">
-      <span class="brand-text"><b>InfiSpace</b><i>AI Agent 工程师转型训练营</i></span>
+      <img class="brand-mark" src="../assets/infispace-logo-nav-dark.png" alt="InfiSpace">
     </a>
     <button class="sb-close" id="sbClose" aria-label="关闭目录">✕</button>
   </div>
@@ -524,7 +523,7 @@ T=3.0: [0.558 0.205 0.075 0.055 0.045]   ← 抹平：冷门候选也有机会
 <nav class="pager"><a class="pg-card pg-prev" href="../agent/03-zhu-yi-li-ji-zhi-yu-transformer-jia-gou.html"><span class="pg-label">← 上一篇</span><span class="pg-title">注意力机制与 Transformer 架构</span><span class="pg-mod">Agent 核心</span></a><a class="pg-card pg-next" href="../agent/05-ben-di-mo-xing-yu-xiao-xi-jie-gou.html"><span class="pg-label">下一篇 →</span><span class="pg-title">本地模型与消息结构</span><span class="pg-mod">Agent 核心</span></a></nav>
     </div>
     <footer class="foot">
-      <span>InfiSpace · AI Agent 工程师转型训练营配套文档</span>
+      <span>AI Agent 工程师转型训练营配套文档</span>
     </footer>
   </main>
 <nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#1-预训练读遍互联网">1. 预训练：读遍互联网</a><a class="toc-link toc-h2" href="#2-后训练从补全机器到助手">2. 后训练：从补全机器到助手</a><a class="toc-link toc-h3" href="#21-sft监督微调照着示范学">2.1 SFT：监督微调，照着示范学</a><a class="toc-link toc-h3" href="#22-rlhf从模仿到偏好对齐">2.2 RLHF：从&quot;模仿&quot;到&quot;偏好对齐&quot;</a><a class="toc-link toc-h3" href="#23-对齐税">2.3 对齐税</a><a class="toc-link toc-h2" href="#3-思维链后训练教会模型想再答">3. 思维链：后训练教会模型&quot;想再答&quot;</a><a class="toc-link toc-h2" href="#4-一个模型的一生训练流水线全景">4. 一个模型的一生：训练流水线全景</a><a class="toc-link toc-h2" href="#5-幻觉流水线的必然副产品">5. 幻觉：流水线的必然副产品</a><a class="toc-link toc-h2" href="#6-自回归一次生成一个-token">6. 自回归：一次生成一个 token</a><a class="toc-link toc-h2" href="#7-k-v-缓存重复计算的大消除">7. K-V 缓存：重复计算的大消除</a><a class="toc-link toc-h3" href="#71-问题前缀的重复计算">7.1 问题：前缀的重复计算</a><a class="toc-link toc-h3" href="#72-解药缓存历史位置的-kv">7.2 解药：缓存历史位置的 K、V</a><a class="toc-link toc-h3" href="#73-推论预填充与解码的两阶段节奏">7.3 推论：预填充与解码的两阶段节奏</a><a class="toc-link toc-h3" href="#74-流式输出不省总耗时只改善体感">7.4 流式输出：不省总耗时，只改善体感</a><a class="toc-link toc-h2" href="#8-采样策略温度到底在调什么">8. 采样策略：温度到底在调什么</a><a class="toc-link toc-h3" href="#81-贪心-vs-随机">8.1 贪心 vs 随机</a><a class="toc-link toc-h3" href="#82-截断top-k-与-top-p">8.2 截断：Top-k 与 Top-p</a><a class="toc-link toc-h3" href="#83-温度分布的锐度旋钮">8.3 温度：分布的锐度旋钮</a><a class="toc-link toc-h3" href="#84-其他参数速览">8.4 其他参数速览</a><a class="toc-link toc-h2" href="#9-上下文窗口推理的资源边界">9. 上下文窗口：推理的资源边界</a><a class="toc-link toc-h2" href="#10-成本token-经济学">10. 成本：token 经济学</a><a class="toc-link toc-h2" href="#11-和-agent-开发的接口">11. 和 Agent 开发的接口</a><a class="toc-link toc-h2" href="#本章小结">本章小结</a></nav>

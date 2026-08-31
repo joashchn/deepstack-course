@@ -6,7 +6,7 @@
 <title>20 · Future 与协程 · InfiSpace 课程文档</title>
 <meta name="description" content="第 19 章把事件循环拆开看了个明白：一个线程、两个队列、一串回调，循环每一圈都在做&quot;执行 ready 队列里排队的函数&quot;这件事。但有两个问题当时刻意绕开了：">
 <link rel="stylesheet" href="../assets/style.css">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%232DD4D4' text-anchor='middle'%3E%E2%88%9E%3C/text%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%23D9C39A' text-anchor='middle'%3E%E2%88%9E%3C/text%3E%3C/svg%3E">
 </head>
 <body>
 <div class="progress" id="progress"></div>
@@ -15,8 +15,7 @@
 <aside class="sidebar" id="sidebar">
   <div class="sb-head">
     <a class="brand" href="../index.html">
-      <img class="brand-mark" src="../assets/infispace-logo-1.png" alt="InfiSpace">
-      <span class="brand-text"><b>InfiSpace</b><i>AI Agent 工程师转型训练营</i></span>
+      <img class="brand-mark" src="../assets/infispace-logo-nav-dark.png" alt="InfiSpace">
     </a>
     <button class="sb-close" id="sbClose" aria-label="关闭目录">✕</button>
   </div>
@@ -579,7 +578,7 @@
 <nav class="pager"><a class="pg-card pg-prev" href="../python/19-shi-jian-xun-huan.html"><span class="pg-label">← 上一篇</span><span class="pg-title">事件循环</span><span class="pg-mod">Python 与数据实践</span></a><a class="pg-card pg-next" href="../python/21-asyncio-shi-zhan.html"><span class="pg-label">下一篇 →</span><span class="pg-title">asyncio 实战</span><span class="pg-mod">Python 与数据实践</span></a></nav>
     </div>
     <footer class="foot">
-      <span>InfiSpace · AI Agent 工程师转型训练营配套文档</span>
+      <span>AI Agent 工程师转型训练营配套文档</span>
     </footer>
   </main>
 <nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#1-future一张尚未兑付的凭据">1. Future：一张&quot;尚未兑付的凭据&quot;</a><a class="toc-link toc-h3" href="#11-先造一张凭据出来">1.1 先造一张凭据出来</a><a class="toc-link toc-h3" href="#12-三种兑付方式挨个试">1.2 三种&quot;兑付&quot;方式挨个试</a><a class="toc-link toc-h3" href="#13-兑付了再叫我add_done_callback">1.3 兑付了再叫我：add_done_callback</a><a class="toc-link toc-h2" href="#2-用-future-改造两段经典等待">2. 用 Future 改造两段经典等待</a><a class="toc-link toc-h3" href="#21-闹钟把等-n-秒封装成-future">2.1 闹钟：把&quot;等 N 秒&quot;封装成 Future</a><a class="toc-link toc-h3" href="#22-拨测把一次-http-请求封装成-future-链">2.2 拨测：把一次 HTTP 请求封装成 Future 链</a><a class="toc-link toc-h3" href="#23-启动器runnerpy">2.3 启动器：runner.py</a><a class="toc-link toc-h2" href="#3-回调的裂缝代码开始向右生长">3. 回调的裂缝：代码开始向右生长</a><a class="toc-link toc-h2" href="#4-协程把异步代码摆回从上往下">4. 协程：把异步代码摆回&quot;从上往下&quot;</a><a class="toc-link toc-h3" href="#41-async-def-与协程对象">4.1 async def 与协程对象</a><a class="toc-link toc-h3" href="#42-await在这里停一下等结果回来">4.2 await：在这里停一下，等结果回来</a><a class="toc-link toc-h2" href="#5-协程和线程到底差在哪">5. 协程和线程，到底差在哪</a><a class="toc-link toc-h2" href="#6-亲手推一次协程">6. 亲手推一次协程</a><a class="toc-link toc-h2" href="#7-task官方出品的协程驱动器">7. Task：官方出品的协程驱动器</a><a class="toc-link toc-h2" href="#8-asynciorun一步到位">8. asyncio.run：一步到位</a><a class="toc-link toc-h2" href="#9-把这一章缝起来">9. 把这一章缝起来</a><a class="toc-link toc-h2" href="#作业">作业</a><a class="toc-link toc-h3" href="#一读懂两段封装">一、读懂两段封装</a><a class="toc-link toc-h3" href="#二实现-collect_all-函数">二、实现 collect_all 函数</a><a class="toc-link toc-h3" href="#三实现-gate-类">三、实现 Gate 类</a></nav>

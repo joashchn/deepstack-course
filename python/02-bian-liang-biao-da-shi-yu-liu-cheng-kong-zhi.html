@@ -6,7 +6,7 @@
 <title>02 · 变量、表达式与流程控制 · InfiSpace 课程文档</title>
 <meta name="description" content="上一章环境已经跑通，从这一章开始正式写代码。我们要解决三件事：数据怎么存（变量）、数据怎么算（运算符与表达式）、程序怎么根据不同情况走不同的路、怎么重复干活（流程控制）。这三样是所有 Python 代码的地基，务必敲熟">
 <link rel="stylesheet" href="../assets/style.css">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%232DD4D4' text-anchor='middle'%3E%E2%88%9E%3C/text%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%23D9C39A' text-anchor='middle'%3E%E2%88%9E%3C/text%3E%3C/svg%3E">
 </head>
 <body>
 <div class="progress" id="progress"></div>
@@ -15,8 +15,7 @@
 <aside class="sidebar" id="sidebar">
   <div class="sb-head">
     <a class="brand" href="../index.html">
-      <img class="brand-mark" src="../assets/infispace-logo-1.png" alt="InfiSpace">
-      <span class="brand-text"><b>InfiSpace</b><i>AI Agent 工程师转型训练营</i></span>
+      <img class="brand-mark" src="../assets/infispace-logo-nav-dark.png" alt="InfiSpace">
     </a>
     <button class="sb-close" id="sbClose" aria-label="关闭目录">✕</button>
   </div>
@@ -1195,7 +1194,7 @@
 <nav class="pager"><a class="pg-card pg-prev" href="../python/01-huan-jing-da-jian-yu-ban-ben-guan-li.html"><span class="pg-label">← 上一篇</span><span class="pg-title">环境搭建与版本管理</span><span class="pg-mod">Python 与数据实践</span></a><a class="pg-card pg-next" href="../python/03-xu-lie-zi-dian-yu-ji-he.html"><span class="pg-label">下一篇 →</span><span class="pg-title">序列、字典与集合</span><span class="pg-mod">Python 与数据实践</span></a></nav>
     </div>
     <footer class="foot">
-      <span>InfiSpace · AI Agent 工程师转型训练营配套文档</span>
+      <span>AI Agent 工程师转型训练营配套文档</span>
     </footer>
   </main>
 <nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#一先摸清-python-的脾气">一、先摸清 Python 的脾气</a><a class="toc-link toc-h2" href="#二注释写给读代码的人">二、注释：写给读代码的人</a><a class="toc-link toc-h2" href="#三变量给数据贴标签">三、变量：给数据贴标签</a><a class="toc-link toc-h3" href="#创建变量">创建变量</a><a class="toc-link toc-h3" href="#起名的硬性规则">起名的硬性规则</a><a class="toc-link toc-h3" href="#起名的软性约定">起名的软性约定</a><a class="toc-link toc-h3" href="#一行搞定多个赋值">一行搞定多个赋值</a><a class="toc-link toc-h2" href="#四数据类型认一认都有什么">四、数据类型：认一认都有什么</a><a class="toc-link toc-h3" href="#六大类基本类型">六大类基本类型</a><a class="toc-link toc-h3" href="#原子与容器两大阵营">原子与容器两大阵营</a><a class="toc-link toc-h3" href="#字面量的各种写法">字面量的各种写法</a><a class="toc-link toc-h2" href="#五type随时验明正身">五、type()：随时验明正身</a><a class="toc-link toc-h2" href="#六类型转换让数据换个身份">六、类型转换：让数据换个身份</a><a class="toc-link toc-h2" href="#七f-string把变量嵌进字符串">七、f-string：把变量嵌进字符串</a><a class="toc-link toc-h2" href="#八输入与输出">八、输入与输出</a><a class="toc-link toc-h3" href="#print向屏幕说话">print：向屏幕说话</a><a class="toc-link toc-h3" href="#input听用户说">input：听用户说</a><a class="toc-link toc-h2" href="#九运算符全家福">九、运算符全家福</a><a class="toc-link toc-h3" href="#算术运算符">算术运算符</a><a class="toc-link toc-h3" href="#比较运算符">比较运算符</a><a class="toc-link toc-h3" href="#链式比较">链式比较</a><a class="toc-link toc-h3" href="#赋值运算符">赋值运算符</a><a class="toc-link toc-h3" href="#海象运算符">海象运算符（:=）</a><a class="toc-link toc-h3" href="#逻辑运算符">逻辑运算符</a><a class="toc-link toc-h3" href="#三元表达式条件表达式">三元表达式（条件表达式）</a><a class="toc-link toc-h2" href="#十流程控制">十、流程控制</a><a class="toc-link toc-h3" href="#if-条件分支">if 条件分支</a><a class="toc-link toc-h3" href="#pass先占个位">pass：先占个位</a><a class="toc-link toc-h3" href="#while-循环">while 循环</a><a class="toc-link toc-h3" href="#break-与-continue">break 与 continue</a><a class="toc-link toc-h3" href="#循环的-else-子句">循环的 else 子句</a><a class="toc-link toc-h2" href="#课后练习">课后练习</a><a class="toc-link toc-h3" href="#练习一基础语法输出预测">练习一：基础语法输出预测</a><a class="toc-link toc-h3" href="#练习二循环与分支输出预测">练习二：循环与分支输出预测</a><a class="toc-link toc-h3" href="#练习三咖啡因摄入评估器">练习三：咖啡因摄入评估器</a><a class="toc-link toc-h3" href="#练习四回文数筛选器">练习四：回文数筛选器</a></nav>

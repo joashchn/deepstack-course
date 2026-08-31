@@ -6,7 +6,7 @@
 <title>30 · Matplotlib 动画与交互 · InfiSpace 课程文档</title>
 <meta name="description" content="上一章末尾留了个尾巴：静态图是&quot;定妆照&quot;，拍完就定格了。可现实里的数据故事经常是动态的——气温逐小时爬升、监控指标滚动刷新、参数一调结果跟着变。这一章给 Matplotlib 装上两样东西：时间轴（动画，图自己动）和操纵…">
 <link rel="stylesheet" href="../assets/style.css">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%232DD4D4' text-anchor='middle'%3E%E2%88%9E%3C/text%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%23D9C39A' text-anchor='middle'%3E%E2%88%9E%3C/text%3E%3C/svg%3E">
 </head>
 <body>
 <div class="progress" id="progress"></div>
@@ -15,8 +15,7 @@
 <aside class="sidebar" id="sidebar">
   <div class="sb-head">
     <a class="brand" href="../index.html">
-      <img class="brand-mark" src="../assets/infispace-logo-1.png" alt="InfiSpace">
-      <span class="brand-text"><b>InfiSpace</b><i>AI Agent 工程师转型训练营</i></span>
+      <img class="brand-mark" src="../assets/infispace-logo-nav-dark.png" alt="InfiSpace">
     </a>
     <button class="sb-close" id="sbClose" aria-label="关闭目录">✕</button>
   </div>
@@ -626,7 +625,7 @@
 <nav class="pager"><a class="pg-card pg-prev" href="../python/29-matplotlib-hui-tu-ti-xi.html"><span class="pg-label">← 上一篇</span><span class="pg-title">Matplotlib 绘图体系</span><span class="pg-mod">Python 与数据实践</span></a><a class="pg-card pg-next" href="../python/31-seaborn-tong-ji-ke-shi-hua.html"><span class="pg-label">下一篇 →</span><span class="pg-title">Seaborn 统计可视化</span><span class="pg-mod">Python 与数据实践</span></a></nav>
     </div>
     <footer class="foot">
-      <span>InfiSpace · AI Agent 工程师转型训练营配套文档</span>
+      <span>AI Agent 工程师转型训练营配套文档</span>
     </footer>
   </main>
 <nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#1-动画的底层逻辑不重画只替换">1. 动画的底层逻辑：不重画，只替换</a><a class="toc-link toc-h2" href="#2-funcanimation把每帧干什么写成函数">2. FuncAnimation：把&quot;每帧干什么&quot;写成函数</a><a class="toc-link toc-h2" href="#3-frames-也可以是个生成器实时数据流">3. frames 也可以是个生成器：实时数据流</a><a class="toc-link toc-h2" href="#4-blit只重绘动过的部分">4. blit：只重绘&quot;动过&quot;的部分</a><a class="toc-link toc-h2" href="#5-artistanimation先把每一帧都摆进画面">5. ArtistAnimation：先把每一帧都摆进画面</a><a class="toc-link toc-h2" href="#6-把动画带出-python保存与嵌入">6. 把动画带出 Python：保存与嵌入</a><a class="toc-link toc-h2" href="#7-交互组件一个套路用到黑">7. 交互组件：一个套路用到黑</a><a class="toc-link toc-h2" href="#8-slider连续参数的旋钮">8. Slider：连续参数的旋钮</a><a class="toc-link toc-h2" href="#9-button一次点击一个动作">9. Button：一次点击，一个动作</a><a class="toc-link toc-h2" href="#10-checkbuttons多个独立开关">10. CheckButtons：多个独立开关</a><a class="toc-link toc-h2" href="#11-radiobuttons一组互斥的选项">11. RadioButtons：一组互斥的选项</a><a class="toc-link toc-h2" href="#12-textbox要精确值的时候">12. TextBox：要精确值的时候</a><a class="toc-link toc-h2" href="#13-选型速查五个控件各管一摊">13. 选型速查：五个控件各管一摊</a><a class="toc-link toc-h2" href="#试一试">试一试</a><a class="toc-link toc-h3" href="#一帧数预算">一、帧数预算</a><a class="toc-link toc-h3" href="#二白名单">二、白名单</a><a class="toc-link toc-h3" href="#三加一个口径">三、加一个口径</a></nav>

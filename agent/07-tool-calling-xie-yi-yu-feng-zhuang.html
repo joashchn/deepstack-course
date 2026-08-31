@@ -6,7 +6,7 @@
 <title>07 · Tool Calling：协议与封装 · InfiSpace 课程文档</title>
 <meta name="description" content="第三章「怎么让它干活」从这里开始。前面两章里，模型再好用也只有一张嘴：它能告诉你&quot;今天适合跑步&quot;，却查不了实时天气、读不了你的文件、调不了你的接口——嘴上功夫再好，也伸不出一只手。给模型接上工具，就是补上这只手。这是 A…">
 <link rel="stylesheet" href="../assets/style.css">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%232DD4D4' text-anchor='middle'%3E%E2%88%9E%3C/text%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%23D9C39A' text-anchor='middle'%3E%E2%88%9E%3C/text%3E%3C/svg%3E">
 </head>
 <body>
 <div class="progress" id="progress"></div>
@@ -15,8 +15,7 @@
 <aside class="sidebar" id="sidebar">
   <div class="sb-head">
     <a class="brand" href="../index.html">
-      <img class="brand-mark" src="../assets/infispace-logo-1.png" alt="InfiSpace">
-      <span class="brand-text"><b>InfiSpace</b><i>AI Agent 工程师转型训练营</i></span>
+      <img class="brand-mark" src="../assets/infispace-logo-nav-dark.png" alt="InfiSpace">
     </a>
     <button class="sb-close" id="sbClose" aria-label="关闭目录">✕</button>
   </div>
@@ -644,7 +643,7 @@
 <nav class="pager"><a class="pg-card pg-prev" href="../agent/06-hui-hua-guan-li-yu-json-shu-chu.html"><span class="pg-label">← 上一篇</span><span class="pg-title">会话管理与 JSON 输出</span><span class="pg-mod">Agent 核心</span></a><a class="pg-card pg-next" href="../agent/08-react-mo-shi-yu-zhu-xun-huan.html"><span class="pg-label">下一篇 →</span><span class="pg-title">ReAct 模式与主循环</span><span class="pg-mod">Agent 核心</span></a></nav>
     </div>
     <footer class="foot">
-      <span>InfiSpace · AI Agent 工程师转型训练营配套文档</span>
+      <span>AI Agent 工程师转型训练营配套文档</span>
     </footer>
   </main>
 <nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#1-为什么需要工具模型只有嘴没有手">1. 为什么需要工具：模型只有嘴，没有手</a><a class="toc-link toc-h2" href="#2-协议全貌四次交互">2. 协议全貌：四次交互</a><a class="toc-link toc-h2" href="#3-协议背后的原理">3. 协议背后的原理</a><a class="toc-link toc-h2" href="#4-并行调用与多轮工具">4. 并行调用与多轮工具</a><a class="toc-link toc-h2" href="#5-一个完整的可运行示例">5. 一个完整的可运行示例</a><a class="toc-link toc-h2" href="#6-description写给模型的产品说明书">6. description：写给模型的产品说明书</a><a class="toc-link toc-h2" href="#7-好工具的六个特征">7. 好工具的六个特征</a><a class="toc-link toc-h2" href="#8-封装tool-registry">8. 封装：Tool + Registry</a><a class="toc-link toc-h2" href="#9-注册一组真实工具">9. 注册一组真实工具</a><a class="toc-link toc-h2" href="#10-工具不是越多越好">10. 工具不是越多越好</a><a class="toc-link toc-h2" href="#本章小结">本章小结</a></nav>

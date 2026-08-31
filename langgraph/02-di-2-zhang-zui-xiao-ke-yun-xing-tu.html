@@ -6,7 +6,7 @@
 <title>02 · 第 2 章 最小可运行图 · InfiSpace 课程文档</title>
 <meta name="description" content="本章目标：跑通第一张 LangGraph 图，并吃透它的三个生命周期阶段——定义、编译、运行，以及最容易误解的一件事：节点返回的是&quot;补丁&quot;，不是&quot;全量状态&quot;">
 <link rel="stylesheet" href="../assets/style.css">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%232DD4D4' text-anchor='middle'%3E%E2%88%9E%3C/text%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%23D9C39A' text-anchor='middle'%3E%E2%88%9E%3C/text%3E%3C/svg%3E">
 </head>
 <body>
 <div class="progress" id="progress"></div>
@@ -15,8 +15,7 @@
 <aside class="sidebar" id="sidebar">
   <div class="sb-head">
     <a class="brand" href="../index.html">
-      <img class="brand-mark" src="../assets/infispace-logo-1.png" alt="InfiSpace">
-      <span class="brand-text"><b>InfiSpace</b><i>AI Agent 工程师转型训练营</i></span>
+      <img class="brand-mark" src="../assets/infispace-logo-nav-dark.png" alt="InfiSpace">
     </a>
     <button class="sb-close" id="sbClose" aria-label="关闭目录">✕</button>
   </div>
@@ -508,7 +507,7 @@
 <nav class="pager"><a class="pg-card pg-prev" href="../langgraph/01-di-1-zhang-cong-yi-ge-shi-kong-de-jiao.html"><span class="pg-label">← 上一篇</span><span class="pg-title">第 1 章 从一个失控的脚本说起</span><span class="pg-mod">LangGraph 框架指南</span></a><a class="pg-card pg-next" href="../langgraph/03-di-3-zhang-zhuang-tai-tu-de-shu-ju-xin.html"><span class="pg-label">下一篇 →</span><span class="pg-title">第 3 章 状态：图的数据心脏</span><span class="pg-mod">LangGraph 框架指南</span></a></nav>
     </div>
     <footer class="foot">
-      <span>InfiSpace · AI Agent 工程师转型训练营配套文档</span>
+      <span>AI Agent 工程师转型训练营配套文档</span>
     </footer>
   </main>
 <nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#21-一张图的三个阶段">2.1 一张图的三个阶段</a><a class="toc-link toc-h2" href="#22-第一张图不依赖模型的纯机械流水线">2.2 第一张图：不依赖模型的纯机械流水线</a><a class="toc-link toc-h2" href="#23-逐个拆解五个核心构件">2.3 逐个拆解五个核心构件</a><a class="toc-link toc-h3" href="#状态typeddict-声明图级共享数据结构">状态：TypedDict 声明&quot;图级共享数据结构&quot;</a><a class="toc-link toc-h3" href="#节点签名约定">节点：签名约定</a><a class="toc-link toc-h3" href="#add_node把函数注册为图中节点">add_node：把函数注册为图中节点</a><a class="toc-link toc-h3" href="#add_edge-start-end连接顺序">add_edge / START / END：连接顺序</a><a class="toc-link toc-h3" href="#compile从图纸到可执行对象">compile：从图纸到可执行对象</a><a class="toc-link toc-h2" href="#24-关键语义节点返回的是补丁">2.4 关键语义：节点返回的是&quot;补丁&quot;</a><a class="toc-link toc-h2" href="#25-给图换上真正的-llm-节点">2.5 给图换上真正的 LLM 节点</a><a class="toc-link toc-h2" href="#26-看见你的图编译产物的自描述">2.6 看见你的图：编译产物的自描述</a><a class="toc-link toc-h2" href="#27-编译产物是一个-runnable">2.7 编译产物是一个 Runnable</a><a class="toc-link toc-h2" href="#28-运行时发生了什么一次-invoke-的生命周期">2.8 运行时发生了什么：一次 invoke 的生命周期</a><a class="toc-link toc-h2" href="#常见坑与排错">常见坑与排错</a><a class="toc-link toc-h2" href="#动手练习">动手练习</a><a class="toc-link toc-h2" href="#本章速查">本章速查</a></nav>
