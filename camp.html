@@ -6,9 +6,15 @@
 <title>InfiSpace · AI Agent 工程师转型课 · 完整课程网页</title>
 <style>
   :root{
-    --black:#1a1a1a; --ink:#2b2b2b; --muted:#6b6b6b;
-    --line:#e6e3dc; --paper:#faf9f6; --card:#ffffff;
-    --gold:#14B8C2; --gold-soft:#CFF5F7; --gold-deep:#0E7490;
+    --black:#0E1626;            /* inset dark surface (hero/story/cta/chips) */
+    --ink:#E6ECF5;             /* primary text */
+    --muted:#7A879C;           /* muted text */
+    --line:#243049;            /* borders on dark */
+    --paper:#0A1228;           /* page background (navy) */
+    --card:#15203A;            /* panel background */
+    --gold:#22D3D4;            /* teal accent (matches logo) */
+    --gold-soft:#5FD4DC;       /* readable light teal (labels/text on dark) */
+    --gold-deep:#5FD4DC;       /* readable teal (legacy label color) */
   }
   *{box-sizing:border-box;margin:0;padding:0}
   html{scroll-behavior:smooth}
@@ -24,7 +30,7 @@
   .nav .inner{max-width:1120px;margin:0 auto;padding:12px 24px;display:flex;align-items:center;gap:18px;flex-wrap:wrap}
   .nav .brand{height:34px;width:auto;display:block;background:#FDFCFA;padding:7px 12px;border-radius:9px}
   .nav .links{display:flex;gap:14px;flex-wrap:wrap;margin-left:auto}
-  .nav .links a{color:#cfccc4;font-size:13px;padding:4px 8px;border-radius:6px;transition:.2s}
+  .nav .links a{color:#9fb0c8;font-size:13px;padding:4px 8px;border-radius:6px;transition:.2s}
   .nav .links a:hover{color:var(--gold-soft);background:rgba(20,184,194,.15)}
 
   /* HERO */
@@ -32,18 +38,18 @@
   .hero::after{content:"";position:absolute;inset:0;background:radial-gradient(900px 400px at 50% -10%,rgba(20,184,194,.22),transparent 60%);pointer-events:none}
   .hero .kicker{color:var(--gold-soft);letter-spacing:.34em;font-size:13px;font-weight:600;text-transform:uppercase}
   .hero h1{font-size:36px;font-weight:800;margin:16px 0 12px;letter-spacing:.5px;position:relative}
-  .hero p{color:#cfccc4;font-size:15px;max-width:720px;margin:0 auto;position:relative}
+  .hero p{color:#B6C2D6;font-size:15px;max-width:720px;margin:0 auto;position:relative}
   .badge{display:inline-block;margin-top:18px;background:rgba(20,184,194,.18);border:1px solid var(--gold);color:var(--gold-soft);font-size:12px;font-weight:700;padding:5px 14px;border-radius:30px;letter-spacing:.05em}
   .stats{display:flex;flex-wrap:wrap;justify-content:center;gap:14px;margin-top:34px;position:relative}
   .stat{background:rgba(255,255,255,.05);border:1px solid rgba(20,184,194,.45);border-radius:12px;padding:14px 22px;min-width:124px}
   .stat b{display:block;color:var(--gold-soft);font-size:25px;font-weight:800}
-  .stat span{font-size:12px;color:#bdbab2}
+  .stat span{font-size:12px;color:#9fb0c8}
 
   /* SECTION TITLE */
   .sec{margin-top:58px}
   .sec-title{display:flex;align-items:center;gap:12px;margin-bottom:22px}
-  .sec-title .num{display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;background:var(--gold);color:#1a1a1a;font-weight:800;font-size:15px;flex-shrink:0}
-  .sec-title h2{font-size:22px;font-weight:800;color:var(--black)}
+  .sec-title .num{display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;background:var(--gold);color:#0A1228;font-weight:800;font-size:15px;flex-shrink:0}
+  .sec-title h2{font-size:22px;font-weight:800;color:var(--ink)}
   .sec-title .sub{font-size:13px;color:var(--muted);margin-left:auto}
   .lead{font-size:14.5px;color:var(--muted);margin:-8px 0 22px;max-width:860px}
 
@@ -56,11 +62,11 @@
   /* BOARD NAV (三大板块) */
   .boards{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px}
   .board{background:var(--card);border:1px solid var(--line);border-top:4px solid var(--gold);border-radius:14px;padding:22px;transition:.2s}
-  .board:hover{box-shadow:0 8px 26px rgba(26,26,26,.08);transform:translateY(-3px)}
+  .board:hover{box-shadow:0 10px 30px rgba(20,184,194,.18);transform:translateY(-3px)}
   .board .pn{font-size:12px;font-weight:800;color:var(--gold-deep);letter-spacing:.12em}
-  .board h3{font-size:19px;color:var(--black);margin:6px 0 8px}
+  .board h3{font-size:19px;color:var(--ink);margin:6px 0 8px}
   .board p{font-size:13.5px;color:var(--muted)}
-  .board .tag{display:inline-block;margin-top:12px;font-size:12px;font-weight:700;color:var(--gold-deep);background:#e8f7f8;border:1px solid var(--gold-soft);padding:3px 10px;border-radius:6px}
+  .board .tag{display:inline-block;margin-top:12px;font-size:12px;font-weight:700;color:var(--gold-soft);background:rgba(20,184,194,.15);border:1px solid var(--gold);padding:3px 10px;border-radius:6px}
 
   /* TIMELINE (AI 基础) */
   .timeline{position:relative;padding-left:34px}
@@ -70,12 +76,12 @@
   .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 22px}
   .card .top{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
   .card .no{font-size:13px;font-weight:800;color:#fff;background:var(--black);border-radius:6px;padding:2px 9px}
-  .card h3{font-size:17px;font-weight:800;color:var(--black)}
+  .card h3{font-size:17px;font-weight:800;color:var(--ink)}
   .card .meta{margin-left:auto;font-size:12px;color:var(--gold-deep);font-weight:600;white-space:nowrap}
   .card ul{margin:12px 0 0;padding-left:18px}
   .card li{font-size:13.5px;color:var(--ink);margin:5px 0}
   .tag{display:inline-block;font-size:11px;padding:1px 7px;border-radius:5px;margin-left:6px;font-weight:600}
-  .tag.opt{background:#e8f7f8;color:var(--gold-deep);border:1px solid var(--gold-soft)}
+  .tag.opt{background:rgba(20,184,194,.15);color:var(--gold-soft);border:1px solid var(--gold)}
   .tag.req{background:var(--black);color:#fff}
   .note{font-size:12px;color:var(--muted);margin-top:8px;font-style:italic}
 
@@ -83,8 +89,8 @@
   .fw{display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:16px}
   .fw .m{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--gold);border-radius:12px;padding:16px 18px}
   .fw .m .hd{display:flex;align-items:center;gap:10px;margin-bottom:6px}
-  .fw .m .mn{font-size:13px;font-weight:800;color:#fff;background:var(--gold-deep);border-radius:6px;padding:2px 9px;flex-shrink:0}
-  .fw .m h4{font-size:15px;color:var(--black);font-weight:800}
+  .fw .m .mn{font-size:13px;font-weight:800;color:#0A1228;background:var(--gold);border-radius:6px;padding:2px 9px;flex-shrink:0}
+  .fw .m h4{font-size:15px;color:var(--ink);font-weight:800}
   .fw .m .goal{font-size:12.5px;color:var(--gold-deep);margin-bottom:6px}
   .fw .m p{font-size:12.5px;color:var(--muted)}
   .fw .m .out{font-size:12.5px;color:var(--ink);margin-top:6px;padding-top:6px;border-top:1px dashed var(--line)}
@@ -98,14 +104,14 @@
   .pc{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px;position:relative;overflow:hidden}
   .pc::after{content:"";position:absolute;right:-34px;top:-34px;width:110px;height:110px;border-radius:50%;background:radial-gradient(var(--gold-soft),transparent 70%);opacity:.5}
   .pc .pn{font-size:12px;font-weight:800;color:var(--gold-deep);letter-spacing:.1em}
-  .pc h3{font-size:19px;color:var(--black);margin:6px 0 4px}
+  .pc h3{font-size:19px;color:var(--ink);margin:6px 0 4px}
   .pc .stack{font-size:12.5px;color:var(--muted);margin-bottom:12px}
-  .pc .stack code{background:#e8f7f8;color:var(--gold-deep);padding:1px 6px;border-radius:4px;font-size:11.5px}
+  .pc .stack code{background:rgba(20,184,194,.15);color:var(--gold-soft);padding:1px 6px;border-radius:4px;font-size:11.5px}
   .pc .cnt{display:inline-block;font-size:12px;font-weight:700;color:#fff;background:var(--black);padding:3px 10px;border-radius:6px;margin-bottom:12px}
   .pc h5{font-size:13px;color:var(--gold-deep);margin:12px 0 6px;font-weight:800}
   .pc ul{margin:0;padding-left:16px;position:relative;z-index:1}
   .pc ul li{font-size:12.5px;color:var(--ink);margin:3px 0}
-  .seven{background:#effafb;border:1px solid var(--gold-soft);border-radius:10px;padding:12px 14px;margin-bottom:12px;position:relative;z-index:1}
+  .seven{background:rgba(20,184,194,.10);border:1px solid rgba(20,184,194,.35);border-radius:10px;padding:12px 14px;margin-bottom:12px;position:relative;z-index:1}
   .seven .lbl{font-size:12px;font-weight:800;color:var(--gold-deep);margin-bottom:5px}
   .seven p{font-size:12.5px;color:var(--ink);margin:4px 0}
   .seven .q{color:var(--muted);font-size:12px}
@@ -120,8 +126,8 @@
   /* CTA */
   .cta{background:var(--black);color:#fff;border-radius:18px;padding:34px 28px;text-align:center;margin-top:54px}
   .cta h3{font-size:21px;color:var(--gold-soft);margin-bottom:10px}
-  .cta p{color:#cfccc4;font-size:14px;margin-bottom:18px;max-width:640px;margin-left:auto;margin-right:auto}
-  .cta .btn{display:inline-block;background:var(--gold);color:#1a1a1a;font-weight:800;padding:12px 30px;border-radius:30px;font-size:14px}
+  .cta p{color:#B6C2D6;font-size:14px;margin-bottom:18px;max-width:640px;margin-left:auto;margin-right:auto}
+  .cta .btn{display:inline-block;background:var(--gold);color:#0A1228;font-weight:800;padding:12px 30px;border-radius:30px;font-size:14px}
   .foot{text-align:center;color:var(--muted);font-size:12px;margin-top:34px}
 
   @media print{
@@ -302,10 +308,10 @@
       <div class="m" data-page-node-id="n0RNE1ybiC9UosyFRP3DkJ"><div class="hd" data-page-node-id="SRCsG9wHfjMQxMxm5Ub5CX"><span class="mn" data-page-node-id="wlkG8H5tmb9ncRN3vWmWYH">模块八</span><h4 data-page-node-id="oztX1yfoXVjF34JLBPaaC7">项目交付、评测与框架选型</h4></div><div class="goal" data-page-node-id="TpfWyJAaiaWwhCuaJRoFqk">目标：把一次 Demo 收口为可求职展示的工程项目。</div><p data-page-node-id="gAF1T1SMcyT5reHdeigBlR">交付证据清单；固定 Fixture（正常 / 歧义 / 工具失败 / 审批）；同时评价结果与过程；Trace / 回归门；框架选型比较；简历与三分钟介绍。</p><div class="out" data-page-node-id="4Rw42Lh1sfVBB70h74XSEF">项目结果：固定评测集、Trace、回归门、框架选型记录与可接追问的作品集。</div></div>
     </div>
 
-    <h3 style="font-size:16px;color:var(--black);margin:26px 0 4px" data-page-node-id="pTHpqGEznixLhh5OL3R0cZ">贯穿项目 · 生产事故调查与修复建议 Agent</h3>
+    <h3 style="font-size:16px;color:var(--ink);margin:26px 0 4px" data-page-node-id="pTHpqGEznixLhh5OL3R0cZ">贯穿项目 · 生产事故调查与修复建议 Agent</h3>
     <p class="lead" data-page-node-id="6ZMlGzGDnINQwDiImjJvI2">从一条线上告警开始，在同一项目上逐步加入工具调用、状态管理、流程恢复、安全隔离和评测能力——八大模块共用一个真实场景，避免「学完框架却没写过项目」。</p>
 
-    <h3 style="font-size:16px;color:var(--black);margin:24px 0 4px" data-page-node-id="LGJ2mDP9g7qgWfOSGVJpX0">LangGraph 深潜 · 7 章完整路径</h3>
+    <h3 style="font-size:16px;color:var(--ink);margin:24px 0 4px" data-page-node-id="LGJ2mDP9g7qgWfOSGVJpX0">LangGraph 深潜 · 7 章完整路径</h3>
     <div class="chapters" data-page-node-id="pQ92myBtnYp5QzDsPkI35G">
       <div class="cp" data-page-node-id="UzSN4gbtu6EGOFre5dT7SU"><b data-page-node-id="Nhz9U099z05lXwnHSw9ajK">第 1 章</b>前置基础与环境搭建（Python 3.10+ / LangChain 基础 / 课程全景）</div>
       <div class="cp" data-page-node-id="R4CH5SwQD2i5UwImWMdm0N"><b data-page-node-id="83IkrKse5plEBdD6uvrnpy">第 2 章</b>快速上手（SDK 安装 / State·Node·Edge / 第一个手动图 / State Schema / Reducer）</div>
