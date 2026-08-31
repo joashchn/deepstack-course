@@ -92,12 +92,12 @@
         securityLevel: 'loose',
         theme: root.dataset.theme === 'dark' ? 'dark' : 'default',
         themeVariables: root.dataset.theme === 'dark'
-          ? { background: '#1E1B16', primaryColor: '#2A2419', primaryTextColor: '#E9E3D8',
-              primaryBorderColor: '#B8945A', lineColor: '#8E8677', secondaryColor: '#241F18',
-              tertiaryColor: '#18150F' }
-          : { background: '#FFFFFF', primaryColor: '#F7F4EE', primaryTextColor: '#24211C',
-              primaryBorderColor: '#B8945A', lineColor: '#8A8279', secondaryColor: '#F3EBDC',
-              tertiaryColor: '#FDFCFA' }
+          ? { background: '#0E1730', primaryColor: '#16233F', primaryTextColor: '#E6EDF3',
+              primaryBorderColor: '#14B8C2', lineColor: '#3A4A66', secondaryColor: '#0B1124',
+              tertiaryColor: '#0A1228' }
+          : { background: '#FFFFFF', primaryColor: '#E3F7F8', primaryTextColor: '#0E1B33',
+              primaryBorderColor: '#14B8C2', lineColor: '#6B7894', secondaryColor: '#E3F7F8',
+              tertiaryColor: '#F7F9FC' }
       });
       window.mermaid.run({ querySelector: '.mermaid' });
       mermaidReady = true;

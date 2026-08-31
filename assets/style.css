@@ -1,9 +1,9 @@
 
 :root{
-  --bg:#FDFCFA; --bg-soft:#F7F4EE; --bg-side:#F6F3EC; --panel:#FFFFFF;
-  --line:#E7E1D6; --line-soft:#F0EBE1;
-  --fg:#24211C; --fg-soft:#4A453D; --fg-mute:#8A8279;
-  --gold:#B8945A; --gold-deep:#8A6A38; --gold-soft:#F3EBDC;
+  --bg:#0A1228; --bg-soft:#0E1730; --bg-side:#0B1124; --panel:#111A30;
+  --line:#1E2A45; --line-soft:#172238;
+  --fg:#E6EDF3; --fg-soft:#A9B4C9; --fg-mute:#6B7894;
+  --gold:#14B8C2; --gold-deep:#0E7490; --gold-soft:#0C2E33;
   --sb-w:302px; --toc-w:236px; --maxw:820px;
   --shadow:0 1px 2px rgba(36,33,28,.05),0 8px 24px rgba(36,33,28,.06);
   --radius:12px;
@@ -11,11 +11,18 @@
   --sans:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
 }
 [data-theme="dark"]{
-  --bg:#14120F; --bg-soft:#1B1815; --bg-side:#18150F; --panel:#1E1B16;
-  --line:#322D25; --line-soft:#282319;
-  --fg:#E9E3D8; --fg-soft:#C6BFB2; --fg-mute:#8E8677;
-  --gold:#D9C39A; --gold-deep:#C2A870; --gold-soft:#2A2419;
+  --bg:#0A1228; --bg-soft:#0E1730; --bg-side:#0B1124; --panel:#111A30;
+  --line:#1E2A45; --line-soft:#172238;
+  --fg:#E6EDF3; --fg-soft:#A9B4C9; --fg-mute:#6B7894;
+  --gold:#22D3D4; --gold-deep:#0E7490; --gold-soft:#0C2E33;
   --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.35);
+}
+[data-theme="light"]{
+  --bg:#F7F9FC; --bg-soft:#EEF2F8; --bg-side:#FFFFFF; --panel:#FFFFFF;
+  --line:#DCE3EE; --line-soft:#E8EDF4;
+  --fg:#0E1B33; --fg-soft:#3A4A66; --fg-mute:#6B7894;
+  --gold:#0E9AA7; --gold-deep:#0E7490; --gold-soft:#E3F7F8;
+  --shadow:0 1px 2px rgba(14,27,51,.05),0 8px 24px rgba(14,27,51,.06);
 }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
@@ -40,7 +47,7 @@ code{font-family:var(--mono)}
   border-bottom:1px solid var(--line-soft)}
 .brand{display:flex;align-items:center;gap:10px;flex:1;min-width:0}
 .brand-mark{height:30px;width:auto;flex:0 0 auto;border-radius:6px;display:block}
-[data-theme="dark"] .brand-mark{background:#D9C39A;color:#1A1A1A}
+[data-theme="dark"] .brand-mark{background:#FDFCFA;color:#1A1A1A}
 .brand-text{display:flex;flex-direction:column;line-height:1.25;min-width:0}
 .brand-text b{font-size:14px;font-weight:650}
 .brand-text i{font-style:normal;font-size:11px;color:var(--fg-mute)}
