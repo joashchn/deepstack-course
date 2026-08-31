@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>14 · 类型标注 · InfiSpace 课程文档</title>
+<meta name="description" content="学习建议：从本章起，请在 VS Code 的设置里把 python.analysis.typeCheckingMode 打开（basic 起步，胆子大了可以上 strict），让编辑器实时帮你挑类型的毛病。本章的所有示例…">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%232DD4D4' text-anchor='middle'%3E%E2%88%9E%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+<div class="progress" id="progress"></div>
+
+<div class="layout">
+<aside class="sidebar" id="sidebar">
+  <div class="sb-head">
+    <a class="brand" href="../index.html">
+      <img class="brand-mark" src="../assets/infispace-logo-1.png" alt="InfiSpace">
+    </a>
+    <button class="sb-close" id="sbClose" aria-label="关闭目录">✕</button>
+  </div>
+  <div class="sb-search"><input type="search" id="searchInput" placeholder="搜索 123 篇文档… ( / )" autocomplete="off">
+    <div class="sb-results" id="searchResults"></div></div>
+  <nav class="sb-nav">
+    <section class="sb-group">
+      <a class="sb-group-title" href="../index.html">
+        <span class="sb-num">00</span>
+        <span class="sb-group-text"><b>学习导航</b><i>课程首页</i></span>
+      </a>
+    </section>
+    <section class="sb-group open" data-mod="python">
+      <a class="sb-group-title" href="../modules/python.html" data-toggle="python">
+        <span class="sb-num">01</span>
+        <span class="sb-group-text"><b>Python 与数据实践</b><i>31 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../python/01-huan-jing-da-jian-yu-ban-ben-guan-li.html"><span class="sb-item-num">01</span><span class="sb-item-title">环境搭建与版本管理</span></a>
+        <a class="sb-item" href="../python/02-bian-liang-biao-da-shi-yu-liu-cheng-kong-zhi.html"><span class="sb-item-num">02</span><span class="sb-item-title">变量、表达式与流程控制</span></a>
+        <a class="sb-item" href="../python/03-xu-lie-zi-dian-yu-ji-he.html"><span class="sb-item-num">03</span><span class="sb-item-title">序列、字典与集合</span></a>
+        <a class="sb-item" href="../python/04-han-shu-she-ji-yu-lambda.html"><span class="sb-item-num">04</span><span class="sb-item-title">函数设计与 lambda</span></a>
+        <a class="sb-item" href="../python/05-zuo-yong-yu-gui-ze-yu-bi-bao.html"><span class="sb-item-num">05</span><span class="sb-item-title">作用域规则与闭包</span></a>
+        <a class="sb-item" href="../python/06-lei-de-ding-yi-yu-shi-li-hua.html"><span class="sb-item-num">06</span><span class="sb-item-title">类的定义与实例化</span></a>
+        <a class="sb-item" href="../python/07-lei-xing-pan-ding-yu-chou-xiang-ji-lei.html"><span class="sb-item-num">07</span><span class="sb-item-title">类型判定与抽象基类</span></a>
+        <a class="sb-item" href="../python/08-mo-shu-fang-fa-quan-jing.html"><span class="sb-item-num">08</span><span class="sb-item-title">魔术方法全景</span></a>
+        <a class="sb-item" href="../python/09-miao-shu-fu-yu-yuan-lei.html"><span class="sb-item-num">09</span><span class="sb-item-title">描述符与元类</span></a>
+        <a class="sb-item" href="../python/10-zhuang-shi-qi.html"><span class="sb-item-num">10</span><span class="sb-item-title">装饰器</span></a>
+        <a class="sb-item" href="../python/11-die-dai-xie-yi-yu-sheng-cheng-qi.html"><span class="sb-item-num">11</span><span class="sb-item-title">迭代协议与生成器</span></a>
+        <a class="sb-item" href="../python/12-with-yu-shang-xia-wen-xie-yi.html"><span class="sb-item-num">12</span><span class="sb-item-title">with 与上下文协议</span></a>
+        <a class="sb-item" href="../python/13-yi-chang-ti-xi-yu-chu-li.html"><span class="sb-item-num">13</span><span class="sb-item-title">异常体系与处理</span></a>
+        <a class="sb-item current" href="../python/14-lei-xing-biao-zhu.html"><span class="sb-item-num">14</span><span class="sb-item-title">类型标注</span></a>
+        <a class="sb-item" href="../python/15-mo-kuai-yu-bao-de-zu-zhi.html"><span class="sb-item-num">15</span><span class="sb-item-title">模块与包的组织</span></a>
+        <a class="sb-item" href="../python/16-biao-zhun-ku-xun-li.html"><span class="sb-item-num">16</span><span class="sb-item-title">标准库巡礼</span></a>
+        <a class="sb-item" href="../python/17-yi-lai-guan-li-yu-di-san-fang-ku.html"><span class="sb-item-num">17</span><span class="sb-item-title">依赖管理与第三方库</span></a>
+        <a class="sb-item" href="../python/18-xian-cheng-yu-jin-cheng.html"><span class="sb-item-num">18</span><span class="sb-item-title">线程与进程</span></a>
+        <a class="sb-item" href="../python/19-shi-jian-xun-huan.html"><span class="sb-item-num">19</span><span class="sb-item-title">事件循环</span></a>
+        <a class="sb-item" href="../python/20-future-yu-xie-cheng.html"><span class="sb-item-num">20</span><span class="sb-item-title">Future 与协程</span></a>
+        <a class="sb-item" href="../python/21-asyncio-shi-zhan.html"><span class="sb-item-num">21</span><span class="sb-item-title">asyncio 实战</span></a>
+        <a class="sb-item" href="../python/22-gou-jian-yu-fa-bu.html"><span class="sb-item-num">22</span><span class="sb-item-title">构建与发布</span></a>
+        <a class="sb-item" href="../python/23-gong-cheng-hua-gong-ju-lian.html"><span class="sb-item-num">23</span><span class="sb-item-title">工程化工具链</span></a>
+        <a class="sb-item" href="../python/24-monorepo-yu-tiao-shi.html"><span class="sb-item-num">24</span><span class="sb-item-title">monorepo 与调试</span></a>
+        <a class="sb-item" href="../python/25-jupyter-jiao-hu-huan-jing.html"><span class="sb-item-num">25</span><span class="sb-item-title">Jupyter 交互环境</span></a>
+        <a class="sb-item" href="../python/26-numpy-shu-zu-yu-xiang-liang-hua.html"><span class="sb-item-num">26</span><span class="sb-item-title">NumPy 数组与向量化</span></a>
+        <a class="sb-item" href="../python/27-pandas-shu-ju-jie-gou.html"><span class="sb-item-num">27</span><span class="sb-item-title">Pandas 数据结构</span></a>
+        <a class="sb-item" href="../python/28-pandas-shu-ju-qing-xi.html"><span class="sb-item-num">28</span><span class="sb-item-title">Pandas 数据清洗</span></a>
+        <a class="sb-item" href="../python/29-matplotlib-hui-tu-ti-xi.html"><span class="sb-item-num">29</span><span class="sb-item-title">Matplotlib 绘图体系</span></a>
+        <a class="sb-item" href="../python/30-matplotlib-dong-hua-yu-jiao-hu.html"><span class="sb-item-num">30</span><span class="sb-item-title">Matplotlib 动画与交互</span></a>
+        <a class="sb-item" href="../python/31-seaborn-tong-ji-ke-shi-hua.html"><span class="sb-item-num">31</span><span class="sb-item-title">Seaborn 统计可视化</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="agent">
+      <a class="sb-group-title" href="../modules/agent.html" data-toggle="agent">
+        <span class="sb-num">02</span>
+        <span class="sb-group-text"><b>Agent 核心</b><i>15 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../agent/01-token-yu-ci-qian-ru.html"><span class="sb-item-num">01</span><span class="sb-item-title">Token 与词嵌入</span></a>
+        <a class="sb-item" href="../agent/02-qian-xiang-chuan-bo-yu-fan-xiang-chuan-bo.html"><span class="sb-item-num">02</span><span class="sb-item-title">前向传播与反向传播</span></a>
+        <a class="sb-item" href="../agent/03-zhu-yi-li-ji-zhi-yu-transformer-jia-gou.html"><span class="sb-item-num">03</span><span class="sb-item-title">注意力机制与 Transformer 架构</span></a>
+        <a class="sb-item" href="../agent/04-yu-xun-lian-rlhf-yu-cai-yang-kv-cache.html"><span class="sb-item-num">04</span><span class="sb-item-title">预训练、RLHF 与采样（KV Cache）</span></a>
+        <a class="sb-item" href="../agent/05-ben-di-mo-xing-yu-xiao-xi-jie-gou.html"><span class="sb-item-num">05</span><span class="sb-item-title">本地模型与消息结构</span></a>
+        <a class="sb-item" href="../agent/06-hui-hua-guan-li-yu-json-shu-chu.html"><span class="sb-item-num">06</span><span class="sb-item-title">会话管理与 JSON 输出</span></a>
+        <a class="sb-item" href="../agent/07-tool-calling-xie-yi-yu-feng-zhuang.html"><span class="sb-item-num">07</span><span class="sb-item-title">Tool Calling：协议与封装</span></a>
+        <a class="sb-item" href="../agent/08-react-mo-shi-yu-zhu-xun-huan.html"><span class="sb-item-num">08</span><span class="sb-item-title">ReAct 模式与主循环</span></a>
+        <a class="sb-item" href="../agent/09-shi-zhan-deep-research-agent.html"><span class="sb-item-num">09</span><span class="sb-item-title">实战：Deep Research Agent</span></a>
+        <a class="sb-item" href="../agent/10-skill-yu-jian-jin-shi-pi-lu.html"><span class="sb-item-num">10</span><span class="sb-item-title">Skill 与渐进式披露</span></a>
+        <a class="sb-item" href="../agent/11-mcp-quan-jing.html"><span class="sb-item-num">11</span><span class="sb-item-title">MCP 全景</span></a>
+        <a class="sb-item" href="../agent/12-duo-agent-yu-xuan-xing-ce-lve.html"><span class="sb-item-num">12</span><span class="sb-item-title">多 Agent 与选型策略</span></a>
+        <a class="sb-item" href="../agent/13-ti-shi-ci-gong-cheng-yu-shang-xia-wen-gong.html"><span class="sb-item-num">13</span><span class="sb-item-title">提示词工程与上下文工程</span></a>
+        <a class="sb-item" href="../agent/14-xun-huan-tu-yu-gu-jia-gong-cheng.html"><span class="sb-item-num">14</span><span class="sb-item-title">循环、图与骨架工程</span></a>
+        <a class="sb-item" href="../agent/15-ji-yi-quan-xian-yu-ping-ce.html"><span class="sb-item-num">15</span><span class="sb-item-title">记忆、权限与评测</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="langchain">
+      <a class="sb-group-title" href="../modules/langchain.html" data-toggle="langchain">
+        <span class="sb-num">03</span>
+        <span class="sb-group-text"><b>LangChain 指南</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langchain/01-ren-shi-langchain.html"><span class="sb-item-num">01</span><span class="sb-item-title">认识 LangChain</span></a>
+        <a class="sb-item" href="../langchain/02-ti-shi-ci-mu-ban-yu-xiao-xi.html"><span class="sb-item-num">02</span><span class="sb-item-title">提示词模板与消息</span></a>
+        <a class="sb-item" href="../langchain/03-lcel-yu-runnable.html"><span class="sb-item-num">03</span><span class="sb-item-title">LCEL 与 Runnable</span></a>
+        <a class="sb-item" href="../langchain/04-liu-shi-yu-bing-fa.html"><span class="sb-item-num">04</span><span class="sb-item-title">流式与并发</span></a>
+        <a class="sb-item" href="../langchain/05-shu-chu-jie-xi-qi.html"><span class="sb-item-num">05</span><span class="sb-item-title">输出解析器</span></a>
+        <a class="sb-item" href="../langchain/06-wen-dang-jia-zai-yu-qie-ge.html"><span class="sb-item-num">06</span><span class="sb-item-title">文档加载与切割</span></a>
+        <a class="sb-item" href="../langchain/07-qian-ru-yu-xiang-liang-ku.html"><span class="sb-item-num">07</span><span class="sb-item-title">嵌入与向量库</span></a>
+        <a class="sb-item" href="../langchain/08-jian-suo-yu-rag.html"><span class="sb-item-num">08</span><span class="sb-item-title">检索与RAG</span></a>
+        <a class="sb-item" href="../langchain/09-dui-hua-ji-yi.html"><span class="sb-item-num">09</span><span class="sb-item-title">对话记忆</span></a>
+        <a class="sb-item" href="../langchain/10-gong-ju-diao-yong.html"><span class="sb-item-num">10</span><span class="sb-item-title">工具调用</span></a>
+        <a class="sb-item" href="../langchain/11-agent.html"><span class="sb-item-num">11</span><span class="sb-item-title">Agent</span></a>
+        <a class="sb-item" href="../langchain/12-hui-diao-yu-tiao-shi-quan-ke-cheng-shou-guan.html"><span class="sb-item-num">12</span><span class="sb-item-title">回调与调试（全课程收官章）</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="langgraph">
+      <a class="sb-group-title" href="../modules/langgraph.html" data-toggle="langgraph">
+        <span class="sb-num">04</span>
+        <span class="sb-group-text"><b>LangGraph 框架指南</b><i>17 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langgraph/01-di-1-zhang-cong-yi-ge-shi-kong-de-jiao.html"><span class="sb-item-num">01</span><span class="sb-item-title">第 1 章 从一个失控的脚本说起</span></a>
+        <a class="sb-item" href="../langgraph/02-di-2-zhang-zui-xiao-ke-yun-xing-tu.html"><span class="sb-item-num">02</span><span class="sb-item-title">第 2 章 最小可运行图</span></a>
+        <a class="sb-item" href="../langgraph/03-di-3-zhang-zhuang-tai-tu-de-shu-ju-xin.html"><span class="sb-item-num">03</span><span class="sb-item-title">第 3 章 状态：图的数据心脏</span></a>
+        <a class="sb-item" href="../langgraph/04-di-4-zhang-rang-liu-cheng-xue-hui-jue-ce.html"><span class="sb-item-num">04</span><span class="sb-item-title">第 4 章 让流程学会决策</span></a>
+        <a class="sb-item" href="../langgraph/05-di-5-zhang-bing-xing-shi-jie-chao-bu-zhi.html"><span class="sb-item-num">05</span><span class="sb-item-title">第 5 章 并行世界：超步执行模型</span></a>
+        <a class="sb-item" href="../langgraph/06-di-6-zhang-command-ba-kong-zhi-quan-jiao-jin.html"><span class="sb-item-num">06</span><span class="sb-item-title">第 6 章 Command：把控制权交进节点</span></a>
+        <a class="sb-item" href="../langgraph/07-di-7-zhang-dong-tai-bing-xing-send-yu-mapreduce.html"><span class="sb-item-num">07</span><span class="sb-item-title">第 7 章 动态并行：Send 与 MapReduce</span></a>
+        <a class="sb-item" href="../langgraph/08-di-8-zhang-gei-tu-zhuang-shang-shou-jiao-gong.html"><span class="sb-item-num">08</span><span class="sb-item-title">第 8 章 给图装上手脚：工具调用</span></a>
+        <a class="sb-item" href="../langgraph/09-di-9-zhang-fu-yong-yu-feng-zhuang-zi-tu.html"><span class="sb-item-num">09</span><span class="sb-item-title">第 9 章 复用与封装：子图</span></a>
+        <a class="sb-item" href="../langgraph/10-di-10-zhang-cong-dan-tu-dao-tuan-dui-duo.html"><span class="sb-item-num">10</span><span class="sb-item-title">第 10 章 从单图到团队：多 Agent 架构</span></a>
+        <a class="sb-item" href="../langgraph/11-di-11-zhang-liu-shi-shu-chu.html"><span class="sb-item-num">11</span><span class="sb-item-title">第 11 章 流式输出</span></a>
+        <a class="sb-item" href="../langgraph/12-di-12-zhang-chi-jiu-hua-checkpointer-yu-xian-cheng.html"><span class="sb-item-num">12</span><span class="sb-item-title">第 12 章 持久化：Checkpointer 与线程</span></a>
+        <a class="sb-item" href="../langgraph/13-di-13-zhang-shi-jian-lv-xing.html"><span class="sb-item-num">13</span><span class="sb-item-title">第 13 章 时间旅行</span></a>
+        <a class="sb-item" href="../langgraph/14-di-14-zhang-zhong-duan-yu-ren-zai-hui-lu.html"><span class="sb-item-num">14</span><span class="sb-item-title">第 14 章 中断与人在回路</span></a>
+        <a class="sb-item" href="../langgraph/15-di-15-zhang-ji-yi-guan-li.html"><span class="sb-item-num">15</span><span class="sb-item-title">第 15 章 记忆管理</span></a>
+        <a class="sb-item" href="../langgraph/16-di-16-zhang-rong-cuo-zhong-shi-chao-shi-yu.html"><span class="sb-item-num">16</span><span class="sb-item-title">第 16 章 容错：重试、超时与兜底</span></a>
+        <a class="sb-item" href="../langgraph/17-di-17-zhang-quan-jing-hui-gu.html"><span class="sb-item-num">17</span><span class="sb-item-title">第 17 章 全景回顾</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="backend">
+      <a class="sb-group-title" href="../modules/backend.html" data-toggle="backend">
+        <span class="sb-num">05</span>
+        <span class="sb-group-text"><b>Python 框架指南</b><i>14 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../backend/01-fastapi-ru-men-yu-asgi.html"><span class="sb-item-num">01</span><span class="sb-item-title">FastAPI 入门与 ASGI</span></a>
+        <a class="sb-item" href="../backend/02-lu-you-yu-qing-qiu-xiang-ying.html"><span class="sb-item-num">02</span><span class="sb-item-title">路由与请求响应</span></a>
+        <a class="sb-item" href="../backend/03-pydantic-shu-ju-jiao-yan-yu-pei-zhi.html"><span class="sb-item-num">03</span><span class="sb-item-title">Pydantic 数据校验与配置</span></a>
+        <a class="sb-item" href="../backend/04-sqlalchemy-yi-bu-yin-qing-yu-hui-hua.html"><span class="sb-item-num">04</span><span class="sb-item-title">SQLAlchemy 异步引擎与会话</span></a>
+        <a class="sb-item" href="../backend/05-orm-jian-mo.html"><span class="sb-item-num">05</span><span class="sb-item-title">ORM 建模</span></a>
+        <a class="sb-item" href="../backend/06-sql-biao-da-shi-yu-shu-ju-cao-zuo.html"><span class="sb-item-num">06</span><span class="sb-item-title">SQL 表达式与数据操作</span></a>
+        <a class="sb-item" href="../backend/07-alembic-shu-ju-qian-yi.html"><span class="sb-item-num">07</span><span class="sb-item-title">Alembic 数据迁移</span></a>
+        <a class="sb-item" href="../backend/08-yi-lai-zhu-ru.html"><span class="sb-item-num">08</span><span class="sb-item-title">依赖注入</span></a>
+        <a class="sb-item" href="../backend/09-tong-yi-yi-chang-chu-li.html"><span class="sb-item-num">09</span><span class="sb-item-title">统一异常处理</span></a>
+        <a class="sb-item" href="../backend/10-zhong-jian-jian.html"><span class="sb-item-num">10</span><span class="sb-item-title">中间件</span></a>
+        <a class="sb-item" href="../backend/11-ren-zheng-yu-jwt.html"><span class="sb-item-num">11</span><span class="sb-item-title">认证与 JWT</span></a>
+        <a class="sb-item" href="../backend/12-pytest-ce-shi.html"><span class="sb-item-num">12</span><span class="sb-item-title">pytest 测试</span></a>
+        <a class="sb-item" href="../backend/13-ri-zhi-loguru.html"><span class="sb-item-num">13</span><span class="sb-item-title">日志 loguru</span></a>
+        <a class="sb-item" href="../backend/14-liu-shi-xiang-ying-sse-yu-websocket.html"><span class="sb-item-num">14</span><span class="sb-item-title">流式响应 SSE 与 WebSocket</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="interview">
+      <a class="sb-group-title" href="../modules/interview.html" data-toggle="interview">
+        <span class="sb-num">06</span>
+        <span class="sb-group-text"><b>面试题库</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../interview/01-llm-yuan-li-pian.html"><span class="sb-item-num">01</span><span class="sb-item-title">LLM 原理篇</span></a>
+        <a class="sb-item" href="../interview/02-rag-yu-jian-suo-pian.html"><span class="sb-item-num">02</span><span class="sb-item-title">RAG 与检索篇</span></a>
+        <a class="sb-item" href="../interview/03-agent-he-xin-pian.html"><span class="sb-item-num">03</span><span class="sb-item-title">Agent 核心篇</span></a>
+        <a class="sb-item" href="../interview/04-langgraph-pian.html"><span class="sb-item-num">04</span><span class="sb-item-title">LangGraph 篇</span></a>
+        <a class="sb-item" href="../interview/05-langchain-pian.html"><span class="sb-item-num">05</span><span class="sb-item-title">LangChain 篇</span></a>
+        <a class="sb-item" href="../interview/06-xi-tong-she-ji-pian.html"><span class="sb-item-num">06</span><span class="sb-item-title">系统设计篇</span></a>
+        <a class="sb-item" href="../interview/07-xiang-mu-shen-wa-pian.html"><span class="sb-item-num">07</span><span class="sb-item-title">项目深挖篇</span></a>
+        <a class="sb-item" href="../interview/08-gu-zhang-pai-cha-pian.html"><span class="sb-item-num">08</span><span class="sb-item-title">故障排查篇</span></a>
+        <a class="sb-item" href="../interview/09-python-ji-chu-pian.html"><span class="sb-item-num">09</span><span class="sb-item-title">Python 基础篇</span></a>
+        <a class="sb-item" href="../interview/10-fastapi-yu-hou-duan-pian.html"><span class="sb-item-num">10</span><span class="sb-item-title">FastAPI 与后端篇</span></a>
+        <a class="sb-item" href="../interview/11-ti-shi-ci-gong-cheng-yu-an-quan-pian.html"><span class="sb-item-num">11</span><span class="sb-item-title">提示词工程与安全篇</span></a>
+        <a class="sb-item" href="../interview/12-mo-xing-xuan-xing-yu-jiang-ben-pian.html"><span class="sb-item-num">12</span><span class="sb-item-title">模型选型与降本篇</span></a>
+      </div>
+    </section>
+    <div class="sb-sep"></div>
+    <a class="sb-home" href="../camp.html">
+      <span class="sb-home-ico">◆</span>
+      <span class="sb-home-text"><b>训练营介绍</b><i>课程总览</i></span>
+    </a>
+  </nav>
+</aside>
+  <main class="main">
+    <header class="topbar">
+      <button class="menu-btn" id="menuBtn" aria-label="目录">☰</button>
+      <div class="crumbs"><a href="../index.html">首页</a><span>/</span><a href="../modules/python.html">Python 与数据实践</a><span>/</span><span class="cur">类型标注</span></div>
+      <div class="topbar-actions">
+        <button class="icon-btn" id="themeBtn" title="切换深浅色" aria-label="切换深浅色">◐</button>
+      </div>
+    </header>
+    <div class="content">
+      <article class="article">
+
+<header class="page-head">
+  <div class="page-kicker">Python 与数据实践 · 第 14 章</div>
+  <h1 class="page-title">类型标注</h1>
+  <p class="page-desc">学习建议：从本章起，请在 VS Code 的设置里把 python.analysis.typeCheckingMode 打开（basic 起步，胆子大了可以上 strict），让编辑器实时帮你挑类型的毛病。本章的所有示例…</p>
+  <div class="page-meta">
+    <span>约 17 分钟</span><span>6,861 字</span><span>20 个代码示例</span>
+  </div>
+</header>
+<div class="md"><blockquote>
+<p>学习建议：从本章起，请在 VS Code 的设置里把 <code>python.analysis.typeCheckingMode</code> 打开（<code>basic</code> 起步，胆子大了可以上 <code>strict</code>），让编辑器实时帮你挑类型的毛病。本章的所有示例，最好开着它练。</p>
+</blockquote>
+<h2 id="1-一个函数签名引发的事故">1. 一个函数签名引发的事故</h2>
+<p>先看一个再普通不过的函数：</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">link</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
+</code></pre></div>
+<p>调用它：</p>
+<div class="highlight"><pre><span></span><code><span class="n">link</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>           <span class="c1"># 8</span>
+<span class="n">link</span><span class="p">(</span><span class="s2">"数据"</span><span class="p">,</span> <span class="s2">"清洗"</span><span class="p">)</span>   <span class="c1"># "数据清洗" —— 合法，但未必是你想要的</span>
+<span class="n">link</span><span class="p">((</span><span class="mi">1</span><span class="p">,),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,))</span>     <span class="c1"># (1, 2) —— 同样合法</span>
+</code></pre></div>
+<p>三种调用全部畅通无阻，结果却完全两回事。问题不在 Python，而在这个函数没把"我到底想收什么"说清楚：写代码的人靠猜，读代码的人靠猜，编辑器想帮忙也无处下手——参数类型一团迷雾，补全和查错统统失效。</p>
+<p><strong>类型标注（type hints）</strong> 就是吹开这层迷雾的办法：在代码里白纸黑字地写明"这个位置应该是什么类型"。它不改变程序运行时的行为，却能把"类型约定"从口头默契变成看得见的契约。</p>
+<h2 id="2-从变量到函数贴标签的基本功">2. 从变量到函数：贴标签的基本功</h2>
+<h3 id="21-给变量贴标签">2.1 给变量贴标签</h3>
+<div class="highlight"><pre><span></span><code><span class="n">book_title</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"Python 与数据实践"</span>
+<span class="n">page_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">320</span>
+<span class="n">price</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">79.5</span>
+<span class="n">in_print</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+
+<span class="c1"># 也可以先声明类型，之后再赋值</span>
+<span class="n">chapter_no</span><span class="p">:</span> <span class="nb">int</span>
+<span class="n">chapter_no</span> <span class="o">=</span> <span class="mi">14</span>
+
+<span class="c1"># 注意：Python 是动态语言，标注只是"声明"，不是"枷锁"</span>
+<span class="n">fake_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="s2">"很多"</span>  <span class="c1"># 运行照样通过，但类型检查器会立刻标红</span>
+</code></pre></div>
+<h3 id="22-给函数贴标签">2.2 给函数贴标签</h3>
+<p>参数和返回值都可以标：</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">describe_chapter</span><span class="p">(</span><span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">pages</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">"《</span><span class="si">{</span><span class="n">title</span><span class="si">}</span><span class="s2">》这一章共 </span><span class="si">{</span><span class="n">pages</span><span class="si">}</span><span class="s2"> 页"</span>
+
+
+<span class="n">describe_chapter</span><span class="p">(</span><span class="s2">"类型标注"</span><span class="p">,</span> <span class="mi">18</span><span class="p">)</span>    <span class="c1"># 正常</span>
+<span class="n">describe_chapter</span><span class="p">(</span><span class="s2">"类型标注"</span><span class="p">,</span> <span class="s2">"18"</span><span class="p">)</span>  <span class="c1"># 运行不报错，但类型检查器会警告</span>
+</code></pre></div>
+<h3 id="23-永不返回的函数">2.3 永不返回的函数</h3>
+<p>有些函数的正常出路只有一条：把程序带走。<code>NoReturn</code> 专门用来标注这类函数：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">NoReturn</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">abort</span><span class="p">(</span><span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NoReturn</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""打印错误并终止整个程序，不存在"正常返回"这回事"""</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</code></pre></div>
+<h2 id="3-容器类型把装的是什么也说清楚">3. 容器类型：把"装的是什么"也说清楚</h2>
+<p>裸的 <code>list</code>、<code>dict</code> 信息量太少了——一串字符的列表和一串浮点数的列表，在裸标注眼里毫无区别。<code>typing</code> 模块（以及 Python 3.9+ 的内置泛型写法）允许把元素类型一并交代：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Set</span>
+
+
+<span class="c1"># 列表：标出元素类型</span>
+<span class="n">readings</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mf">36.5</span><span class="p">,</span> <span class="mf">36.8</span><span class="p">,</span> <span class="mf">37.1</span><span class="p">]</span>
+<span class="n">cities</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"杭州"</span><span class="p">,</span> <span class="s2">"苏州"</span><span class="p">,</span> <span class="s2">"广州"</span><span class="p">]</span>
+
+<span class="c1"># 字典：分别标出键类型、值类型</span>
+<span class="n">city_temp</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">"杭州"</span><span class="p">:</span> <span class="mf">26.5</span><span class="p">,</span>
+    <span class="s2">"苏州"</span><span class="p">:</span> <span class="mf">25.9</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="c1"># 元组：长度固定，逐位标类型，每一位都可以不一样</span>
+<span class="n">coord</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">120.15</span><span class="p">,</span> <span class="mf">30.28</span><span class="p">)</span>
+<span class="n">record</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"杭州"</span><span class="p">,</span> <span class="mi">1200</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># 集合：标出元素类型</span>
+<span class="n">tags</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"爬虫"</span><span class="p">,</span> <span class="s2">"清洗"</span><span class="p">,</span> <span class="s2">"可视化"</span><span class="p">}</span>
+</code></pre></div>
+<p>标到这个粒度，类型检查器才有底气质问 "<code>city_temp["上海"] = "26度"</code> 有问题——值应该是 float"。</p>
+<h2 id="4-允许缺席与多选一optional-和-union">4. 允许缺席与多选一：Optional 和 Union</h2>
+<h3 id="41-optional可能没有值">4.1 Optional：可能没有值</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">find_player</span><span class="p">(</span><span class="n">no</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""按号码查队员姓名，查不到就返回 None"""</span>
+    <span class="k">if</span> <span class="n">no</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">"队员_</span><span class="si">{</span><span class="n">no</span><span class="si">}</span><span class="s2">"</span>
+</code></pre></div>
+<p><code>Optional[str]</code> 读作"是 str，也可能是 None"。它只负责把"可能缺席"写进签名，至于返回 None 之后怎么办，是调用方的事。</p>
+<h3 id="42-union几选一">4.2 Union：几选一</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Union</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">to_number</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""能转成数字就转，转不动就原样奉还"""</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s2">"."</span> <span class="ow">in</span> <span class="n">text</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">text</span>
+</code></pre></div>
+<p><code>Union[int, float, str]</code> 表示返回值是这三种类型之一。顺带一提：新语法里 <code>Union[int, float]</code> 可以写成 <code>int | float</code>，<code>Optional[str]</code> 则等价于 <code>str | None</code>。</p>
+<h2 id="5-any-和类型别名">5. Any 和类型别名</h2>
+<h3 id="51-any主动放弃约束">5.1 Any：主动放弃约束</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">trace</span><span class="p">(</span><span class="n">payload</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""调试打印：来者不拒，什么类型都接"""</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"[trace] </span><span class="si">{</span><span class="n">payload</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</code></pre></div>
+<p><code>Any</code> 等于告诉检查器"这里不用管了"。它适合出现在调试日志、与动态数据的交界处；但满屏 Any 的代码约等于没标——别拿它当逃避思考的借口。</p>
+<h3 id="52-类型别名给复杂类型起小名">5.2 类型别名：给复杂类型起小名</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TypeAlias</span>
+
+
+<span class="n">Series</span><span class="p">:</span> <span class="n">TypeAlias</span> <span class="o">=</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span>        <span class="c1"># 一维数列</span>
+<span class="n">Frame</span><span class="p">:</span> <span class="n">TypeAlias</span> <span class="o">=</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]]</span>   <span class="c1"># 二维表</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">series_dot</span><span class="p">(</span><span class="n">s1</span><span class="p">:</span> <span class="n">Series</span><span class="p">,</span> <span class="n">s2</span><span class="p">:</span> <span class="n">Series</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""计算两个数列的内积"""</span>
+    <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">a</span> <span class="o">*</span> <span class="n">b</span> <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">s1</span><span class="p">,</span> <span class="n">s2</span><span class="p">))</span>
+</code></pre></div>
+<p>一层套一层的类型写起来啰嗦、读起来费劲，起个别名之后，函数签名一下子清爽了。</p>
+<h2 id="6-类里的标注以及-self">6. 类里的标注，以及 Self</h2>
+<p>第 06 章写类的时候我们没管类型，现在可以补上了：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Self</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Pixel</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">col</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">row</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">col</span> <span class="o">=</span> <span class="n">col</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">row</span> <span class="o">=</span> <span class="n">row</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">translate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dc</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">dr</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""平移之后，返回一个新的像素点"""</span>
+        <span class="k">return</span> <span class="n">Pixel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">col</span> <span class="o">+</span> <span class="n">dc</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">row</span> <span class="o">+</span> <span class="n">dr</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">gap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="s2">"Pixel"</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""算出自己与另一个像素点的距离"""</span>
+        <span class="k">return</span> <span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">col</span> <span class="o">-</span> <span class="n">other</span><span class="o">.</span><span class="n">col</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">row</span> <span class="o">-</span> <span class="n">other</span><span class="o">.</span><span class="n">row</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.5</span>
+
+
+<span class="c1"># 使用</span>
+<span class="n">origin</span> <span class="o">=</span> <span class="n">Pixel</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="n">corner</span> <span class="o">=</span> <span class="n">Pixel</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">origin</span><span class="o">.</span><span class="n">gap</span><span class="p">(</span><span class="n">corner</span><span class="p">))</span>  <span class="c1"># 5.0</span>
+</code></pre></div>
+<p>两个细节值得注意：</p>
+<ul>
+<li>方法内部引用本类时，可以写成字符串 <code>"Pixel"</code>——类定义还没执行完，直接写裸类名会找不到名字，字符串形式是经典解法；</li>
+<li>返回"自己的类型"用 <code>Self</code>，它比手写类名更稳——子类继承之后，返回值标注依然自动成立。</li>
+</ul>
+<h2 id="7-泛型让容器记住自己装过什么">7. 泛型：让容器记住自己装过什么</h2>
+<p>内置的 <code>list</code> 能装任何东西，我们自己写的容器类也可以泛化。<code>TypeVar</code> 负责声明一个"类型占位符"，<code>Generic</code> 让类接受它：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TypeVar</span><span class="p">,</span> <span class="n">Generic</span>
+
+
+<span class="n">T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">"T"</span><span class="p">)</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">PlayQueue</span><span class="p">(</span><span class="n">Generic</span><span class="p">[</span><span class="n">T</span><span class="p">]):</span>
+<span class="w">    </span><span class="sd">"""泛型播放队列：放进去什么类型，拿出来还是什么类型"""</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_tracks</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">T</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">enqueue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">track</span><span class="p">:</span> <span class="n">T</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_tracks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">track</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">skip</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tracks</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="s2">"队列为空"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tracks</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">current</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tracks</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tracks</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+
+<span class="c1"># 用歌名当队列</span>
+<span class="n">name_queue</span><span class="p">:</span> <span class="n">PlayQueue</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">PlayQueue</span><span class="p">()</span>
+<span class="n">name_queue</span><span class="o">.</span><span class="n">enqueue</span><span class="p">(</span><span class="s2">"晴天"</span><span class="p">)</span>
+<span class="n">name_queue</span><span class="o">.</span><span class="n">enqueue</span><span class="p">(</span><span class="s2">"七里香"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">name_queue</span><span class="o">.</span><span class="n">skip</span><span class="p">())</span>  <span class="c1"># 晴天</span>
+
+<span class="c1"># 用时长当队列</span>
+<span class="n">length_queue</span><span class="p">:</span> <span class="n">PlayQueue</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">PlayQueue</span><span class="p">()</span>
+<span class="n">length_queue</span><span class="o">.</span><span class="n">enqueue</span><span class="p">(</span><span class="mi">269</span><span class="p">)</span>
+<span class="c1"># length_queue.enqueue("269")  # 类型检查器会警告</span>
+</code></pre></div>
+<p><code>PlayQueue[str]</code> 一旦写定，检查器就替你盯着这个实例：往里塞整数它会拦，从里面取出的元素它也自动按 <code>str</code> 来补全。</p>
+<h2 id="8-callable给函数参数标注">8. Callable：给"函数参数"标注</h2>
+<p>函数可以当参数传来传去（第 04 章的老知识），那这种参数的类型该怎么写？答案是 <code>Callable</code>——方括号里先列参数类型列表，再列返回值类型：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">apply_op</span><span class="p">(</span>
+    <span class="n">op</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="nb">float</span><span class="p">],</span>
+    <span class="n">x</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">y</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""把运算本身交给外部传入的函数"""</span>
+    <span class="k">return</span> <span class="n">op</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+
+<span class="nb">print</span><span class="p">(</span><span class="n">apply_op</span><span class="p">(</span><span class="k">lambda</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">a</span> <span class="o">*</span> <span class="n">b</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">))</span>  <span class="c1"># 42.0</span>
+</code></pre></div>
+<p><code>Callable[[float, float], float]</code> 读作"接收两个 float、返回一个 float 的可调用对象"，普通函数、lambda、实现了 <code>__call__</code> 的实例都算。</p>
+<h2 id="9-两类高频应用场景">9. 两类高频应用场景</h2>
+<h3 id="91-用-typeddict-给字典立契约">9.1 用 TypedDict 给字典立契约</h3>
+<p>数据脚本里到处是字典，而键名拼错一个字母，往往要等到运行时才炸。<code>TypedDict</code> 能给字典定下"键与值的契约"：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TypedDict</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">BookInfo</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""接口返回的图书数据结构"""</span>
+    <span class="n">isbn</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">title</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">author</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">in_stock</span><span class="p">:</span> <span class="nb">bool</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">fetch_book</span><span class="p">(</span><span class="n">isbn</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BookInfo</span><span class="p">:</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">"isbn"</span><span class="p">:</span> <span class="s2">"9787111700000"</span><span class="p">,</span>
+        <span class="s2">"title"</span><span class="p">:</span> <span class="s2">"Python 与数据实践"</span><span class="p">,</span>
+        <span class="s2">"author"</span><span class="p">:</span> <span class="s2">"课程组"</span><span class="p">,</span>
+        <span class="s2">"in_stock"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="p">}</span>
+</code></pre></div>
+<p>少写一个键、写错一个键名，类型检查器直接在编辑器里就把你拦下。</p>
+<h3 id="92-让-ide-的智能提示全速运转">9.2 让 IDE 的智能提示全速运转</h3>
+<p>类型标注到位之后，IDE 能帮的忙会上一个台阶：</p>
+<ul>
+<li>成员自动补全</li>
+<li>参数提示</li>
+<li>类型不匹配处实时标红</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">SearchEngine</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">connect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">endpoint</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">timeout</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">30</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">"Session"</span><span class="p">:</span>
+        <span class="o">...</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">search</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">keyword</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+        <span class="o">...</span>
+
+
+<span class="n">engine</span> <span class="o">=</span> <span class="n">SearchEngine</span><span class="p">()</span>
+<span class="n">session</span> <span class="o">=</span> <span class="n">engine</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s2">"es://localhost"</span><span class="p">)</span>  <span class="c1"># IDE 会提示还能传 timeout</span>
+</code></pre></div>
+<p>标注越完整，编辑器就越像一位随叫随到的结对伙伴。</p>
+<h2 id="10-实在标不动的时候type-ignore">10. 实在标不动的时候：type: ignore</h2>
+<p>总有些代码没法好好标注——第三方库没有类型信息、动态属性满天飞。这时可以在行尾加 <code># type: ignore</code>，让检查器跳过这一行：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 整行放弃检查</span>
+<span class="n">payload</span> <span class="o">=</span> <span class="n">legacy_loader</span><span class="o">.</span><span class="n">parse</span><span class="p">()</span>  <span class="c1"># type: ignore</span>
+
+<span class="c1"># 只忽略指定类别的错误（错误码来自检查器给出的提示）</span>
+<span class="n">fake_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="s2">"很多"</span>  <span class="c1"># type: ignore[assignment]</span>
+</code></pre></div>
+<p>把它当成应急的创可贴，而不是常规操作——每一处 ignore，都是写给未来维护者的那句"这里我也没搞明白"。</p>
+<hr />
+<h2 id="习题">习题</h2>
+<h3 id="一补全类型标注">一、补全类型标注</h3>
+<p>给下面两个函数加上合适的类型标注：</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">compute_density</span><span class="p">(</span><span class="n">mass</span><span class="p">,</span> <span class="n">volume</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""计算密度"""</span>
+    <span class="k">if</span> <span class="n">volume</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"体积必须大于 0"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">mass</span> <span class="o">/</span> <span class="n">volume</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">aqi_level</span><span class="p">(</span><span class="n">aqi</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""把空气质量指数翻译成等级文字"""</span>
+    <span class="k">if</span> <span class="n">aqi</span> <span class="o">&lt;=</span> <span class="mi">50</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">"优"</span>
+    <span class="k">elif</span> <span class="n">aqi</span> <span class="o">&lt;=</span> <span class="mi">100</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">"良"</span>
+    <span class="k">elif</span> <span class="n">aqi</span> <span class="o">&lt;=</span> <span class="mi">150</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">"轻度污染"</span>
+    <span class="k">elif</span> <span class="n">aqi</span> <span class="o">&lt;=</span> <span class="mi">200</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">"中度污染"</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">"重度污染"</span>
+</code></pre></div>
+<h3 id="二泛型登记表-registry">二、泛型登记表 Registry</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TypeVar</span><span class="p">,</span> <span class="n">Generic</span><span class="p">,</span> <span class="n">Optional</span>
+
+<span class="n">K</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">"K"</span><span class="p">)</span>
+<span class="n">V</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">"V"</span><span class="p">)</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Registry</span><span class="p">(</span><span class="n">Generic</span><span class="p">[</span><span class="n">K</span><span class="p">,</span> <span class="n">V</span><span class="p">]):</span>
+<span class="w">    </span><span class="sd">"""泛型登记表"""</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># 你的代码</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">register</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">K</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">V</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""登记一个键值对"""</span>
+        <span class="c1"># 你的代码</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">lookup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">K</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">V</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""按键取值，没登记过就返回 None"""</span>
+        <span class="c1"># 你的代码</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">wipe</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""清空登记表"""</span>
+        <span class="c1"># 你的代码</span>
+        <span class="k">pass</span>
+
+
+<span class="c1"># 测试</span>
+<span class="n">registry</span><span class="p">:</span> <span class="n">Registry</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">Registry</span><span class="p">()</span>
+<span class="n">registry</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s2">"pv"</span><span class="p">,</span> <span class="mi">1024</span><span class="p">)</span>
+<span class="n">registry</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s2">"uv"</span><span class="p">,</span> <span class="mi">256</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">registry</span><span class="o">.</span><span class="n">lookup</span><span class="p">(</span><span class="s2">"pv"</span><span class="p">))</span>  <span class="c1"># 1024</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">registry</span><span class="o">.</span><span class="n">lookup</span><span class="p">(</span><span class="s2">"vv"</span><span class="p">))</span>  <span class="c1"># None</span>
+<span class="n">registry</span><span class="o">.</span><span class="n">wipe</span><span class="p">()</span>
+</code></pre></div>
+<h3 id="三用-typeddict-定义服务配置">三、用 TypedDict 定义服务配置</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TypedDict</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">StorageConfig</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""对象存储配置"""</span>
+    <span class="c1"># 你的代码：包含 endpoint(str), region(str), bucket(str), secret_key(str)</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">ServiceConfig</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""服务总配置"""</span>
+    <span class="c1"># 你的代码：包含 service_name(str), verbose(bool), storage(StorageConfig)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">default_config</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">ServiceConfig</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""返回默认配置"""</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">"service_name"</span><span class="p">:</span> <span class="s2">"data-worker"</span><span class="p">,</span>
+        <span class="s2">"verbose"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="s2">"storage"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">"endpoint"</span><span class="p">:</span> <span class="s2">"https://oss.example.com"</span><span class="p">,</span>
+            <span class="s2">"region"</span><span class="p">:</span> <span class="s2">"cn-hangzhou"</span><span class="p">,</span>
+            <span class="s2">"bucket"</span><span class="p">:</span> <span class="s2">"raw-data"</span><span class="p">,</span>
+            <span class="s2">"secret_key"</span><span class="p">:</span> <span class="s2">"s3cr3t"</span><span class="p">,</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+</code></pre></div>
+<h3 id="四思考题这些标注写对了吗">四、思考题：这些标注写对了吗</h3>
+<p>下面的代码在类型标注上有没有毛病？有的话该怎么改？</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Dict</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">index_records</span><span class="p">(</span><span class="n">records</span><span class="p">:</span> <span class="n">List</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""把记录整理成索引"""</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">record</span> <span class="ow">in</span> <span class="n">records</span><span class="p">:</span>
+        <span class="n">result</span><span class="p">[</span><span class="n">record</span><span class="p">[</span><span class="s2">"code"</span><span class="p">]]</span> <span class="o">=</span> <span class="n">record</span><span class="p">[</span><span class="s2">"score"</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">result</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">pick_taller</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""返回较高的身高；两人一样高时返回 None"""</span>
+    <span class="k">if</span> <span class="n">a</span> <span class="o">==</span> <span class="n">b</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">return</span> <span class="n">a</span> <span class="k">if</span> <span class="n">a</span> <span class="o">&gt;</span> <span class="n">b</span> <span class="k">else</span> <span class="n">b</span>
+</code></pre></div>
+<hr />
+<p><strong>下一章</strong>：<a href="../python/15-mo-kuai-yu-bao-de-zu-zhi.html">../15-模块与包的组织/课件.md</a></p></div>
+
+      </article>
+<nav class="pager"><a class="pg-card pg-prev" href="../python/13-yi-chang-ti-xi-yu-chu-li.html"><span class="pg-label">← 上一篇</span><span class="pg-title">异常体系与处理</span><span class="pg-mod">Python 与数据实践</span></a><a class="pg-card pg-next" href="../python/15-mo-kuai-yu-bao-de-zu-zhi.html"><span class="pg-label">下一篇 →</span><span class="pg-title">模块与包的组织</span><span class="pg-mod">Python 与数据实践</span></a></nav>
+    </div>
+    <footer class="foot">
+      <span>AI Agent 工程师转型训练营配套文档</span>
+    </footer>
+  </main>
+<nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#1-一个函数签名引发的事故">1. 一个函数签名引发的事故</a><a class="toc-link toc-h2" href="#2-从变量到函数贴标签的基本功">2. 从变量到函数：贴标签的基本功</a><a class="toc-link toc-h3" href="#21-给变量贴标签">2.1 给变量贴标签</a><a class="toc-link toc-h3" href="#22-给函数贴标签">2.2 给函数贴标签</a><a class="toc-link toc-h3" href="#23-永不返回的函数">2.3 永不返回的函数</a><a class="toc-link toc-h2" href="#3-容器类型把装的是什么也说清楚">3. 容器类型：把&quot;装的是什么&quot;也说清楚</a><a class="toc-link toc-h2" href="#4-允许缺席与多选一optional-和-union">4. 允许缺席与多选一：Optional 和 Union</a><a class="toc-link toc-h3" href="#41-optional可能没有值">4.1 Optional：可能没有值</a><a class="toc-link toc-h3" href="#42-union几选一">4.2 Union：几选一</a><a class="toc-link toc-h2" href="#5-any-和类型别名">5. Any 和类型别名</a><a class="toc-link toc-h3" href="#51-any主动放弃约束">5.1 Any：主动放弃约束</a><a class="toc-link toc-h3" href="#52-类型别名给复杂类型起小名">5.2 类型别名：给复杂类型起小名</a><a class="toc-link toc-h2" href="#6-类里的标注以及-self">6. 类里的标注，以及 Self</a><a class="toc-link toc-h2" href="#7-泛型让容器记住自己装过什么">7. 泛型：让容器记住自己装过什么</a><a class="toc-link toc-h2" href="#8-callable给函数参数标注">8. Callable：给&quot;函数参数&quot;标注</a><a class="toc-link toc-h2" href="#9-两类高频应用场景">9. 两类高频应用场景</a><a class="toc-link toc-h3" href="#91-用-typeddict-给字典立契约">9.1 用 TypedDict 给字典立契约</a><a class="toc-link toc-h3" href="#92-让-ide-的智能提示全速运转">9.2 让 IDE 的智能提示全速运转</a><a class="toc-link toc-h2" href="#10-实在标不动的时候type-ignore">10. 实在标不动的时候：type: ignore</a><a class="toc-link toc-h2" href="#习题">习题</a><a class="toc-link toc-h3" href="#一补全类型标注">一、补全类型标注</a><a class="toc-link toc-h3" href="#二泛型登记表-registry">二、泛型登记表 Registry</a><a class="toc-link toc-h3" href="#三用-typeddict-定义服务配置">三、用 TypedDict 定义服务配置</a><a class="toc-link toc-h3" href="#四思考题这些标注写对了吗">四、思考题：这些标注写对了吗</a></nav>
+</div>
+<div class="sb-mask" id="sbMask"></div>
+<script src="../assets/app.js"></script>
+</body>
+</html>

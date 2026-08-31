@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>11 · 迭代协议与生成器 · InfiSpace 课程文档</title>
+<meta name="description" content="for 循环你从第 02 章用到现在，早就成了肌肉记忆。但你有没有追问过一句：for 凭什么知道&quot;下一个值&quot;是谁？凭什么列表、字符串、字典、文件都能往 for 里塞，一个数字却会被当场拒绝？这一章我们就把 for 的机箱…">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%232DD4D4' text-anchor='middle'%3E%E2%88%9E%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+<div class="progress" id="progress"></div>
+
+<div class="layout">
+<aside class="sidebar" id="sidebar">
+  <div class="sb-head">
+    <a class="brand" href="../index.html">
+      <img class="brand-mark" src="../assets/infispace-logo-1.png" alt="InfiSpace">
+    </a>
+    <button class="sb-close" id="sbClose" aria-label="关闭目录">✕</button>
+  </div>
+  <div class="sb-search"><input type="search" id="searchInput" placeholder="搜索 123 篇文档… ( / )" autocomplete="off">
+    <div class="sb-results" id="searchResults"></div></div>
+  <nav class="sb-nav">
+    <section class="sb-group">
+      <a class="sb-group-title" href="../index.html">
+        <span class="sb-num">00</span>
+        <span class="sb-group-text"><b>学习导航</b><i>课程首页</i></span>
+      </a>
+    </section>
+    <section class="sb-group open" data-mod="python">
+      <a class="sb-group-title" href="../modules/python.html" data-toggle="python">
+        <span class="sb-num">01</span>
+        <span class="sb-group-text"><b>Python 与数据实践</b><i>31 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../python/01-huan-jing-da-jian-yu-ban-ben-guan-li.html"><span class="sb-item-num">01</span><span class="sb-item-title">环境搭建与版本管理</span></a>
+        <a class="sb-item" href="../python/02-bian-liang-biao-da-shi-yu-liu-cheng-kong-zhi.html"><span class="sb-item-num">02</span><span class="sb-item-title">变量、表达式与流程控制</span></a>
+        <a class="sb-item" href="../python/03-xu-lie-zi-dian-yu-ji-he.html"><span class="sb-item-num">03</span><span class="sb-item-title">序列、字典与集合</span></a>
+        <a class="sb-item" href="../python/04-han-shu-she-ji-yu-lambda.html"><span class="sb-item-num">04</span><span class="sb-item-title">函数设计与 lambda</span></a>
+        <a class="sb-item" href="../python/05-zuo-yong-yu-gui-ze-yu-bi-bao.html"><span class="sb-item-num">05</span><span class="sb-item-title">作用域规则与闭包</span></a>
+        <a class="sb-item" href="../python/06-lei-de-ding-yi-yu-shi-li-hua.html"><span class="sb-item-num">06</span><span class="sb-item-title">类的定义与实例化</span></a>
+        <a class="sb-item" href="../python/07-lei-xing-pan-ding-yu-chou-xiang-ji-lei.html"><span class="sb-item-num">07</span><span class="sb-item-title">类型判定与抽象基类</span></a>
+        <a class="sb-item" href="../python/08-mo-shu-fang-fa-quan-jing.html"><span class="sb-item-num">08</span><span class="sb-item-title">魔术方法全景</span></a>
+        <a class="sb-item" href="../python/09-miao-shu-fu-yu-yuan-lei.html"><span class="sb-item-num">09</span><span class="sb-item-title">描述符与元类</span></a>
+        <a class="sb-item" href="../python/10-zhuang-shi-qi.html"><span class="sb-item-num">10</span><span class="sb-item-title">装饰器</span></a>
+        <a class="sb-item current" href="../python/11-die-dai-xie-yi-yu-sheng-cheng-qi.html"><span class="sb-item-num">11</span><span class="sb-item-title">迭代协议与生成器</span></a>
+        <a class="sb-item" href="../python/12-with-yu-shang-xia-wen-xie-yi.html"><span class="sb-item-num">12</span><span class="sb-item-title">with 与上下文协议</span></a>
+        <a class="sb-item" href="../python/13-yi-chang-ti-xi-yu-chu-li.html"><span class="sb-item-num">13</span><span class="sb-item-title">异常体系与处理</span></a>
+        <a class="sb-item" href="../python/14-lei-xing-biao-zhu.html"><span class="sb-item-num">14</span><span class="sb-item-title">类型标注</span></a>
+        <a class="sb-item" href="../python/15-mo-kuai-yu-bao-de-zu-zhi.html"><span class="sb-item-num">15</span><span class="sb-item-title">模块与包的组织</span></a>
+        <a class="sb-item" href="../python/16-biao-zhun-ku-xun-li.html"><span class="sb-item-num">16</span><span class="sb-item-title">标准库巡礼</span></a>
+        <a class="sb-item" href="../python/17-yi-lai-guan-li-yu-di-san-fang-ku.html"><span class="sb-item-num">17</span><span class="sb-item-title">依赖管理与第三方库</span></a>
+        <a class="sb-item" href="../python/18-xian-cheng-yu-jin-cheng.html"><span class="sb-item-num">18</span><span class="sb-item-title">线程与进程</span></a>
+        <a class="sb-item" href="../python/19-shi-jian-xun-huan.html"><span class="sb-item-num">19</span><span class="sb-item-title">事件循环</span></a>
+        <a class="sb-item" href="../python/20-future-yu-xie-cheng.html"><span class="sb-item-num">20</span><span class="sb-item-title">Future 与协程</span></a>
+        <a class="sb-item" href="../python/21-asyncio-shi-zhan.html"><span class="sb-item-num">21</span><span class="sb-item-title">asyncio 实战</span></a>
+        <a class="sb-item" href="../python/22-gou-jian-yu-fa-bu.html"><span class="sb-item-num">22</span><span class="sb-item-title">构建与发布</span></a>
+        <a class="sb-item" href="../python/23-gong-cheng-hua-gong-ju-lian.html"><span class="sb-item-num">23</span><span class="sb-item-title">工程化工具链</span></a>
+        <a class="sb-item" href="../python/24-monorepo-yu-tiao-shi.html"><span class="sb-item-num">24</span><span class="sb-item-title">monorepo 与调试</span></a>
+        <a class="sb-item" href="../python/25-jupyter-jiao-hu-huan-jing.html"><span class="sb-item-num">25</span><span class="sb-item-title">Jupyter 交互环境</span></a>
+        <a class="sb-item" href="../python/26-numpy-shu-zu-yu-xiang-liang-hua.html"><span class="sb-item-num">26</span><span class="sb-item-title">NumPy 数组与向量化</span></a>
+        <a class="sb-item" href="../python/27-pandas-shu-ju-jie-gou.html"><span class="sb-item-num">27</span><span class="sb-item-title">Pandas 数据结构</span></a>
+        <a class="sb-item" href="../python/28-pandas-shu-ju-qing-xi.html"><span class="sb-item-num">28</span><span class="sb-item-title">Pandas 数据清洗</span></a>
+        <a class="sb-item" href="../python/29-matplotlib-hui-tu-ti-xi.html"><span class="sb-item-num">29</span><span class="sb-item-title">Matplotlib 绘图体系</span></a>
+        <a class="sb-item" href="../python/30-matplotlib-dong-hua-yu-jiao-hu.html"><span class="sb-item-num">30</span><span class="sb-item-title">Matplotlib 动画与交互</span></a>
+        <a class="sb-item" href="../python/31-seaborn-tong-ji-ke-shi-hua.html"><span class="sb-item-num">31</span><span class="sb-item-title">Seaborn 统计可视化</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="agent">
+      <a class="sb-group-title" href="../modules/agent.html" data-toggle="agent">
+        <span class="sb-num">02</span>
+        <span class="sb-group-text"><b>Agent 核心</b><i>15 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../agent/01-token-yu-ci-qian-ru.html"><span class="sb-item-num">01</span><span class="sb-item-title">Token 与词嵌入</span></a>
+        <a class="sb-item" href="../agent/02-qian-xiang-chuan-bo-yu-fan-xiang-chuan-bo.html"><span class="sb-item-num">02</span><span class="sb-item-title">前向传播与反向传播</span></a>
+        <a class="sb-item" href="../agent/03-zhu-yi-li-ji-zhi-yu-transformer-jia-gou.html"><span class="sb-item-num">03</span><span class="sb-item-title">注意力机制与 Transformer 架构</span></a>
+        <a class="sb-item" href="../agent/04-yu-xun-lian-rlhf-yu-cai-yang-kv-cache.html"><span class="sb-item-num">04</span><span class="sb-item-title">预训练、RLHF 与采样（KV Cache）</span></a>
+        <a class="sb-item" href="../agent/05-ben-di-mo-xing-yu-xiao-xi-jie-gou.html"><span class="sb-item-num">05</span><span class="sb-item-title">本地模型与消息结构</span></a>
+        <a class="sb-item" href="../agent/06-hui-hua-guan-li-yu-json-shu-chu.html"><span class="sb-item-num">06</span><span class="sb-item-title">会话管理与 JSON 输出</span></a>
+        <a class="sb-item" href="../agent/07-tool-calling-xie-yi-yu-feng-zhuang.html"><span class="sb-item-num">07</span><span class="sb-item-title">Tool Calling：协议与封装</span></a>
+        <a class="sb-item" href="../agent/08-react-mo-shi-yu-zhu-xun-huan.html"><span class="sb-item-num">08</span><span class="sb-item-title">ReAct 模式与主循环</span></a>
+        <a class="sb-item" href="../agent/09-shi-zhan-deep-research-agent.html"><span class="sb-item-num">09</span><span class="sb-item-title">实战：Deep Research Agent</span></a>
+        <a class="sb-item" href="../agent/10-skill-yu-jian-jin-shi-pi-lu.html"><span class="sb-item-num">10</span><span class="sb-item-title">Skill 与渐进式披露</span></a>
+        <a class="sb-item" href="../agent/11-mcp-quan-jing.html"><span class="sb-item-num">11</span><span class="sb-item-title">MCP 全景</span></a>
+        <a class="sb-item" href="../agent/12-duo-agent-yu-xuan-xing-ce-lve.html"><span class="sb-item-num">12</span><span class="sb-item-title">多 Agent 与选型策略</span></a>
+        <a class="sb-item" href="../agent/13-ti-shi-ci-gong-cheng-yu-shang-xia-wen-gong.html"><span class="sb-item-num">13</span><span class="sb-item-title">提示词工程与上下文工程</span></a>
+        <a class="sb-item" href="../agent/14-xun-huan-tu-yu-gu-jia-gong-cheng.html"><span class="sb-item-num">14</span><span class="sb-item-title">循环、图与骨架工程</span></a>
+        <a class="sb-item" href="../agent/15-ji-yi-quan-xian-yu-ping-ce.html"><span class="sb-item-num">15</span><span class="sb-item-title">记忆、权限与评测</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="langchain">
+      <a class="sb-group-title" href="../modules/langchain.html" data-toggle="langchain">
+        <span class="sb-num">03</span>
+        <span class="sb-group-text"><b>LangChain 指南</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langchain/01-ren-shi-langchain.html"><span class="sb-item-num">01</span><span class="sb-item-title">认识 LangChain</span></a>
+        <a class="sb-item" href="../langchain/02-ti-shi-ci-mu-ban-yu-xiao-xi.html"><span class="sb-item-num">02</span><span class="sb-item-title">提示词模板与消息</span></a>
+        <a class="sb-item" href="../langchain/03-lcel-yu-runnable.html"><span class="sb-item-num">03</span><span class="sb-item-title">LCEL 与 Runnable</span></a>
+        <a class="sb-item" href="../langchain/04-liu-shi-yu-bing-fa.html"><span class="sb-item-num">04</span><span class="sb-item-title">流式与并发</span></a>
+        <a class="sb-item" href="../langchain/05-shu-chu-jie-xi-qi.html"><span class="sb-item-num">05</span><span class="sb-item-title">输出解析器</span></a>
+        <a class="sb-item" href="../langchain/06-wen-dang-jia-zai-yu-qie-ge.html"><span class="sb-item-num">06</span><span class="sb-item-title">文档加载与切割</span></a>
+        <a class="sb-item" href="../langchain/07-qian-ru-yu-xiang-liang-ku.html"><span class="sb-item-num">07</span><span class="sb-item-title">嵌入与向量库</span></a>
+        <a class="sb-item" href="../langchain/08-jian-suo-yu-rag.html"><span class="sb-item-num">08</span><span class="sb-item-title">检索与RAG</span></a>
+        <a class="sb-item" href="../langchain/09-dui-hua-ji-yi.html"><span class="sb-item-num">09</span><span class="sb-item-title">对话记忆</span></a>
+        <a class="sb-item" href="../langchain/10-gong-ju-diao-yong.html"><span class="sb-item-num">10</span><span class="sb-item-title">工具调用</span></a>
+        <a class="sb-item" href="../langchain/11-agent.html"><span class="sb-item-num">11</span><span class="sb-item-title">Agent</span></a>
+        <a class="sb-item" href="../langchain/12-hui-diao-yu-tiao-shi-quan-ke-cheng-shou-guan.html"><span class="sb-item-num">12</span><span class="sb-item-title">回调与调试（全课程收官章）</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="langgraph">
+      <a class="sb-group-title" href="../modules/langgraph.html" data-toggle="langgraph">
+        <span class="sb-num">04</span>
+        <span class="sb-group-text"><b>LangGraph 框架指南</b><i>17 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langgraph/01-di-1-zhang-cong-yi-ge-shi-kong-de-jiao.html"><span class="sb-item-num">01</span><span class="sb-item-title">第 1 章 从一个失控的脚本说起</span></a>
+        <a class="sb-item" href="../langgraph/02-di-2-zhang-zui-xiao-ke-yun-xing-tu.html"><span class="sb-item-num">02</span><span class="sb-item-title">第 2 章 最小可运行图</span></a>
+        <a class="sb-item" href="../langgraph/03-di-3-zhang-zhuang-tai-tu-de-shu-ju-xin.html"><span class="sb-item-num">03</span><span class="sb-item-title">第 3 章 状态：图的数据心脏</span></a>
+        <a class="sb-item" href="../langgraph/04-di-4-zhang-rang-liu-cheng-xue-hui-jue-ce.html"><span class="sb-item-num">04</span><span class="sb-item-title">第 4 章 让流程学会决策</span></a>
+        <a class="sb-item" href="../langgraph/05-di-5-zhang-bing-xing-shi-jie-chao-bu-zhi.html"><span class="sb-item-num">05</span><span class="sb-item-title">第 5 章 并行世界：超步执行模型</span></a>
+        <a class="sb-item" href="../langgraph/06-di-6-zhang-command-ba-kong-zhi-quan-jiao-jin.html"><span class="sb-item-num">06</span><span class="sb-item-title">第 6 章 Command：把控制权交进节点</span></a>
+        <a class="sb-item" href="../langgraph/07-di-7-zhang-dong-tai-bing-xing-send-yu-mapreduce.html"><span class="sb-item-num">07</span><span class="sb-item-title">第 7 章 动态并行：Send 与 MapReduce</span></a>
+        <a class="sb-item" href="../langgraph/08-di-8-zhang-gei-tu-zhuang-shang-shou-jiao-gong.html"><span class="sb-item-num">08</span><span class="sb-item-title">第 8 章 给图装上手脚：工具调用</span></a>
+        <a class="sb-item" href="../langgraph/09-di-9-zhang-fu-yong-yu-feng-zhuang-zi-tu.html"><span class="sb-item-num">09</span><span class="sb-item-title">第 9 章 复用与封装：子图</span></a>
+        <a class="sb-item" href="../langgraph/10-di-10-zhang-cong-dan-tu-dao-tuan-dui-duo.html"><span class="sb-item-num">10</span><span class="sb-item-title">第 10 章 从单图到团队：多 Agent 架构</span></a>
+        <a class="sb-item" href="../langgraph/11-di-11-zhang-liu-shi-shu-chu.html"><span class="sb-item-num">11</span><span class="sb-item-title">第 11 章 流式输出</span></a>
+        <a class="sb-item" href="../langgraph/12-di-12-zhang-chi-jiu-hua-checkpointer-yu-xian-cheng.html"><span class="sb-item-num">12</span><span class="sb-item-title">第 12 章 持久化：Checkpointer 与线程</span></a>
+        <a class="sb-item" href="../langgraph/13-di-13-zhang-shi-jian-lv-xing.html"><span class="sb-item-num">13</span><span class="sb-item-title">第 13 章 时间旅行</span></a>
+        <a class="sb-item" href="../langgraph/14-di-14-zhang-zhong-duan-yu-ren-zai-hui-lu.html"><span class="sb-item-num">14</span><span class="sb-item-title">第 14 章 中断与人在回路</span></a>
+        <a class="sb-item" href="../langgraph/15-di-15-zhang-ji-yi-guan-li.html"><span class="sb-item-num">15</span><span class="sb-item-title">第 15 章 记忆管理</span></a>
+        <a class="sb-item" href="../langgraph/16-di-16-zhang-rong-cuo-zhong-shi-chao-shi-yu.html"><span class="sb-item-num">16</span><span class="sb-item-title">第 16 章 容错：重试、超时与兜底</span></a>
+        <a class="sb-item" href="../langgraph/17-di-17-zhang-quan-jing-hui-gu.html"><span class="sb-item-num">17</span><span class="sb-item-title">第 17 章 全景回顾</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="backend">
+      <a class="sb-group-title" href="../modules/backend.html" data-toggle="backend">
+        <span class="sb-num">05</span>
+        <span class="sb-group-text"><b>Python 框架指南</b><i>14 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../backend/01-fastapi-ru-men-yu-asgi.html"><span class="sb-item-num">01</span><span class="sb-item-title">FastAPI 入门与 ASGI</span></a>
+        <a class="sb-item" href="../backend/02-lu-you-yu-qing-qiu-xiang-ying.html"><span class="sb-item-num">02</span><span class="sb-item-title">路由与请求响应</span></a>
+        <a class="sb-item" href="../backend/03-pydantic-shu-ju-jiao-yan-yu-pei-zhi.html"><span class="sb-item-num">03</span><span class="sb-item-title">Pydantic 数据校验与配置</span></a>
+        <a class="sb-item" href="../backend/04-sqlalchemy-yi-bu-yin-qing-yu-hui-hua.html"><span class="sb-item-num">04</span><span class="sb-item-title">SQLAlchemy 异步引擎与会话</span></a>
+        <a class="sb-item" href="../backend/05-orm-jian-mo.html"><span class="sb-item-num">05</span><span class="sb-item-title">ORM 建模</span></a>
+        <a class="sb-item" href="../backend/06-sql-biao-da-shi-yu-shu-ju-cao-zuo.html"><span class="sb-item-num">06</span><span class="sb-item-title">SQL 表达式与数据操作</span></a>
+        <a class="sb-item" href="../backend/07-alembic-shu-ju-qian-yi.html"><span class="sb-item-num">07</span><span class="sb-item-title">Alembic 数据迁移</span></a>
+        <a class="sb-item" href="../backend/08-yi-lai-zhu-ru.html"><span class="sb-item-num">08</span><span class="sb-item-title">依赖注入</span></a>
+        <a class="sb-item" href="../backend/09-tong-yi-yi-chang-chu-li.html"><span class="sb-item-num">09</span><span class="sb-item-title">统一异常处理</span></a>
+        <a class="sb-item" href="../backend/10-zhong-jian-jian.html"><span class="sb-item-num">10</span><span class="sb-item-title">中间件</span></a>
+        <a class="sb-item" href="../backend/11-ren-zheng-yu-jwt.html"><span class="sb-item-num">11</span><span class="sb-item-title">认证与 JWT</span></a>
+        <a class="sb-item" href="../backend/12-pytest-ce-shi.html"><span class="sb-item-num">12</span><span class="sb-item-title">pytest 测试</span></a>
+        <a class="sb-item" href="../backend/13-ri-zhi-loguru.html"><span class="sb-item-num">13</span><span class="sb-item-title">日志 loguru</span></a>
+        <a class="sb-item" href="../backend/14-liu-shi-xiang-ying-sse-yu-websocket.html"><span class="sb-item-num">14</span><span class="sb-item-title">流式响应 SSE 与 WebSocket</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="interview">
+      <a class="sb-group-title" href="../modules/interview.html" data-toggle="interview">
+        <span class="sb-num">06</span>
+        <span class="sb-group-text"><b>面试题库</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../interview/01-llm-yuan-li-pian.html"><span class="sb-item-num">01</span><span class="sb-item-title">LLM 原理篇</span></a>
+        <a class="sb-item" href="../interview/02-rag-yu-jian-suo-pian.html"><span class="sb-item-num">02</span><span class="sb-item-title">RAG 与检索篇</span></a>
+        <a class="sb-item" href="../interview/03-agent-he-xin-pian.html"><span class="sb-item-num">03</span><span class="sb-item-title">Agent 核心篇</span></a>
+        <a class="sb-item" href="../interview/04-langgraph-pian.html"><span class="sb-item-num">04</span><span class="sb-item-title">LangGraph 篇</span></a>
+        <a class="sb-item" href="../interview/05-langchain-pian.html"><span class="sb-item-num">05</span><span class="sb-item-title">LangChain 篇</span></a>
+        <a class="sb-item" href="../interview/06-xi-tong-she-ji-pian.html"><span class="sb-item-num">06</span><span class="sb-item-title">系统设计篇</span></a>
+        <a class="sb-item" href="../interview/07-xiang-mu-shen-wa-pian.html"><span class="sb-item-num">07</span><span class="sb-item-title">项目深挖篇</span></a>
+        <a class="sb-item" href="../interview/08-gu-zhang-pai-cha-pian.html"><span class="sb-item-num">08</span><span class="sb-item-title">故障排查篇</span></a>
+        <a class="sb-item" href="../interview/09-python-ji-chu-pian.html"><span class="sb-item-num">09</span><span class="sb-item-title">Python 基础篇</span></a>
+        <a class="sb-item" href="../interview/10-fastapi-yu-hou-duan-pian.html"><span class="sb-item-num">10</span><span class="sb-item-title">FastAPI 与后端篇</span></a>
+        <a class="sb-item" href="../interview/11-ti-shi-ci-gong-cheng-yu-an-quan-pian.html"><span class="sb-item-num">11</span><span class="sb-item-title">提示词工程与安全篇</span></a>
+        <a class="sb-item" href="../interview/12-mo-xing-xuan-xing-yu-jiang-ben-pian.html"><span class="sb-item-num">12</span><span class="sb-item-title">模型选型与降本篇</span></a>
+      </div>
+    </section>
+    <div class="sb-sep"></div>
+    <a class="sb-home" href="../camp.html">
+      <span class="sb-home-ico">◆</span>
+      <span class="sb-home-text"><b>训练营介绍</b><i>课程总览</i></span>
+    </a>
+  </nav>
+</aside>
+  <main class="main">
+    <header class="topbar">
+      <button class="menu-btn" id="menuBtn" aria-label="目录">☰</button>
+      <div class="crumbs"><a href="../index.html">首页</a><span>/</span><a href="../modules/python.html">Python 与数据实践</a><span>/</span><span class="cur">迭代协议与生成器</span></div>
+      <div class="topbar-actions">
+        <button class="icon-btn" id="themeBtn" title="切换深浅色" aria-label="切换深浅色">◐</button>
+      </div>
+    </header>
+    <div class="content">
+      <article class="article">
+
+<header class="page-head">
+  <div class="page-kicker">Python 与数据实践 · 第 11 章</div>
+  <h1 class="page-title">迭代协议与生成器</h1>
+  <p class="page-desc">for 循环你从第 02 章用到现在，早就成了肌肉记忆。但你有没有追问过一句：for 凭什么知道&quot;下一个值&quot;是谁？凭什么列表、字符串、字典、文件都能往 for 里塞，一个数字却会被当场拒绝？这一章我们就把 for 的机箱…</p>
+  <div class="page-meta">
+    <span>约 24 分钟</span><span>9,589 字</span><span>30 个代码示例</span>
+  </div>
+</header>
+<div class="md"><p><code>for</code> 循环你从第 02 章用到现在，早就成了肌肉记忆。但你有没有追问过一句：for 凭什么知道"下一个值"是谁？凭什么列表、字符串、字典、文件都能往 for 里塞，一个数字却会被当场拒绝？这一章我们就把 for 的机箱拆开——里面是一套叫<strong>迭代协议</strong>的约定。吃透它，你不仅能造出自己"可被 for 的对象"，还能解锁 Python 里最省内存的取值姿势：生成器。</p>
+<hr />
+<h2 id="1-可迭代对象for-眼里的合格供应商">1. 可迭代对象：for 眼里的合格供应商</h2>
+<p>先立规矩：</p>
+<blockquote>
+<p><strong>一个对象只要实现了 <code>__iter__()</code> 方法，并且这个方法返回一个迭代器，它就是可迭代对象（Iterable）。</strong></p>
+</blockquote>
+<p>你叫得出名字的容器——<code>list</code>、<code>tuple</code>、<code>str</code>、<code>dict</code>、<code>set</code>——全都签了这份合约。</p>
+<p>动手验证一下，<code>iter()</code> 这个内置函数能从可迭代对象身上"领"到一个迭代器：</p>
+<div class="highlight"><pre><span></span><code><span class="n">cart</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"键盘"</span><span class="p">,</span> <span class="s2">"鼠标"</span><span class="p">,</span> <span class="s2">"显示器"</span><span class="p">]</span>
+
+<span class="c1"># iter() 等价于 cart.__iter__()，拿到一个迭代器</span>
+<span class="n">it</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="n">cart</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">it</span><span class="p">))</span>   <span class="c1"># &lt;class 'list_iterator'&gt;</span>
+
+<span class="c1"># next() 等价于 it.__next__()，逐个把值"吐"出来</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">next</span><span class="p">(</span><span class="n">it</span><span class="p">))</span>   <span class="c1"># 键盘</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">next</span><span class="p">(</span><span class="n">it</span><span class="p">))</span>   <span class="c1"># 鼠标</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">next</span><span class="p">(</span><span class="n">it</span><span class="p">))</span>   <span class="c1"># 显示器</span>
+
+<span class="c1"># print(next(it))  # 再要就没了：抛 StopIteration</span>
+</code></pre></div>
+<p>顺手记住一条推理：<strong>迭代器自己也实现了 <code>__iter__</code>（约定俗成返回自身），所以迭代器必然是可迭代对象</strong>；但反过来，可迭代对象不一定是迭代器。</p>
+<h2 id="2-迭代器真正吐值的角色">2. 迭代器：真正吐值的角色</h2>
+<p>把上面的推理摊开，就是迭代器的完整定义——<strong>同时实现了 <code>__iter__</code> 和 <code>__next__</code> 两个方法的对象</strong>。骨架长这样：</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">ValueEmitter</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""迭代器骨架：两个方法缺一不可"""</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        要求：返回一个迭代器。</span>
+<span class="sd">        绝大多数情况下，把自己 return 出去就是标准答案</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__next__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""交出下一个值；实在没了就抛 StopIteration"""</span>
+        <span class="k">pass</span>
+
+
+<span class="n">obj</span> <span class="o">=</span> <span class="n">ValueEmitter</span><span class="p">()</span>  <span class="c1"># obj 就是一个迭代器</span>
+</code></pre></div>
+<p><code>iter()</code> 和 <code>next()</code> 这两个内置函数，不过是这两个魔术方法（第 08 章的老朋友）的马甲而已。</p>
+<h3 id="应用造一条停不下来的序列">应用：造一条停不下来的序列</h3>
+<p>容器得先把所有值装进内存才敢开工，迭代器没有这个包袱——它算一步、给一步。比如培养皿里的细胞，每观察一次数量翻一倍：</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">CellCulture</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""细胞分裂迭代器：数量无限翻倍，没有尽头"""</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__next__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">observed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">count</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">*=</span> <span class="mi">2</span>
+        <span class="k">return</span> <span class="n">observed</span>
+
+
+<span class="n">dish</span> <span class="o">=</span> <span class="n">CellCulture</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="nb">next</span><span class="p">(</span><span class="n">dish</span><span class="p">))</span>  <span class="c1"># 1</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">next</span><span class="p">(</span><span class="n">dish</span><span class="p">))</span>  <span class="c1"># 2</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">next</span><span class="p">(</span><span class="n">dish</span><span class="p">))</span>  <span class="c1"># 4</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">next</span><span class="p">(</span><span class="n">dish</span><span class="p">))</span>  <span class="c1"># 8</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">next</span><span class="p">(</span><span class="n">dish</span><span class="p">))</span>  <span class="c1"># 16</span>
+</code></pre></div>
+<p>这条序列没有终点，但谁需要谁取——"无限"在惰性的世界里根本不值钱。</p>
+<h2 id="3-各司其职可迭代对象配一个专职迭代器">3. 各司其职：可迭代对象配一个专职迭代器</h2>
+<p>第 1 节那条协议说 <code>__iter__</code> 要返回迭代器，最讲究的写法是拆成两个类：可迭代对象管"能被遍历"这件事，迭代器管"遍历到哪儿了"这件事。看一部从 6 层往 1 层降的电梯：</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">ElevatorDescent</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""可迭代对象：电梯从 top 层一路降到 1 层"""</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">top</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">top</span> <span class="o">=</span> <span class="n">top</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># 每次调用都发一个崭新的迭代器</span>
+        <span class="k">return</span> <span class="n">FloorStepper</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">top</span><span class="p">)</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">FloorStepper</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""专职迭代器：记住电梯当前停在哪层"""</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">top</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">floor</span> <span class="o">=</span> <span class="n">top</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__next__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">floor</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">StopIteration</span>  <span class="c1"># 1 层以下没楼层可给了</span>
+        <span class="n">current</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">floor</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">floor</span> <span class="o">-=</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="n">current</span>
+
+
+<span class="n">lift</span> <span class="o">=</span> <span class="n">ElevatorDescent</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span>
+
+<span class="n">step</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="n">lift</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">next</span><span class="p">(</span><span class="n">step</span><span class="p">))</span>  <span class="c1"># 6</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">next</span><span class="p">(</span><span class="n">step</span><span class="p">))</span>  <span class="c1"># 5</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">next</span><span class="p">(</span><span class="n">step</span><span class="p">))</span>  <span class="c1"># 4</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">next</span><span class="p">(</span><span class="n">step</span><span class="p">))</span>  <span class="c1"># 3</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">next</span><span class="p">(</span><span class="n">step</span><span class="p">))</span>  <span class="c1"># 2</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">next</span><span class="p">(</span><span class="n">step</span><span class="p">))</span>  <span class="c1"># 1</span>
+<span class="c1"># print(next(step))  # StopIteration!</span>
+</code></pre></div>
+<p>为什么非要拆开？玄机在 <code>ElevatorDescent.__iter__</code> 每次都 new 一个新的 <code>FloorStepper</code>：进度状态存在迭代器身上，不污染可迭代对象本身，所以同一个对象能一遍又一遍地从头遍历。列表能 for 两遍，靠的就是这个机制。</p>
+<h2 id="4-隐形的消费者谁在替你调-iter-和-next">4. 隐形的消费者：谁在替你调 iter 和 next</h2>
+<p>除了 for，还有一大票语法和内置函数在背后偷偷走"领迭代器 → 反复取值"的流程。</p>
+<h3 id="41-for-循环">4.1 <code>for</code> 循环</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># for 的内部剧本：先 iter() 领迭代器，再不停 next()，直到收到 StopIteration</span>
+<span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">ElevatorDescent</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>  <span class="c1"># 3 2 1</span>
+</code></pre></div>
+<h3 id="42-listtupleset-构造函数">4.2 <code>list()</code>、<code>tuple()</code>、<code>set()</code> 构造函数</h3>
+<div class="highlight"><pre><span></span><code><span class="nb">print</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">ElevatorDescent</span><span class="p">(</span><span class="mi">3</span><span class="p">)))</span>   <span class="c1"># [3, 2, 1]</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">ElevatorDescent</span><span class="p">(</span><span class="mi">3</span><span class="p">)))</span>  <span class="c1"># (3, 2, 1)</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">ElevatorDescent</span><span class="p">(</span><span class="mi">3</span><span class="p">)))</span>    <span class="c1"># {1, 2, 3}</span>
+</code></pre></div>
+<h3 id="43-解包">4.3 <code>*</code> 解包</h3>
+<div class="highlight"><pre><span></span><code><span class="n">top</span><span class="p">,</span> <span class="o">*</span><span class="n">below</span> <span class="o">=</span> <span class="n">ElevatorDescent</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">top</span><span class="p">)</span>    <span class="c1"># 3</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">below</span><span class="p">)</span>  <span class="c1"># [2, 1]</span>
+
+<span class="n">floors</span> <span class="o">=</span> <span class="p">[</span><span class="o">*</span><span class="n">ElevatorDescent</span><span class="p">(</span><span class="mi">3</span><span class="p">)]</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">floors</span><span class="p">)</span>  <span class="c1"># [3, 2, 1]</span>
+</code></pre></div>
+<h3 id="44-in-成员判断">4.4 <code>in</code> 成员判断</h3>
+<div class="highlight"><pre><span></span><code><span class="nb">print</span><span class="p">(</span><span class="mi">6</span> <span class="ow">in</span> <span class="n">ElevatorDescent</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>  <span class="c1"># False</span>
+<span class="nb">print</span><span class="p">(</span><span class="mi">2</span> <span class="ow">in</span> <span class="n">ElevatorDescent</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>  <span class="c1"># True</span>
+</code></pre></div>
+<h3 id="45-summaxmin">4.5 <code>sum()</code>、<code>max()</code>、<code>min()</code></h3>
+<div class="highlight"><pre><span></span><code><span class="nb">print</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">ElevatorDescent</span><span class="p">(</span><span class="mi">3</span><span class="p">)))</span>  <span class="c1"># 6</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">ElevatorDescent</span><span class="p">(</span><span class="mi">3</span><span class="p">)))</span>  <span class="c1"># 3</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">ElevatorDescent</span><span class="p">(</span><span class="mi">3</span><span class="p">)))</span>  <span class="c1"># 1</span>
+</code></pre></div>
+<h3 id="46-zipmapfilter">4.6 <code>zip()</code>、<code>map()</code>、<code>filter()</code></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># zip：把多个可迭代对象按位置配成对</span>
+<span class="n">goods</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"口罩"</span><span class="p">,</span> <span class="s2">"酒精"</span><span class="p">,</span> <span class="s2">"创可贴"</span><span class="p">]</span>
+<span class="n">prices</span> <span class="o">=</span> <span class="p">[</span><span class="mi">12</span><span class="p">,</span> <span class="mi">35</span><span class="p">,</span> <span class="mi">8</span><span class="p">]</span>
+<span class="k">for</span> <span class="n">good</span><span class="p">,</span> <span class="n">price</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">goods</span><span class="p">,</span> <span class="n">prices</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">good</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">price</span><span class="si">}</span><span class="s2"> 元"</span><span class="p">)</span>
+<span class="c1"># 口罩: 12 元</span>
+<span class="c1"># 酒精: 35 元</span>
+<span class="c1"># 创可贴: 8 元</span>
+
+<span class="c1"># map：对每个值做一次转换</span>
+<span class="n">doubled</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">n</span><span class="p">:</span> <span class="n">n</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="n">ElevatorDescent</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">doubled</span><span class="p">))</span>  <span class="c1"># [6, 4, 2]</span>
+
+<span class="c1"># filter：按条件筛掉不要的</span>
+<span class="n">odds</span> <span class="o">=</span> <span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">n</span><span class="p">:</span> <span class="n">n</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="n">ElevatorDescent</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">odds</span><span class="p">))</span>  <span class="c1"># [3, 1]</span>
+</code></pre></div>
+<h3 id="47-anyall">4.7 <code>any()</code>、<code>all()</code></h3>
+<div class="highlight"><pre><span></span><code><span class="n">floors</span> <span class="o">=</span> <span class="n">ElevatorDescent</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">any</span><span class="p">(</span><span class="n">floors</span><span class="p">))</span>  <span class="c1"># True（只要有一个值为真，any 就是 True）</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">all</span><span class="p">(</span><span class="n">floors</span><span class="p">))</span>  <span class="c1"># True（3、2、1 全是真值）</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="nb">all</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]))</span>  <span class="c1"># False（混进一个 0，all 立刻翻脸）</span>
+</code></pre></div>
+<h2 id="5-range天天用未必真懂">5. range：天天用，未必真懂</h2>
+<p><code>range()</code> 大概是你最常打交道的可迭代对象，专门负责生产整数序列。三种参数形态：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># range(stop)：从 0 数到 stop-1</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">" "</span><span class="p">)</span>  <span class="c1"># 0 1 2 3</span>
+<span class="nb">print</span><span class="p">()</span>
+
+<span class="c1"># range(start, stop)：从 start 数到 stop-1</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">7</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">" "</span><span class="p">)</span>  <span class="c1"># 3 4 5 6</span>
+<span class="nb">print</span><span class="p">()</span>
+
+<span class="c1"># range(start, stop, step)：按步长跳着数</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">3</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">" "</span><span class="p">)</span>  <span class="c1"># 1 4 7</span>
+<span class="nb">print</span><span class="p">()</span>
+
+<span class="c1"># 步长为负：倒着数</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">" "</span><span class="p">)</span>  <span class="c1"># 4 3 2 1</span>
+</code></pre></div>
+<p>三条重要特性，逐条说清：</p>
+<p><strong>特性一：惰性求值。</strong> range 从不预先生成一长串数字，用到哪个才算哪个。而且和列表不同，它支持索引、切片和长度查询：</p>
+<div class="highlight"><pre><span></span><code><span class="n">r</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="p">))</span>    <span class="c1"># 50</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="mi">4</span><span class="p">])</span>      <span class="c1"># 8</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="mi">2</span><span class="p">:</span><span class="mi">6</span><span class="p">])</span>    <span class="c1"># range(4, 12, 2)</span>
+<span class="nb">print</span><span class="p">(</span><span class="mi">8</span> <span class="ow">in</span> <span class="n">r</span><span class="p">)</span>    <span class="c1"># True</span>
+<span class="nb">print</span><span class="p">(</span><span class="mi">9</span> <span class="ow">in</span> <span class="n">r</span><span class="p">)</span>    <span class="c1"># False</span>
+</code></pre></div>
+<p><strong>特性二：不是迭代器。</strong> range 是可迭代对象，但不亲自当迭代器——每次 <code>iter()</code> 都发新的，于是可以反复遍历：</p>
+<div class="highlight"><pre><span></span><code><span class="n">r</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">r</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">" "</span><span class="p">)</span>  <span class="c1"># 0 1 2</span>
+<span class="nb">print</span><span class="p">()</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">r</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">" "</span><span class="p">)</span>  <span class="c1"># 0 1 2（再来一遍毫无压力）</span>
+</code></pre></div>
+<p><strong>特性三：内存恒定。</strong> range 内部只保存 <code>start</code>、<code>stop</code>、<code>step</code> 三个数，区间再大也只占这点地方——<code>range(10**10)</code> 随手就建，换成列表试试？</p>
+<h2 id="6-推导式一行代码顶一小段循环">6. 推导式：一行代码顶一小段循环</h2>
+<p>推导式（Comprehension）是一种紧凑语法：从已有的可迭代对象出发，一步到位造出新容器。</p>
+<h3 id="61-列表推导式">6.1 列表推导式</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># 基本款：[表达式 for 变量 in 可迭代对象]</span>
+<span class="n">triples</span> <span class="o">=</span> <span class="p">[</span><span class="n">n</span> <span class="o">*</span> <span class="mi">3</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">)]</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">triples</span><span class="p">)</span>  <span class="c1"># [0, 3, 6, 9, 12]</span>
+
+<span class="c1"># 带筛选：[表达式 for 变量 in 可迭代对象 if 条件]</span>
+<span class="n">multiples_of_5</span> <span class="o">=</span> <span class="p">[</span><span class="n">n</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">30</span><span class="p">)</span> <span class="k">if</span> <span class="n">n</span> <span class="o">%</span> <span class="mi">5</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">multiples_of_5</span><span class="p">)</span>  <span class="c1"># [0, 5, 10, 15, 20, 25]</span>
+
+<span class="c1"># if-else 放在表达式前部（注意：这种写法没有"尾巴上的 if"）</span>
+<span class="n">scores</span> <span class="o">=</span> <span class="p">[</span><span class="mi">92</span><span class="p">,</span> <span class="mi">58</span><span class="p">,</span> <span class="mi">77</span><span class="p">,</span> <span class="mi">61</span><span class="p">]</span>
+<span class="n">verdicts</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"通过"</span> <span class="k">if</span> <span class="n">s</span> <span class="o">&gt;=</span> <span class="mi">60</span> <span class="k">else</span> <span class="s2">"不通过"</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">scores</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">verdicts</span><span class="p">)</span>  <span class="c1"># ['通过', '不通过', '通过', '通过']</span>
+</code></pre></div>
+<h3 id="62-字典推导式">6.2 字典推导式</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># 基本款：{键表达式: 值表达式 for 变量 in 可迭代对象}</span>
+<span class="n">cube_map</span> <span class="o">=</span> <span class="p">{</span><span class="n">n</span><span class="p">:</span> <span class="n">n</span> <span class="o">**</span> <span class="mi">3</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">)}</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">cube_map</span><span class="p">)</span>  <span class="c1"># {0: 0, 1: 1, 2: 8, 3: 27, 4: 64}</span>
+
+<span class="c1"># 带筛选：只保留 3 的倍数</span>
+<span class="n">by_three</span> <span class="o">=</span> <span class="p">{</span><span class="n">n</span><span class="p">:</span> <span class="n">n</span> <span class="o">**</span> <span class="mi">3</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span> <span class="k">if</span> <span class="n">n</span> <span class="o">%</span> <span class="mi">3</span> <span class="o">==</span> <span class="mi">0</span><span class="p">}</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">by_three</span><span class="p">)</span>  <span class="c1"># {0: 0, 3: 27, 6: 216, 9: 729}</span>
+</code></pre></div>
+<h3 id="63-集合推导式">6.3 集合推导式</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># 基本款：{表达式 for 变量 in 可迭代对象}（花括号里没有冒号）</span>
+<span class="n">multiples_of_4</span> <span class="o">=</span> <span class="p">{</span><span class="n">n</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span> <span class="k">if</span> <span class="n">n</span> <span class="o">%</span> <span class="mi">4</span> <span class="o">==</span> <span class="mi">0</span><span class="p">}</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">multiples_of_4</span><span class="p">)</span>  <span class="c1"># {0, 4, 8, 12, 16}</span>
+
+<span class="c1"># 集合自动去重：四个单词只留下三个首字母</span>
+<span class="n">words</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"apple"</span><span class="p">,</span> <span class="s2">"avocado"</span><span class="p">,</span> <span class="s2">"banana"</span><span class="p">,</span> <span class="s2">"cherry"</span><span class="p">]</span>
+<span class="n">initials</span> <span class="o">=</span> <span class="p">{</span><span class="n">w</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">words</span><span class="p">}</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">initials</span><span class="p">)</span>  <span class="c1"># {'a', 'b', 'c'}</span>
+</code></pre></div>
+<h3 id="64-嵌套推导式">6.4 嵌套推导式</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># 把二维名单拍扁成一维</span>
+<span class="n">roster</span> <span class="o">=</span> <span class="p">[[</span><span class="s2">"张三"</span><span class="p">,</span> <span class="s2">"李四"</span><span class="p">],</span> <span class="p">[</span><span class="s2">"欧阳锋"</span><span class="p">],</span> <span class="p">[</span><span class="s2">"王五"</span><span class="p">,</span> <span class="s2">"赵六"</span><span class="p">]]</span>
+<span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="n">name</span> <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">roster</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">group</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">names</span><span class="p">)</span>  <span class="c1"># ['张三', '李四', '欧阳锋', '王五', '赵六']</span>
+
+<span class="c1"># 等价于：</span>
+<span class="c1"># names = []</span>
+<span class="c1"># for group in roster:</span>
+<span class="c1">#     for name in group:</span>
+<span class="c1">#         names.append(name)</span>
+
+<span class="c1"># 嵌套 + 筛选：只留两个字的名字</span>
+<span class="n">short</span> <span class="o">=</span> <span class="p">[</span><span class="n">name</span> <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">roster</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">group</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">short</span><span class="p">)</span>  <span class="c1"># ['张三', '李四', '王五', '赵六']</span>
+</code></pre></div>
+<p>读嵌套推导式有个窍门：从左往右读，<code>for</code> 出现的顺序就等于普通循环从外到内的顺序。</p>
+<h3 id="65-没有元组推导式这回事">6.5 没有元组推导式这回事</h3>
+<p>Python 里不存在元组推导式。你用圆括号写出来的那个东西，是下一节的主角——生成器表达式：</p>
+<div class="highlight"><pre><span></span><code><span class="n">result</span> <span class="o">=</span> <span class="p">(</span><span class="n">n</span> <span class="o">*</span> <span class="mi">2</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">result</span><span class="p">))</span>  <span class="c1"># &lt;class 'generator'&gt;，不是 tuple</span>
+</code></pre></div>
+<h3 id="66-推导式与循环怎么选">6.6 推导式与循环怎么选</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># 推导式写法（更 Pythonic，通常也更快）</span>
+<span class="n">cubes</span> <span class="o">=</span> <span class="p">[</span><span class="n">n</span> <span class="o">**</span> <span class="mi">3</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">8</span><span class="p">)]</span>
+
+<span class="c1"># 等价的循环写法</span>
+<span class="n">cubes</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">8</span><span class="p">):</span>
+    <span class="n">cubes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">n</span> <span class="o">**</span> <span class="mi">3</span><span class="p">)</span>
+</code></pre></div>
+<p>推导式短小精悍，解释器对它还有专门优化。但别走火入魔：一旦逻辑复杂起来（多层嵌套加多重条件），硬压成一行只会变成没人敢碰的天书——那种时候，老老实实写循环才是对读者负责。</p>
+<hr />
+<h2 id="7-生成器函数会踩刹车的函数">7. 生成器函数：会踩刹车的函数</h2>
+<p>普通函数一路狂奔，撞到 return 交出结果就散场。但只要函数体内出现一个 <code>yield</code> 关键字，这个函数的性质就彻底变了——<strong>调用它不执行任何代码，只生产一个生成器对象；而生成器本身就是一个迭代器</strong>。</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 函数体里有 yield，Python 就把它登记为生成器函数</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">game_levels</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"载入草原关卡"</span><span class="p">)</span>
+    <span class="k">yield</span> <span class="s2">"草原"</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"载入沙漠关卡"</span><span class="p">)</span>
+    <span class="k">yield</span> <span class="s2">"沙漠"</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"载入火山关卡"</span><span class="p">)</span>
+    <span class="k">yield</span> <span class="s2">"火山"</span>
+
+
+<span class="n">quest</span> <span class="o">=</span> <span class="n">game_levels</span><span class="p">()</span>  <span class="c1"># 注意：此刻函数体一行都没跑，只拿到了生成器</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">quest</span><span class="p">))</span>     <span class="c1"># &lt;class 'generator'&gt;</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="nb">next</span><span class="p">(</span><span class="n">quest</span><span class="p">))</span>  <span class="c1"># 载入草原关卡（开始执行，到第一个 yield 踩下刹车）</span>
+                    <span class="c1"># 草原</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">next</span><span class="p">(</span><span class="n">quest</span><span class="p">))</span>  <span class="c1"># 载入沙漠关卡（从上次的刹车点无缝续跑）</span>
+                    <span class="c1"># 沙漠</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">next</span><span class="p">(</span><span class="n">quest</span><span class="p">))</span>  <span class="c1"># 载入火山关卡</span>
+                    <span class="c1"># 火山</span>
+<span class="c1"># print(next(quest))  # 函数体跑完，抛 StopIteration</span>
+</code></pre></div>
+<p>生成器是编写迭代器的捷径。第 3 节那个电梯，两个类几十行，换成生成器只要几行：</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">descend</span><span class="p">(</span><span class="n">top</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""生成器版本：从 top 层降到 1 层"""</span>
+    <span class="k">while</span> <span class="n">top</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">yield</span> <span class="n">top</span>
+        <span class="n">top</span> <span class="o">-=</span> <span class="mi">1</span>
+
+
+<span class="n">lift</span> <span class="o">=</span> <span class="n">descend</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">lift</span><span class="p">))</span>     <span class="c1"># &lt;class 'generator'&gt;</span>
+
+<span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">lift</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">" "</span><span class="p">)</span>  <span class="c1"># 5 4 3 2 1</span>
+</code></pre></div>
+<p>生成器有三个鲜明特点：</p>
+<ol>
+<li><strong>惰性求值</strong>：值按需生产，用一个算一个，内存开销可以忽略</li>
+<li><strong>现场封存</strong>：每次 yield 处暂停，局部变量和执行位置原样冻结，下次调用继续接着演</li>
+<li><strong>一遍生命</strong>：跟迭代器一样，取完即止，没法倒带重放</li>
+</ol>
+<h2 id="8-yield-from把产量外包出去">8. yield from：把产量外包出去</h2>
+<p>生成器内部可以调用别的生成器，把人家的产出逐个转发：</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">opening_ceremony</span><span class="p">():</span>
+    <span class="k">yield</span> <span class="s2">"运动员入场"</span>
+    <span class="k">yield</span> <span class="s2">"点燃火炬"</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">sports_day</span><span class="p">():</span>
+    <span class="k">yield</span> <span class="s2">"运动会开始"</span>
+    <span class="k">for</span> <span class="n">moment</span> <span class="ow">in</span> <span class="n">opening_ceremony</span><span class="p">():</span>
+        <span class="k">yield</span> <span class="n">moment</span>
+    <span class="k">yield</span> <span class="s2">"仪式结束，比赛开始"</span>
+
+
+<span class="k">for</span> <span class="n">moment</span> <span class="ow">in</span> <span class="n">sports_day</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">moment</span><span class="p">)</span>
+<span class="c1"># 运动会开始</span>
+<span class="c1"># 运动员入场</span>
+<span class="c1"># 点燃火炬</span>
+<span class="c1"># 仪式结束，比赛开始</span>
+</code></pre></div>
+<p>中间那个 for 纯属搬运工体力活，Python 给了个语法糖 <code>yield from</code>，一步完成"委托"：</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">sports_day</span><span class="p">():</span>
+    <span class="k">yield</span> <span class="s2">"运动会开始"</span>
+    <span class="k">yield from</span> <span class="n">opening_ceremony</span><span class="p">()</span>  <span class="c1"># 中间环节整体转交子生成器</span>
+    <span class="k">yield</span> <span class="s2">"仪式结束，比赛开始"</span>
+</code></pre></div>
+<h2 id="9-send不仅会吐还会收">9. send：不仅会吐，还会收</h2>
+<p>yield 不只是出料口，同时也是进料口。调用生成器的 <code>send(值)</code> 方法，这个值会成为 yield 表达式的运算结果，被函数体接住：</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">checkout</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""收银台：不停接收商品价格，随时回报累计账单"""</span>
+    <span class="n">bill</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">price</span> <span class="o">=</span> <span class="k">yield</span> <span class="n">bill</span>  <span class="c1"># 吐出当前账单，同时等待下一件商品的价格</span>
+        <span class="k">if</span> <span class="n">price</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">break</span>
+        <span class="n">bill</span> <span class="o">+=</span> <span class="n">price</span>
+
+
+<span class="n">counter</span> <span class="o">=</span> <span class="n">checkout</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">next</span><span class="p">(</span><span class="n">counter</span><span class="p">))</span>      <span class="c1"># 0（先点火一次，让生成器走到 yield 处待命）</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">counter</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="mi">15</span><span class="p">))</span>   <span class="c1"># 15（收到 15 元，累计后吐出新账单）</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">counter</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="mi">42</span><span class="p">))</span>   <span class="c1"># 57</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">counter</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="mi">8</span><span class="p">))</span>    <span class="c1"># 65</span>
+</code></pre></div>
+<p>有个细节必须记住：第一次不能直接 send 具体值——生成器还没跑到 yield 那一行，送进去的值没人接，会直接报错。先 <code>next()</code>（或 <code>send(None)</code>）把它点火。</p>
+<h2 id="10-生成器表达式换一对括号立刻变懒">10. 生成器表达式：换一对括号，立刻变懒</h2>
+<p>把列表推导式的方括号换成圆括号，得到的不是元组，而是生成器表达式——一次性把"算"和"存"分开，只算不存：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 惰性版本：内存里只有一个生成器，两百万个值一个都没提前算</span>
+<span class="n">lazy_squares</span> <span class="o">=</span> <span class="p">(</span><span class="n">n</span> <span class="o">*</span> <span class="n">n</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2_000_000</span><span class="p">))</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">lazy_squares</span><span class="p">))</span>  <span class="c1"># &lt;class 'generator'&gt;</span>
+
+<span class="c1"># 要一个，算一个：</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">next</span><span class="p">(</span><span class="n">lazy_squares</span><span class="p">))</span>  <span class="c1"># 0</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">next</span><span class="p">(</span><span class="n">lazy_squares</span><span class="p">))</span>  <span class="c1"># 1</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">next</span><span class="p">(</span><span class="n">lazy_squares</span><span class="p">))</span>  <span class="c1"># 4</span>
+</code></pre></div>
+<h2 id="11-itertools标准库自带的迭代工具箱">11. itertools：标准库自带的迭代工具箱</h2>
+<p><code>itertools</code> 模块收录了一大批现成的高效迭代器，认识几个最常用的：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">itertools</span>
+
+<span class="c1"># count(起点, 步长)：从起点出发，无限往下数</span>
+<span class="n">seat_no</span> <span class="o">=</span> <span class="n">itertools</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">next</span><span class="p">(</span><span class="n">seat_no</span><span class="p">))</span>  <span class="c1"># 7</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">next</span><span class="p">(</span><span class="n">seat_no</span><span class="p">))</span>  <span class="c1"># 10</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">next</span><span class="p">(</span><span class="n">seat_no</span><span class="p">))</span>  <span class="c1"># 13</span>
+
+<span class="c1"># cycle(可迭代对象)：循环播放，永不停止</span>
+<span class="n">light</span> <span class="o">=</span> <span class="n">itertools</span><span class="o">.</span><span class="n">cycle</span><span class="p">([</span><span class="s2">"红灯"</span><span class="p">,</span> <span class="s2">"绿灯"</span><span class="p">,</span> <span class="s2">"黄灯"</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">next</span><span class="p">(</span><span class="n">light</span><span class="p">))</span>  <span class="c1"># 红灯</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">next</span><span class="p">(</span><span class="n">light</span><span class="p">))</span>  <span class="c1"># 绿灯</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">next</span><span class="p">(</span><span class="n">light</span><span class="p">))</span>  <span class="c1"># 黄灯</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">next</span><span class="p">(</span><span class="n">light</span><span class="p">))</span>  <span class="c1"># 红灯（又转回来了）</span>
+
+<span class="c1"># repeat(值, 次数)：把同一个值连给 N 遍</span>
+<span class="n">padding</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="s2">"待定"</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">padding</span><span class="p">)</span>  <span class="c1"># ['待定', '待定', '待定']</span>
+
+<span class="c1"># chain(*可迭代对象)：几段序列首尾相接</span>
+<span class="n">merged</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">chain</span><span class="p">([</span><span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">],</span> <span class="p">[</span><span class="mi">9</span><span class="p">,</span> <span class="mi">10</span><span class="p">],</span> <span class="p">[</span><span class="mi">11</span><span class="p">]))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">merged</span><span class="p">)</span>  <span class="c1"># [7, 8, 9, 10, 11]</span>
+
+<span class="c1"># islice(可迭代对象, 起点, 结束, 步长)：给无限序列"切片"</span>
+<span class="n">head</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">islice</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">count</span><span class="p">(),</span> <span class="mi">6</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">head</span><span class="p">)</span>  <span class="c1"># [0, 1, 2, 3, 4, 5]</span>
+
+<span class="c1"># permutations(可迭代对象, r)：排列（讲究先后顺序）</span>
+<span class="n">podium</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">permutations</span><span class="p">([</span><span class="s2">"甲"</span><span class="p">,</span> <span class="s2">"乙"</span><span class="p">,</span> <span class="s2">"丙"</span><span class="p">],</span> <span class="mi">2</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">podium</span><span class="p">)</span>
+<span class="c1"># [('甲', '乙'), ('甲', '丙'), ('乙', '甲'), ('乙', '丙'), ('丙', '甲'), ('丙', '乙')]</span>
+
+<span class="c1"># combinations(可迭代对象, r)：组合（不分先后）</span>
+<span class="n">matchups</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">combinations</span><span class="p">([</span><span class="s2">"A"</span><span class="p">,</span> <span class="s2">"B"</span><span class="p">,</span> <span class="s2">"C"</span><span class="p">,</span> <span class="s2">"D"</span><span class="p">],</span> <span class="mi">2</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">matchups</span><span class="p">)</span>
+<span class="c1"># [('A', 'B'), ('A', 'C'), ('A', 'D'), ('B', 'C'), ('B', 'D'), ('C', 'D')]</span>
+</code></pre></div>
+<hr />
+<h2 id="12-作业">12. 作业</h2>
+<p>动笔之前，先用费曼学习法把三样东西讲给自己听：迭代器、可迭代对象、生成器各是什么，彼此什么关系。讲卡壳的地方，就是需要回头补的地方。</p>
+<h3 id="一多层储物清单摊平">一、多层储物清单摊平</h3>
+<p>编写生成器函数 <code>flatten_boxes</code>，把任意深度嵌套的列表摊平成一层：</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">flatten_boxes</span><span class="p">(</span><span class="n">boxes</span><span class="p">):</span>
+    <span class="c1"># 你的代码</span>
+    <span class="k">pass</span>
+
+
+<span class="n">storage</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"拖把"</span><span class="p">,</span> <span class="p">[</span><span class="s2">"抹布"</span><span class="p">,</span> <span class="p">[</span><span class="s2">"扫帚"</span><span class="p">,</span> <span class="s2">"垃圾袋"</span><span class="p">],</span> <span class="s2">"水桶"</span><span class="p">],</span> <span class="s2">"梯子"</span><span class="p">,</span> <span class="p">[</span><span class="s2">"灯泡"</span><span class="p">,</span> <span class="s2">"灯管"</span><span class="p">]]</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">flatten_boxes</span><span class="p">(</span><span class="n">storage</span><span class="p">)))</span>
+<span class="c1"># ['拖把', '抹布', '扫帚', '垃圾袋', '水桶', '梯子', '灯泡', '灯管']</span>
+</code></pre></div>
+<h3 id="二模拟分批拉取记录">二、模拟分批拉取记录</h3>
+<p>编写一个生成器，模拟从接口分批拉取数据：</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">fetch_batches</span><span class="p">(</span><span class="n">total</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    模拟分批拉取</span>
+<span class="sd">    total: 记录总数</span>
+<span class="sd">    batch_size: 每批条数</span>
+<span class="sd">    每轮 yield 一批记录（列表），记录编号从 1 开始</span>
+<span class="sd">    """</span>
+    <span class="c1"># 你的代码</span>
+    <span class="k">pass</span>
+
+
+<span class="k">for</span> <span class="n">batch</span> <span class="ow">in</span> <span class="n">fetch_batches</span><span class="p">(</span><span class="mi">25</span><span class="p">,</span> <span class="mi">10</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
+<span class="c1"># [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]</span>
+<span class="c1"># [11, 12, 13, 14, 15, 16, 17, 18, 19, 20]</span>
+<span class="c1"># [21, 22, 23, 24, 25]</span>
+</code></pre></div>
+<h3 id="三思考题">三、思考题</h3>
+<p>下面代码的输出是什么？为什么？</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">tea_pot</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"第一泡，出汤"</span><span class="p">)</span>
+    <span class="k">yield</span> <span class="mi">1</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"第二泡，出汤"</span><span class="p">)</span>
+    <span class="k">yield</span> <span class="mi">2</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"第三泡，出汤"</span><span class="p">)</span>
+    <span class="k">yield</span> <span class="mi">3</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"茶叶已泡乏"</span><span class="p">)</span>
+
+
+<span class="n">pot</span> <span class="o">=</span> <span class="n">tea_pot</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"茶具已备好"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">next</span><span class="p">(</span><span class="n">pot</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"---"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">next</span><span class="p">(</span><span class="n">pot</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"---"</span><span class="p">)</span>
+<span class="n">pot</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"茶具已收拾"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">next</span><span class="p">(</span><span class="n">pot</span><span class="p">))</span>
+</code></pre></div>
+<hr />
+<p><strong>下一章</strong>：<a href="../python/12-with-yu-shang-xia-wen-xie-yi.html">12 · with 与上下文协议</a></p></div>
+
+      </article>
+<nav class="pager"><a class="pg-card pg-prev" href="../python/10-zhuang-shi-qi.html"><span class="pg-label">← 上一篇</span><span class="pg-title">装饰器</span><span class="pg-mod">Python 与数据实践</span></a><a class="pg-card pg-next" href="../python/12-with-yu-shang-xia-wen-xie-yi.html"><span class="pg-label">下一篇 →</span><span class="pg-title">with 与上下文协议</span><span class="pg-mod">Python 与数据实践</span></a></nav>
+    </div>
+    <footer class="foot">
+      <span>AI Agent 工程师转型训练营配套文档</span>
+    </footer>
+  </main>
+<nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#1-可迭代对象for-眼里的合格供应商">1. 可迭代对象：for 眼里的合格供应商</a><a class="toc-link toc-h2" href="#2-迭代器真正吐值的角色">2. 迭代器：真正吐值的角色</a><a class="toc-link toc-h3" href="#应用造一条停不下来的序列">应用：造一条停不下来的序列</a><a class="toc-link toc-h2" href="#3-各司其职可迭代对象配一个专职迭代器">3. 各司其职：可迭代对象配一个专职迭代器</a><a class="toc-link toc-h2" href="#4-隐形的消费者谁在替你调-iter-和-next">4. 隐形的消费者：谁在替你调 iter 和 next</a><a class="toc-link toc-h3" href="#41-for-循环">4.1 for 循环</a><a class="toc-link toc-h3" href="#42-listtupleset-构造函数">4.2 list()、tuple()、set() 构造函数</a><a class="toc-link toc-h3" href="#43-解包">4.3 * 解包</a><a class="toc-link toc-h3" href="#44-in-成员判断">4.4 in 成员判断</a><a class="toc-link toc-h3" href="#45-summaxmin">4.5 sum()、max()、min()</a><a class="toc-link toc-h3" href="#46-zipmapfilter">4.6 zip()、map()、filter()</a><a class="toc-link toc-h3" href="#47-anyall">4.7 any()、all()</a><a class="toc-link toc-h2" href="#5-range天天用未必真懂">5. range：天天用，未必真懂</a><a class="toc-link toc-h2" href="#6-推导式一行代码顶一小段循环">6. 推导式：一行代码顶一小段循环</a><a class="toc-link toc-h3" href="#61-列表推导式">6.1 列表推导式</a><a class="toc-link toc-h3" href="#62-字典推导式">6.2 字典推导式</a><a class="toc-link toc-h3" href="#63-集合推导式">6.3 集合推导式</a><a class="toc-link toc-h3" href="#64-嵌套推导式">6.4 嵌套推导式</a><a class="toc-link toc-h3" href="#65-没有元组推导式这回事">6.5 没有元组推导式这回事</a><a class="toc-link toc-h3" href="#66-推导式与循环怎么选">6.6 推导式与循环怎么选</a><a class="toc-link toc-h2" href="#7-生成器函数会踩刹车的函数">7. 生成器函数：会踩刹车的函数</a><a class="toc-link toc-h2" href="#8-yield-from把产量外包出去">8. yield from：把产量外包出去</a><a class="toc-link toc-h2" href="#9-send不仅会吐还会收">9. send：不仅会吐，还会收</a><a class="toc-link toc-h2" href="#10-生成器表达式换一对括号立刻变懒">10. 生成器表达式：换一对括号，立刻变懒</a><a class="toc-link toc-h2" href="#11-itertools标准库自带的迭代工具箱">11. itertools：标准库自带的迭代工具箱</a><a class="toc-link toc-h2" href="#12-作业">12. 作业</a><a class="toc-link toc-h3" href="#一多层储物清单摊平">一、多层储物清单摊平</a><a class="toc-link toc-h3" href="#二模拟分批拉取记录">二、模拟分批拉取记录</a><a class="toc-link toc-h3" href="#三思考题">三、思考题</a></nav>
+</div>
+<div class="sb-mask" id="sbMask"></div>
+<script src="../assets/app.js"></script>
+</body>
+</html>

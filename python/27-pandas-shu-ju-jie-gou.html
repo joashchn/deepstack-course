@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>27 · Pandas 数据结构 · InfiSpace 课程文档</title>
+<meta name="description" content="第 26 章的 NumPy 把「同质数值 + 广播」玩得很转：一个数组里全是数字，运算又快又省心。可随手打开一张真实业务表——比如一份员工花名册——里面是姓名、部门、职级这样的文字，混着工龄、薪资这样的数字，还零星缺着几…">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%232DD4D4' text-anchor='middle'%3E%E2%88%9E%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+<div class="progress" id="progress"></div>
+
+<div class="layout">
+<aside class="sidebar" id="sidebar">
+  <div class="sb-head">
+    <a class="brand" href="../index.html">
+      <img class="brand-mark" src="../assets/infispace-logo-1.png" alt="InfiSpace">
+    </a>
+    <button class="sb-close" id="sbClose" aria-label="关闭目录">✕</button>
+  </div>
+  <div class="sb-search"><input type="search" id="searchInput" placeholder="搜索 123 篇文档… ( / )" autocomplete="off">
+    <div class="sb-results" id="searchResults"></div></div>
+  <nav class="sb-nav">
+    <section class="sb-group">
+      <a class="sb-group-title" href="../index.html">
+        <span class="sb-num">00</span>
+        <span class="sb-group-text"><b>学习导航</b><i>课程首页</i></span>
+      </a>
+    </section>
+    <section class="sb-group open" data-mod="python">
+      <a class="sb-group-title" href="../modules/python.html" data-toggle="python">
+        <span class="sb-num">01</span>
+        <span class="sb-group-text"><b>Python 与数据实践</b><i>31 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../python/01-huan-jing-da-jian-yu-ban-ben-guan-li.html"><span class="sb-item-num">01</span><span class="sb-item-title">环境搭建与版本管理</span></a>
+        <a class="sb-item" href="../python/02-bian-liang-biao-da-shi-yu-liu-cheng-kong-zhi.html"><span class="sb-item-num">02</span><span class="sb-item-title">变量、表达式与流程控制</span></a>
+        <a class="sb-item" href="../python/03-xu-lie-zi-dian-yu-ji-he.html"><span class="sb-item-num">03</span><span class="sb-item-title">序列、字典与集合</span></a>
+        <a class="sb-item" href="../python/04-han-shu-she-ji-yu-lambda.html"><span class="sb-item-num">04</span><span class="sb-item-title">函数设计与 lambda</span></a>
+        <a class="sb-item" href="../python/05-zuo-yong-yu-gui-ze-yu-bi-bao.html"><span class="sb-item-num">05</span><span class="sb-item-title">作用域规则与闭包</span></a>
+        <a class="sb-item" href="../python/06-lei-de-ding-yi-yu-shi-li-hua.html"><span class="sb-item-num">06</span><span class="sb-item-title">类的定义与实例化</span></a>
+        <a class="sb-item" href="../python/07-lei-xing-pan-ding-yu-chou-xiang-ji-lei.html"><span class="sb-item-num">07</span><span class="sb-item-title">类型判定与抽象基类</span></a>
+        <a class="sb-item" href="../python/08-mo-shu-fang-fa-quan-jing.html"><span class="sb-item-num">08</span><span class="sb-item-title">魔术方法全景</span></a>
+        <a class="sb-item" href="../python/09-miao-shu-fu-yu-yuan-lei.html"><span class="sb-item-num">09</span><span class="sb-item-title">描述符与元类</span></a>
+        <a class="sb-item" href="../python/10-zhuang-shi-qi.html"><span class="sb-item-num">10</span><span class="sb-item-title">装饰器</span></a>
+        <a class="sb-item" href="../python/11-die-dai-xie-yi-yu-sheng-cheng-qi.html"><span class="sb-item-num">11</span><span class="sb-item-title">迭代协议与生成器</span></a>
+        <a class="sb-item" href="../python/12-with-yu-shang-xia-wen-xie-yi.html"><span class="sb-item-num">12</span><span class="sb-item-title">with 与上下文协议</span></a>
+        <a class="sb-item" href="../python/13-yi-chang-ti-xi-yu-chu-li.html"><span class="sb-item-num">13</span><span class="sb-item-title">异常体系与处理</span></a>
+        <a class="sb-item" href="../python/14-lei-xing-biao-zhu.html"><span class="sb-item-num">14</span><span class="sb-item-title">类型标注</span></a>
+        <a class="sb-item" href="../python/15-mo-kuai-yu-bao-de-zu-zhi.html"><span class="sb-item-num">15</span><span class="sb-item-title">模块与包的组织</span></a>
+        <a class="sb-item" href="../python/16-biao-zhun-ku-xun-li.html"><span class="sb-item-num">16</span><span class="sb-item-title">标准库巡礼</span></a>
+        <a class="sb-item" href="../python/17-yi-lai-guan-li-yu-di-san-fang-ku.html"><span class="sb-item-num">17</span><span class="sb-item-title">依赖管理与第三方库</span></a>
+        <a class="sb-item" href="../python/18-xian-cheng-yu-jin-cheng.html"><span class="sb-item-num">18</span><span class="sb-item-title">线程与进程</span></a>
+        <a class="sb-item" href="../python/19-shi-jian-xun-huan.html"><span class="sb-item-num">19</span><span class="sb-item-title">事件循环</span></a>
+        <a class="sb-item" href="../python/20-future-yu-xie-cheng.html"><span class="sb-item-num">20</span><span class="sb-item-title">Future 与协程</span></a>
+        <a class="sb-item" href="../python/21-asyncio-shi-zhan.html"><span class="sb-item-num">21</span><span class="sb-item-title">asyncio 实战</span></a>
+        <a class="sb-item" href="../python/22-gou-jian-yu-fa-bu.html"><span class="sb-item-num">22</span><span class="sb-item-title">构建与发布</span></a>
+        <a class="sb-item" href="../python/23-gong-cheng-hua-gong-ju-lian.html"><span class="sb-item-num">23</span><span class="sb-item-title">工程化工具链</span></a>
+        <a class="sb-item" href="../python/24-monorepo-yu-tiao-shi.html"><span class="sb-item-num">24</span><span class="sb-item-title">monorepo 与调试</span></a>
+        <a class="sb-item" href="../python/25-jupyter-jiao-hu-huan-jing.html"><span class="sb-item-num">25</span><span class="sb-item-title">Jupyter 交互环境</span></a>
+        <a class="sb-item" href="../python/26-numpy-shu-zu-yu-xiang-liang-hua.html"><span class="sb-item-num">26</span><span class="sb-item-title">NumPy 数组与向量化</span></a>
+        <a class="sb-item current" href="../python/27-pandas-shu-ju-jie-gou.html"><span class="sb-item-num">27</span><span class="sb-item-title">Pandas 数据结构</span></a>
+        <a class="sb-item" href="../python/28-pandas-shu-ju-qing-xi.html"><span class="sb-item-num">28</span><span class="sb-item-title">Pandas 数据清洗</span></a>
+        <a class="sb-item" href="../python/29-matplotlib-hui-tu-ti-xi.html"><span class="sb-item-num">29</span><span class="sb-item-title">Matplotlib 绘图体系</span></a>
+        <a class="sb-item" href="../python/30-matplotlib-dong-hua-yu-jiao-hu.html"><span class="sb-item-num">30</span><span class="sb-item-title">Matplotlib 动画与交互</span></a>
+        <a class="sb-item" href="../python/31-seaborn-tong-ji-ke-shi-hua.html"><span class="sb-item-num">31</span><span class="sb-item-title">Seaborn 统计可视化</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="agent">
+      <a class="sb-group-title" href="../modules/agent.html" data-toggle="agent">
+        <span class="sb-num">02</span>
+        <span class="sb-group-text"><b>Agent 核心</b><i>15 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../agent/01-token-yu-ci-qian-ru.html"><span class="sb-item-num">01</span><span class="sb-item-title">Token 与词嵌入</span></a>
+        <a class="sb-item" href="../agent/02-qian-xiang-chuan-bo-yu-fan-xiang-chuan-bo.html"><span class="sb-item-num">02</span><span class="sb-item-title">前向传播与反向传播</span></a>
+        <a class="sb-item" href="../agent/03-zhu-yi-li-ji-zhi-yu-transformer-jia-gou.html"><span class="sb-item-num">03</span><span class="sb-item-title">注意力机制与 Transformer 架构</span></a>
+        <a class="sb-item" href="../agent/04-yu-xun-lian-rlhf-yu-cai-yang-kv-cache.html"><span class="sb-item-num">04</span><span class="sb-item-title">预训练、RLHF 与采样（KV Cache）</span></a>
+        <a class="sb-item" href="../agent/05-ben-di-mo-xing-yu-xiao-xi-jie-gou.html"><span class="sb-item-num">05</span><span class="sb-item-title">本地模型与消息结构</span></a>
+        <a class="sb-item" href="../agent/06-hui-hua-guan-li-yu-json-shu-chu.html"><span class="sb-item-num">06</span><span class="sb-item-title">会话管理与 JSON 输出</span></a>
+        <a class="sb-item" href="../agent/07-tool-calling-xie-yi-yu-feng-zhuang.html"><span class="sb-item-num">07</span><span class="sb-item-title">Tool Calling：协议与封装</span></a>
+        <a class="sb-item" href="../agent/08-react-mo-shi-yu-zhu-xun-huan.html"><span class="sb-item-num">08</span><span class="sb-item-title">ReAct 模式与主循环</span></a>
+        <a class="sb-item" href="../agent/09-shi-zhan-deep-research-agent.html"><span class="sb-item-num">09</span><span class="sb-item-title">实战：Deep Research Agent</span></a>
+        <a class="sb-item" href="../agent/10-skill-yu-jian-jin-shi-pi-lu.html"><span class="sb-item-num">10</span><span class="sb-item-title">Skill 与渐进式披露</span></a>
+        <a class="sb-item" href="../agent/11-mcp-quan-jing.html"><span class="sb-item-num">11</span><span class="sb-item-title">MCP 全景</span></a>
+        <a class="sb-item" href="../agent/12-duo-agent-yu-xuan-xing-ce-lve.html"><span class="sb-item-num">12</span><span class="sb-item-title">多 Agent 与选型策略</span></a>
+        <a class="sb-item" href="../agent/13-ti-shi-ci-gong-cheng-yu-shang-xia-wen-gong.html"><span class="sb-item-num">13</span><span class="sb-item-title">提示词工程与上下文工程</span></a>
+        <a class="sb-item" href="../agent/14-xun-huan-tu-yu-gu-jia-gong-cheng.html"><span class="sb-item-num">14</span><span class="sb-item-title">循环、图与骨架工程</span></a>
+        <a class="sb-item" href="../agent/15-ji-yi-quan-xian-yu-ping-ce.html"><span class="sb-item-num">15</span><span class="sb-item-title">记忆、权限与评测</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="langchain">
+      <a class="sb-group-title" href="../modules/langchain.html" data-toggle="langchain">
+        <span class="sb-num">03</span>
+        <span class="sb-group-text"><b>LangChain 指南</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langchain/01-ren-shi-langchain.html"><span class="sb-item-num">01</span><span class="sb-item-title">认识 LangChain</span></a>
+        <a class="sb-item" href="../langchain/02-ti-shi-ci-mu-ban-yu-xiao-xi.html"><span class="sb-item-num">02</span><span class="sb-item-title">提示词模板与消息</span></a>
+        <a class="sb-item" href="../langchain/03-lcel-yu-runnable.html"><span class="sb-item-num">03</span><span class="sb-item-title">LCEL 与 Runnable</span></a>
+        <a class="sb-item" href="../langchain/04-liu-shi-yu-bing-fa.html"><span class="sb-item-num">04</span><span class="sb-item-title">流式与并发</span></a>
+        <a class="sb-item" href="../langchain/05-shu-chu-jie-xi-qi.html"><span class="sb-item-num">05</span><span class="sb-item-title">输出解析器</span></a>
+        <a class="sb-item" href="../langchain/06-wen-dang-jia-zai-yu-qie-ge.html"><span class="sb-item-num">06</span><span class="sb-item-title">文档加载与切割</span></a>
+        <a class="sb-item" href="../langchain/07-qian-ru-yu-xiang-liang-ku.html"><span class="sb-item-num">07</span><span class="sb-item-title">嵌入与向量库</span></a>
+        <a class="sb-item" href="../langchain/08-jian-suo-yu-rag.html"><span class="sb-item-num">08</span><span class="sb-item-title">检索与RAG</span></a>
+        <a class="sb-item" href="../langchain/09-dui-hua-ji-yi.html"><span class="sb-item-num">09</span><span class="sb-item-title">对话记忆</span></a>
+        <a class="sb-item" href="../langchain/10-gong-ju-diao-yong.html"><span class="sb-item-num">10</span><span class="sb-item-title">工具调用</span></a>
+        <a class="sb-item" href="../langchain/11-agent.html"><span class="sb-item-num">11</span><span class="sb-item-title">Agent</span></a>
+        <a class="sb-item" href="../langchain/12-hui-diao-yu-tiao-shi-quan-ke-cheng-shou-guan.html"><span class="sb-item-num">12</span><span class="sb-item-title">回调与调试（全课程收官章）</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="langgraph">
+      <a class="sb-group-title" href="../modules/langgraph.html" data-toggle="langgraph">
+        <span class="sb-num">04</span>
+        <span class="sb-group-text"><b>LangGraph 框架指南</b><i>17 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langgraph/01-di-1-zhang-cong-yi-ge-shi-kong-de-jiao.html"><span class="sb-item-num">01</span><span class="sb-item-title">第 1 章 从一个失控的脚本说起</span></a>
+        <a class="sb-item" href="../langgraph/02-di-2-zhang-zui-xiao-ke-yun-xing-tu.html"><span class="sb-item-num">02</span><span class="sb-item-title">第 2 章 最小可运行图</span></a>
+        <a class="sb-item" href="../langgraph/03-di-3-zhang-zhuang-tai-tu-de-shu-ju-xin.html"><span class="sb-item-num">03</span><span class="sb-item-title">第 3 章 状态：图的数据心脏</span></a>
+        <a class="sb-item" href="../langgraph/04-di-4-zhang-rang-liu-cheng-xue-hui-jue-ce.html"><span class="sb-item-num">04</span><span class="sb-item-title">第 4 章 让流程学会决策</span></a>
+        <a class="sb-item" href="../langgraph/05-di-5-zhang-bing-xing-shi-jie-chao-bu-zhi.html"><span class="sb-item-num">05</span><span class="sb-item-title">第 5 章 并行世界：超步执行模型</span></a>
+        <a class="sb-item" href="../langgraph/06-di-6-zhang-command-ba-kong-zhi-quan-jiao-jin.html"><span class="sb-item-num">06</span><span class="sb-item-title">第 6 章 Command：把控制权交进节点</span></a>
+        <a class="sb-item" href="../langgraph/07-di-7-zhang-dong-tai-bing-xing-send-yu-mapreduce.html"><span class="sb-item-num">07</span><span class="sb-item-title">第 7 章 动态并行：Send 与 MapReduce</span></a>
+        <a class="sb-item" href="../langgraph/08-di-8-zhang-gei-tu-zhuang-shang-shou-jiao-gong.html"><span class="sb-item-num">08</span><span class="sb-item-title">第 8 章 给图装上手脚：工具调用</span></a>
+        <a class="sb-item" href="../langgraph/09-di-9-zhang-fu-yong-yu-feng-zhuang-zi-tu.html"><span class="sb-item-num">09</span><span class="sb-item-title">第 9 章 复用与封装：子图</span></a>
+        <a class="sb-item" href="../langgraph/10-di-10-zhang-cong-dan-tu-dao-tuan-dui-duo.html"><span class="sb-item-num">10</span><span class="sb-item-title">第 10 章 从单图到团队：多 Agent 架构</span></a>
+        <a class="sb-item" href="../langgraph/11-di-11-zhang-liu-shi-shu-chu.html"><span class="sb-item-num">11</span><span class="sb-item-title">第 11 章 流式输出</span></a>
+        <a class="sb-item" href="../langgraph/12-di-12-zhang-chi-jiu-hua-checkpointer-yu-xian-cheng.html"><span class="sb-item-num">12</span><span class="sb-item-title">第 12 章 持久化：Checkpointer 与线程</span></a>
+        <a class="sb-item" href="../langgraph/13-di-13-zhang-shi-jian-lv-xing.html"><span class="sb-item-num">13</span><span class="sb-item-title">第 13 章 时间旅行</span></a>
+        <a class="sb-item" href="../langgraph/14-di-14-zhang-zhong-duan-yu-ren-zai-hui-lu.html"><span class="sb-item-num">14</span><span class="sb-item-title">第 14 章 中断与人在回路</span></a>
+        <a class="sb-item" href="../langgraph/15-di-15-zhang-ji-yi-guan-li.html"><span class="sb-item-num">15</span><span class="sb-item-title">第 15 章 记忆管理</span></a>
+        <a class="sb-item" href="../langgraph/16-di-16-zhang-rong-cuo-zhong-shi-chao-shi-yu.html"><span class="sb-item-num">16</span><span class="sb-item-title">第 16 章 容错：重试、超时与兜底</span></a>
+        <a class="sb-item" href="../langgraph/17-di-17-zhang-quan-jing-hui-gu.html"><span class="sb-item-num">17</span><span class="sb-item-title">第 17 章 全景回顾</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="backend">
+      <a class="sb-group-title" href="../modules/backend.html" data-toggle="backend">
+        <span class="sb-num">05</span>
+        <span class="sb-group-text"><b>Python 框架指南</b><i>14 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../backend/01-fastapi-ru-men-yu-asgi.html"><span class="sb-item-num">01</span><span class="sb-item-title">FastAPI 入门与 ASGI</span></a>
+        <a class="sb-item" href="../backend/02-lu-you-yu-qing-qiu-xiang-ying.html"><span class="sb-item-num">02</span><span class="sb-item-title">路由与请求响应</span></a>
+        <a class="sb-item" href="../backend/03-pydantic-shu-ju-jiao-yan-yu-pei-zhi.html"><span class="sb-item-num">03</span><span class="sb-item-title">Pydantic 数据校验与配置</span></a>
+        <a class="sb-item" href="../backend/04-sqlalchemy-yi-bu-yin-qing-yu-hui-hua.html"><span class="sb-item-num">04</span><span class="sb-item-title">SQLAlchemy 异步引擎与会话</span></a>
+        <a class="sb-item" href="../backend/05-orm-jian-mo.html"><span class="sb-item-num">05</span><span class="sb-item-title">ORM 建模</span></a>
+        <a class="sb-item" href="../backend/06-sql-biao-da-shi-yu-shu-ju-cao-zuo.html"><span class="sb-item-num">06</span><span class="sb-item-title">SQL 表达式与数据操作</span></a>
+        <a class="sb-item" href="../backend/07-alembic-shu-ju-qian-yi.html"><span class="sb-item-num">07</span><span class="sb-item-title">Alembic 数据迁移</span></a>
+        <a class="sb-item" href="../backend/08-yi-lai-zhu-ru.html"><span class="sb-item-num">08</span><span class="sb-item-title">依赖注入</span></a>
+        <a class="sb-item" href="../backend/09-tong-yi-yi-chang-chu-li.html"><span class="sb-item-num">09</span><span class="sb-item-title">统一异常处理</span></a>
+        <a class="sb-item" href="../backend/10-zhong-jian-jian.html"><span class="sb-item-num">10</span><span class="sb-item-title">中间件</span></a>
+        <a class="sb-item" href="../backend/11-ren-zheng-yu-jwt.html"><span class="sb-item-num">11</span><span class="sb-item-title">认证与 JWT</span></a>
+        <a class="sb-item" href="../backend/12-pytest-ce-shi.html"><span class="sb-item-num">12</span><span class="sb-item-title">pytest 测试</span></a>
+        <a class="sb-item" href="../backend/13-ri-zhi-loguru.html"><span class="sb-item-num">13</span><span class="sb-item-title">日志 loguru</span></a>
+        <a class="sb-item" href="../backend/14-liu-shi-xiang-ying-sse-yu-websocket.html"><span class="sb-item-num">14</span><span class="sb-item-title">流式响应 SSE 与 WebSocket</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="interview">
+      <a class="sb-group-title" href="../modules/interview.html" data-toggle="interview">
+        <span class="sb-num">06</span>
+        <span class="sb-group-text"><b>面试题库</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../interview/01-llm-yuan-li-pian.html"><span class="sb-item-num">01</span><span class="sb-item-title">LLM 原理篇</span></a>
+        <a class="sb-item" href="../interview/02-rag-yu-jian-suo-pian.html"><span class="sb-item-num">02</span><span class="sb-item-title">RAG 与检索篇</span></a>
+        <a class="sb-item" href="../interview/03-agent-he-xin-pian.html"><span class="sb-item-num">03</span><span class="sb-item-title">Agent 核心篇</span></a>
+        <a class="sb-item" href="../interview/04-langgraph-pian.html"><span class="sb-item-num">04</span><span class="sb-item-title">LangGraph 篇</span></a>
+        <a class="sb-item" href="../interview/05-langchain-pian.html"><span class="sb-item-num">05</span><span class="sb-item-title">LangChain 篇</span></a>
+        <a class="sb-item" href="../interview/06-xi-tong-she-ji-pian.html"><span class="sb-item-num">06</span><span class="sb-item-title">系统设计篇</span></a>
+        <a class="sb-item" href="../interview/07-xiang-mu-shen-wa-pian.html"><span class="sb-item-num">07</span><span class="sb-item-title">项目深挖篇</span></a>
+        <a class="sb-item" href="../interview/08-gu-zhang-pai-cha-pian.html"><span class="sb-item-num">08</span><span class="sb-item-title">故障排查篇</span></a>
+        <a class="sb-item" href="../interview/09-python-ji-chu-pian.html"><span class="sb-item-num">09</span><span class="sb-item-title">Python 基础篇</span></a>
+        <a class="sb-item" href="../interview/10-fastapi-yu-hou-duan-pian.html"><span class="sb-item-num">10</span><span class="sb-item-title">FastAPI 与后端篇</span></a>
+        <a class="sb-item" href="../interview/11-ti-shi-ci-gong-cheng-yu-an-quan-pian.html"><span class="sb-item-num">11</span><span class="sb-item-title">提示词工程与安全篇</span></a>
+        <a class="sb-item" href="../interview/12-mo-xing-xuan-xing-yu-jiang-ben-pian.html"><span class="sb-item-num">12</span><span class="sb-item-title">模型选型与降本篇</span></a>
+      </div>
+    </section>
+    <div class="sb-sep"></div>
+    <a class="sb-home" href="../camp.html">
+      <span class="sb-home-ico">◆</span>
+      <span class="sb-home-text"><b>训练营介绍</b><i>课程总览</i></span>
+    </a>
+  </nav>
+</aside>
+  <main class="main">
+    <header class="topbar">
+      <button class="menu-btn" id="menuBtn" aria-label="目录">☰</button>
+      <div class="crumbs"><a href="../index.html">首页</a><span>/</span><a href="../modules/python.html">Python 与数据实践</a><span>/</span><span class="cur">Pandas 数据结构</span></div>
+      <div class="topbar-actions">
+        <button class="icon-btn" id="themeBtn" title="切换深浅色" aria-label="切换深浅色">◐</button>
+      </div>
+    </header>
+    <div class="content">
+      <article class="article">
+
+<header class="page-head">
+  <div class="page-kicker">Python 与数据实践 · 第 27 章</div>
+  <h1 class="page-title">Pandas 数据结构</h1>
+  <p class="page-desc">第 26 章的 NumPy 把「同质数值 + 广播」玩得很转：一个数组里全是数字，运算又快又省心。可随手打开一张真实业务表——比如一份员工花名册——里面是姓名、部门、职级这样的文字，混着工龄、薪资这样的数字，还零星缺着几…</p>
+  <div class="page-meta">
+    <span>约 17 分钟</span><span>6,611 字</span><span>31 个代码示例</span>
+  </div>
+</header>
+<div class="md"><p>第 26 章的 NumPy 把「同质数值 + 广播」玩得很转：一个数组里全是数字，运算又快又省心。可随手打开一张真实业务表——比如一份员工花名册——里面是姓名、部门、职级这样的文字，混着工龄、薪资这样的数字，还零星缺着几个格子。硬塞进 <code>ndarray</code>，整表都会被「升格」成最宽容的 object 类型，NumPy 引以为傲的速度优势瞬间清零。</p>
+<p>Pandas 就是来补这块短板的：它在 NumPy 之上加了一层「标签 + 异构」的能力，让 Python 拥有接近 Excel、SQL 的表格操作体验。本章解决三件事——认识 <strong>Series</strong> 与 <strong>DataFrame</strong> 两种核心结构，学会把文件和数据库里的数据装进来，再把一张表拆开、看清它的内部构造。</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 数据实践部分的依赖一次装齐（本章只用到前两个，其余是后续章节的）</span>
+<span class="c1"># pip install pandas openpyxl</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+</code></pre></div>
+<hr />
+<h2 id="1-pandas-在工具链里的位置">1. Pandas 在工具链里的位置</h2>
+<p>先划清边界，免得学混：</p>
+<ul>
+<li><strong>NumPy 管「数」</strong>：单一类型的数值数组、向量化运算、广播——上一章的主场；</li>
+<li><strong>Pandas 管「表」</strong>：不同类型的列拼在一起、行列都有名字、缺失值有统一的表示（NaN）。</li>
+</ul>
+<p>两者不是竞争关系：Pandas 的底层大量复用 ndarray，你在 Series 上调用的很多方法，最终仍会走上 NumPy 的向量化快车道。可以说 <strong>Pandas = ndarray 的计算能力 + 表格的标签体系</strong>。</p>
+<p>顺带认识几位同行：Polars（Rust 内核、天生多线程）、DuckDB（直接用 SQL 查文件）、Modin 和 Dask（让 Pandas 代码扩展到多核或集群）。它们各有所长，但 API 设计全都或多或少借鉴 Pandas——先把 Pandas 用熟，将来换工具几乎零成本。</p>
+<hr />
+<h2 id="2-series带标签的一维数据">2. Series：带标签的一维数据</h2>
+<h3 id="21-最小可运行例子">2.1 最小可运行例子</h3>
+<p>想象书店里四本书的定价（元）：</p>
+<div class="highlight"><pre><span></span><code><span class="n">prices</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">([</span><span class="mf">89.0</span><span class="p">,</span> <span class="mf">45.5</span><span class="p">,</span> <span class="mf">128.0</span><span class="p">,</span> <span class="mf">39.9</span><span class="p">])</span>
+<span class="n">prices</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>0     89.0
+1     45.5
+2    128.0
+3     39.9
+dtype: float64
+</code></pre></div>
+<p>左边那列 0~3 是自动分配的<strong>整数索引</strong>（index）——每个值的「门牌号」。右边是数据和整体的 dtype。</p>
+<h3 id="22-门牌号可以自己起">2.2 门牌号可以自己起</h3>
+<p>整数编号在数学计算里方便，业务里却常常不如有意义的标签好用——比如直接用书名：</p>
+<div class="highlight"><pre><span></span><code><span class="n">prices</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span>
+    <span class="p">[</span><span class="mf">89.0</span><span class="p">,</span> <span class="mf">45.5</span><span class="p">,</span> <span class="mf">128.0</span><span class="p">,</span> <span class="mf">39.9</span><span class="p">],</span>
+    <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="s1">'Python从入门到实践'</span><span class="p">,</span> <span class="s1">'算法图解'</span><span class="p">,</span> <span class="s1">'深度学习入门'</span><span class="p">,</span> <span class="s1">'SQL必知必会'</span><span class="p">],</span>
+<span class="p">)</span>
+<span class="n">prices</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>Python从入门到实践     89.0
+算法图解               45.5
+深度学习入门          128.0
+SQL必知必会            39.9
+dtype: float64
+</code></pre></div>
+<h3 id="23-从字典创建">2.3 从字典创建</h3>
+<p>字典本身就是「标签 → 值」的映射，天然适合造 Series——键自动成为索引：</p>
+<div class="highlight"><pre><span></span><code><span class="n">stock</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">({</span><span class="s1">'Python从入门到实践'</span><span class="p">:</span> <span class="mi">42</span><span class="p">,</span> <span class="s1">'算法图解'</span><span class="p">:</span> <span class="mi">130</span><span class="p">,</span> <span class="s1">'SQL必知必会'</span><span class="p">:</span> <span class="mi">67</span><span class="p">})</span>
+<span class="n">stock</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>Python从入门到实践     42
+算法图解              130
+SQL必知必会            67
+dtype: int64
+</code></pre></div>
+<h3 id="24-拆开看values-与-index">2.4 拆开看：values 与 index</h3>
+<p>一个 Series 由两块零件组成，分别摸一下：</p>
+<div class="highlight"><pre><span></span><code><span class="nb">print</span><span class="p">(</span><span class="n">prices</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>   <span class="c1"># [ 89.   45.5 128.   39.9] → &lt;class 'numpy.ndarray'&gt;</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">prices</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>    <span class="c1"># Index(['Python从入门到实践', ...], dtype='object')</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">prices</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>    <span class="c1"># float64</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">prices</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>    <span class="c1"># (4,)</span>
+</code></pre></div>
+<p><code>values</code> 就是上一章的老朋友 ndarray——所以 <strong>Series 的本质是一维 ndarray 配上一个 Index 标签层</strong>。理解这一点，后面很多行为都好解释了。</p>
+<hr />
+<h2 id="3-dataframe把多个-series-拼成一张表">3. DataFrame：把多个 Series 拼成一张表</h2>
+<h3 id="31-从字典创建最常用">3.1 从字典创建（最常用）</h3>
+<p>键当列名，列表当列数据——这是最贴近直觉的造表方式：</p>
+<div class="highlight"><pre><span></span><code><span class="n">books</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
+    <span class="s1">'书名'</span><span class="p">:</span> <span class="p">[</span><span class="s1">'算法图解'</span><span class="p">,</span> <span class="s1">'Python从入门到实践'</span><span class="p">,</span> <span class="s1">'SQL进阶'</span><span class="p">,</span> <span class="s1">'数据可视化实战'</span><span class="p">],</span>
+    <span class="s1">'类别'</span><span class="p">:</span> <span class="p">[</span><span class="s1">'计算机'</span><span class="p">,</span> <span class="s1">'计算机'</span><span class="p">,</span> <span class="s1">'数据库'</span><span class="p">,</span> <span class="s1">'计算机'</span><span class="p">],</span>
+    <span class="s1">'单价'</span><span class="p">:</span> <span class="p">[</span><span class="mf">45.5</span><span class="p">,</span> <span class="mf">89.0</span><span class="p">,</span> <span class="mf">69.0</span><span class="p">,</span> <span class="mf">79.8</span><span class="p">],</span>
+    <span class="s1">'月销量'</span><span class="p">:</span> <span class="p">[</span><span class="mi">320</span><span class="p">,</span> <span class="mi">150</span><span class="p">,</span> <span class="mi">88</span><span class="p">,</span> <span class="mi">46</span><span class="p">],</span>
+<span class="p">})</span>
+<span class="n">books</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>                 书名    类别  单价  月销量
+0            算法图解  计算机  45.5     320
+1  Python从入门到实践  计算机  89.0     150
+2             SQL进阶  数据库  69.0      88
+3      数据可视化实战  计算机  79.8      46
+</code></pre></div>
+<h3 id="32-从嵌套列表创建">3.2 从嵌套列表创建</h3>
+<p>换成「行思维」：外层列表一行一个记录，内层列表就是每行的字段，列名用 <code>columns</code> 另行指定：</p>
+<div class="highlight"><pre><span></span><code><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+    <span class="p">[</span>
+        <span class="p">[</span><span class="s1">'算法图解'</span><span class="p">,</span> <span class="s1">'计算机'</span><span class="p">,</span> <span class="mf">45.5</span><span class="p">,</span> <span class="mi">320</span><span class="p">],</span>
+        <span class="p">[</span><span class="s1">'Python从入门到实践'</span><span class="p">,</span> <span class="s1">'计算机'</span><span class="p">,</span> <span class="mf">89.0</span><span class="p">,</span> <span class="mi">150</span><span class="p">],</span>
+        <span class="p">[</span><span class="s1">'SQL进阶'</span><span class="p">,</span> <span class="s1">'数据库'</span><span class="p">,</span> <span class="mf">69.0</span><span class="p">,</span> <span class="mi">88</span><span class="p">],</span>
+    <span class="p">],</span>
+    <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">'书名'</span><span class="p">,</span> <span class="s1">'类别'</span><span class="p">,</span> <span class="s1">'单价'</span><span class="p">,</span> <span class="s1">'月销量'</span><span class="p">],</span>
+<span class="p">)</span>
+</code></pre></div>
+<h3 id="33-从-numpy-数组创建">3.3 从 NumPy 数组创建</h3>
+<p>把上一章的 ndarray 直接喂进来（纯数值表特别合适）：</p>
+<div class="highlight"><pre><span></span><code><span class="n">matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+    <span class="p">[</span><span class="mf">45.5</span><span class="p">,</span> <span class="mi">320</span><span class="p">],</span>
+    <span class="p">[</span><span class="mf">89.0</span><span class="p">,</span> <span class="mi">150</span><span class="p">],</span>
+    <span class="p">[</span><span class="mf">69.0</span><span class="p">,</span> <span class="mi">88</span><span class="p">],</span>
+<span class="p">])</span>
+<span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">matrix</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">'单价'</span><span class="p">,</span> <span class="s1">'月销量'</span><span class="p">])</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>   单价  月销量
+0  45.5   320.0
+1  89.0   150.0
+2  69.0    88.0
+</code></pre></div>
+<p>注意一个小细节：由于 ndarray 只能装同一种 dtype，整数列 <code>月销量</code> 也被「就高」成了 float64——这正是异构数据需要 DataFrame 的原因。</p>
+<h3 id="34-表与列的关系">3.4 表与列的关系</h3>
+<div class="highlight"><pre><span></span><code><span class="nb">type</span><span class="p">(</span><span class="n">books</span><span class="p">)</span>          <span class="c1"># &lt;class 'pandas.core.frame.DataFrame'&gt;</span>
+<span class="nb">type</span><span class="p">(</span><span class="n">books</span><span class="p">[</span><span class="s1">'单价'</span><span class="p">])</span>   <span class="c1"># &lt;class 'pandas.core.series.Series'&gt;</span>
+</code></pre></div>
+<p>取一列得到的正是 Series。<strong>DataFrame 可以理解为「若干个共享同一套行索引的 Series 纵向拼起来」</strong>——这个视角在后面学习按列操作、分组聚合时非常有用。</p>
+<hr />
+<h2 id="4-把文件里的数据装进来">4. 把文件里的数据装进来</h2>
+<p>手工造表只够教学，真实数据得从文件读。本章起会用一份贯穿两章的示例数据：<code>data/staff.csv</code>——一家虚构公司的员工花名册，字段为员工号、姓名、部门、职级、工作年限、月薪、绩效，共 37 行。它是「故意弄脏」的：各部门上报格式不一，混着各种写法，正好留给下一章练手。</p>
+<blockquote>
+<p>路径 <code>data/staff.csv</code> 相对课程根目录，请从 <code>Python与数据实践/</code> 目录启动 Python（或把工作目录切到这里）再运行本章代码。</p>
+</blockquote>
+<h3 id="41-csvpdread_csv">4.1 CSV：pd.read_csv</h3>
+<div class="highlight"><pre><span></span><code><span class="n">staff</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">'data/staff.csv'</span><span class="p">)</span>
+<span class="n">staff</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>   <span class="c1"># 默认看前 5 行，快速确认读对了</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>  员工号    姓名      部门  职级 工作年限 月薪 绩效
+0   E001  陈明远    技术部    P7      8年  42k    A
+1   E002  林晓彤    技术部    P6      5年  26k   A+
+2   E003  赵启航  技术研发    P6      4年  25k   B+
+3   E004  孙一诺    市场部   M1      3年  18k    B
+4   E005  周慕云    人事部  M1级      6年  16k    B
+</code></pre></div>
+<p>大文件、怪文件场景下，这几个参数出场率最高：</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>作用</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>encoding</code></td>
+<td>指定编码（老系统导出的 CSV 常是 GBK）</td>
+<td><code>encoding='gbk'</code></td>
+</tr>
+<tr>
+<td><code>header</code></td>
+<td>哪一行当表头；<code>None</code> 表示没有表头</td>
+<td><code>header=None</code></td>
+</tr>
+<tr>
+<td><code>index_col</code></td>
+<td>把某一列设为行索引</td>
+<td><code>index_col='员工号'</code></td>
+</tr>
+<tr>
+<td><code>usecols</code></td>
+<td>只读指定列（省内存）</td>
+<td><code>usecols=['姓名', '月薪']</code></td>
+</tr>
+<tr>
+<td><code>nrows</code></td>
+<td>只读前 N 行（先探路再全量读）</td>
+<td><code>nrows=100</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="42-excelpdread_excel">4.2 Excel：pd.read_excel</h3>
+<p>读写 <code>.xlsx</code> 需要额外装 <code>openpyxl</code>（课程环境已包含）。Excel 是「工作簿 → 多个工作表」的两层结构，所以多了一个 <code>sheet_name</code> 参数：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 先把花名册另存为 Excel</span>
+<span class="n">staff</span><span class="o">.</span><span class="n">to_excel</span><span class="p">(</span><span class="s1">'data/staff.xlsx'</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>   <span class="c1"># index=False：别把行号写进文件</span>
+
+<span class="c1"># 再读回来；sheet_name 默认取第一张表，也可以按名字或序号指定</span>
+<span class="n">back</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="s1">'data/staff.xlsx'</span><span class="p">,</span> <span class="n">sheet_name</span><span class="o">=</span><span class="s1">'Sheet1'</span><span class="p">)</span>
+<span class="n">back</span><span class="o">.</span><span class="n">shape</span>   <span class="c1"># (37, 7)，与原表一致</span>
+</code></pre></div>
+<h3 id="43-其他格式">4.3 其他格式</h3>
+<p>Pandas 的读取家族几乎覆盖所有常见格式，套路一致：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># logs = pd.read_json('data/logs.json')          # JSON</span>
+<span class="c1"># big = pd.read_parquet('data/orders.parquet')    # 列式存储，大数据量首选（需 pyarrow）</span>
+</code></pre></div>
+<hr />
+<h2 id="5-把数据库里的数据装进来pdread_sql">5. 把数据库里的数据装进来：pd.read_sql</h2>
+<p>业务系统的数据通常躺在数据库里。以 Python 内置的 SQLite 演示（无需安装任何服务），建一张书店订单表再查出来：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">sqlite3</span>
+
+<span class="n">conn</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s1">':memory:'</span><span class="p">)</span>   <span class="c1"># 内存数据库，脚本结束即消失</span>
+<span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">'''</span>
+<span class="s1">    CREATE TABLE orders (</span>
+<span class="s1">        book TEXT, qty INT, amount FLOAT</span>
+<span class="s1">    )</span>
+<span class="s1">'''</span><span class="p">)</span>
+<span class="n">conn</span><span class="o">.</span><span class="n">executemany</span><span class="p">(</span>
+    <span class="s1">'INSERT INTO orders VALUES (?, ?, ?)'</span><span class="p">,</span>
+    <span class="p">[(</span><span class="s1">'算法图解'</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mf">136.5</span><span class="p">),</span> <span class="p">(</span><span class="s1">'Python从入门到实践'</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mf">178.0</span><span class="p">),</span> <span class="p">(</span><span class="s1">'SQL进阶'</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mf">345.0</span><span class="p">)],</span>
+<span class="p">)</span>
+<span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+
+<span class="n">orders</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_sql</span><span class="p">(</span><span class="s1">'SELECT * FROM orders'</span><span class="p">,</span> <span class="n">conn</span><span class="p">)</span>
+<span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+<span class="n">orders</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>                 book  qty  amount
+0            算法图解    3   136.5
+1  Python从入门到实践    2   178.0
+2             SQL进阶    5   345.0
+</code></pre></div>
+<p>SQL 查询的结果直接变成 DataFrame，数值列也会保留正确的类型（<code>qty</code> 是 int64、<code>amount</code> 是 float64）。</p>
+<blockquote>
+<p>💡 <strong>真实场景</strong>：公司数据库多是 MySQL / PostgreSQL。配好 SQLAlchemy 引擎后，<code>pd.read_sql('SELECT ...', engine)</code> 同样一行拉数进 DataFrame 分析，省去「先导出 CSV 再读」的中间环节。</p>
+</blockquote>
+<hr />
+<h2 id="6-行索引不只是序号">6. 行索引：不只是序号</h2>
+<p>默认情况下行索引是 <code>RangeIndex</code>——自动编号 0, 1, 2, …：</p>
+<div class="highlight"><pre><span></span><code><span class="n">staff</span><span class="o">.</span><span class="n">index</span>   <span class="c1"># RangeIndex(start=0, stop=37, step=1)</span>
+</code></pre></div>
+<p>但表格的主键往往自带业务含义（比如员工号）。用 <code>set_index</code> 把某列「提拔」为行索引，之后就能用标签直接定位：</p>
+<div class="highlight"><pre><span></span><code><span class="n">staff_idx</span> <span class="o">=</span> <span class="n">staff</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">'员工号'</span><span class="p">)</span>
+
+<span class="c1"># 用工号查一个人的完整档案（loc 的完整用法见下一章）</span>
+<span class="n">staff_idx</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">'E007'</span><span class="p">]</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>姓名       郑安然
+部门       财务部
+职级           M1
+工作年限      7年
+月薪       20w/年
+绩效          B+
+Name: E007, dtype: object
+</code></pre></div>
+<p>（顺带一提：这份表里 E029 出现了两次，<code>loc['E029']</code> 会一次查出两行——重复数据的问题，下一章开头就处理它。）</p>
+<p><code>reset_index</code> 是它的逆操作——索引退回成普通列，行索引恢复默认编号：</p>
+<div class="highlight"><pre><span></span><code><span class="n">staff_idx</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>  员工号    姓名    部门 职级 工作年限 月薪 绩效
+0   E001  陈明远  技术部   P7      8年  42k    A
+1   E002  林晓彤  技术部   P6      5年  26k   A+
+</code></pre></div>
+<hr />
+<h2 id="7-解剖一个-dataframe">7. 解剖一个 DataFrame</h2>
+<p>拿 <code>staff</code> 做标本，把 DataFrame 的五脏六腑挨个看一遍。先上一张结构图：</p>
+<div class="highlight"><pre><span></span><code>              columns（列标签）
+              ┌─────────────────────────────┐
+   index     │  员工号    姓名    部门   …   │
+（行标签）   ├─────────────────────────────┤
+    0   →   │   E001   陈明远   技术部  …   │
+    1   →   │   E002   林晓彤   技术部  …   │
+    ⋮        │    ⋮       ⋮       ⋮         │
+              └─────────────────────────────┘
+        values：剥掉两层标签后剩下的二维 ndarray
+</code></pre></div>
+<p>逐个属性核对：</p>
+<div class="highlight"><pre><span></span><code><span class="nb">print</span><span class="p">(</span><span class="n">staff</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>   <span class="c1"># Index(['员工号', '姓名', '部门', '职级', '工作年限', '月薪', '绩效'], dtype='object')</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">staff</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>     <span class="c1"># RangeIndex(start=0, stop=37, step=1)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">staff</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>     <span class="c1"># (37, 7)  → (行数, 列数)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">staff</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>      <span class="c1"># 259      → 元素总数 = 37 × 7</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">staff</span><span class="o">.</span><span class="n">ndim</span><span class="p">)</span>      <span class="c1"># 2        → 二维</span>
+</code></pre></div>
+<p><code>values</code>（新版本更推荐写 <code>to_numpy()</code>）剥掉标签，露出二维 ndarray 本体：</p>
+<div class="highlight"><pre><span></span><code><span class="n">staff</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()[:</span><span class="mi">2</span><span class="p">]</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>array([['E001', '陈明远', '技术部', 'P7', '8年', '42k', 'A'],
+       ['E002', '林晓彤', '技术部', 'P6', '5年', '26k', 'A+']], dtype=object)
+</code></pre></div>
+<p>最后看 <code>dtypes</code>——<strong>每列各自的类型</strong>，这是读表后要做的第一项检查：</p>
+<div class="highlight"><pre><span></span><code><span class="n">staff</span><span class="o">.</span><span class="n">dtypes</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>员工号     object
+姓名       object
+部门       object
+职级       object
+工作年限    object
+月薪       object
+绩效       object
+dtype: object
+</code></pre></div>
+<p>问题来了：工作年限、月薪明明是数字，怎么全是 object（字符串）？因为表里混着 <code>20w/年</code>、<code>10+年</code> 这类写法，Pandas 只能整列按字符串收下。<strong>数值被当成文本，意味着没法求和、没法求均值、没法比较大小</strong>——这就是数据清洗要解决的头号问题，下一章用它开刀。</p>
+<blockquote>
+<p>小贴士：pandas 3.0 起字符串列默认显示为 <code>str</code>，旧版本显示 <code>object</code>——两者在这里是同一件事，别被名字唬住。</p>
+</blockquote>
+<hr />
+<h2 id="8-小结">8. 小结</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Series</th>
+<th>DataFrame</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>维度</td>
+<td>一维</td>
+<td>二维</td>
+</tr>
+<tr>
+<td>直观类比</td>
+<td>Excel 里的一列</td>
+<td>Excel 里的一张表</td>
+</tr>
+<tr>
+<td>标签</td>
+<td><code>index</code></td>
+<td><code>index</code> + <code>columns</code></td>
+</tr>
+<tr>
+<td>本质</td>
+<td>一维 ndarray + 标签</td>
+<td>共享行索引的一组 Series</td>
+</tr>
+</tbody>
+</table>
+<p>这一章的三条主线：</p>
+<ol>
+<li><strong>两种结构</strong>：Series 是带标签的一维数组，DataFrame 是带行列标签的二维表，取 DataFrame 的一列就是 Series；</li>
+<li><strong>数据装载</strong>：<code>read_csv</code> / <code>read_excel</code> / <code>read_sql</code> 一行把外部数据变 DataFrame，参数应对各种怪文件；</li>
+<li><strong>内部构成</strong>：<code>index</code>、<code>columns</code>、<code>values</code>、<code>dtypes</code>、<code>shape</code> 五个属性就是 DataFrame 的「体检单」，其中 <code>dtypes</code> 最值得反复看。</li>
+</ol>
+<p>我们还埋了一个悬念：staff 花名册里全是 object 列、藏着一个重复员工、月薪写法五花八门。下一章就把它彻底洗干净，让每个字段都变得「能算」。</p>
+<hr />
+<p><strong>下一章</strong>：<a href="../python/28-pandas-shu-ju-qing-xi.html">28 · Pandas 数据清洗</a></p></div>
+
+      </article>
+<nav class="pager"><a class="pg-card pg-prev" href="../python/26-numpy-shu-zu-yu-xiang-liang-hua.html"><span class="pg-label">← 上一篇</span><span class="pg-title">NumPy 数组与向量化</span><span class="pg-mod">Python 与数据实践</span></a><a class="pg-card pg-next" href="../python/28-pandas-shu-ju-qing-xi.html"><span class="pg-label">下一篇 →</span><span class="pg-title">Pandas 数据清洗</span><span class="pg-mod">Python 与数据实践</span></a></nav>
+    </div>
+    <footer class="foot">
+      <span>AI Agent 工程师转型训练营配套文档</span>
+    </footer>
+  </main>
+<nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#1-pandas-在工具链里的位置">1. Pandas 在工具链里的位置</a><a class="toc-link toc-h2" href="#2-series带标签的一维数据">2. Series：带标签的一维数据</a><a class="toc-link toc-h3" href="#21-最小可运行例子">2.1 最小可运行例子</a><a class="toc-link toc-h3" href="#22-门牌号可以自己起">2.2 门牌号可以自己起</a><a class="toc-link toc-h3" href="#23-从字典创建">2.3 从字典创建</a><a class="toc-link toc-h3" href="#24-拆开看values-与-index">2.4 拆开看：values 与 index</a><a class="toc-link toc-h2" href="#3-dataframe把多个-series-拼成一张表">3. DataFrame：把多个 Series 拼成一张表</a><a class="toc-link toc-h3" href="#31-从字典创建最常用">3.1 从字典创建（最常用）</a><a class="toc-link toc-h3" href="#32-从嵌套列表创建">3.2 从嵌套列表创建</a><a class="toc-link toc-h3" href="#33-从-numpy-数组创建">3.3 从 NumPy 数组创建</a><a class="toc-link toc-h3" href="#34-表与列的关系">3.4 表与列的关系</a><a class="toc-link toc-h2" href="#4-把文件里的数据装进来">4. 把文件里的数据装进来</a><a class="toc-link toc-h3" href="#41-csvpdread_csv">4.1 CSV：pd.read_csv</a><a class="toc-link toc-h3" href="#42-excelpdread_excel">4.2 Excel：pd.read_excel</a><a class="toc-link toc-h3" href="#43-其他格式">4.3 其他格式</a><a class="toc-link toc-h2" href="#5-把数据库里的数据装进来pdread_sql">5. 把数据库里的数据装进来：pd.read_sql</a><a class="toc-link toc-h2" href="#6-行索引不只是序号">6. 行索引：不只是序号</a><a class="toc-link toc-h2" href="#7-解剖一个-dataframe">7. 解剖一个 DataFrame</a><a class="toc-link toc-h2" href="#8-小结">8. 小结</a></nav>
+</div>
+<div class="sb-mask" id="sbMask"></div>
+<script src="../assets/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>12 · with 与上下文协议 · InfiSpace 课程文档</title>
+<meta name="description" content="写代码久了你会发现一件事：大量资源都讲究&quot;有借有还&quot;——打开的文件要关、连上的服务要断、占到的锁要放、申请的句柄要释放。麻烦在于，&quot;还&quot;这个动作太容易掉链子：一个提前的 return、一个半路杀出的异常，清理代码就被整个…">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%232DD4D4' text-anchor='middle'%3E%E2%88%9E%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+<div class="progress" id="progress"></div>
+
+<div class="layout">
+<aside class="sidebar" id="sidebar">
+  <div class="sb-head">
+    <a class="brand" href="../index.html">
+      <img class="brand-mark" src="../assets/infispace-logo-1.png" alt="InfiSpace">
+    </a>
+    <button class="sb-close" id="sbClose" aria-label="关闭目录">✕</button>
+  </div>
+  <div class="sb-search"><input type="search" id="searchInput" placeholder="搜索 123 篇文档… ( / )" autocomplete="off">
+    <div class="sb-results" id="searchResults"></div></div>
+  <nav class="sb-nav">
+    <section class="sb-group">
+      <a class="sb-group-title" href="../index.html">
+        <span class="sb-num">00</span>
+        <span class="sb-group-text"><b>学习导航</b><i>课程首页</i></span>
+      </a>
+    </section>
+    <section class="sb-group open" data-mod="python">
+      <a class="sb-group-title" href="../modules/python.html" data-toggle="python">
+        <span class="sb-num">01</span>
+        <span class="sb-group-text"><b>Python 与数据实践</b><i>31 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../python/01-huan-jing-da-jian-yu-ban-ben-guan-li.html"><span class="sb-item-num">01</span><span class="sb-item-title">环境搭建与版本管理</span></a>
+        <a class="sb-item" href="../python/02-bian-liang-biao-da-shi-yu-liu-cheng-kong-zhi.html"><span class="sb-item-num">02</span><span class="sb-item-title">变量、表达式与流程控制</span></a>
+        <a class="sb-item" href="../python/03-xu-lie-zi-dian-yu-ji-he.html"><span class="sb-item-num">03</span><span class="sb-item-title">序列、字典与集合</span></a>
+        <a class="sb-item" href="../python/04-han-shu-she-ji-yu-lambda.html"><span class="sb-item-num">04</span><span class="sb-item-title">函数设计与 lambda</span></a>
+        <a class="sb-item" href="../python/05-zuo-yong-yu-gui-ze-yu-bi-bao.html"><span class="sb-item-num">05</span><span class="sb-item-title">作用域规则与闭包</span></a>
+        <a class="sb-item" href="../python/06-lei-de-ding-yi-yu-shi-li-hua.html"><span class="sb-item-num">06</span><span class="sb-item-title">类的定义与实例化</span></a>
+        <a class="sb-item" href="../python/07-lei-xing-pan-ding-yu-chou-xiang-ji-lei.html"><span class="sb-item-num">07</span><span class="sb-item-title">类型判定与抽象基类</span></a>
+        <a class="sb-item" href="../python/08-mo-shu-fang-fa-quan-jing.html"><span class="sb-item-num">08</span><span class="sb-item-title">魔术方法全景</span></a>
+        <a class="sb-item" href="../python/09-miao-shu-fu-yu-yuan-lei.html"><span class="sb-item-num">09</span><span class="sb-item-title">描述符与元类</span></a>
+        <a class="sb-item" href="../python/10-zhuang-shi-qi.html"><span class="sb-item-num">10</span><span class="sb-item-title">装饰器</span></a>
+        <a class="sb-item" href="../python/11-die-dai-xie-yi-yu-sheng-cheng-qi.html"><span class="sb-item-num">11</span><span class="sb-item-title">迭代协议与生成器</span></a>
+        <a class="sb-item current" href="../python/12-with-yu-shang-xia-wen-xie-yi.html"><span class="sb-item-num">12</span><span class="sb-item-title">with 与上下文协议</span></a>
+        <a class="sb-item" href="../python/13-yi-chang-ti-xi-yu-chu-li.html"><span class="sb-item-num">13</span><span class="sb-item-title">异常体系与处理</span></a>
+        <a class="sb-item" href="../python/14-lei-xing-biao-zhu.html"><span class="sb-item-num">14</span><span class="sb-item-title">类型标注</span></a>
+        <a class="sb-item" href="../python/15-mo-kuai-yu-bao-de-zu-zhi.html"><span class="sb-item-num">15</span><span class="sb-item-title">模块与包的组织</span></a>
+        <a class="sb-item" href="../python/16-biao-zhun-ku-xun-li.html"><span class="sb-item-num">16</span><span class="sb-item-title">标准库巡礼</span></a>
+        <a class="sb-item" href="../python/17-yi-lai-guan-li-yu-di-san-fang-ku.html"><span class="sb-item-num">17</span><span class="sb-item-title">依赖管理与第三方库</span></a>
+        <a class="sb-item" href="../python/18-xian-cheng-yu-jin-cheng.html"><span class="sb-item-num">18</span><span class="sb-item-title">线程与进程</span></a>
+        <a class="sb-item" href="../python/19-shi-jian-xun-huan.html"><span class="sb-item-num">19</span><span class="sb-item-title">事件循环</span></a>
+        <a class="sb-item" href="../python/20-future-yu-xie-cheng.html"><span class="sb-item-num">20</span><span class="sb-item-title">Future 与协程</span></a>
+        <a class="sb-item" href="../python/21-asyncio-shi-zhan.html"><span class="sb-item-num">21</span><span class="sb-item-title">asyncio 实战</span></a>
+        <a class="sb-item" href="../python/22-gou-jian-yu-fa-bu.html"><span class="sb-item-num">22</span><span class="sb-item-title">构建与发布</span></a>
+        <a class="sb-item" href="../python/23-gong-cheng-hua-gong-ju-lian.html"><span class="sb-item-num">23</span><span class="sb-item-title">工程化工具链</span></a>
+        <a class="sb-item" href="../python/24-monorepo-yu-tiao-shi.html"><span class="sb-item-num">24</span><span class="sb-item-title">monorepo 与调试</span></a>
+        <a class="sb-item" href="../python/25-jupyter-jiao-hu-huan-jing.html"><span class="sb-item-num">25</span><span class="sb-item-title">Jupyter 交互环境</span></a>
+        <a class="sb-item" href="../python/26-numpy-shu-zu-yu-xiang-liang-hua.html"><span class="sb-item-num">26</span><span class="sb-item-title">NumPy 数组与向量化</span></a>
+        <a class="sb-item" href="../python/27-pandas-shu-ju-jie-gou.html"><span class="sb-item-num">27</span><span class="sb-item-title">Pandas 数据结构</span></a>
+        <a class="sb-item" href="../python/28-pandas-shu-ju-qing-xi.html"><span class="sb-item-num">28</span><span class="sb-item-title">Pandas 数据清洗</span></a>
+        <a class="sb-item" href="../python/29-matplotlib-hui-tu-ti-xi.html"><span class="sb-item-num">29</span><span class="sb-item-title">Matplotlib 绘图体系</span></a>
+        <a class="sb-item" href="../python/30-matplotlib-dong-hua-yu-jiao-hu.html"><span class="sb-item-num">30</span><span class="sb-item-title">Matplotlib 动画与交互</span></a>
+        <a class="sb-item" href="../python/31-seaborn-tong-ji-ke-shi-hua.html"><span class="sb-item-num">31</span><span class="sb-item-title">Seaborn 统计可视化</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="agent">
+      <a class="sb-group-title" href="../modules/agent.html" data-toggle="agent">
+        <span class="sb-num">02</span>
+        <span class="sb-group-text"><b>Agent 核心</b><i>15 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../agent/01-token-yu-ci-qian-ru.html"><span class="sb-item-num">01</span><span class="sb-item-title">Token 与词嵌入</span></a>
+        <a class="sb-item" href="../agent/02-qian-xiang-chuan-bo-yu-fan-xiang-chuan-bo.html"><span class="sb-item-num">02</span><span class="sb-item-title">前向传播与反向传播</span></a>
+        <a class="sb-item" href="../agent/03-zhu-yi-li-ji-zhi-yu-transformer-jia-gou.html"><span class="sb-item-num">03</span><span class="sb-item-title">注意力机制与 Transformer 架构</span></a>
+        <a class="sb-item" href="../agent/04-yu-xun-lian-rlhf-yu-cai-yang-kv-cache.html"><span class="sb-item-num">04</span><span class="sb-item-title">预训练、RLHF 与采样（KV Cache）</span></a>
+        <a class="sb-item" href="../agent/05-ben-di-mo-xing-yu-xiao-xi-jie-gou.html"><span class="sb-item-num">05</span><span class="sb-item-title">本地模型与消息结构</span></a>
+        <a class="sb-item" href="../agent/06-hui-hua-guan-li-yu-json-shu-chu.html"><span class="sb-item-num">06</span><span class="sb-item-title">会话管理与 JSON 输出</span></a>
+        <a class="sb-item" href="../agent/07-tool-calling-xie-yi-yu-feng-zhuang.html"><span class="sb-item-num">07</span><span class="sb-item-title">Tool Calling：协议与封装</span></a>
+        <a class="sb-item" href="../agent/08-react-mo-shi-yu-zhu-xun-huan.html"><span class="sb-item-num">08</span><span class="sb-item-title">ReAct 模式与主循环</span></a>
+        <a class="sb-item" href="../agent/09-shi-zhan-deep-research-agent.html"><span class="sb-item-num">09</span><span class="sb-item-title">实战：Deep Research Agent</span></a>
+        <a class="sb-item" href="../agent/10-skill-yu-jian-jin-shi-pi-lu.html"><span class="sb-item-num">10</span><span class="sb-item-title">Skill 与渐进式披露</span></a>
+        <a class="sb-item" href="../agent/11-mcp-quan-jing.html"><span class="sb-item-num">11</span><span class="sb-item-title">MCP 全景</span></a>
+        <a class="sb-item" href="../agent/12-duo-agent-yu-xuan-xing-ce-lve.html"><span class="sb-item-num">12</span><span class="sb-item-title">多 Agent 与选型策略</span></a>
+        <a class="sb-item" href="../agent/13-ti-shi-ci-gong-cheng-yu-shang-xia-wen-gong.html"><span class="sb-item-num">13</span><span class="sb-item-title">提示词工程与上下文工程</span></a>
+        <a class="sb-item" href="../agent/14-xun-huan-tu-yu-gu-jia-gong-cheng.html"><span class="sb-item-num">14</span><span class="sb-item-title">循环、图与骨架工程</span></a>
+        <a class="sb-item" href="../agent/15-ji-yi-quan-xian-yu-ping-ce.html"><span class="sb-item-num">15</span><span class="sb-item-title">记忆、权限与评测</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="langchain">
+      <a class="sb-group-title" href="../modules/langchain.html" data-toggle="langchain">
+        <span class="sb-num">03</span>
+        <span class="sb-group-text"><b>LangChain 指南</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langchain/01-ren-shi-langchain.html"><span class="sb-item-num">01</span><span class="sb-item-title">认识 LangChain</span></a>
+        <a class="sb-item" href="../langchain/02-ti-shi-ci-mu-ban-yu-xiao-xi.html"><span class="sb-item-num">02</span><span class="sb-item-title">提示词模板与消息</span></a>
+        <a class="sb-item" href="../langchain/03-lcel-yu-runnable.html"><span class="sb-item-num">03</span><span class="sb-item-title">LCEL 与 Runnable</span></a>
+        <a class="sb-item" href="../langchain/04-liu-shi-yu-bing-fa.html"><span class="sb-item-num">04</span><span class="sb-item-title">流式与并发</span></a>
+        <a class="sb-item" href="../langchain/05-shu-chu-jie-xi-qi.html"><span class="sb-item-num">05</span><span class="sb-item-title">输出解析器</span></a>
+        <a class="sb-item" href="../langchain/06-wen-dang-jia-zai-yu-qie-ge.html"><span class="sb-item-num">06</span><span class="sb-item-title">文档加载与切割</span></a>
+        <a class="sb-item" href="../langchain/07-qian-ru-yu-xiang-liang-ku.html"><span class="sb-item-num">07</span><span class="sb-item-title">嵌入与向量库</span></a>
+        <a class="sb-item" href="../langchain/08-jian-suo-yu-rag.html"><span class="sb-item-num">08</span><span class="sb-item-title">检索与RAG</span></a>
+        <a class="sb-item" href="../langchain/09-dui-hua-ji-yi.html"><span class="sb-item-num">09</span><span class="sb-item-title">对话记忆</span></a>
+        <a class="sb-item" href="../langchain/10-gong-ju-diao-yong.html"><span class="sb-item-num">10</span><span class="sb-item-title">工具调用</span></a>
+        <a class="sb-item" href="../langchain/11-agent.html"><span class="sb-item-num">11</span><span class="sb-item-title">Agent</span></a>
+        <a class="sb-item" href="../langchain/12-hui-diao-yu-tiao-shi-quan-ke-cheng-shou-guan.html"><span class="sb-item-num">12</span><span class="sb-item-title">回调与调试（全课程收官章）</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="langgraph">
+      <a class="sb-group-title" href="../modules/langgraph.html" data-toggle="langgraph">
+        <span class="sb-num">04</span>
+        <span class="sb-group-text"><b>LangGraph 框架指南</b><i>17 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langgraph/01-di-1-zhang-cong-yi-ge-shi-kong-de-jiao.html"><span class="sb-item-num">01</span><span class="sb-item-title">第 1 章 从一个失控的脚本说起</span></a>
+        <a class="sb-item" href="../langgraph/02-di-2-zhang-zui-xiao-ke-yun-xing-tu.html"><span class="sb-item-num">02</span><span class="sb-item-title">第 2 章 最小可运行图</span></a>
+        <a class="sb-item" href="../langgraph/03-di-3-zhang-zhuang-tai-tu-de-shu-ju-xin.html"><span class="sb-item-num">03</span><span class="sb-item-title">第 3 章 状态：图的数据心脏</span></a>
+        <a class="sb-item" href="../langgraph/04-di-4-zhang-rang-liu-cheng-xue-hui-jue-ce.html"><span class="sb-item-num">04</span><span class="sb-item-title">第 4 章 让流程学会决策</span></a>
+        <a class="sb-item" href="../langgraph/05-di-5-zhang-bing-xing-shi-jie-chao-bu-zhi.html"><span class="sb-item-num">05</span><span class="sb-item-title">第 5 章 并行世界：超步执行模型</span></a>
+        <a class="sb-item" href="../langgraph/06-di-6-zhang-command-ba-kong-zhi-quan-jiao-jin.html"><span class="sb-item-num">06</span><span class="sb-item-title">第 6 章 Command：把控制权交进节点</span></a>
+        <a class="sb-item" href="../langgraph/07-di-7-zhang-dong-tai-bing-xing-send-yu-mapreduce.html"><span class="sb-item-num">07</span><span class="sb-item-title">第 7 章 动态并行：Send 与 MapReduce</span></a>
+        <a class="sb-item" href="../langgraph/08-di-8-zhang-gei-tu-zhuang-shang-shou-jiao-gong.html"><span class="sb-item-num">08</span><span class="sb-item-title">第 8 章 给图装上手脚：工具调用</span></a>
+        <a class="sb-item" href="../langgraph/09-di-9-zhang-fu-yong-yu-feng-zhuang-zi-tu.html"><span class="sb-item-num">09</span><span class="sb-item-title">第 9 章 复用与封装：子图</span></a>
+        <a class="sb-item" href="../langgraph/10-di-10-zhang-cong-dan-tu-dao-tuan-dui-duo.html"><span class="sb-item-num">10</span><span class="sb-item-title">第 10 章 从单图到团队：多 Agent 架构</span></a>
+        <a class="sb-item" href="../langgraph/11-di-11-zhang-liu-shi-shu-chu.html"><span class="sb-item-num">11</span><span class="sb-item-title">第 11 章 流式输出</span></a>
+        <a class="sb-item" href="../langgraph/12-di-12-zhang-chi-jiu-hua-checkpointer-yu-xian-cheng.html"><span class="sb-item-num">12</span><span class="sb-item-title">第 12 章 持久化：Checkpointer 与线程</span></a>
+        <a class="sb-item" href="../langgraph/13-di-13-zhang-shi-jian-lv-xing.html"><span class="sb-item-num">13</span><span class="sb-item-title">第 13 章 时间旅行</span></a>
+        <a class="sb-item" href="../langgraph/14-di-14-zhang-zhong-duan-yu-ren-zai-hui-lu.html"><span class="sb-item-num">14</span><span class="sb-item-title">第 14 章 中断与人在回路</span></a>
+        <a class="sb-item" href="../langgraph/15-di-15-zhang-ji-yi-guan-li.html"><span class="sb-item-num">15</span><span class="sb-item-title">第 15 章 记忆管理</span></a>
+        <a class="sb-item" href="../langgraph/16-di-16-zhang-rong-cuo-zhong-shi-chao-shi-yu.html"><span class="sb-item-num">16</span><span class="sb-item-title">第 16 章 容错：重试、超时与兜底</span></a>
+        <a class="sb-item" href="../langgraph/17-di-17-zhang-quan-jing-hui-gu.html"><span class="sb-item-num">17</span><span class="sb-item-title">第 17 章 全景回顾</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="backend">
+      <a class="sb-group-title" href="../modules/backend.html" data-toggle="backend">
+        <span class="sb-num">05</span>
+        <span class="sb-group-text"><b>Python 框架指南</b><i>14 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../backend/01-fastapi-ru-men-yu-asgi.html"><span class="sb-item-num">01</span><span class="sb-item-title">FastAPI 入门与 ASGI</span></a>
+        <a class="sb-item" href="../backend/02-lu-you-yu-qing-qiu-xiang-ying.html"><span class="sb-item-num">02</span><span class="sb-item-title">路由与请求响应</span></a>
+        <a class="sb-item" href="../backend/03-pydantic-shu-ju-jiao-yan-yu-pei-zhi.html"><span class="sb-item-num">03</span><span class="sb-item-title">Pydantic 数据校验与配置</span></a>
+        <a class="sb-item" href="../backend/04-sqlalchemy-yi-bu-yin-qing-yu-hui-hua.html"><span class="sb-item-num">04</span><span class="sb-item-title">SQLAlchemy 异步引擎与会话</span></a>
+        <a class="sb-item" href="../backend/05-orm-jian-mo.html"><span class="sb-item-num">05</span><span class="sb-item-title">ORM 建模</span></a>
+        <a class="sb-item" href="../backend/06-sql-biao-da-shi-yu-shu-ju-cao-zuo.html"><span class="sb-item-num">06</span><span class="sb-item-title">SQL 表达式与数据操作</span></a>
+        <a class="sb-item" href="../backend/07-alembic-shu-ju-qian-yi.html"><span class="sb-item-num">07</span><span class="sb-item-title">Alembic 数据迁移</span></a>
+        <a class="sb-item" href="../backend/08-yi-lai-zhu-ru.html"><span class="sb-item-num">08</span><span class="sb-item-title">依赖注入</span></a>
+        <a class="sb-item" href="../backend/09-tong-yi-yi-chang-chu-li.html"><span class="sb-item-num">09</span><span class="sb-item-title">统一异常处理</span></a>
+        <a class="sb-item" href="../backend/10-zhong-jian-jian.html"><span class="sb-item-num">10</span><span class="sb-item-title">中间件</span></a>
+        <a class="sb-item" href="../backend/11-ren-zheng-yu-jwt.html"><span class="sb-item-num">11</span><span class="sb-item-title">认证与 JWT</span></a>
+        <a class="sb-item" href="../backend/12-pytest-ce-shi.html"><span class="sb-item-num">12</span><span class="sb-item-title">pytest 测试</span></a>
+        <a class="sb-item" href="../backend/13-ri-zhi-loguru.html"><span class="sb-item-num">13</span><span class="sb-item-title">日志 loguru</span></a>
+        <a class="sb-item" href="../backend/14-liu-shi-xiang-ying-sse-yu-websocket.html"><span class="sb-item-num">14</span><span class="sb-item-title">流式响应 SSE 与 WebSocket</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="interview">
+      <a class="sb-group-title" href="../modules/interview.html" data-toggle="interview">
+        <span class="sb-num">06</span>
+        <span class="sb-group-text"><b>面试题库</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../interview/01-llm-yuan-li-pian.html"><span class="sb-item-num">01</span><span class="sb-item-title">LLM 原理篇</span></a>
+        <a class="sb-item" href="../interview/02-rag-yu-jian-suo-pian.html"><span class="sb-item-num">02</span><span class="sb-item-title">RAG 与检索篇</span></a>
+        <a class="sb-item" href="../interview/03-agent-he-xin-pian.html"><span class="sb-item-num">03</span><span class="sb-item-title">Agent 核心篇</span></a>
+        <a class="sb-item" href="../interview/04-langgraph-pian.html"><span class="sb-item-num">04</span><span class="sb-item-title">LangGraph 篇</span></a>
+        <a class="sb-item" href="../interview/05-langchain-pian.html"><span class="sb-item-num">05</span><span class="sb-item-title">LangChain 篇</span></a>
+        <a class="sb-item" href="../interview/06-xi-tong-she-ji-pian.html"><span class="sb-item-num">06</span><span class="sb-item-title">系统设计篇</span></a>
+        <a class="sb-item" href="../interview/07-xiang-mu-shen-wa-pian.html"><span class="sb-item-num">07</span><span class="sb-item-title">项目深挖篇</span></a>
+        <a class="sb-item" href="../interview/08-gu-zhang-pai-cha-pian.html"><span class="sb-item-num">08</span><span class="sb-item-title">故障排查篇</span></a>
+        <a class="sb-item" href="../interview/09-python-ji-chu-pian.html"><span class="sb-item-num">09</span><span class="sb-item-title">Python 基础篇</span></a>
+        <a class="sb-item" href="../interview/10-fastapi-yu-hou-duan-pian.html"><span class="sb-item-num">10</span><span class="sb-item-title">FastAPI 与后端篇</span></a>
+        <a class="sb-item" href="../interview/11-ti-shi-ci-gong-cheng-yu-an-quan-pian.html"><span class="sb-item-num">11</span><span class="sb-item-title">提示词工程与安全篇</span></a>
+        <a class="sb-item" href="../interview/12-mo-xing-xuan-xing-yu-jiang-ben-pian.html"><span class="sb-item-num">12</span><span class="sb-item-title">模型选型与降本篇</span></a>
+      </div>
+    </section>
+    <div class="sb-sep"></div>
+    <a class="sb-home" href="../camp.html">
+      <span class="sb-home-ico">◆</span>
+      <span class="sb-home-text"><b>训练营介绍</b><i>课程总览</i></span>
+    </a>
+  </nav>
+</aside>
+  <main class="main">
+    <header class="topbar">
+      <button class="menu-btn" id="menuBtn" aria-label="目录">☰</button>
+      <div class="crumbs"><a href="../index.html">首页</a><span>/</span><a href="../modules/python.html">Python 与数据实践</a><span>/</span><span class="cur">with 与上下文协议</span></div>
+      <div class="topbar-actions">
+        <button class="icon-btn" id="themeBtn" title="切换深浅色" aria-label="切换深浅色">◐</button>
+      </div>
+    </header>
+    <div class="content">
+      <article class="article">
+
+<header class="page-head">
+  <div class="page-kicker">Python 与数据实践 · 第 12 章</div>
+  <h1 class="page-title">with 与上下文协议</h1>
+  <p class="page-desc">写代码久了你会发现一件事：大量资源都讲究&quot;有借有还&quot;——打开的文件要关、连上的服务要断、占到的锁要放、申请的句柄要释放。麻烦在于，&quot;还&quot;这个动作太容易掉链子：一个提前的 return、一个半路杀出的异常，清理代码就被整个…</p>
+  <div class="page-meta">
+    <span>约 12 分钟</span><span>4,794 字</span><span>12 个代码示例</span>
+  </div>
+</header>
+<div class="md"><p>写代码久了你会发现一件事：大量资源都讲究"有借有还"——打开的文件要关、连上的服务要断、占到的锁要放、申请的句柄要释放。麻烦在于，"还"这个动作太容易掉链子：一个提前的 return、一个半路杀出的异常，清理代码就被整个跳过去了。<code>with</code> 语句就是 Python 对这件事的官方解法：把"借"和"还"写进一套协议，让解释器替你盯着收尾——<strong>不管中间发生什么，离开代码块时该做的清理一定会做</strong>。</p>
+<hr />
+<h2 id="1-with-的长相与内脏">1. with 的长相与内脏</h2>
+<p>语法长这样：</p>
+<div class="highlight"><pre><span></span><code><span class="k">with</span> <span class="n">表达式</span> <span class="k">as</span> <span class="n">变量</span><span class="p">:</span>
+    <span class="n">代码块</span>
+</code></pre></div>
+<p>这行语法糖脱掉外壳之后，大致等效于：</p>
+<div class="highlight"><pre><span></span><code><span class="n">变量</span> <span class="o">=</span> <span class="n">表达式</span><span class="o">.</span><span class="fm">__enter__</span><span class="p">()</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">代码块</span>
+<span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="n">swallowed</span> <span class="o">=</span> <span class="n">变量</span><span class="o">.</span><span class="fm">__exit__</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">e</span><span class="p">),</span> <span class="n">e</span><span class="p">,</span> <span class="n">e</span><span class="o">.</span><span class="n">__traceback__</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">swallowed</span><span class="p">:</span>
+        <span class="k">raise</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">变量</span><span class="o">.</span><span class="fm">__exit__</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+</code></pre></div>
+<p>从这段展开式里能直接读出几件事：</p>
+<ul>
+<li>踏进代码块之前，先调 <code>__enter__()</code>，它的返回值交给 <code>as</code> 后面的变量</li>
+<li>离开代码块时，无论正常走完还是中途炸了，<code>__exit__()</code> 都会被调用——自动清理的底气就在这里</li>
+<li>出异常时，<code>__exit__</code> 会收到三个参数：异常类型、异常对象、调用栈信息；没出异常，三者全是 <code>None</code></li>
+<li><code>__exit__</code> 的返回值是个开关：返回 <code>True</code> 表示"这个异常归我处理"，异常就地消亡；返回 <code>False</code>（或者不写 return），异常继续向上传播</li>
+</ul>
+<h2 id="2-上下文管理器一纸双方法协议">2. 上下文管理器：一纸双方法协议</h2>
+<blockquote>
+<p><strong>同时实现了 <code>__enter__</code> 和 <code>__exit__</code> 两个方法的对象，就叫上下文管理器（Context Manager）。</strong> with 语句只认这种对象——两个方法缺了任何一个，with 都会直接报错。</p>
+</blockquote>
+<h2 id="3-最经典的搭档文件">3. 最经典的搭档：文件</h2>
+<div class="highlight"><pre><span></span><code><span class="c1"># 文件操作 —— 关闭动作全自动</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">"notes.txt"</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="c1"># 走出 with 块的那一刻，文件已被关好</span>
+
+<span class="c1"># 不借 with 之手的等价写法（体会一下手动管理的啰嗦）：</span>
+<span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s2">"notes.txt"</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">)</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+<span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="n">swallowed</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="fm">__exit__</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">e</span><span class="p">),</span> <span class="n">e</span><span class="p">,</span> <span class="n">e</span><span class="o">.</span><span class="n">__traceback__</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">swallowed</span><span class="p">:</span>
+        <span class="k">raise</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">f</span><span class="o">.</span><span class="fm">__exit__</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+</code></pre></div>
+<h2 id="4-亲手造一个上下文管理器">4. 亲手造一个上下文管理器</h2>
+<p>协议就两个方法，照着填就行。做一个消息服务器的连接：</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">MessageBroker</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">server</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">server</span> <span class="o">=</span> <span class="n">server</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">online</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""踏进 with 块时执行；返回值赋给 as 后面的变量"""</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"已连上消息服务器: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">online</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="bp">self</span>  <span class="c1"># 把自己交出去，块内就能用 conn.xxx</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_val</span><span class="p">,</span> <span class="n">exc_tb</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        踏出 with 块时执行（出不出异常都会到这一步）</span>
+<span class="sd">        exc_type / exc_val / exc_tb：出异常时是"异常三件套"，没出全是 None</span>
+<span class="sd">        返回 True = 异常到此为止；返回 False = 异常照常上报</span>
+<span class="sd">        """</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"已断开消息服务器: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">online</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="kc">False</span>  <span class="c1"># 不拦异常，出了事让上层知道</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">publish</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">topic</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">online</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">"尚未连接消息服务器"</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"向频道 </span><span class="si">{</span><span class="n">topic</span><span class="si">}</span><span class="s2"> 发送: </span><span class="si">{</span><span class="n">message</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+
+<span class="k">with</span> <span class="n">MessageBroker</span><span class="p">(</span><span class="s2">"mq.internal"</span><span class="p">)</span> <span class="k">as</span> <span class="n">conn</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"在线状态: </span><span class="si">{</span><span class="n">conn</span><span class="o">.</span><span class="n">online</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>          <span class="c1"># True</span>
+    <span class="n">conn</span><span class="o">.</span><span class="n">publish</span><span class="p">(</span><span class="s2">"订单频道"</span><span class="p">,</span> <span class="s2">"新订单已创建"</span><span class="p">)</span>
+
+<span class="c1"># 走出 with 块之后</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"在线状态: </span><span class="si">{</span><span class="n">conn</span><span class="o">.</span><span class="n">online</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>              <span class="c1"># False</span>
+
+<span class="c1"># 输出：</span>
+<span class="c1"># 已连上消息服务器: mq.internal</span>
+<span class="c1"># 在线状态: True</span>
+<span class="c1"># 向频道 订单频道 发送: 新订单已创建</span>
+<span class="c1"># 已断开消息服务器: mq.internal</span>
+<span class="c1"># 在线状态: False</span>
+</code></pre></div>
+<h2 id="5-__exit__-的返回值异常的拦截阀">5. <code>__exit__</code> 的返回值：异常的拦截阀</h2>
+<p><code>__exit__</code> 不只负责收拾残局，还可以顺手处理甚至"吞掉"异常：</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">ErrorMuffler</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""名单之内的异常一律消音，名单之外的照常放行"""</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">muted_types</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">muted_types</span> <span class="o">=</span> <span class="n">muted_types</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_val</span><span class="p">,</span> <span class="n">exc_tb</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">exc_type</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">exc_type</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">muted_types</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"已消音: </span><span class="si">{</span><span class="n">exc_type</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">exc_val</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">True</span>   <span class="c1"># 返回 True：异常已被处理，外界毫无感知</span>
+        <span class="k">return</span> <span class="kc">False</span>      <span class="c1"># 不在名单里的异常，不归我管</span>
+
+
+<span class="k">with</span> <span class="n">ErrorMuffler</span><span class="p">(</span><span class="ne">ZeroDivisionError</span><span class="p">):</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="mi">0</span>        <span class="c1"># 不会崩</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"到不了这一行"</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">"程序若无其事地继续"</span><span class="p">)</span>  <span class="c1"># 正常执行</span>
+</code></pre></div>
+<hr />
+<h2 id="6-借生成器之力contextmanager-装饰器">6. 借生成器之力：@contextmanager 装饰器</h2>
+<p>第 11 章刚学完生成器，这里立刻派上用场。写类有时候显得太隆重，<code>contextlib</code> 模块提供了 <code>@contextmanager</code> 装饰器——用一个带 <code>yield</code> 的函数就能表达同样的协议：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">contextlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">contextmanager</span>
+
+
+<span class="nd">@contextmanager</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">camera</span><span class="p">(</span><span class="n">session</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""yield 之前的代码 ≈ __enter__，yield 之后的代码 ≈ __exit__"""</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"开启摄像头: </span><span class="si">{</span><span class="n">session</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">handle</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"device"</span><span class="p">:</span> <span class="n">session</span><span class="p">,</span> <span class="s2">"power"</span><span class="p">:</span> <span class="s2">"on"</span><span class="p">}</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">yield</span> <span class="n">handle</span>  <span class="c1"># 暂停点：with 块在这里执行，handle 交给 as 变量</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"关闭摄像头: </span><span class="si">{</span><span class="n">session</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>  <span class="c1"># 块内出不出事，这行都会执行</span>
+
+
+<span class="k">with</span> <span class="n">camera</span><span class="p">(</span><span class="s2">"前台闸机"</span><span class="p">)</span> <span class="k">as</span> <span class="n">cam</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"抓拍中: </span><span class="si">{</span><span class="n">cam</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="c1"># 开启摄像头: 前台闸机</span>
+<span class="c1"># 抓拍中: {'device': '前台闸机', 'power': 'on'}</span>
+<span class="c1"># 关闭摄像头: 前台闸机</span>
+</code></pre></div>
+<p>再看一个带完整异常处理的版本——先写临时文件，确认成功才替换正式文件，失败就清场：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">contextlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">contextmanager</span>
+
+
+<span class="nd">@contextmanager</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">atomic_write</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""先把内容写进临时文件，确认无误再顶替正式文件"""</span>
+    <span class="n">temp_path</span> <span class="o">=</span> <span class="n">path</span> <span class="o">+</span> <span class="s2">".swap"</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">temp_path</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">yield</span> <span class="n">f</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="c1"># 全部写完且没出岔子，正式换名</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">temp_path</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"落盘成功"</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="c1"># 中途出错：残缺的临时文件不要了</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">temp_path</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">temp_path</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"落盘失败: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="k">raise</span>  <span class="c1"># 异常继续抛出去，交给上层定夺</span>
+
+
+<span class="k">with</span> <span class="n">atomic_write</span><span class="p">(</span><span class="s2">"settings.json"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">'{"theme": "dark"}</span><span class="se">\n</span><span class="s1">'</span><span class="p">)</span>
+</code></pre></div>
+<hr />
+<h2 id="7-一条-with-掌管多个资源">7. 一条 with 掌管多个资源</h2>
+<p>资源一多，with 可以层层嵌套，也可以写成一行：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 嵌套写法</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">"原始日志.txt"</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">)</span> <span class="k">as</span> <span class="n">src</span><span class="p">:</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">"归档副本.txt"</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">backup</span><span class="p">:</span>
+        <span class="n">backup</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">src</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">upper</span><span class="p">())</span>
+
+<span class="c1"># 逗号并列写法（Python 3.1+），效果与上面完全相同</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">"原始日志.txt"</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">)</span> <span class="k">as</span> <span class="n">src</span><span class="p">,</span> <span class="nb">open</span><span class="p">(</span><span class="s2">"归档副本.txt"</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">backup</span><span class="p">:</span>
+    <span class="n">backup</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">src</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">upper</span><span class="p">())</span>
+</code></pre></div>
+<p>退出顺序与进入顺序相反：后进入的先退出——<code>backup</code> 先关，<code>src</code> 后关。</p>
+<hr />
+<h2 id="8-作业">8. 作业</h2>
+<p>动笔之前，先把 <code>__enter__</code> 和 <code>__exit__</code> 的调用时机、参数含义、返回值含义复述一遍，复述顺畅再开工。</p>
+<h3 id="一给代码块计时">一、给代码块计时</h3>
+<p>用 <code>@contextmanager</code> 实现一个计时上下文管理器 <code>elapsed</code>：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">contextlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">contextmanager</span>
+
+<span class="c1"># 目标效果：</span>
+<span class="k">with</span> <span class="n">elapsed</span><span class="p">(</span><span class="s2">"数据清洗"</span><span class="p">):</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"清洗完成"</span><span class="p">)</span>
+<span class="c1"># 清洗完成</span>
+<span class="c1"># 数据清洗 耗时: 1.0013 秒</span>
+</code></pre></div>
+<h3 id="二临时工作区">二、临时工作区</h3>
+<p>编写一个 <code>ScratchSpace</code> 上下文管理器：进入时开辟一个临时目录，退出时连同里面所有内容一并铲除：</p>
+<div class="highlight"><pre><span></span><code><span class="k">with</span> <span class="n">ScratchSpace</span><span class="p">()</span> <span class="k">as</span> <span class="n">work_dir</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"工作区: </span><span class="si">{</span><span class="n">work_dir</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="c1"># 可以在目录里随便建文件、写东西</span>
+    <span class="c1"># 离开 with 块后，目录连同内容自动消失</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">"工作区已清理"</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>提示：</strong> 用 <code>tempfile</code> 模块创建临时目录，用 <code>shutil.rmtree</code> 连根删除。</p>
+<h3 id="三辨析题with-能实现自动重试吗">三、辨析题：with 能实现"自动重试"吗？</h3>
+<p>一个诱人的想法：写个上下文管理器，块内代码抛异常就自动再执行一遍，直到成功或达到次数上限。先别急着动手——想想 with 的进出机制，允许同一个代码块被"重复进入"吗？写下你的结论和理由，再对照 <code>answers/p3.py</code>（不可行方案的剖析）与 <code>answers/p3-1.py</code>（用第 10 章的装饰器给出的正解）。</p>
+<h3 id="四思考题">四、思考题</h3>
+<p>下面代码的输出是什么？为什么？</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">contextlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">contextmanager</span>
+
+
+<span class="nd">@contextmanager</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">stage_lights</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"灯光就位"</span><span class="p">)</span>
+    <span class="k">yield</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"落幕关灯"</span><span class="p">)</span>
+
+
+<span class="k">with</span> <span class="n">stage_lights</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"演出进行中"</span><span class="p">)</span>
+    <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">"道具故障"</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"这行永远轮不到"</span><span class="p">)</span>
+</code></pre></div>
+<p>如果改成下面的写法，输出又有什么不同？</p>
+<div class="highlight"><pre><span></span><code><span class="nd">@contextmanager</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">stage_lights</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"灯光就位"</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">yield</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"临时救场: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"落幕关灯"</span><span class="p">)</span>
+
+
+<span class="k">with</span> <span class="n">stage_lights</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"演出进行中"</span><span class="p">)</span>
+    <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">"道具故障"</span><span class="p">)</span>
+</code></pre></div>
+<hr />
+<p><strong>下一章</strong>：<a href="../python/13-yi-chang-ti-xi-yu-chu-li.html">13 · 异常体系与处理</a></p></div>
+
+      </article>
+<nav class="pager"><a class="pg-card pg-prev" href="../python/11-die-dai-xie-yi-yu-sheng-cheng-qi.html"><span class="pg-label">← 上一篇</span><span class="pg-title">迭代协议与生成器</span><span class="pg-mod">Python 与数据实践</span></a><a class="pg-card pg-next" href="../python/13-yi-chang-ti-xi-yu-chu-li.html"><span class="pg-label">下一篇 →</span><span class="pg-title">异常体系与处理</span><span class="pg-mod">Python 与数据实践</span></a></nav>
+    </div>
+    <footer class="foot">
+      <span>AI Agent 工程师转型训练营配套文档</span>
+    </footer>
+  </main>
+<nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#1-with-的长相与内脏">1. with 的长相与内脏</a><a class="toc-link toc-h2" href="#2-上下文管理器一纸双方法协议">2. 上下文管理器：一纸双方法协议</a><a class="toc-link toc-h2" href="#3-最经典的搭档文件">3. 最经典的搭档：文件</a><a class="toc-link toc-h2" href="#4-亲手造一个上下文管理器">4. 亲手造一个上下文管理器</a><a class="toc-link toc-h2" href="#5-__exit__-的返回值异常的拦截阀">5. __exit__ 的返回值：异常的拦截阀</a><a class="toc-link toc-h2" href="#6-借生成器之力contextmanager-装饰器">6. 借生成器之力：@contextmanager 装饰器</a><a class="toc-link toc-h2" href="#7-一条-with-掌管多个资源">7. 一条 with 掌管多个资源</a><a class="toc-link toc-h2" href="#8-作业">8. 作业</a><a class="toc-link toc-h3" href="#一给代码块计时">一、给代码块计时</a><a class="toc-link toc-h3" href="#二临时工作区">二、临时工作区</a><a class="toc-link toc-h3" href="#三辨析题with-能实现自动重试吗">三、辨析题：with 能实现&quot;自动重试&quot;吗？</a><a class="toc-link toc-h3" href="#四思考题">四、思考题</a></nav>
+</div>
+<div class="sb-mask" id="sbMask"></div>
+<script src="../assets/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>20 · Future 与协程 · InfiSpace 课程文档</title>
+<meta name="description" content="第 19 章把事件循环拆开看了个明白：一个线程、两个队列、一串回调，循环每一圈都在做&quot;执行 ready 队列里排队的函数&quot;这件事。但有两个问题当时刻意绕开了：">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%232DD4D4' text-anchor='middle'%3E%E2%88%9E%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+<div class="progress" id="progress"></div>
+
+<div class="layout">
+<aside class="sidebar" id="sidebar">
+  <div class="sb-head">
+    <a class="brand" href="../index.html">
+      <img class="brand-mark" src="../assets/infispace-logo-1.png" alt="InfiSpace">
+    </a>
+    <button class="sb-close" id="sbClose" aria-label="关闭目录">✕</button>
+  </div>
+  <div class="sb-search"><input type="search" id="searchInput" placeholder="搜索 123 篇文档… ( / )" autocomplete="off">
+    <div class="sb-results" id="searchResults"></div></div>
+  <nav class="sb-nav">
+    <section class="sb-group">
+      <a class="sb-group-title" href="../index.html">
+        <span class="sb-num">00</span>
+        <span class="sb-group-text"><b>学习导航</b><i>课程首页</i></span>
+      </a>
+    </section>
+    <section class="sb-group open" data-mod="python">
+      <a class="sb-group-title" href="../modules/python.html" data-toggle="python">
+        <span class="sb-num">01</span>
+        <span class="sb-group-text"><b>Python 与数据实践</b><i>31 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../python/01-huan-jing-da-jian-yu-ban-ben-guan-li.html"><span class="sb-item-num">01</span><span class="sb-item-title">环境搭建与版本管理</span></a>
+        <a class="sb-item" href="../python/02-bian-liang-biao-da-shi-yu-liu-cheng-kong-zhi.html"><span class="sb-item-num">02</span><span class="sb-item-title">变量、表达式与流程控制</span></a>
+        <a class="sb-item" href="../python/03-xu-lie-zi-dian-yu-ji-he.html"><span class="sb-item-num">03</span><span class="sb-item-title">序列、字典与集合</span></a>
+        <a class="sb-item" href="../python/04-han-shu-she-ji-yu-lambda.html"><span class="sb-item-num">04</span><span class="sb-item-title">函数设计与 lambda</span></a>
+        <a class="sb-item" href="../python/05-zuo-yong-yu-gui-ze-yu-bi-bao.html"><span class="sb-item-num">05</span><span class="sb-item-title">作用域规则与闭包</span></a>
+        <a class="sb-item" href="../python/06-lei-de-ding-yi-yu-shi-li-hua.html"><span class="sb-item-num">06</span><span class="sb-item-title">类的定义与实例化</span></a>
+        <a class="sb-item" href="../python/07-lei-xing-pan-ding-yu-chou-xiang-ji-lei.html"><span class="sb-item-num">07</span><span class="sb-item-title">类型判定与抽象基类</span></a>
+        <a class="sb-item" href="../python/08-mo-shu-fang-fa-quan-jing.html"><span class="sb-item-num">08</span><span class="sb-item-title">魔术方法全景</span></a>
+        <a class="sb-item" href="../python/09-miao-shu-fu-yu-yuan-lei.html"><span class="sb-item-num">09</span><span class="sb-item-title">描述符与元类</span></a>
+        <a class="sb-item" href="../python/10-zhuang-shi-qi.html"><span class="sb-item-num">10</span><span class="sb-item-title">装饰器</span></a>
+        <a class="sb-item" href="../python/11-die-dai-xie-yi-yu-sheng-cheng-qi.html"><span class="sb-item-num">11</span><span class="sb-item-title">迭代协议与生成器</span></a>
+        <a class="sb-item" href="../python/12-with-yu-shang-xia-wen-xie-yi.html"><span class="sb-item-num">12</span><span class="sb-item-title">with 与上下文协议</span></a>
+        <a class="sb-item" href="../python/13-yi-chang-ti-xi-yu-chu-li.html"><span class="sb-item-num">13</span><span class="sb-item-title">异常体系与处理</span></a>
+        <a class="sb-item" href="../python/14-lei-xing-biao-zhu.html"><span class="sb-item-num">14</span><span class="sb-item-title">类型标注</span></a>
+        <a class="sb-item" href="../python/15-mo-kuai-yu-bao-de-zu-zhi.html"><span class="sb-item-num">15</span><span class="sb-item-title">模块与包的组织</span></a>
+        <a class="sb-item" href="../python/16-biao-zhun-ku-xun-li.html"><span class="sb-item-num">16</span><span class="sb-item-title">标准库巡礼</span></a>
+        <a class="sb-item" href="../python/17-yi-lai-guan-li-yu-di-san-fang-ku.html"><span class="sb-item-num">17</span><span class="sb-item-title">依赖管理与第三方库</span></a>
+        <a class="sb-item" href="../python/18-xian-cheng-yu-jin-cheng.html"><span class="sb-item-num">18</span><span class="sb-item-title">线程与进程</span></a>
+        <a class="sb-item" href="../python/19-shi-jian-xun-huan.html"><span class="sb-item-num">19</span><span class="sb-item-title">事件循环</span></a>
+        <a class="sb-item current" href="../python/20-future-yu-xie-cheng.html"><span class="sb-item-num">20</span><span class="sb-item-title">Future 与协程</span></a>
+        <a class="sb-item" href="../python/21-asyncio-shi-zhan.html"><span class="sb-item-num">21</span><span class="sb-item-title">asyncio 实战</span></a>
+        <a class="sb-item" href="../python/22-gou-jian-yu-fa-bu.html"><span class="sb-item-num">22</span><span class="sb-item-title">构建与发布</span></a>
+        <a class="sb-item" href="../python/23-gong-cheng-hua-gong-ju-lian.html"><span class="sb-item-num">23</span><span class="sb-item-title">工程化工具链</span></a>
+        <a class="sb-item" href="../python/24-monorepo-yu-tiao-shi.html"><span class="sb-item-num">24</span><span class="sb-item-title">monorepo 与调试</span></a>
+        <a class="sb-item" href="../python/25-jupyter-jiao-hu-huan-jing.html"><span class="sb-item-num">25</span><span class="sb-item-title">Jupyter 交互环境</span></a>
+        <a class="sb-item" href="../python/26-numpy-shu-zu-yu-xiang-liang-hua.html"><span class="sb-item-num">26</span><span class="sb-item-title">NumPy 数组与向量化</span></a>
+        <a class="sb-item" href="../python/27-pandas-shu-ju-jie-gou.html"><span class="sb-item-num">27</span><span class="sb-item-title">Pandas 数据结构</span></a>
+        <a class="sb-item" href="../python/28-pandas-shu-ju-qing-xi.html"><span class="sb-item-num">28</span><span class="sb-item-title">Pandas 数据清洗</span></a>
+        <a class="sb-item" href="../python/29-matplotlib-hui-tu-ti-xi.html"><span class="sb-item-num">29</span><span class="sb-item-title">Matplotlib 绘图体系</span></a>
+        <a class="sb-item" href="../python/30-matplotlib-dong-hua-yu-jiao-hu.html"><span class="sb-item-num">30</span><span class="sb-item-title">Matplotlib 动画与交互</span></a>
+        <a class="sb-item" href="../python/31-seaborn-tong-ji-ke-shi-hua.html"><span class="sb-item-num">31</span><span class="sb-item-title">Seaborn 统计可视化</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="agent">
+      <a class="sb-group-title" href="../modules/agent.html" data-toggle="agent">
+        <span class="sb-num">02</span>
+        <span class="sb-group-text"><b>Agent 核心</b><i>15 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../agent/01-token-yu-ci-qian-ru.html"><span class="sb-item-num">01</span><span class="sb-item-title">Token 与词嵌入</span></a>
+        <a class="sb-item" href="../agent/02-qian-xiang-chuan-bo-yu-fan-xiang-chuan-bo.html"><span class="sb-item-num">02</span><span class="sb-item-title">前向传播与反向传播</span></a>
+        <a class="sb-item" href="../agent/03-zhu-yi-li-ji-zhi-yu-transformer-jia-gou.html"><span class="sb-item-num">03</span><span class="sb-item-title">注意力机制与 Transformer 架构</span></a>
+        <a class="sb-item" href="../agent/04-yu-xun-lian-rlhf-yu-cai-yang-kv-cache.html"><span class="sb-item-num">04</span><span class="sb-item-title">预训练、RLHF 与采样（KV Cache）</span></a>
+        <a class="sb-item" href="../agent/05-ben-di-mo-xing-yu-xiao-xi-jie-gou.html"><span class="sb-item-num">05</span><span class="sb-item-title">本地模型与消息结构</span></a>
+        <a class="sb-item" href="../agent/06-hui-hua-guan-li-yu-json-shu-chu.html"><span class="sb-item-num">06</span><span class="sb-item-title">会话管理与 JSON 输出</span></a>
+        <a class="sb-item" href="../agent/07-tool-calling-xie-yi-yu-feng-zhuang.html"><span class="sb-item-num">07</span><span class="sb-item-title">Tool Calling：协议与封装</span></a>
+        <a class="sb-item" href="../agent/08-react-mo-shi-yu-zhu-xun-huan.html"><span class="sb-item-num">08</span><span class="sb-item-title">ReAct 模式与主循环</span></a>
+        <a class="sb-item" href="../agent/09-shi-zhan-deep-research-agent.html"><span class="sb-item-num">09</span><span class="sb-item-title">实战：Deep Research Agent</span></a>
+        <a class="sb-item" href="../agent/10-skill-yu-jian-jin-shi-pi-lu.html"><span class="sb-item-num">10</span><span class="sb-item-title">Skill 与渐进式披露</span></a>
+        <a class="sb-item" href="../agent/11-mcp-quan-jing.html"><span class="sb-item-num">11</span><span class="sb-item-title">MCP 全景</span></a>
+        <a class="sb-item" href="../agent/12-duo-agent-yu-xuan-xing-ce-lve.html"><span class="sb-item-num">12</span><span class="sb-item-title">多 Agent 与选型策略</span></a>
+        <a class="sb-item" href="../agent/13-ti-shi-ci-gong-cheng-yu-shang-xia-wen-gong.html"><span class="sb-item-num">13</span><span class="sb-item-title">提示词工程与上下文工程</span></a>
+        <a class="sb-item" href="../agent/14-xun-huan-tu-yu-gu-jia-gong-cheng.html"><span class="sb-item-num">14</span><span class="sb-item-title">循环、图与骨架工程</span></a>
+        <a class="sb-item" href="../agent/15-ji-yi-quan-xian-yu-ping-ce.html"><span class="sb-item-num">15</span><span class="sb-item-title">记忆、权限与评测</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="langchain">
+      <a class="sb-group-title" href="../modules/langchain.html" data-toggle="langchain">
+        <span class="sb-num">03</span>
+        <span class="sb-group-text"><b>LangChain 指南</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langchain/01-ren-shi-langchain.html"><span class="sb-item-num">01</span><span class="sb-item-title">认识 LangChain</span></a>
+        <a class="sb-item" href="../langchain/02-ti-shi-ci-mu-ban-yu-xiao-xi.html"><span class="sb-item-num">02</span><span class="sb-item-title">提示词模板与消息</span></a>
+        <a class="sb-item" href="../langchain/03-lcel-yu-runnable.html"><span class="sb-item-num">03</span><span class="sb-item-title">LCEL 与 Runnable</span></a>
+        <a class="sb-item" href="../langchain/04-liu-shi-yu-bing-fa.html"><span class="sb-item-num">04</span><span class="sb-item-title">流式与并发</span></a>
+        <a class="sb-item" href="../langchain/05-shu-chu-jie-xi-qi.html"><span class="sb-item-num">05</span><span class="sb-item-title">输出解析器</span></a>
+        <a class="sb-item" href="../langchain/06-wen-dang-jia-zai-yu-qie-ge.html"><span class="sb-item-num">06</span><span class="sb-item-title">文档加载与切割</span></a>
+        <a class="sb-item" href="../langchain/07-qian-ru-yu-xiang-liang-ku.html"><span class="sb-item-num">07</span><span class="sb-item-title">嵌入与向量库</span></a>
+        <a class="sb-item" href="../langchain/08-jian-suo-yu-rag.html"><span class="sb-item-num">08</span><span class="sb-item-title">检索与RAG</span></a>
+        <a class="sb-item" href="../langchain/09-dui-hua-ji-yi.html"><span class="sb-item-num">09</span><span class="sb-item-title">对话记忆</span></a>
+        <a class="sb-item" href="../langchain/10-gong-ju-diao-yong.html"><span class="sb-item-num">10</span><span class="sb-item-title">工具调用</span></a>
+        <a class="sb-item" href="../langchain/11-agent.html"><span class="sb-item-num">11</span><span class="sb-item-title">Agent</span></a>
+        <a class="sb-item" href="../langchain/12-hui-diao-yu-tiao-shi-quan-ke-cheng-shou-guan.html"><span class="sb-item-num">12</span><span class="sb-item-title">回调与调试（全课程收官章）</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="langgraph">
+      <a class="sb-group-title" href="../modules/langgraph.html" data-toggle="langgraph">
+        <span class="sb-num">04</span>
+        <span class="sb-group-text"><b>LangGraph 框架指南</b><i>17 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langgraph/01-di-1-zhang-cong-yi-ge-shi-kong-de-jiao.html"><span class="sb-item-num">01</span><span class="sb-item-title">第 1 章 从一个失控的脚本说起</span></a>
+        <a class="sb-item" href="../langgraph/02-di-2-zhang-zui-xiao-ke-yun-xing-tu.html"><span class="sb-item-num">02</span><span class="sb-item-title">第 2 章 最小可运行图</span></a>
+        <a class="sb-item" href="../langgraph/03-di-3-zhang-zhuang-tai-tu-de-shu-ju-xin.html"><span class="sb-item-num">03</span><span class="sb-item-title">第 3 章 状态：图的数据心脏</span></a>
+        <a class="sb-item" href="../langgraph/04-di-4-zhang-rang-liu-cheng-xue-hui-jue-ce.html"><span class="sb-item-num">04</span><span class="sb-item-title">第 4 章 让流程学会决策</span></a>
+        <a class="sb-item" href="../langgraph/05-di-5-zhang-bing-xing-shi-jie-chao-bu-zhi.html"><span class="sb-item-num">05</span><span class="sb-item-title">第 5 章 并行世界：超步执行模型</span></a>
+        <a class="sb-item" href="../langgraph/06-di-6-zhang-command-ba-kong-zhi-quan-jiao-jin.html"><span class="sb-item-num">06</span><span class="sb-item-title">第 6 章 Command：把控制权交进节点</span></a>
+        <a class="sb-item" href="../langgraph/07-di-7-zhang-dong-tai-bing-xing-send-yu-mapreduce.html"><span class="sb-item-num">07</span><span class="sb-item-title">第 7 章 动态并行：Send 与 MapReduce</span></a>
+        <a class="sb-item" href="../langgraph/08-di-8-zhang-gei-tu-zhuang-shang-shou-jiao-gong.html"><span class="sb-item-num">08</span><span class="sb-item-title">第 8 章 给图装上手脚：工具调用</span></a>
+        <a class="sb-item" href="../langgraph/09-di-9-zhang-fu-yong-yu-feng-zhuang-zi-tu.html"><span class="sb-item-num">09</span><span class="sb-item-title">第 9 章 复用与封装：子图</span></a>
+        <a class="sb-item" href="../langgraph/10-di-10-zhang-cong-dan-tu-dao-tuan-dui-duo.html"><span class="sb-item-num">10</span><span class="sb-item-title">第 10 章 从单图到团队：多 Agent 架构</span></a>
+        <a class="sb-item" href="../langgraph/11-di-11-zhang-liu-shi-shu-chu.html"><span class="sb-item-num">11</span><span class="sb-item-title">第 11 章 流式输出</span></a>
+        <a class="sb-item" href="../langgraph/12-di-12-zhang-chi-jiu-hua-checkpointer-yu-xian-cheng.html"><span class="sb-item-num">12</span><span class="sb-item-title">第 12 章 持久化：Checkpointer 与线程</span></a>
+        <a class="sb-item" href="../langgraph/13-di-13-zhang-shi-jian-lv-xing.html"><span class="sb-item-num">13</span><span class="sb-item-title">第 13 章 时间旅行</span></a>
+        <a class="sb-item" href="../langgraph/14-di-14-zhang-zhong-duan-yu-ren-zai-hui-lu.html"><span class="sb-item-num">14</span><span class="sb-item-title">第 14 章 中断与人在回路</span></a>
+        <a class="sb-item" href="../langgraph/15-di-15-zhang-ji-yi-guan-li.html"><span class="sb-item-num">15</span><span class="sb-item-title">第 15 章 记忆管理</span></a>
+        <a class="sb-item" href="../langgraph/16-di-16-zhang-rong-cuo-zhong-shi-chao-shi-yu.html"><span class="sb-item-num">16</span><span class="sb-item-title">第 16 章 容错：重试、超时与兜底</span></a>
+        <a class="sb-item" href="../langgraph/17-di-17-zhang-quan-jing-hui-gu.html"><span class="sb-item-num">17</span><span class="sb-item-title">第 17 章 全景回顾</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="backend">
+      <a class="sb-group-title" href="../modules/backend.html" data-toggle="backend">
+        <span class="sb-num">05</span>
+        <span class="sb-group-text"><b>Python 框架指南</b><i>14 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../backend/01-fastapi-ru-men-yu-asgi.html"><span class="sb-item-num">01</span><span class="sb-item-title">FastAPI 入门与 ASGI</span></a>
+        <a class="sb-item" href="../backend/02-lu-you-yu-qing-qiu-xiang-ying.html"><span class="sb-item-num">02</span><span class="sb-item-title">路由与请求响应</span></a>
+        <a class="sb-item" href="../backend/03-pydantic-shu-ju-jiao-yan-yu-pei-zhi.html"><span class="sb-item-num">03</span><span class="sb-item-title">Pydantic 数据校验与配置</span></a>
+        <a class="sb-item" href="../backend/04-sqlalchemy-yi-bu-yin-qing-yu-hui-hua.html"><span class="sb-item-num">04</span><span class="sb-item-title">SQLAlchemy 异步引擎与会话</span></a>
+        <a class="sb-item" href="../backend/05-orm-jian-mo.html"><span class="sb-item-num">05</span><span class="sb-item-title">ORM 建模</span></a>
+        <a class="sb-item" href="../backend/06-sql-biao-da-shi-yu-shu-ju-cao-zuo.html"><span class="sb-item-num">06</span><span class="sb-item-title">SQL 表达式与数据操作</span></a>
+        <a class="sb-item" href="../backend/07-alembic-shu-ju-qian-yi.html"><span class="sb-item-num">07</span><span class="sb-item-title">Alembic 数据迁移</span></a>
+        <a class="sb-item" href="../backend/08-yi-lai-zhu-ru.html"><span class="sb-item-num">08</span><span class="sb-item-title">依赖注入</span></a>
+        <a class="sb-item" href="../backend/09-tong-yi-yi-chang-chu-li.html"><span class="sb-item-num">09</span><span class="sb-item-title">统一异常处理</span></a>
+        <a class="sb-item" href="../backend/10-zhong-jian-jian.html"><span class="sb-item-num">10</span><span class="sb-item-title">中间件</span></a>
+        <a class="sb-item" href="../backend/11-ren-zheng-yu-jwt.html"><span class="sb-item-num">11</span><span class="sb-item-title">认证与 JWT</span></a>
+        <a class="sb-item" href="../backend/12-pytest-ce-shi.html"><span class="sb-item-num">12</span><span class="sb-item-title">pytest 测试</span></a>
+        <a class="sb-item" href="../backend/13-ri-zhi-loguru.html"><span class="sb-item-num">13</span><span class="sb-item-title">日志 loguru</span></a>
+        <a class="sb-item" href="../backend/14-liu-shi-xiang-ying-sse-yu-websocket.html"><span class="sb-item-num">14</span><span class="sb-item-title">流式响应 SSE 与 WebSocket</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="interview">
+      <a class="sb-group-title" href="../modules/interview.html" data-toggle="interview">
+        <span class="sb-num">06</span>
+        <span class="sb-group-text"><b>面试题库</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../interview/01-llm-yuan-li-pian.html"><span class="sb-item-num">01</span><span class="sb-item-title">LLM 原理篇</span></a>
+        <a class="sb-item" href="../interview/02-rag-yu-jian-suo-pian.html"><span class="sb-item-num">02</span><span class="sb-item-title">RAG 与检索篇</span></a>
+        <a class="sb-item" href="../interview/03-agent-he-xin-pian.html"><span class="sb-item-num">03</span><span class="sb-item-title">Agent 核心篇</span></a>
+        <a class="sb-item" href="../interview/04-langgraph-pian.html"><span class="sb-item-num">04</span><span class="sb-item-title">LangGraph 篇</span></a>
+        <a class="sb-item" href="../interview/05-langchain-pian.html"><span class="sb-item-num">05</span><span class="sb-item-title">LangChain 篇</span></a>
+        <a class="sb-item" href="../interview/06-xi-tong-she-ji-pian.html"><span class="sb-item-num">06</span><span class="sb-item-title">系统设计篇</span></a>
+        <a class="sb-item" href="../interview/07-xiang-mu-shen-wa-pian.html"><span class="sb-item-num">07</span><span class="sb-item-title">项目深挖篇</span></a>
+        <a class="sb-item" href="../interview/08-gu-zhang-pai-cha-pian.html"><span class="sb-item-num">08</span><span class="sb-item-title">故障排查篇</span></a>
+        <a class="sb-item" href="../interview/09-python-ji-chu-pian.html"><span class="sb-item-num">09</span><span class="sb-item-title">Python 基础篇</span></a>
+        <a class="sb-item" href="../interview/10-fastapi-yu-hou-duan-pian.html"><span class="sb-item-num">10</span><span class="sb-item-title">FastAPI 与后端篇</span></a>
+        <a class="sb-item" href="../interview/11-ti-shi-ci-gong-cheng-yu-an-quan-pian.html"><span class="sb-item-num">11</span><span class="sb-item-title">提示词工程与安全篇</span></a>
+        <a class="sb-item" href="../interview/12-mo-xing-xuan-xing-yu-jiang-ben-pian.html"><span class="sb-item-num">12</span><span class="sb-item-title">模型选型与降本篇</span></a>
+      </div>
+    </section>
+    <div class="sb-sep"></div>
+    <a class="sb-home" href="../camp.html">
+      <span class="sb-home-ico">◆</span>
+      <span class="sb-home-text"><b>训练营介绍</b><i>课程总览</i></span>
+    </a>
+  </nav>
+</aside>
+  <main class="main">
+    <header class="topbar">
+      <button class="menu-btn" id="menuBtn" aria-label="目录">☰</button>
+      <div class="crumbs"><a href="../index.html">首页</a><span>/</span><a href="../modules/python.html">Python 与数据实践</a><span>/</span><span class="cur">Future 与协程</span></div>
+      <div class="topbar-actions">
+        <button class="icon-btn" id="themeBtn" title="切换深浅色" aria-label="切换深浅色">◐</button>
+      </div>
+    </header>
+    <div class="content">
+      <article class="article">
+
+<header class="page-head">
+  <div class="page-kicker">Python 与数据实践 · 第 20 章</div>
+  <h1 class="page-title">Future 与协程</h1>
+  <p class="page-desc">第 19 章把事件循环拆开看了个明白：一个线程、两个队列、一串回调，循环每一圈都在做&quot;执行 ready 队列里排队的函数&quot;这件事。但有两个问题当时刻意绕开了：</p>
+  <div class="page-meta">
+    <span>约 23 分钟</span><span>9,136 字</span><span>17 个代码示例</span>
+  </div>
+</header>
+<div class="md"><p>第 19 章把事件循环拆开看了个明白：一个线程、两个队列、一串回调，循环每一圈都在做"执行 ready 队列里排队的函数"这件事。但有两个问题当时刻意绕开了：</p>
+<ol>
+<li>那些"正在等待中"的任务，在代码里用什么表示？</li>
+<li>回调写多了，代码会不会散成一地碎片？</li>
+</ol>
+<p>这两个问题的答案分别是 <code>Future</code> 和<strong>协程</strong>。搞懂它们，<code>async</code> / <code>await</code> 这套语法就不再是一团迷雾，而是一个你能亲手拆装的机器。</p>
+<hr />
+<h2 id="1-future一张尚未兑付的凭据">1. Future：一张"尚未兑付的凭据"</h2>
+<p>先想一个日常场景：你在奶茶店下单，店员递给你一张取餐凭据。此刻奶茶还没做出来，但凭据保证了两件事——将来一定会兑付，兑付时一定有个说法。<code>Future</code> 就是代码世界里的这张凭据：<strong>它代表一个已经开始、但要等到将来才能有结果的任务。</strong></p>
+<p>每一张凭据只有两种状态：</p>
+<ul>
+<li><strong>未完成</strong>：还在等待，结果尚不存在；</li>
+<li><strong>已完成</strong>：有了说法。说法又分三种——</li>
+<li>正常完成：拿到了结果；</li>
+<li>出错完成：拿到了一个异常；</li>
+<li>被取消：任务中途撤销，等不到结果了。</li>
+</ul>
+<h3 id="11-先造一张凭据出来">1.1 先造一张凭据出来</h3>
+<p><code>Future</code> 对象一般不直接实例化，而是通过事件循环的工厂方法创建：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
+
+<span class="n">loop</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">new_event_loop</span><span class="p">()</span>
+<span class="n">fut</span> <span class="o">=</span> <span class="n">loop</span><span class="o">.</span><span class="n">create_future</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">fut</span><span class="o">.</span><span class="n">done</span><span class="p">())</span>  <span class="c1"># False —— 还没完成</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">fut</span><span class="o">.</span><span class="n">result</span><span class="p">())</span>  <span class="c1"># 抛出 InvalidStateError：结果根本还不存在</span>
+</code></pre></div>
+<p>注意 <code>result()</code> 的行为：凭据未兑付时去取结果，不是返回 <code>None</code>，而是直接抛 <code>InvalidStateError</code>——"没有结果"和"结果是空"是两码事。</p>
+<h3 id="12-三种兑付方式挨个试">1.2 三种"兑付"方式挨个试</h3>
+<p><strong>正常完成</strong>——用 <code>set_result</code> 兑付：</p>
+<div class="highlight"><pre><span></span><code><span class="n">fut</span><span class="o">.</span><span class="n">set_result</span><span class="p">(</span><span class="s2">"报表已生成"</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">fut</span><span class="o">.</span><span class="n">done</span><span class="p">())</span>    <span class="c1"># True</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">fut</span><span class="o">.</span><span class="n">result</span><span class="p">())</span>  <span class="c1"># 报表已生成</span>
+</code></pre></div>
+<p><strong>出错完成</strong>——用 <code>set_exception</code> 兑付一个异常：</p>
+<div class="highlight"><pre><span></span><code><span class="n">fut2</span> <span class="o">=</span> <span class="n">loop</span><span class="o">.</span><span class="n">create_future</span><span class="p">()</span>
+<span class="n">fut2</span><span class="o">.</span><span class="n">set_exception</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">(</span><span class="s2">"数值不合法"</span><span class="p">))</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">fut2</span><span class="o">.</span><span class="n">done</span><span class="p">())</span>       <span class="c1"># True</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">fut2</span><span class="o">.</span><span class="n">exception</span><span class="p">())</span>  <span class="c1"># ValueError: 数值不合法</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">fut2</span><span class="o">.</span><span class="n">result</span><span class="p">())</span>     <span class="c1"># 抛出 ValueError：取结果时异常被重新抛出</span>
+</code></pre></div>
+<p><strong>取消</strong>——用 <code>cancel</code> 直接作废：</p>
+<div class="highlight"><pre><span></span><code><span class="n">fut3</span> <span class="o">=</span> <span class="n">loop</span><span class="o">.</span><span class="n">create_future</span><span class="p">()</span>
+<span class="n">fut3</span><span class="o">.</span><span class="n">cancel</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">fut3</span><span class="o">.</span><span class="n">done</span><span class="p">())</span>        <span class="c1"># True —— 取消也算一种"完成"</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">fut3</span><span class="o">.</span><span class="n">cancelled</span><span class="p">())</span>   <span class="c1"># True</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">fut3</span><span class="o">.</span><span class="n">result</span><span class="p">())</span>      <span class="c1"># 抛出 CancelledError</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">fut3</span><span class="o">.</span><span class="n">exception</span><span class="p">())</span>   <span class="c1"># 同样抛出 CancelledError</span>
+</code></pre></div>
+<p>三种结局殊途同归：<code>done()</code> 都变成 <code>True</code>，此后凭据定格，状态不再改变。</p>
+<h3 id="13-兑付了再叫我add_done_callback">1.3 兑付了再叫我：add_done_callback</h3>
+<p>更多时候我们不想守着凭据反复问"好了没"，而是留个话："好了叫我"。这就是 <code>add_done_callback</code>：</p>
+<div class="highlight"><pre><span></span><code><span class="n">fut4</span> <span class="o">=</span> <span class="n">loop</span><span class="o">.</span><span class="n">create_future</span><span class="p">()</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">on_ready</span><span class="p">(</span><span class="n">f</span><span class="p">:</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">Future</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"凭据兑付，结果：</span><span class="si">{</span><span class="n">f</span><span class="o">.</span><span class="n">result</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"凭据兑付，但出错了：</span><span class="si">{</span><span class="n">exc</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+
+<span class="n">fut4</span><span class="o">.</span><span class="n">add_done_callback</span><span class="p">(</span><span class="n">on_ready</span><span class="p">)</span>
+</code></pre></div>
+<p>有个细节值得停一下：注册回调这一步<strong>什么都不会发生</strong>。回调不会立刻执行，而是等 <code>fut4</code> 完成后，被投递到事件循环的 <strong>ready 队列</strong>里排队，由循环统一调度执行——这正是第 19 章讲过的调度机制。<code>Future</code> 负责的是"完成任务"的表达，<strong>通知和执行永远由事件循环经手</strong>，两者职责分得清清楚楚。</p>
+<h2 id="2-用-future-改造两段经典等待">2. 用 Future 改造两段经典等待</h2>
+<p>空讲 API 有点飘，来看 demo 里两个真实封装。本章 demo 目录下有三个文件：<code>alarm.py</code>（延时封装）、<code>probe.py</code>（网络请求封装）、<code>runner.py</code>（启动器）。</p>
+<h3 id="21-闹钟把等-n-秒封装成-future">2.1 闹钟：把"等 N 秒"封装成 Future</h3>
+<p><code>demo/alarm.py</code> 的核心只有四行：</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">ring_after</span><span class="p">(</span><span class="n">seconds</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">Future</span><span class="p">:</span>
+    <span class="n">loop</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">get_event_loop</span><span class="p">()</span>
+    <span class="n">fut</span> <span class="o">=</span> <span class="n">loop</span><span class="o">.</span><span class="n">create_future</span><span class="p">()</span>
+    <span class="n">loop</span><span class="o">.</span><span class="n">call_later</span><span class="p">(</span><span class="n">seconds</span><span class="p">,</span> <span class="n">fut</span><span class="o">.</span><span class="n">set_result</span><span class="p">,</span> <span class="s2">"叮——"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">fut</span>
+</code></pre></div>
+<p>读懂它：<code>call_later</code> 是第 19 章的老朋友——<code>seconds</code> 秒后，它会带着参数执行 <code>fut.set_result("叮——")</code>，凭据随之兑付。调用方的体验是：拿到凭据、注册回调、转身走人，等待期间线程完全空闲。</p>
+<p>配套的 <code>main</code> 部分注册了一个回调，两秒后闹钟响起时触发——而"闹钟已设定"这行代码是<strong>立刻</strong>打印的，等待没有卡住任何人。</p>
+<h3 id="22-拨测把一次-http-请求封装成-future-链">2.2 拨测：把一次 HTTP 请求封装成 Future 链</h3>
+<p><code>demo/probe.py</code> 是本章最有嚼头的代码，它用非阻塞 socket 完整实现了一次 HTTP 拨测，分三层：</p>
+<ul>
+<li><code>open_link(host, port)</code>：发起非阻塞连接。非阻塞的 <code>connect</code> 几乎必然先抛 <code>BlockingIOError</code>（请求已发出、结果未到），真正的"连上了没有"要靠 <code>loop.add_writer</code> 注册的回调来回答——描述符变得可写，就说明连接有了最终结果，此时再检查 <code>SO_ERROR</code> 区分成功与失败；</li>
+<li><code>read_reply(sock, request)</code>：把请求发出去，用 <code>loop.add_reader</code> 挂上读取回调，循环接收响应，直到收到空字节 <code>b""</code>——那是对端关闭连接的信号，读取到此为止；</li>
+<li><code>probe_http(host, port, path)</code>：把前两层串起来，对外只暴露<strong>一个总 Future</strong>——连接 Future 完成后触发读取，读取 Future 完成后兑付总结果，错误也顺着链条向总 Future 传递。</li>
+</ul>
+<p>一个 Future 兑付触发下一段流程的开启，这就是纯 Future 风格的异步组织方式。建议对照文件里的注释逐行读通。</p>
+<h3 id="23-启动器runnerpy">2.3 启动器：runner.py</h3>
+<p>前两个 demo 都需要一个"把循环转起来"的入口，<code>demo/runner.py</code> 就是干这个的：</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">boot</span><span class="p">(</span><span class="n">entry</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">loop</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">new_event_loop</span><span class="p">()</span>
+    <span class="n">asyncio</span><span class="o">.</span><span class="n">set_event_loop</span><span class="p">(</span><span class="n">loop</span><span class="p">)</span>
+    <span class="n">loop</span><span class="o">.</span><span class="n">call_soon</span><span class="p">(</span><span class="n">entry</span><span class="p">)</span>
+    <span class="n">loop</span><span class="o">.</span><span class="n">run_forever</span><span class="p">()</span>
+</code></pre></div>
+<p>新建循环、绑定线程、把入口函数塞进 ready 队列、转起来——四步正是第 19 章手动操作事件循环的标准姿势。</p>
+<h2 id="3-回调的裂缝代码开始向右生长">3. 回调的裂缝：代码开始向右生长</h2>
+<p>Future 解决了"结果何时到位"的表达问题，但看看拿到结果之后的代码长什么样：</p>
+<div class="highlight"><pre><span></span><code><span class="n">ring_after</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">add_done_callback</span><span class="p">(</span><span class="k">lambda</span> <span class="n">_</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s2">"两秒到了"</span><span class="p">))</span>
+</code></pre></div>
+<p>单看还行。可异步任务的典型形态是"完成后紧接着下一件事"，比如拨测完一个站点再拨测下一个、三个站点全部测完再汇总——用回调写出来就是这样：</p>
+<div class="highlight"><pre><span></span><code><span class="n">probe_http</span><span class="p">(</span><span class="s2">"example.com"</span><span class="p">)</span><span class="o">.</span><span class="n">add_done_callback</span><span class="p">(</span><span class="k">lambda</span> <span class="n">r1</span><span class="p">:</span>
+    <span class="n">probe_http</span><span class="p">(</span><span class="s2">"example.org"</span><span class="p">)</span><span class="o">.</span><span class="n">add_done_callback</span><span class="p">(</span><span class="k">lambda</span> <span class="n">r2</span><span class="p">:</span>
+        <span class="n">probe_http</span><span class="p">(</span><span class="s2">"example.net"</span><span class="p">)</span><span class="o">.</span><span class="n">add_done_callback</span><span class="p">(</span><span class="k">lambda</span> <span class="n">r3</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">"三个站点都拨测完了"</span><span class="p">)</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>这就是名声在外的<strong>回调地狱</strong>：代码每多做一步就向右缩进一层，业务只有三步，缩进已经三层。更糟的还在后面——</p>
+<ul>
+<li>想用 <code>try</code> 统一处理三步里任何一步的异常？对不起，异常发生在回调里，<code>try</code> 根本罩不住；</li>
+<li>想在第三步用到第一步的中间变量？闭包套闭包，越套越深；</li>
+<li>整段代码的执行顺序被切碎埋进了一个个匿名函数，从上往下读代码已经读不出业务流程。</li>
+</ul>
+<p>我们需要一种魔法：<strong>写的时候是从上往下的顺序，执行的时候还是异步不阻塞</strong>。协程就是这门魔法。</p>
+<h2 id="4-协程把异步代码摆回从上往下">4. 协程：把异步代码摆回"从上往下"</h2>
+<h3 id="41-async-def-与协程对象">4.1 async def 与协程对象</h3>
+<p>在函数定义前加一个 <code>async</code>，它就成了<strong>协程函数</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">double_check</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="o">...</span>
+</code></pre></div>
+<p>调用协程函数，得到的不是执行结果，而是一个<strong>协程对象</strong>——函数体一行都没跑，只是把"这段将要执行的流程"打包了起来。这和第 11 章生成器函数调用后得到生成器对象、函数体同样不执行，是一模一样的脾气。</p>
+<h3 id="42-await在这里停一下等结果回来">4.2 await：在这里停一下，等结果回来</h3>
+<p>协程对象内部，用 <code>await</code> 等一个结果。把前面那个三层回调地狱改写成协程：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">alarm</span><span class="w"> </span><span class="kn">import</span> <span class="n">ring_after</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">probe</span><span class="w"> </span><span class="kn">import</span> <span class="n">probe_http</span>
+
+
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">patrol</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="n">first</span> <span class="o">=</span> <span class="k">await</span> <span class="n">probe_http</span><span class="p">(</span><span class="s2">"example.com"</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"第一站完成，响应头"</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">first</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"</span><span class="se">\r\n\r\n</span><span class="s2">"</span><span class="p">)[</span><span class="mi">0</span><span class="p">]),</span> <span class="s2">"字符"</span><span class="p">)</span>
+    <span class="n">second</span> <span class="o">=</span> <span class="k">await</span> <span class="n">probe_http</span><span class="p">(</span><span class="s2">"example.org"</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"第二站完成，响应头"</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">second</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"</span><span class="se">\r\n\r\n</span><span class="s2">"</span><span class="p">)[</span><span class="mi">0</span><span class="p">]),</span> <span class="s2">"字符"</span><span class="p">)</span>
+    <span class="k">await</span> <span class="n">ring_after</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"歇了一秒"</span><span class="p">)</span>
+    <span class="n">third</span> <span class="o">=</span> <span class="k">await</span> <span class="n">probe_http</span><span class="p">(</span><span class="s2">"example.net"</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"第三站完成，响应头"</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">third</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"</span><span class="se">\r\n\r\n</span><span class="s2">"</span><span class="p">)[</span><span class="mi">0</span><span class="p">]),</span> <span class="s2">"字符"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="s2">"巡检结束"</span>
+</code></pre></div>
+<p>（示例在 demo 目录下运行，<code>alarm</code> 和 <code>probe</code> 都是同目录模块。）</p>
+<p>读起来完全是同步代码的样子：第一站、第二站、歇一秒、第三站，从上往下。但执行起来，<code>await</code> 所在之处，协程会<strong>挂起</strong>——把线程让出来还给事件循环，事件循环趁这段时间去推进别的协程；被等待的对象一旦完成，协程就从断点处<strong>恢复</strong>，拿到结果继续往下跑。</p>
+<p>几条规则记牢：</p>
+<ul>
+<li><code>await</code> 只能出现在协程函数（<code>async def</code>）里；</li>
+<li><code>await</code> 后面必须跟一个 <strong>awaitable</strong> 对象，最常见的三种：<strong>协程对象</strong>、<strong>Task</strong>、<strong>Future</strong>——上面代码里 <code>probe_http</code> 和 <code>ring_after</code> 返回的都是 Future；</li>
+<li>协程对象如果不被 <code>await</code>、也没人驱动它，就只是一段打包好却从未执行的代码。</li>
+</ul>
+<h2 id="5-协程和线程到底差在哪">5. 协程和线程，到底差在哪</h2>
+<p>"一个线程里跑很多任务"这件事，第 18 章用线程也能做（每个任务开一个线程等着）。那协程存在的意义是什么？逐项对比：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">对比维度</th>
+<th style="text-align: left;">🧵 线程</th>
+<th style="text-align: left;">🍃 协程</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>谁来调度</strong></td>
+<td style="text-align: left;">操作系统内核，什么时候切走你说了不算</td>
+<td style="text-align: left;">事件循环（如 asyncio），调度权在应用层手里</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>资源开销</strong></td>
+<td style="text-align: left;">高：每个线程独享一块 MB 级的栈，外加内核对象，创建、销毁都不便宜</td>
+<td style="text-align: left;">低：一个协程只要 KB 级的小栈，说建就建</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>切换成本</strong></td>
+<td style="text-align: left;">贵：一次切换要在用户态和内核态之间往返，烧掉数百个时钟周期</td>
+<td style="text-align: left;">便宜：纯用户态换一下寄存器上下文，几十个周期搞定</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>数据共享</strong></td>
+<td style="text-align: left;">共享内存意味着随时可能互踩，锁、信号量一个不能少，死锁和竞态条件防不胜防</td>
+<td style="text-align: left;">默认单线程内串行执行，同一时刻只有一个协程在跑，天然没有"抢跑道"（多线程事件循环另说）</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>利用多核</strong></td>
+<td style="text-align: left;">✅ 天生支持，线程可以被摊到多个核心并行计算</td>
+<td style="text-align: left;">❌ 单个事件循环只占一个核，想吃满多核要靠 <code>run_in_executor</code> 或多进程</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>拿手的活</strong></td>
+<td style="text-align: left;">计算密集型任务；对响应速度要求苛刻的 I/O</td>
+<td style="text-align: left;">海量 I/O 等待型任务：数据采集、高并发接口、聊天长连接，开几万个协程面不改色</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>代表技术</strong></td>
+<td style="text-align: left;"><code>threading</code>、<code>ThreadPoolExecutor</code></td>
+<td style="text-align: left;"><code>asyncio</code>（<code>async</code>/<code>await</code> 语法）、<code>trio</code>、<code>gevent</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>数量级</strong></td>
+<td style="text-align: left;">上百个线程，开销就已经很可观</td>
+<td style="text-align: left;">几万、几十万个协程都算日常</td>
+</tr>
+</tbody>
+</table>
+<p>一句话收束：<strong>线程靠人海（多核并行），协程靠周转（单核高频调度）</strong>。等待满天飞的场景，协程用极低的成本把等待时间全部填满，这是线程给不了的性价比。</p>
+<h2 id="6-亲手推一次协程">6. 亲手推一次协程</h2>
+<p>现在回答一个关键问题：协程对象自己不会动，那"驱动"到底发生了什么？我们手动推一次，看清里面的机关。</p>
+<p>协程对象和生成器一样支持 <code>send</code>：<code>coro.send(None)</code> 把协程发动起来，它会一路跑到第一个 <code>await</code> 处停下，并把<strong>正在等待的那个对象</strong>（通常是个 Future）作为 <code>send</code> 的返回值交出来。之后每当这个 Future 完成，就把结果 <code>send</code> 回去，协程便从断点恢复、继续跑向下一段；协程彻底跑完时，<code>send</code> 会抛出 <code>StopIteration</code>，<code>return</code> 的值就挂在异常的 <code>value</code> 上——又是第 11 章生成器的老规矩。</p>
+<p>据此可以写一个通用的手动驱动器：</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">drive</span><span class="p">(</span><span class="n">coro</span><span class="p">):</span>
+    <span class="n">done</span> <span class="o">=</span> <span class="n">loop</span><span class="o">.</span><span class="n">create_future</span><span class="p">()</span>          <span class="c1"># 用来装协程的最终返回值</span>
+    <span class="n">current</span> <span class="o">=</span> <span class="n">coro</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>            <span class="c1"># 发动协程，拿到第一个 await 的 Future</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">resume</span><span class="p">(</span><span class="n">fut</span><span class="p">:</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">Future</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">nonlocal</span> <span class="n">current</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">current</span> <span class="o">=</span> <span class="n">coro</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">fut</span><span class="o">.</span><span class="n">result</span><span class="p">())</span>   <span class="c1"># 结果送回去，协程恢复执行</span>
+            <span class="n">current</span><span class="o">.</span><span class="n">add_done_callback</span><span class="p">(</span><span class="n">resume</span><span class="p">)</span>  <span class="c1"># 新的等待点，继续挂回调</span>
+        <span class="k">except</span> <span class="ne">StopIteration</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">done</span><span class="o">.</span><span class="n">set_result</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>           <span class="c1"># 协程跑完了，return 值在 e.value</span>
+
+    <span class="n">current</span><span class="o">.</span><span class="n">add_done_callback</span><span class="p">(</span><span class="n">resume</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">done</span>
+</code></pre></div>
+<p>配合事件循环跑起来（<code>probe</code> 里用了 <code>get_running_loop</code>，所以驱动这活儿要安排在循环运行期间进行）：</p>
+<div class="highlight"><pre><span></span><code><span class="n">loop</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">new_event_loop</span><span class="p">()</span>
+<span class="n">asyncio</span><span class="o">.</span><span class="n">set_event_loop</span><span class="p">(</span><span class="n">loop</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">launch</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">fut</span> <span class="o">=</span> <span class="n">drive</span><span class="p">(</span><span class="n">patrol</span><span class="p">())</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">on_over</span><span class="p">(</span><span class="n">f</span><span class="p">:</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">Future</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">loop</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"协程的返回值："</span><span class="p">,</span> <span class="n">f</span><span class="o">.</span><span class="n">result</span><span class="p">())</span>
+
+    <span class="n">fut</span><span class="o">.</span><span class="n">add_done_callback</span><span class="p">(</span><span class="n">on_over</span><span class="p">)</span>
+
+
+<span class="n">loop</span><span class="o">.</span><span class="n">call_soon</span><span class="p">(</span><span class="n">launch</span><span class="p">)</span>
+<span class="n">loop</span><span class="o">.</span><span class="n">run_forever</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"结束"</span><span class="p">)</span>
+</code></pre></div>
+<p>看清楚这套机关的本质：<strong>协程加 Future，正好拼成一个自我延续的回调链</strong>。协程每 <code>await</code> 一次，就产出一张新凭据，凭据兑付的回调负责唤醒协程——上一节"向右生长的回调地狱"，被协程在垂直方向上折叠了起来。章节根目录的 <code>demo.py</code> 把这个手动驱动做成了可运行版本，跑一遍、对照输出读一遍，胜过看十遍文字。</p>
+<h2 id="7-task官方出品的协程驱动器">7. Task：官方出品的协程驱动器</h2>
+<p>上面 <code>drive</code> 函数干的事，官方早就标准化了——<code>Task</code>。<code>Task</code> 是 <code>Future</code> 的子类，专职驱动协程对象：</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">launch</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">task</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">create_task</span><span class="p">(</span><span class="n">patrol</span><span class="p">())</span>  <span class="c1"># 协程对象交给官方驱动器</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">on_over</span><span class="p">(</span><span class="n">t</span><span class="p">:</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">Task</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">loop</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"协程的返回值："</span><span class="p">,</span> <span class="n">t</span><span class="o">.</span><span class="n">result</span><span class="p">())</span>
+
+    <span class="n">task</span><span class="o">.</span><span class="n">add_done_callback</span><span class="p">(</span><span class="n">on_over</span><span class="p">)</span>
+
+
+<span class="n">loop</span><span class="o">.</span><span class="n">call_soon</span><span class="p">(</span><span class="n">launch</span><span class="p">)</span>
+<span class="n">loop</span><span class="o">.</span><span class="n">run_forever</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"结束"</span><span class="p">)</span>
+</code></pre></div>
+<p>和手动版输出完全一致，但 <code>drive</code> 那十几行全没了。<code>asyncio.create_task</code> 做了三件事：</p>
+<ol>
+<li>把协程对象包成一个 <code>Task</code>；</li>
+<li>立即把这个 Task 排进事件循环的 ready 队列——协程马上就会开始执行；</li>
+<li>协程 <code>return</code> 时 Task 完成，返回值就是 Task 的结果；协程抛异常，Task 也随之以异常收场。</li>
+</ol>
+<p>因为 Task 本身是 Future，所以它天然可以 <code>await</code>，也可以 <code>add_done_callback</code>——底层协议一以贯之。</p>
+<h2 id="8-asynciorun一步到位">8. asyncio.run：一步到位</h2>
+<p>日常写代码，连"建循环、绑线程、call_soon"这套仪式都可以省掉。<code>asyncio.run</code> 接收一个协程对象，内部自动完成"创建事件循环 → 包装成 Task → 跑到完成 → 拿到返回值 → 关闭循环"的全流程：</p>
+<div class="highlight"><pre><span></span><code><span class="n">result</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">patrol</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"结束"</span><span class="p">)</span>
+</code></pre></div>
+<p>一行顶前面一屏。前面手动操作循环的代码不是白学——它们是 <code>asyncio.run</code> 的内部实现缩影，理解了缩写，才明白这一行在替你做什么。</p>
+<h2 id="9-把这一章缝起来">9. 把这一章缝起来</h2>
+<ol>
+<li><code>async def</code> 定义的是<strong>协程函数</strong>，调用它得到<strong>协程对象</strong>，函数体此时并未执行；</li>
+<li><strong>awaitable</strong> 有三个常客：协程对象、<code>Task</code>、<code>Future</code>；<code>await</code> 只能写在协程函数里，它让当前协程挂起、让出线程，等结果到位再从断点恢复；</li>
+<li><code>Future</code> 是底层的"结果凭据"，两种状态、三种完成结局（正常、异常、取消），完成通知靠 <code>add_done_callback</code> 投递进 ready 队列；</li>
+<li><code>Task</code> 是 <code>Future</code> 的子类，是官方的协程驱动器：<code>create_task</code> 之后协程立即进 ready 队列开跑，协程的 <code>return</code> 值就是 Task 的结果；</li>
+<li><code>asyncio.run(coro)</code> 是日常入口，内部把协程转成 Task 驱动到完成。</li>
+</ol>
+<p>下一章我们放下"造轮子"，全面启用官方和社区 API 做真正的实战。</p>
+<h2 id="作业">作业</h2>
+<h3 id="一读懂两段封装">一、读懂两段封装</h3>
+<p>通读 demo 目录下的 <code>alarm.py</code> 和 <code>probe.py</code>（配套入口是 <code>runner.py</code>），读完后应该能脱稿回答：</p>
+<ol>
+<li>非阻塞 socket 的 <code>connect</code> 为什么几乎必然先抛 <code>BlockingIOError</code>？靠什么机制得知连接的最终结果？</li>
+<li>读取响应时，收到 <code>b""</code> 意味着什么？为什么不在这时再 <code>recv</code> 了？</li>
+<li><code>probe_http</code> 内部三层 Future 是怎么环环相扣的？某一层出错时，错误如何传到最外层？</li>
+</ol>
+<h3 id="二实现-collect_all-函数">二、实现 <code>collect_all</code> 函数</h3>
+<p>并发驱动多个协程，等它们<strong>全部</strong>完成后，把各自的结果<strong>按传入顺序</strong>打包进一个 Future 返回——功能对标 <code>asyncio.gather</code>：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Coroutine</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">alarm</span><span class="w"> </span><span class="kn">import</span> <span class="n">ring_after</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">collect_all</span><span class="p">(</span><span class="o">*</span><span class="n">jobs</span><span class="p">:</span> <span class="n">Coroutine</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">Future</span><span class="p">:</span>
+    <span class="c1"># 你的代码</span>
+    <span class="k">pass</span>
+
+
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">pull</span><span class="p">(</span><span class="n">sensor</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">seconds</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">await</span> <span class="n">ring_after</span><span class="p">(</span><span class="n">seconds</span><span class="p">)</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">sensor</span><span class="si">}</span><span class="s2"> 读数就绪"</span>
+
+
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">outcomes</span> <span class="o">=</span> <span class="k">await</span> <span class="n">collect_all</span><span class="p">(</span>
+        <span class="n">pull</span><span class="p">(</span><span class="s2">"温度计"</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+        <span class="n">pull</span><span class="p">(</span><span class="s2">"湿度计"</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+        <span class="n">pull</span><span class="p">(</span><span class="s2">"气压计"</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">outcomes</span><span class="p">)</span>  <span class="c1"># 预期: ['温度计 读数就绪', '湿度计 读数就绪', '气压计 读数就绪']</span>
+
+
+<span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">main</span><span class="p">())</span>
+</code></pre></div>
+<p><strong>提示：</strong> 每个协程都用 <code>create_task</code> 推上跑道；结果按各自下标放回列表（完成顺序和返回顺序不是一回事）；用计数器数齐了再兑付总 Future。</p>
+<h3 id="三实现-gate-类">三、实现 <code>Gate</code> 类</h3>
+<p>一道只能开合一次的闸门——功能对标 <code>asyncio.Event</code>：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">alarm</span><span class="w"> </span><span class="kn">import</span> <span class="n">ring_after</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collect</span><span class="w"> </span><span class="kn">import</span> <span class="n">collect_all</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Gate</span><span class="p">:</span>
+    <span class="c1"># 你的代码</span>
+    <span class="k">pass</span>
+
+
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">demo</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">gate</span> <span class="o">=</span> <span class="n">Gate</span><span class="p">()</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">audience</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"观众: 进入直播间，坐等开播"</span><span class="p">)</span>
+        <span class="k">await</span> <span class="n">gate</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"观众: 开播了！"</span><span class="p">)</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">host</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"主播: 正在调试设备……"</span><span class="p">)</span>
+        <span class="k">await</span> <span class="n">ring_after</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">gate</span><span class="o">.</span><span class="n">lift</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"主播: 各位晚上好，正式开播"</span><span class="p">)</span>
+
+    <span class="k">await</span> <span class="n">collect_all</span><span class="p">(</span><span class="n">audience</span><span class="p">(),</span> <span class="n">host</span><span class="p">())</span>
+
+
+<span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">demo</span><span class="p">())</span>
+
+<span class="c1"># 预期输出：</span>
+<span class="sd">"""</span>
+<span class="sd">观众: 进入直播间，坐等开播</span>
+<span class="sd">主播: 正在调试设备……</span>
+<span class="sd">主播: 各位晚上好，正式开播</span>
+<span class="sd">观众: 开播了！</span>
+<span class="sd">"""</span>
+</code></pre></div>
+<p><strong>提示：</strong> <code>wait</code> 里现场创建一个 Future 并 <code>await</code> 它；<code>lift</code> 做的事就是兑付这个 Future。想知道自己的实现和官方差在哪，可以去读 <code>asyncio.Event</code> 的源码——它用等待者列表支持多个等待方，参考实现 <code>demo/gate.py</code> 则是只保证单个等待方的简化版。</p>
+<hr />
+<p><strong>下一章</strong>：<a href="../python/21-asyncio-shi-zhan.html">../21-asyncio实战/课件.md</a></p></div>
+
+      </article>
+<nav class="pager"><a class="pg-card pg-prev" href="../python/19-shi-jian-xun-huan.html"><span class="pg-label">← 上一篇</span><span class="pg-title">事件循环</span><span class="pg-mod">Python 与数据实践</span></a><a class="pg-card pg-next" href="../python/21-asyncio-shi-zhan.html"><span class="pg-label">下一篇 →</span><span class="pg-title">asyncio 实战</span><span class="pg-mod">Python 与数据实践</span></a></nav>
+    </div>
+    <footer class="foot">
+      <span>AI Agent 工程师转型训练营配套文档</span>
+    </footer>
+  </main>
+<nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#1-future一张尚未兑付的凭据">1. Future：一张&quot;尚未兑付的凭据&quot;</a><a class="toc-link toc-h3" href="#11-先造一张凭据出来">1.1 先造一张凭据出来</a><a class="toc-link toc-h3" href="#12-三种兑付方式挨个试">1.2 三种&quot;兑付&quot;方式挨个试</a><a class="toc-link toc-h3" href="#13-兑付了再叫我add_done_callback">1.3 兑付了再叫我：add_done_callback</a><a class="toc-link toc-h2" href="#2-用-future-改造两段经典等待">2. 用 Future 改造两段经典等待</a><a class="toc-link toc-h3" href="#21-闹钟把等-n-秒封装成-future">2.1 闹钟：把&quot;等 N 秒&quot;封装成 Future</a><a class="toc-link toc-h3" href="#22-拨测把一次-http-请求封装成-future-链">2.2 拨测：把一次 HTTP 请求封装成 Future 链</a><a class="toc-link toc-h3" href="#23-启动器runnerpy">2.3 启动器：runner.py</a><a class="toc-link toc-h2" href="#3-回调的裂缝代码开始向右生长">3. 回调的裂缝：代码开始向右生长</a><a class="toc-link toc-h2" href="#4-协程把异步代码摆回从上往下">4. 协程：把异步代码摆回&quot;从上往下&quot;</a><a class="toc-link toc-h3" href="#41-async-def-与协程对象">4.1 async def 与协程对象</a><a class="toc-link toc-h3" href="#42-await在这里停一下等结果回来">4.2 await：在这里停一下，等结果回来</a><a class="toc-link toc-h2" href="#5-协程和线程到底差在哪">5. 协程和线程，到底差在哪</a><a class="toc-link toc-h2" href="#6-亲手推一次协程">6. 亲手推一次协程</a><a class="toc-link toc-h2" href="#7-task官方出品的协程驱动器">7. Task：官方出品的协程驱动器</a><a class="toc-link toc-h2" href="#8-asynciorun一步到位">8. asyncio.run：一步到位</a><a class="toc-link toc-h2" href="#9-把这一章缝起来">9. 把这一章缝起来</a><a class="toc-link toc-h2" href="#作业">作业</a><a class="toc-link toc-h3" href="#一读懂两段封装">一、读懂两段封装</a><a class="toc-link toc-h3" href="#二实现-collect_all-函数">二、实现 collect_all 函数</a><a class="toc-link toc-h3" href="#三实现-gate-类">三、实现 Gate 类</a></nav>
+</div>
+<div class="sb-mask" id="sbMask"></div>
+<script src="../assets/app.js"></script>
+</body>
+</html>

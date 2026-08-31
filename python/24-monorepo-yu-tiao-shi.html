@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>24 · monorepo 与调试 · InfiSpace 课程文档</title>
+<meta name="description" content="工程化的最后一课，收两个尾。其一，项目做大了会「裂变」——对外一个应用，底下还养着工具库、算法库、若干脚本，仓库该怎么组织才不乱？其二，代码一多难免出岔子，全靠 print 排查既慢又伤士气，得学会让程序停在出问题的那一…">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%232DD4D4' text-anchor='middle'%3E%E2%88%9E%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+<div class="progress" id="progress"></div>
+
+<div class="layout">
+<aside class="sidebar" id="sidebar">
+  <div class="sb-head">
+    <a class="brand" href="../index.html">
+      <img class="brand-mark" src="../assets/infispace-logo-1.png" alt="InfiSpace">
+    </a>
+    <button class="sb-close" id="sbClose" aria-label="关闭目录">✕</button>
+  </div>
+  <div class="sb-search"><input type="search" id="searchInput" placeholder="搜索 123 篇文档… ( / )" autocomplete="off">
+    <div class="sb-results" id="searchResults"></div></div>
+  <nav class="sb-nav">
+    <section class="sb-group">
+      <a class="sb-group-title" href="../index.html">
+        <span class="sb-num">00</span>
+        <span class="sb-group-text"><b>学习导航</b><i>课程首页</i></span>
+      </a>
+    </section>
+    <section class="sb-group open" data-mod="python">
+      <a class="sb-group-title" href="../modules/python.html" data-toggle="python">
+        <span class="sb-num">01</span>
+        <span class="sb-group-text"><b>Python 与数据实践</b><i>31 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../python/01-huan-jing-da-jian-yu-ban-ben-guan-li.html"><span class="sb-item-num">01</span><span class="sb-item-title">环境搭建与版本管理</span></a>
+        <a class="sb-item" href="../python/02-bian-liang-biao-da-shi-yu-liu-cheng-kong-zhi.html"><span class="sb-item-num">02</span><span class="sb-item-title">变量、表达式与流程控制</span></a>
+        <a class="sb-item" href="../python/03-xu-lie-zi-dian-yu-ji-he.html"><span class="sb-item-num">03</span><span class="sb-item-title">序列、字典与集合</span></a>
+        <a class="sb-item" href="../python/04-han-shu-she-ji-yu-lambda.html"><span class="sb-item-num">04</span><span class="sb-item-title">函数设计与 lambda</span></a>
+        <a class="sb-item" href="../python/05-zuo-yong-yu-gui-ze-yu-bi-bao.html"><span class="sb-item-num">05</span><span class="sb-item-title">作用域规则与闭包</span></a>
+        <a class="sb-item" href="../python/06-lei-de-ding-yi-yu-shi-li-hua.html"><span class="sb-item-num">06</span><span class="sb-item-title">类的定义与实例化</span></a>
+        <a class="sb-item" href="../python/07-lei-xing-pan-ding-yu-chou-xiang-ji-lei.html"><span class="sb-item-num">07</span><span class="sb-item-title">类型判定与抽象基类</span></a>
+        <a class="sb-item" href="../python/08-mo-shu-fang-fa-quan-jing.html"><span class="sb-item-num">08</span><span class="sb-item-title">魔术方法全景</span></a>
+        <a class="sb-item" href="../python/09-miao-shu-fu-yu-yuan-lei.html"><span class="sb-item-num">09</span><span class="sb-item-title">描述符与元类</span></a>
+        <a class="sb-item" href="../python/10-zhuang-shi-qi.html"><span class="sb-item-num">10</span><span class="sb-item-title">装饰器</span></a>
+        <a class="sb-item" href="../python/11-die-dai-xie-yi-yu-sheng-cheng-qi.html"><span class="sb-item-num">11</span><span class="sb-item-title">迭代协议与生成器</span></a>
+        <a class="sb-item" href="../python/12-with-yu-shang-xia-wen-xie-yi.html"><span class="sb-item-num">12</span><span class="sb-item-title">with 与上下文协议</span></a>
+        <a class="sb-item" href="../python/13-yi-chang-ti-xi-yu-chu-li.html"><span class="sb-item-num">13</span><span class="sb-item-title">异常体系与处理</span></a>
+        <a class="sb-item" href="../python/14-lei-xing-biao-zhu.html"><span class="sb-item-num">14</span><span class="sb-item-title">类型标注</span></a>
+        <a class="sb-item" href="../python/15-mo-kuai-yu-bao-de-zu-zhi.html"><span class="sb-item-num">15</span><span class="sb-item-title">模块与包的组织</span></a>
+        <a class="sb-item" href="../python/16-biao-zhun-ku-xun-li.html"><span class="sb-item-num">16</span><span class="sb-item-title">标准库巡礼</span></a>
+        <a class="sb-item" href="../python/17-yi-lai-guan-li-yu-di-san-fang-ku.html"><span class="sb-item-num">17</span><span class="sb-item-title">依赖管理与第三方库</span></a>
+        <a class="sb-item" href="../python/18-xian-cheng-yu-jin-cheng.html"><span class="sb-item-num">18</span><span class="sb-item-title">线程与进程</span></a>
+        <a class="sb-item" href="../python/19-shi-jian-xun-huan.html"><span class="sb-item-num">19</span><span class="sb-item-title">事件循环</span></a>
+        <a class="sb-item" href="../python/20-future-yu-xie-cheng.html"><span class="sb-item-num">20</span><span class="sb-item-title">Future 与协程</span></a>
+        <a class="sb-item" href="../python/21-asyncio-shi-zhan.html"><span class="sb-item-num">21</span><span class="sb-item-title">asyncio 实战</span></a>
+        <a class="sb-item" href="../python/22-gou-jian-yu-fa-bu.html"><span class="sb-item-num">22</span><span class="sb-item-title">构建与发布</span></a>
+        <a class="sb-item" href="../python/23-gong-cheng-hua-gong-ju-lian.html"><span class="sb-item-num">23</span><span class="sb-item-title">工程化工具链</span></a>
+        <a class="sb-item current" href="../python/24-monorepo-yu-tiao-shi.html"><span class="sb-item-num">24</span><span class="sb-item-title">monorepo 与调试</span></a>
+        <a class="sb-item" href="../python/25-jupyter-jiao-hu-huan-jing.html"><span class="sb-item-num">25</span><span class="sb-item-title">Jupyter 交互环境</span></a>
+        <a class="sb-item" href="../python/26-numpy-shu-zu-yu-xiang-liang-hua.html"><span class="sb-item-num">26</span><span class="sb-item-title">NumPy 数组与向量化</span></a>
+        <a class="sb-item" href="../python/27-pandas-shu-ju-jie-gou.html"><span class="sb-item-num">27</span><span class="sb-item-title">Pandas 数据结构</span></a>
+        <a class="sb-item" href="../python/28-pandas-shu-ju-qing-xi.html"><span class="sb-item-num">28</span><span class="sb-item-title">Pandas 数据清洗</span></a>
+        <a class="sb-item" href="../python/29-matplotlib-hui-tu-ti-xi.html"><span class="sb-item-num">29</span><span class="sb-item-title">Matplotlib 绘图体系</span></a>
+        <a class="sb-item" href="../python/30-matplotlib-dong-hua-yu-jiao-hu.html"><span class="sb-item-num">30</span><span class="sb-item-title">Matplotlib 动画与交互</span></a>
+        <a class="sb-item" href="../python/31-seaborn-tong-ji-ke-shi-hua.html"><span class="sb-item-num">31</span><span class="sb-item-title">Seaborn 统计可视化</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="agent">
+      <a class="sb-group-title" href="../modules/agent.html" data-toggle="agent">
+        <span class="sb-num">02</span>
+        <span class="sb-group-text"><b>Agent 核心</b><i>15 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../agent/01-token-yu-ci-qian-ru.html"><span class="sb-item-num">01</span><span class="sb-item-title">Token 与词嵌入</span></a>
+        <a class="sb-item" href="../agent/02-qian-xiang-chuan-bo-yu-fan-xiang-chuan-bo.html"><span class="sb-item-num">02</span><span class="sb-item-title">前向传播与反向传播</span></a>
+        <a class="sb-item" href="../agent/03-zhu-yi-li-ji-zhi-yu-transformer-jia-gou.html"><span class="sb-item-num">03</span><span class="sb-item-title">注意力机制与 Transformer 架构</span></a>
+        <a class="sb-item" href="../agent/04-yu-xun-lian-rlhf-yu-cai-yang-kv-cache.html"><span class="sb-item-num">04</span><span class="sb-item-title">预训练、RLHF 与采样（KV Cache）</span></a>
+        <a class="sb-item" href="../agent/05-ben-di-mo-xing-yu-xiao-xi-jie-gou.html"><span class="sb-item-num">05</span><span class="sb-item-title">本地模型与消息结构</span></a>
+        <a class="sb-item" href="../agent/06-hui-hua-guan-li-yu-json-shu-chu.html"><span class="sb-item-num">06</span><span class="sb-item-title">会话管理与 JSON 输出</span></a>
+        <a class="sb-item" href="../agent/07-tool-calling-xie-yi-yu-feng-zhuang.html"><span class="sb-item-num">07</span><span class="sb-item-title">Tool Calling：协议与封装</span></a>
+        <a class="sb-item" href="../agent/08-react-mo-shi-yu-zhu-xun-huan.html"><span class="sb-item-num">08</span><span class="sb-item-title">ReAct 模式与主循环</span></a>
+        <a class="sb-item" href="../agent/09-shi-zhan-deep-research-agent.html"><span class="sb-item-num">09</span><span class="sb-item-title">实战：Deep Research Agent</span></a>
+        <a class="sb-item" href="../agent/10-skill-yu-jian-jin-shi-pi-lu.html"><span class="sb-item-num">10</span><span class="sb-item-title">Skill 与渐进式披露</span></a>
+        <a class="sb-item" href="../agent/11-mcp-quan-jing.html"><span class="sb-item-num">11</span><span class="sb-item-title">MCP 全景</span></a>
+        <a class="sb-item" href="../agent/12-duo-agent-yu-xuan-xing-ce-lve.html"><span class="sb-item-num">12</span><span class="sb-item-title">多 Agent 与选型策略</span></a>
+        <a class="sb-item" href="../agent/13-ti-shi-ci-gong-cheng-yu-shang-xia-wen-gong.html"><span class="sb-item-num">13</span><span class="sb-item-title">提示词工程与上下文工程</span></a>
+        <a class="sb-item" href="../agent/14-xun-huan-tu-yu-gu-jia-gong-cheng.html"><span class="sb-item-num">14</span><span class="sb-item-title">循环、图与骨架工程</span></a>
+        <a class="sb-item" href="../agent/15-ji-yi-quan-xian-yu-ping-ce.html"><span class="sb-item-num">15</span><span class="sb-item-title">记忆、权限与评测</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="langchain">
+      <a class="sb-group-title" href="../modules/langchain.html" data-toggle="langchain">
+        <span class="sb-num">03</span>
+        <span class="sb-group-text"><b>LangChain 指南</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langchain/01-ren-shi-langchain.html"><span class="sb-item-num">01</span><span class="sb-item-title">认识 LangChain</span></a>
+        <a class="sb-item" href="../langchain/02-ti-shi-ci-mu-ban-yu-xiao-xi.html"><span class="sb-item-num">02</span><span class="sb-item-title">提示词模板与消息</span></a>
+        <a class="sb-item" href="../langchain/03-lcel-yu-runnable.html"><span class="sb-item-num">03</span><span class="sb-item-title">LCEL 与 Runnable</span></a>
+        <a class="sb-item" href="../langchain/04-liu-shi-yu-bing-fa.html"><span class="sb-item-num">04</span><span class="sb-item-title">流式与并发</span></a>
+        <a class="sb-item" href="../langchain/05-shu-chu-jie-xi-qi.html"><span class="sb-item-num">05</span><span class="sb-item-title">输出解析器</span></a>
+        <a class="sb-item" href="../langchain/06-wen-dang-jia-zai-yu-qie-ge.html"><span class="sb-item-num">06</span><span class="sb-item-title">文档加载与切割</span></a>
+        <a class="sb-item" href="../langchain/07-qian-ru-yu-xiang-liang-ku.html"><span class="sb-item-num">07</span><span class="sb-item-title">嵌入与向量库</span></a>
+        <a class="sb-item" href="../langchain/08-jian-suo-yu-rag.html"><span class="sb-item-num">08</span><span class="sb-item-title">检索与RAG</span></a>
+        <a class="sb-item" href="../langchain/09-dui-hua-ji-yi.html"><span class="sb-item-num">09</span><span class="sb-item-title">对话记忆</span></a>
+        <a class="sb-item" href="../langchain/10-gong-ju-diao-yong.html"><span class="sb-item-num">10</span><span class="sb-item-title">工具调用</span></a>
+        <a class="sb-item" href="../langchain/11-agent.html"><span class="sb-item-num">11</span><span class="sb-item-title">Agent</span></a>
+        <a class="sb-item" href="../langchain/12-hui-diao-yu-tiao-shi-quan-ke-cheng-shou-guan.html"><span class="sb-item-num">12</span><span class="sb-item-title">回调与调试（全课程收官章）</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="langgraph">
+      <a class="sb-group-title" href="../modules/langgraph.html" data-toggle="langgraph">
+        <span class="sb-num">04</span>
+        <span class="sb-group-text"><b>LangGraph 框架指南</b><i>17 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langgraph/01-di-1-zhang-cong-yi-ge-shi-kong-de-jiao.html"><span class="sb-item-num">01</span><span class="sb-item-title">第 1 章 从一个失控的脚本说起</span></a>
+        <a class="sb-item" href="../langgraph/02-di-2-zhang-zui-xiao-ke-yun-xing-tu.html"><span class="sb-item-num">02</span><span class="sb-item-title">第 2 章 最小可运行图</span></a>
+        <a class="sb-item" href="../langgraph/03-di-3-zhang-zhuang-tai-tu-de-shu-ju-xin.html"><span class="sb-item-num">03</span><span class="sb-item-title">第 3 章 状态：图的数据心脏</span></a>
+        <a class="sb-item" href="../langgraph/04-di-4-zhang-rang-liu-cheng-xue-hui-jue-ce.html"><span class="sb-item-num">04</span><span class="sb-item-title">第 4 章 让流程学会决策</span></a>
+        <a class="sb-item" href="../langgraph/05-di-5-zhang-bing-xing-shi-jie-chao-bu-zhi.html"><span class="sb-item-num">05</span><span class="sb-item-title">第 5 章 并行世界：超步执行模型</span></a>
+        <a class="sb-item" href="../langgraph/06-di-6-zhang-command-ba-kong-zhi-quan-jiao-jin.html"><span class="sb-item-num">06</span><span class="sb-item-title">第 6 章 Command：把控制权交进节点</span></a>
+        <a class="sb-item" href="../langgraph/07-di-7-zhang-dong-tai-bing-xing-send-yu-mapreduce.html"><span class="sb-item-num">07</span><span class="sb-item-title">第 7 章 动态并行：Send 与 MapReduce</span></a>
+        <a class="sb-item" href="../langgraph/08-di-8-zhang-gei-tu-zhuang-shang-shou-jiao-gong.html"><span class="sb-item-num">08</span><span class="sb-item-title">第 8 章 给图装上手脚：工具调用</span></a>
+        <a class="sb-item" href="../langgraph/09-di-9-zhang-fu-yong-yu-feng-zhuang-zi-tu.html"><span class="sb-item-num">09</span><span class="sb-item-title">第 9 章 复用与封装：子图</span></a>
+        <a class="sb-item" href="../langgraph/10-di-10-zhang-cong-dan-tu-dao-tuan-dui-duo.html"><span class="sb-item-num">10</span><span class="sb-item-title">第 10 章 从单图到团队：多 Agent 架构</span></a>
+        <a class="sb-item" href="../langgraph/11-di-11-zhang-liu-shi-shu-chu.html"><span class="sb-item-num">11</span><span class="sb-item-title">第 11 章 流式输出</span></a>
+        <a class="sb-item" href="../langgraph/12-di-12-zhang-chi-jiu-hua-checkpointer-yu-xian-cheng.html"><span class="sb-item-num">12</span><span class="sb-item-title">第 12 章 持久化：Checkpointer 与线程</span></a>
+        <a class="sb-item" href="../langgraph/13-di-13-zhang-shi-jian-lv-xing.html"><span class="sb-item-num">13</span><span class="sb-item-title">第 13 章 时间旅行</span></a>
+        <a class="sb-item" href="../langgraph/14-di-14-zhang-zhong-duan-yu-ren-zai-hui-lu.html"><span class="sb-item-num">14</span><span class="sb-item-title">第 14 章 中断与人在回路</span></a>
+        <a class="sb-item" href="../langgraph/15-di-15-zhang-ji-yi-guan-li.html"><span class="sb-item-num">15</span><span class="sb-item-title">第 15 章 记忆管理</span></a>
+        <a class="sb-item" href="../langgraph/16-di-16-zhang-rong-cuo-zhong-shi-chao-shi-yu.html"><span class="sb-item-num">16</span><span class="sb-item-title">第 16 章 容错：重试、超时与兜底</span></a>
+        <a class="sb-item" href="../langgraph/17-di-17-zhang-quan-jing-hui-gu.html"><span class="sb-item-num">17</span><span class="sb-item-title">第 17 章 全景回顾</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="backend">
+      <a class="sb-group-title" href="../modules/backend.html" data-toggle="backend">
+        <span class="sb-num">05</span>
+        <span class="sb-group-text"><b>Python 框架指南</b><i>14 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../backend/01-fastapi-ru-men-yu-asgi.html"><span class="sb-item-num">01</span><span class="sb-item-title">FastAPI 入门与 ASGI</span></a>
+        <a class="sb-item" href="../backend/02-lu-you-yu-qing-qiu-xiang-ying.html"><span class="sb-item-num">02</span><span class="sb-item-title">路由与请求响应</span></a>
+        <a class="sb-item" href="../backend/03-pydantic-shu-ju-jiao-yan-yu-pei-zhi.html"><span class="sb-item-num">03</span><span class="sb-item-title">Pydantic 数据校验与配置</span></a>
+        <a class="sb-item" href="../backend/04-sqlalchemy-yi-bu-yin-qing-yu-hui-hua.html"><span class="sb-item-num">04</span><span class="sb-item-title">SQLAlchemy 异步引擎与会话</span></a>
+        <a class="sb-item" href="../backend/05-orm-jian-mo.html"><span class="sb-item-num">05</span><span class="sb-item-title">ORM 建模</span></a>
+        <a class="sb-item" href="../backend/06-sql-biao-da-shi-yu-shu-ju-cao-zuo.html"><span class="sb-item-num">06</span><span class="sb-item-title">SQL 表达式与数据操作</span></a>
+        <a class="sb-item" href="../backend/07-alembic-shu-ju-qian-yi.html"><span class="sb-item-num">07</span><span class="sb-item-title">Alembic 数据迁移</span></a>
+        <a class="sb-item" href="../backend/08-yi-lai-zhu-ru.html"><span class="sb-item-num">08</span><span class="sb-item-title">依赖注入</span></a>
+        <a class="sb-item" href="../backend/09-tong-yi-yi-chang-chu-li.html"><span class="sb-item-num">09</span><span class="sb-item-title">统一异常处理</span></a>
+        <a class="sb-item" href="../backend/10-zhong-jian-jian.html"><span class="sb-item-num">10</span><span class="sb-item-title">中间件</span></a>
+        <a class="sb-item" href="../backend/11-ren-zheng-yu-jwt.html"><span class="sb-item-num">11</span><span class="sb-item-title">认证与 JWT</span></a>
+        <a class="sb-item" href="../backend/12-pytest-ce-shi.html"><span class="sb-item-num">12</span><span class="sb-item-title">pytest 测试</span></a>
+        <a class="sb-item" href="../backend/13-ri-zhi-loguru.html"><span class="sb-item-num">13</span><span class="sb-item-title">日志 loguru</span></a>
+        <a class="sb-item" href="../backend/14-liu-shi-xiang-ying-sse-yu-websocket.html"><span class="sb-item-num">14</span><span class="sb-item-title">流式响应 SSE 与 WebSocket</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="interview">
+      <a class="sb-group-title" href="../modules/interview.html" data-toggle="interview">
+        <span class="sb-num">06</span>
+        <span class="sb-group-text"><b>面试题库</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../interview/01-llm-yuan-li-pian.html"><span class="sb-item-num">01</span><span class="sb-item-title">LLM 原理篇</span></a>
+        <a class="sb-item" href="../interview/02-rag-yu-jian-suo-pian.html"><span class="sb-item-num">02</span><span class="sb-item-title">RAG 与检索篇</span></a>
+        <a class="sb-item" href="../interview/03-agent-he-xin-pian.html"><span class="sb-item-num">03</span><span class="sb-item-title">Agent 核心篇</span></a>
+        <a class="sb-item" href="../interview/04-langgraph-pian.html"><span class="sb-item-num">04</span><span class="sb-item-title">LangGraph 篇</span></a>
+        <a class="sb-item" href="../interview/05-langchain-pian.html"><span class="sb-item-num">05</span><span class="sb-item-title">LangChain 篇</span></a>
+        <a class="sb-item" href="../interview/06-xi-tong-she-ji-pian.html"><span class="sb-item-num">06</span><span class="sb-item-title">系统设计篇</span></a>
+        <a class="sb-item" href="../interview/07-xiang-mu-shen-wa-pian.html"><span class="sb-item-num">07</span><span class="sb-item-title">项目深挖篇</span></a>
+        <a class="sb-item" href="../interview/08-gu-zhang-pai-cha-pian.html"><span class="sb-item-num">08</span><span class="sb-item-title">故障排查篇</span></a>
+        <a class="sb-item" href="../interview/09-python-ji-chu-pian.html"><span class="sb-item-num">09</span><span class="sb-item-title">Python 基础篇</span></a>
+        <a class="sb-item" href="../interview/10-fastapi-yu-hou-duan-pian.html"><span class="sb-item-num">10</span><span class="sb-item-title">FastAPI 与后端篇</span></a>
+        <a class="sb-item" href="../interview/11-ti-shi-ci-gong-cheng-yu-an-quan-pian.html"><span class="sb-item-num">11</span><span class="sb-item-title">提示词工程与安全篇</span></a>
+        <a class="sb-item" href="../interview/12-mo-xing-xuan-xing-yu-jiang-ben-pian.html"><span class="sb-item-num">12</span><span class="sb-item-title">模型选型与降本篇</span></a>
+      </div>
+    </section>
+    <div class="sb-sep"></div>
+    <a class="sb-home" href="../camp.html">
+      <span class="sb-home-ico">◆</span>
+      <span class="sb-home-text"><b>训练营介绍</b><i>课程总览</i></span>
+    </a>
+  </nav>
+</aside>
+  <main class="main">
+    <header class="topbar">
+      <button class="menu-btn" id="menuBtn" aria-label="目录">☰</button>
+      <div class="crumbs"><a href="../index.html">首页</a><span>/</span><a href="../modules/python.html">Python 与数据实践</a><span>/</span><span class="cur">monorepo 与调试</span></div>
+      <div class="topbar-actions">
+        <button class="icon-btn" id="themeBtn" title="切换深浅色" aria-label="切换深浅色">◐</button>
+      </div>
+    </header>
+    <div class="content">
+      <article class="article">
+
+<header class="page-head">
+  <div class="page-kicker">Python 与数据实践 · 第 24 章</div>
+  <h1 class="page-title">monorepo 与调试</h1>
+  <p class="page-desc">工程化的最后一课，收两个尾。其一，项目做大了会「裂变」——对外一个应用，底下还养着工具库、算法库、若干脚本，仓库该怎么组织才不乱？其二，代码一多难免出岔子，全靠 print 排查既慢又伤士气，得学会让程序停在出问题的那一…</p>
+  <div class="page-meta">
+    <span>约 21 分钟</span><span>8,318 字</span><span>26 个代码示例</span>
+  </div>
+</header>
+<div class="md"><p>工程化的最后一课，收两个尾。其一，项目做大了会「裂变」——对外一个应用，底下还养着工具库、算法库、若干脚本，仓库该怎么组织才不乱？其二，代码一多难免出岔子，全靠 print 排查既慢又伤士气，得学会让程序停在出问题的那一行，当场审问。前半章用 uv 的 workspace 把一群项目装进一个仓库统一供养；后半章拆开断点调试的原理，再把它接进 monorepo 工程。本章配了两个可以直接动手的示例：<code>insight-lab/</code>（monorepo 工程）与 <code>debug-demo/</code>（调试原理演示）。</p>
+<hr />
+<h2 id="1-一个仓库装下一窝项目">1. 一个仓库装下一窝项目</h2>
+<h3 id="11-monorepo-长什么样">1.1 monorepo 长什么样</h3>
+<p>先看现象：一个数据项目做着做着，往往会长出好几样东西——一个对外的应用、一个画图的库、一个算指标的库。默认做法是每样开一个仓库，这叫 multirepo（多仓库）；monorepo（单仓库）反其道而行：<strong>只要这些项目由同一拨人维护、彼此紧密配合，就全部放进同一个代码仓库</strong>。</p>
+<p>本章示例工程 <code>insight-lab</code> 的布局：</p>
+<div class="highlight"><pre><span></span><code>insight-lab/
+├── apps/
+│   └── report-cli/        # 应用：终端周报
+├── packages/
+│   ├── statskit/          # 库：统计计算
+│   └── vizkit/            # 库：终端图表
+├── pyproject.toml         # workspace 根配置
+└── README.md
+</code></pre></div>
+<h3 id="12-和多仓库比一比">1.2 和多仓库比一比</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">对比维度</th>
+<th style="text-align: left;">多仓库（multirepo）</th>
+<th style="text-align: left;">单仓库（monorepo）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">代码复用</td>
+<td style="text-align: left;">先发成 pip 包，别人才用得上</td>
+<td style="text-align: left;">直接引源码，改完立刻生效</td>
+</tr>
+<tr>
+<td style="text-align: left;">跨项目改动</td>
+<td style="text-align: left;">多仓分别提 PR，版本号对齐全靠人肉</td>
+<td style="text-align: left;">一次提交，所有关联改动齐步走</td>
+</tr>
+<tr>
+<td style="text-align: left;">工具与规范</td>
+<td style="text-align: left;">每仓自己配一套</td>
+<td style="text-align: left;">全仓统一，一处配置全局受益</td>
+</tr>
+<tr>
+<td style="text-align: left;">大范围重构</td>
+<td style="text-align: left;">牵扯多仓，风险高回报低</td>
+<td style="text-align: left;">整仓都在工具链眼皮底下，放心动手</td>
+</tr>
+<tr>
+<td style="text-align: left;">持续集成</td>
+<td style="text-align: left;">每仓一条流水线</td>
+<td style="text-align: left;">一条流水线，还能只测受影响的成员</td>
+</tr>
+<tr>
+<td style="text-align: left;">适合谁</td>
+<td style="text-align: left;">团队独立、发版节奏互不相同</td>
+<td style="text-align: left;">紧密协作的应用群、SDK 家族、工具集</td>
+</tr>
+</tbody>
+</table>
+<p>经验之谈：项目之间「血缘」越近，monorepo 越划算；真到了各养各的团队、各排各的发版，再拆仓不迟。</p>
+<h2 id="2-用-uv-workspace-搭骨架">2. 用 uv workspace 搭骨架</h2>
+<blockquote>
+<p>uv workspace 官方文档：https://docs.astral.sh/uv/concepts/projects/workspaces/#using-workspaces
+以下操作都假定 uv 已装好（第 23 章的内容）。</p>
+</blockquote>
+<h3 id="21-根项目先立起来">2.1 根项目先立起来</h3>
+<div class="highlight"><pre><span></span><code>mkdir<span class="w"> </span>insight-lab<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">cd</span><span class="w"> </span>insight-lab
+uv<span class="w"> </span>init
+</code></pre></div>
+<p><code>uv init</code> 生成的是一个普通单项目骨架，接下来在根目录 <code>pyproject.toml</code> 里补一段声明，把它升级成工作区：</p>
+<div class="highlight"><pre><span></span><code><span class="k">[tool.uv.workspace]</span>
+<span class="n">members</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="s2">"packages/*"</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">"apps/*"</span><span class="p">,</span>
+<span class="p">]</span>
+</code></pre></div>
+<p><code>members</code> 就是「户口本」：列在上面的子项目，才算这个工作区的成员。</p>
+<h3 id="22-members-的通配写法">2.2 members 的通配写法</h3>
+<p><code>members</code> 支持写 glob 模式，以后新增子目录不必每次回来登记：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">模式</th>
+<th style="text-align: left;">圈定范围</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>packages/*</code></td>
+<td style="text-align: left;"><code>packages/</code> 下的直接子目录</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>packages/**</code></td>
+<td style="text-align: left;"><code>packages/</code> 下所有层级子目录（含嵌套）</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>libs/*</code></td>
+<td style="text-align: left;"><code>libs/</code> 下的直接子目录</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>apps/*</code></td>
+<td style="text-align: left;"><code>apps/</code> 下的直接子目录</td>
+</tr>
+</tbody>
+</table>
+<p>目录也可以并列多个，各管一摊：</p>
+<div class="highlight"><pre><span></span><code><span class="k">[tool.uv.workspace]</span>
+<span class="n">members</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="s2">"packages/*"</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">"apps/*"</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">"libs/*"</span><span class="p">,</span>
+<span class="p">]</span>
+</code></pre></div>
+<h3 id="23-创建成员包">2.3 创建成员包</h3>
+<div class="highlight"><pre><span></span><code>uv<span class="w"> </span>init<span class="w"> </span>--lib<span class="w"> </span>packages/statskit<span class="w">   </span><span class="c1"># 库：按 src 布局生成，自带构建配置</span>
+uv<span class="w"> </span>init<span class="w"> </span>--lib<span class="w"> </span>packages/vizkit
+uv<span class="w"> </span>init<span class="w"> </span>apps/report-cli<span class="w">           </span><span class="c1"># 应用：只管自己跑，普通初始化即可</span>
+</code></pre></div>
+<p><code>--lib</code> 与不加的区别在第 22 章讲过：库要被别人 import、要能构建发布，得有 <code>src</code> 布局和构建后端这些行头；应用不对外发布，就不需要。</p>
+<h3 id="24-sources把成员连起来">2.4 sources：把成员连起来</h3>
+<p>工作区里的成员也要互相依赖。本工程里，vizkit 要用 statskit 的归一化函数，report-cli 则两个都直接用：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># packages/vizkit/pyproject.toml</span>
+<span class="n">dependencies</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="s2">"rich&gt;=13.7.0"</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">"statskit"</span><span class="p">,</span>
+<span class="p">]</span>
+
+<span class="k">[tool.uv.sources]</span>
+<span class="n">statskit</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">workspace</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="kc">true</span><span class="w"> </span><span class="p">}</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="c1"># apps/report-cli/pyproject.toml</span>
+<span class="n">dependencies</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="s2">"statskit"</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">"vizkit"</span><span class="p">,</span>
+<span class="p">]</span>
+
+<span class="k">[tool.uv.sources]</span>
+<span class="n">statskit</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">workspace</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="kc">true</span><span class="w"> </span><span class="p">}</span>
+<span class="n">vizkit</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">workspace</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="kc">true</span><span class="w"> </span><span class="p">}</span>
+</code></pre></div>
+<p><strong><code>[tool.uv.sources]</code> 是 workspace 机制的心脏</strong>。光在 <code>dependencies</code> 里写名字，uv 默认去 PyPI 找包；而 sources 里那行 <code>workspace = true</code> 等于告诉 uv：这个名字<strong>别去下载，去工作区里找同名成员，直接用它的源码</strong>。于是你改 statskit 的代码，vizkit 立刻用上新版，中间不存在「重新安装」这个动作。</p>
+<p>两个细节：</p>
+<ol>
+<li>某个包名在 PyPI 和工作区里同时存在时，<strong>工作区优先</strong>；</li>
+<li>确实想用 PyPI 上的同名包，显式写 <code>statskit = { workspace = false }</code> 把链接关掉。</li>
+</ol>
+<h3 id="25-一条命令装齐">2.5 一条命令装齐</h3>
+<div class="highlight"><pre><span></span><code>uv<span class="w"> </span>sync<span class="w"> </span>--all-packages
+</code></pre></div>
+<p>这条命令替你干了四件事：</p>
+<ol>
+<li>把所有成员的 <code>pyproject.toml</code> 读齐；</li>
+<li>解析整棵依赖树——成员之间的依赖也算在内；</li>
+<li>在<strong>根目录</strong>生成唯一的 <code>uv.lock</code>；</li>
+<li>在<strong>根目录</strong>创建唯一的 <code>.venv</code>，所有依赖装进这一个环境。</li>
+</ol>
+<p>和第 17 章 venv 的「一个项目一个环境」对照：workspace 是整仓一个环境，成员包以可编辑方式装进去，import 兄弟包像 import 第三方库一样自然（第 15 章讲的 import 搜索路径在背后生效）。顺带的规矩：<code>uv.lock</code> 要提交进 git，<code>.venv</code> 不要。</p>
+<h3 id="26-跑起来">2.6 跑起来</h3>
+<div class="highlight"><pre><span></span><code>uv<span class="w"> </span>run<span class="w"> </span>--package<span class="w"> </span>report-cli<span class="w"> </span>python<span class="w"> </span>apps/report-cli/main.py
+</code></pre></div>
+<p><code>--package</code> 指定以哪个成员的身份运行。跑通后会打印统计摘要和两张终端柱状图：</p>
+<div class="highlight"><pre><span></span><code>本周 7 天，日均 158.1 元
+最高 245.5，最低 96.5
+
+                每日销售额
+┏━━━━━━┳━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ 条目 ┃  数值 ┃ 分布                     ┃
+┡━━━━━━╇━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│ 周一 │ 128.0 │ █████████████            │
+│ 周二 │  96.5 │ █████████                │
+│ ……   │    …… │ ……                       │
+└──────┴───────┴──────────────────────────┘
+</code></pre></div>
+<h2 id="3-workspace-日常速查">3. workspace 日常速查</h2>
+<h3 id="31-makefile-收纳长命令">3.1 Makefile 收纳长命令</h3>
+<p><code>uv run --package report-cli python apps/report-cli/main.py</code> 这种命令敲两遍就腻了，交给 Makefile：</p>
+<div class="highlight"><pre><span></span><code><span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">report</span> <span class="n">build</span>
+
+<span class="nf">report</span><span class="o">:</span>
+<span class="w">    </span>uv<span class="w"> </span>run<span class="w"> </span>--package<span class="w"> </span>report-cli<span class="w"> </span>python<span class="w"> </span>apps/report-cli/main.py
+
+<span class="nf">build</span><span class="o">:</span>
+<span class="w">    </span>uv<span class="w"> </span>build<span class="w"> </span>--package<span class="w"> </span>statskit
+<span class="w">    </span>uv<span class="w"> </span>build<span class="w"> </span>--package<span class="w"> </span>vizkit
+</code></pre></div>
+<p>以后 <code>make report</code> 一句话的事。</p>
+<h3 id="32-加第三方依赖">3.2 加第三方依赖</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># 给某个成员包加（写进它自己的 pyproject.toml）</span>
+uv<span class="w"> </span>add<span class="w"> </span>--package<span class="w"> </span>vizkit<span class="w"> </span>&lt;包名&gt;
+
+<span class="c1"># 给根项目加开发依赖</span>
+uv<span class="w"> </span>add<span class="w"> </span>--dev<span class="w"> </span>debugpy
+</code></pre></div>
+<h3 id="33-构建">3.3 构建</h3>
+<div class="highlight"><pre><span></span><code>uv<span class="w"> </span>build<span class="w">                     </span><span class="c1"># 全部成员一起构建</span>
+uv<span class="w"> </span>build<span class="w"> </span>--package<span class="w"> </span>statskit<span class="w">  </span><span class="c1"># 只构建某一个</span>
+</code></pre></div>
+<p>产物落在各成员的 <code>dist/</code> 目录，拿去发布走的就是第 22 章的流程。</p>
+<h3 id="34-看依赖网uv-tree">3.4 看依赖网：uv tree</h3>
+<div class="highlight"><pre><span></span><code>uv<span class="w"> </span>tree<span class="w"> </span>--package<span class="w"> </span>report-cli<span class="w">   </span><span class="c1"># 看某个成员的依赖树</span>
+uv<span class="w"> </span>tree<span class="w">                        </span><span class="c1"># 看全部成员的</span>
+</code></pre></div>
+<p>输出示例：</p>
+<div class="highlight"><pre><span></span><code>report-cli v0.1.0
+├── statskit v0.1.0 (workspace)
+└── vizkit v0.1.0 (workspace)
+    ├── rich v13.9.4
+    └── statskit v0.1.0 (workspace)
+</code></pre></div>
+<p>自家成员带 <code>(workspace)</code> 标记，内部依赖与外部依赖一眼分明。</p>
+<h2 id="4-引用成员包的三种姿势">4. 引用成员包的三种姿势</h2>
+<p><code>[tool.uv.sources]</code> 里除了 <code>workspace</code>，还支持另外两种来源。</p>
+<h3 id="41-源码链接workspace-模式">4.1 源码链接（workspace 模式）</h3>
+<div class="highlight"><pre><span></span><code><span class="k">[tool.uv.sources]</span>
+<span class="n">statskit</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">workspace</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="kc">true</span><span class="w"> </span><span class="p">}</span>
+</code></pre></div>
+<p>日常开发的首选：本地源码直连，改完即生效，不需要 <code>pip install -e .</code>，也不需要重新 add。</p>
+<h3 id="42-路径引用">4.2 路径引用</h3>
+<div class="highlight"><pre><span></span><code><span class="k">[tool.uv.sources]</span>
+<span class="n">statskit</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">path</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">"../statskit"</span><span class="w"> </span><span class="p">}</span>
+</code></pre></div>
+<p>引用<strong>工作区之外</strong>的本地包——比如某个库还没搬进这个仓库，先临时挂上用用。相对路径、绝对路径都可以。</p>
+<h3 id="43-git-引用">4.3 Git 引用</h3>
+<div class="highlight"><pre><span></span><code><span class="k">[tool.uv.sources]</span>
+<span class="n">statskit</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">git</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">"https://github.com/your-org/statskit.git"</span><span class="p">,</span><span class="w"> </span><span class="n">rev</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">"v0.1.0"</span><span class="w"> </span><span class="p">}</span>
+</code></pre></div>
+<p>引用某个 Git 仓库的指定版本（<code>rev</code> 可以是 tag、分支或 commit），适合依赖「还没发到 PyPI、但远端仓库已经有了」的包。</p>
+<hr />
+<p>到这里，「组织」的问题就绪：仓库有了、环境统一了、成员互相认识了。可工程一跑起来难免出岔子——数据不对、图表怪异、某行代码的结果离谱。print 调试法在小脚本里凑合，在多包工程里会把人逼疯。下半场换主题：断点调试。</p>
+<h2 id="5-断点凭什么能让程序说停就停">5. 断点凭什么能让程序说停就停</h2>
+<h3 id="51-解释器留的后门syssettrace">5.1 解释器留的后门：sys.settrace</h3>
+<p>先认识被调试的目标，<code>debug-demo/price.py</code>，一个折后价计算：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># price.py：一笔订单的折后价计算</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">final_price</span><span class="p">(</span><span class="n">original</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">discount</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""discount 为折扣百分比，例如 75 表示七五折。"""</span>
+    <span class="n">rate</span> <span class="o">=</span> <span class="n">discount</span> <span class="o">/</span> <span class="mi">100</span>
+    <span class="n">saved</span> <span class="o">=</span> <span class="n">original</span> <span class="o">*</span> <span class="n">rate</span>
+    <span class="k">return</span> <span class="n">original</span> <span class="o">-</span> <span class="n">saved</span>
+
+
+<span class="n">order</span> <span class="o">=</span> <span class="n">final_price</span><span class="p">(</span><span class="mf">280.0</span><span class="p">,</span> <span class="mi">75</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"应付金额：</span><span class="si">{</span><span class="n">order</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</code></pre></div>
+<p>再看 <code>debug-demo/mini_tracer.py</code>——一个二十来行的「最小调试器」：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># mini_tracer.py：一个手写的「最小调试器」</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+
+<span class="c1"># 定位同目录下的目标脚本并读入源码</span>
+<span class="n">here</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span>
+<span class="n">target</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">here</span><span class="p">,</span> <span class="s2">"price.py"</span><span class="p">)</span>
+<span class="n">source</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">tracer</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">event</span><span class="p">,</span> <span class="n">arg</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""每发生一次调试事件就触发：event 说什么事发生了，frame 是当时的栈帧。"""</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"事件 </span><span class="si">{</span><span class="n">event</span><span class="si">}</span><span class="s2">｜</span><span class="si">{</span><span class="n">frame</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span><span class="si">}</span><span class="s2">() 第 </span><span class="si">{</span><span class="n">frame</span><span class="o">.</span><span class="n">f_lineno</span><span class="si">}</span><span class="s2"> 行"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">tracer</span>
+
+
+<span class="n">sys</span><span class="o">.</span><span class="n">settrace</span><span class="p">(</span><span class="n">tracer</span><span class="p">)</span>
+<span class="n">exec</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="p">{</span><span class="s2">"__name__"</span><span class="p">:</span> <span class="s2">"__main__"</span><span class="p">})</span>
+</code></pre></div>
+<p>运行 <code>python mini_tracer.py</code>，解释器的执行轨迹被一行行「直播」出来：</p>
+<div class="highlight"><pre><span></span><code>事件 call｜&lt;module&gt;() 第 1 行
+事件 line｜&lt;module&gt;() 第 1 行
+事件 line｜&lt;module&gt;() 第 4 行
+事件 line｜&lt;module&gt;() 第 11 行
+事件 call｜final_price() 第 4 行
+事件 line｜final_price() 第 6 行
+事件 line｜final_price() 第 7 行
+事件 line｜final_price() 第 8 行
+事件 return｜final_price() 第 8 行
+事件 line｜&lt;module&gt;() 第 12 行
+应付金额：70.00
+事件 return｜&lt;module&gt;() 第 12 行
+</code></pre></div>
+<p>解读一下：</p>
+<ul>
+<li><code>sys.settrace(tracer)</code> 注册追踪函数后，解释器每往前执行一步都会回调它，把「正在发生什么」实时递出来；</li>
+<li><code>event</code> 是事件类型：<code>call</code>（进入某个函数）、<code>line</code>（即将执行某行）、<code>return</code>（函数返回）……</li>
+<li><code>frame</code> 是当时的栈帧：第几行（<code>f_lineno</code>）、在哪个函数（<code>f_code.co_name</code>）、局部变量有哪些，全在里面；</li>
+<li>tracer 把自己 return 回去，意思是「这个帧后续的行事件也继续通知我」。</li>
+</ul>
+<p>调试器的全部秘密就这层窗户纸：<strong>断点</strong>，无非是「事件到了指定文件的指定行，就暂停」；<strong>单步</strong>，无非是「每走一行都停，等你发令」；<strong>变量面板</strong>，无非是暂停那一刻去 frame 里把局部变量读出来。debugpy 这类工业级工具，是在同一套机制之上把体验和工程化做到了极致。</p>
+<h3 id="52-一场调试里的四个角色">5.2 一场调试里的四个角色</h3>
+<p>原理清楚后，再看你按下 F5 那一刻，台上一共有谁：</p>
+<div class="highlight"><pre><span></span><code>┌──────────────┐    DAP（JSON 消息）   ┌──────────────┐   sys.settrace   ┌──────────────┐
+│  编辑器调试界面 │ ◄──────────────────► │  debugpy 适配器 │ ◄──────────────► │    目标程序    │
+│ 断点·单步·变量  │                      │   （翻译官）    │    每步执行回调    │  （Python 进程）│
+└──────────────┘                      └──────────────┘                  └──────────────┘
+</code></pre></div>
+<ul>
+<li><strong>编辑器调试界面</strong>：红点断点、变量面板、单步按钮——你直接面对的那一层；</li>
+<li><strong>debugpy（调试适配器）</strong>：两头都懂的角色，对编辑器说 DAP，对 Python 用 settrace；</li>
+<li><strong>DAP（Debug Adapter Protocol）</strong>：编辑器与适配器之间的 JSON 消息协议。有了这层通用语言，VS Code 不必懂 Python，debugpy 也不必懂 VS Code——换一个编辑器，适配器照样能对接；</li>
+<li><strong>目标程序</strong>：真正执行代码的 Python 进程。</li>
+</ul>
+<h2 id="6-单文件调试launch-模式">6. 单文件调试：launch 模式</h2>
+<p>调试单个文件最省事的方式是 launch（发射）模式：拉起程序、装上调试器、建立连接，全由编辑器一口气完成。以 <code>debug-demo</code> 为例，在 VS Code 里建 <code>.vscode/launch.json</code>：</p>
+<div class="highlight"><pre><span></span><code>{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "调试当前打开的文件",       // 配置名，调试面板下拉框里显示
+      "type": "debugpy",                // 用哪个调试适配器：Python 自然是 debugpy
+      "request": "launch",              // 启动模式：由编辑器负责拉起程序
+      "program": "${file}",             // 调试谁：当前编辑器里打开的文件
+      "console": "integratedTerminal"   // 程序输出走 VS Code 内置终端
+    }
+  ]
+}
+</code></pre></div>
+<p>用法三步：在行号左边点一下，打下红色断点；按 F5 选中这个配置；程序跑到断点行自动停住。停住之后可以单步（F10 逐行、F11 进入函数）、看变量面板、看调用栈。<code>debug-demo/</code> 里已经放好这份配置，可以直接体验。</p>
+<h2 id="7-工程调试attach-模式">7. 工程调试：attach 模式</h2>
+<p>launch 模式有个软肋：<strong>程序得由编辑器拉起</strong>。而 monorepo 里的应用必须靠 <code>uv run</code> 启动——依赖装在 workspace 的共享环境里，编辑器直接 launch 找不到那套环境。解法换个思路：程序照旧由 uv 启动，只是让它「挂起等连接」，编辑器再主动贴上去。这就是 attach（附加）模式。</p>
+<h3 id="71-第一步装上调试器">7.1 第一步：装上调试器</h3>
+<div class="highlight"><pre><span></span><code>uv<span class="w"> </span>add<span class="w"> </span>--dev<span class="w"> </span>debugpy
+</code></pre></div>
+<p>装进根项目的开发依赖组（<code>[dependency-groups]</code>）——整个工作区共享一个 <code>.venv</code>，装一次处处可用。</p>
+<h3 id="72-第二步让应用挂起待命">7.2 第二步：让应用「挂起待命」</h3>
+<p>在 <code>insight-lab/Makefile</code> 里加一个 <code>debug</code> 目标（记得把它补进 <code>.PHONY</code>）：</p>
+<div class="highlight"><pre><span></span><code><span class="nf">debug</span><span class="o">:</span>
+<span class="w">    </span>uv<span class="w"> </span>run<span class="w"> </span>--package<span class="w"> </span>report-cli<span class="w"> </span>python<span class="w"> </span>-m<span class="w"> </span>debugpy<span class="w"> </span>--listen<span class="w"> </span><span class="m">5678</span><span class="w"> </span>--wait-for-client<span class="w"> </span>apps/report-cli/main.py
+</code></pre></div>
+<p>两个参数是关键：</p>
+<ul>
+<li><code>--listen 5678</code>：在本机 5678 端口开一个调试服务，等人来连；</li>
+<li><code>--wait-for-client</code>：客户端没连上之前，一行业务代码都不执行——保证断点从第一行就生效。</li>
+</ul>
+<h3 id="73-第三步编辑器侧的附加配置">7.3 第三步：编辑器侧的附加配置</h3>
+<p><code>insight-lab/.vscode/launch.json</code>：</p>
+<div class="highlight"><pre><span></span><code>{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "附加到 make debug",
+      "type": "debugpy",
+      "request": "attach",              // 附加模式：连到一个已经在跑的进程
+      "connect": {
+        "host": "localhost",
+        "port": 5678                    // 与 --listen 的端口保持一致
+      }
+    }
+  ]
+}
+</code></pre></div>
+<h3 id="74-两步启动">7.4 两步启动</h3>
+<ol>
+<li>终端里 <code>make debug</code>：应用启动但原地挂起，等待连接；</li>
+<li>VS Code 里按 F5 选「附加到 make debug」：连上之后程序开跑，命中断点即停。</li>
+</ol>
+<p>连不上先查两处：launch.json 里的端口和 <code>--listen</code> 是否一致；终端里程序是否真的停在 debugpy 的等待提示上。</p>
+<p>attach 模式的妙处在于：不管程序怎么起的——uv、容器、还是远程服务器——只要它能开调试端口，编辑器就能贴上去。工程越大，这招越值钱。</p>
+<h2 id="8-作业">8. 作业</h2>
+<h3 id="习题一复刻一个自己的-monorepo">习题一：复刻一个自己的 monorepo</h3>
+<p>照本章流程从零搭一遍（别直接抄 <code>insight-lab</code>，换个业务场景，比如「待办应用 + 日程库 + 提醒库」），要求：</p>
+<ol>
+<li>根配置的 <code>members</code> 用上 glob 通配；</li>
+<li>至少两个库包 + 一个应用，且库之间存在依赖（A 依赖 B）；</li>
+<li><code>uv sync --all-packages</code> 一键装齐，<code>uv run --package</code> 跑通，<code>uv tree</code> 能看到 <code>(workspace)</code> 标记；</li>
+<li>把两个库包 <code>uv build</code> 构建出来，发布到阿里云制品仓库（第 22 章私有发布的做法）。</li>
+</ol>
+<h3 id="习题二把断点调试接进-monorepo">习题二：把断点调试接进 monorepo</h3>
+<p>在习题一的工程（或本章 <code>insight-lab</code>）上完成：</p>
+<ol>
+<li>先跑一遍 <code>debug-demo/mini_tracer.py</code>，把 call / line / return 的事件流亲眼看过；</li>
+<li>给应用加上 debugpy 监听目标，用 Makefile 收纳；</li>
+<li>编辑器 attach 上去，在<strong>库包内部</strong>的函数里打断点，验证两件事：跨包的断点一样能停；暂停时变量面板能看到库包里的局部变量。</li>
+</ol>
+<hr />
+<p><strong>下一章</strong>：<a href="../python/25-jupyter-jiao-hu-huan-jing.html">25 · Jupyter 交互环境</a>——至此，从写代码到建工程、到打包发布、再到排障调试，「工程交付」这条线完整收官。接下来换挡进入数据实践：从交互式的 Jupyter 笔记本开始，看看数据探索为什么离不开它。</p></div>
+
+      </article>
+<nav class="pager"><a class="pg-card pg-prev" href="../python/23-gong-cheng-hua-gong-ju-lian.html"><span class="pg-label">← 上一篇</span><span class="pg-title">工程化工具链</span><span class="pg-mod">Python 与数据实践</span></a><a class="pg-card pg-next" href="../python/25-jupyter-jiao-hu-huan-jing.html"><span class="pg-label">下一篇 →</span><span class="pg-title">Jupyter 交互环境</span><span class="pg-mod">Python 与数据实践</span></a></nav>
+    </div>
+    <footer class="foot">
+      <span>AI Agent 工程师转型训练营配套文档</span>
+    </footer>
+  </main>
+<nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#1-一个仓库装下一窝项目">1. 一个仓库装下一窝项目</a><a class="toc-link toc-h3" href="#11-monorepo-长什么样">1.1 monorepo 长什么样</a><a class="toc-link toc-h3" href="#12-和多仓库比一比">1.2 和多仓库比一比</a><a class="toc-link toc-h2" href="#2-用-uv-workspace-搭骨架">2. 用 uv workspace 搭骨架</a><a class="toc-link toc-h3" href="#21-根项目先立起来">2.1 根项目先立起来</a><a class="toc-link toc-h3" href="#22-members-的通配写法">2.2 members 的通配写法</a><a class="toc-link toc-h3" href="#23-创建成员包">2.3 创建成员包</a><a class="toc-link toc-h3" href="#24-sources把成员连起来">2.4 sources：把成员连起来</a><a class="toc-link toc-h3" href="#25-一条命令装齐">2.5 一条命令装齐</a><a class="toc-link toc-h3" href="#26-跑起来">2.6 跑起来</a><a class="toc-link toc-h2" href="#3-workspace-日常速查">3. workspace 日常速查</a><a class="toc-link toc-h3" href="#31-makefile-收纳长命令">3.1 Makefile 收纳长命令</a><a class="toc-link toc-h3" href="#32-加第三方依赖">3.2 加第三方依赖</a><a class="toc-link toc-h3" href="#33-构建">3.3 构建</a><a class="toc-link toc-h3" href="#34-看依赖网uv-tree">3.4 看依赖网：uv tree</a><a class="toc-link toc-h2" href="#4-引用成员包的三种姿势">4. 引用成员包的三种姿势</a><a class="toc-link toc-h3" href="#41-源码链接workspace-模式">4.1 源码链接（workspace 模式）</a><a class="toc-link toc-h3" href="#42-路径引用">4.2 路径引用</a><a class="toc-link toc-h3" href="#43-git-引用">4.3 Git 引用</a><a class="toc-link toc-h2" href="#5-断点凭什么能让程序说停就停">5. 断点凭什么能让程序说停就停</a><a class="toc-link toc-h3" href="#51-解释器留的后门syssettrace">5.1 解释器留的后门：sys.settrace</a><a class="toc-link toc-h3" href="#52-一场调试里的四个角色">5.2 一场调试里的四个角色</a><a class="toc-link toc-h2" href="#6-单文件调试launch-模式">6. 单文件调试：launch 模式</a><a class="toc-link toc-h2" href="#7-工程调试attach-模式">7. 工程调试：attach 模式</a><a class="toc-link toc-h3" href="#71-第一步装上调试器">7.1 第一步：装上调试器</a><a class="toc-link toc-h3" href="#72-第二步让应用挂起待命">7.2 第二步：让应用「挂起待命」</a><a class="toc-link toc-h3" href="#73-第三步编辑器侧的附加配置">7.3 第三步：编辑器侧的附加配置</a><a class="toc-link toc-h3" href="#74-两步启动">7.4 两步启动</a><a class="toc-link toc-h2" href="#8-作业">8. 作业</a><a class="toc-link toc-h3" href="#习题一复刻一个自己的-monorepo">习题一：复刻一个自己的 monorepo</a><a class="toc-link toc-h3" href="#习题二把断点调试接进-monorepo">习题二：把断点调试接进 monorepo</a></nav>
+</div>
+<div class="sb-mask" id="sbMask"></div>
+<script src="../assets/app.js"></script>
+</body>
+</html>

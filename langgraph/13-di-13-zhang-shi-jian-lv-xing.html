@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>13 · 第 13 章 时间旅行 · InfiSpace 课程文档</title>
+<meta name="description" content="本章目标：在第 12 章的检查点机制之上，掌握回放（replay）与分叉（fork）两种时间旅行形态。前者&quot;重看历史&quot;，后者&quot;改写历史&quot;——它们是调试复杂工作流和做 A/B 对比实验的核心武器">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%232DD4D4' text-anchor='middle'%3E%E2%88%9E%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+<div class="progress" id="progress"></div>
+
+<div class="layout">
+<aside class="sidebar" id="sidebar">
+  <div class="sb-head">
+    <a class="brand" href="../index.html">
+      <img class="brand-mark" src="../assets/infispace-logo-1.png" alt="InfiSpace">
+    </a>
+    <button class="sb-close" id="sbClose" aria-label="关闭目录">✕</button>
+  </div>
+  <div class="sb-search"><input type="search" id="searchInput" placeholder="搜索 123 篇文档… ( / )" autocomplete="off">
+    <div class="sb-results" id="searchResults"></div></div>
+  <nav class="sb-nav">
+    <section class="sb-group">
+      <a class="sb-group-title" href="../index.html">
+        <span class="sb-num">00</span>
+        <span class="sb-group-text"><b>学习导航</b><i>课程首页</i></span>
+      </a>
+    </section>
+    <section class="sb-group" data-mod="python">
+      <a class="sb-group-title" href="../modules/python.html" data-toggle="python">
+        <span class="sb-num">01</span>
+        <span class="sb-group-text"><b>Python 与数据实践</b><i>31 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../python/01-huan-jing-da-jian-yu-ban-ben-guan-li.html"><span class="sb-item-num">01</span><span class="sb-item-title">环境搭建与版本管理</span></a>
+        <a class="sb-item" href="../python/02-bian-liang-biao-da-shi-yu-liu-cheng-kong-zhi.html"><span class="sb-item-num">02</span><span class="sb-item-title">变量、表达式与流程控制</span></a>
+        <a class="sb-item" href="../python/03-xu-lie-zi-dian-yu-ji-he.html"><span class="sb-item-num">03</span><span class="sb-item-title">序列、字典与集合</span></a>
+        <a class="sb-item" href="../python/04-han-shu-she-ji-yu-lambda.html"><span class="sb-item-num">04</span><span class="sb-item-title">函数设计与 lambda</span></a>
+        <a class="sb-item" href="../python/05-zuo-yong-yu-gui-ze-yu-bi-bao.html"><span class="sb-item-num">05</span><span class="sb-item-title">作用域规则与闭包</span></a>
+        <a class="sb-item" href="../python/06-lei-de-ding-yi-yu-shi-li-hua.html"><span class="sb-item-num">06</span><span class="sb-item-title">类的定义与实例化</span></a>
+        <a class="sb-item" href="../python/07-lei-xing-pan-ding-yu-chou-xiang-ji-lei.html"><span class="sb-item-num">07</span><span class="sb-item-title">类型判定与抽象基类</span></a>
+        <a class="sb-item" href="../python/08-mo-shu-fang-fa-quan-jing.html"><span class="sb-item-num">08</span><span class="sb-item-title">魔术方法全景</span></a>
+        <a class="sb-item" href="../python/09-miao-shu-fu-yu-yuan-lei.html"><span class="sb-item-num">09</span><span class="sb-item-title">描述符与元类</span></a>
+        <a class="sb-item" href="../python/10-zhuang-shi-qi.html"><span class="sb-item-num">10</span><span class="sb-item-title">装饰器</span></a>
+        <a class="sb-item" href="../python/11-die-dai-xie-yi-yu-sheng-cheng-qi.html"><span class="sb-item-num">11</span><span class="sb-item-title">迭代协议与生成器</span></a>
+        <a class="sb-item" href="../python/12-with-yu-shang-xia-wen-xie-yi.html"><span class="sb-item-num">12</span><span class="sb-item-title">with 与上下文协议</span></a>
+        <a class="sb-item" href="../python/13-yi-chang-ti-xi-yu-chu-li.html"><span class="sb-item-num">13</span><span class="sb-item-title">异常体系与处理</span></a>
+        <a class="sb-item" href="../python/14-lei-xing-biao-zhu.html"><span class="sb-item-num">14</span><span class="sb-item-title">类型标注</span></a>
+        <a class="sb-item" href="../python/15-mo-kuai-yu-bao-de-zu-zhi.html"><span class="sb-item-num">15</span><span class="sb-item-title">模块与包的组织</span></a>
+        <a class="sb-item" href="../python/16-biao-zhun-ku-xun-li.html"><span class="sb-item-num">16</span><span class="sb-item-title">标准库巡礼</span></a>
+        <a class="sb-item" href="../python/17-yi-lai-guan-li-yu-di-san-fang-ku.html"><span class="sb-item-num">17</span><span class="sb-item-title">依赖管理与第三方库</span></a>
+        <a class="sb-item" href="../python/18-xian-cheng-yu-jin-cheng.html"><span class="sb-item-num">18</span><span class="sb-item-title">线程与进程</span></a>
+        <a class="sb-item" href="../python/19-shi-jian-xun-huan.html"><span class="sb-item-num">19</span><span class="sb-item-title">事件循环</span></a>
+        <a class="sb-item" href="../python/20-future-yu-xie-cheng.html"><span class="sb-item-num">20</span><span class="sb-item-title">Future 与协程</span></a>
+        <a class="sb-item" href="../python/21-asyncio-shi-zhan.html"><span class="sb-item-num">21</span><span class="sb-item-title">asyncio 实战</span></a>
+        <a class="sb-item" href="../python/22-gou-jian-yu-fa-bu.html"><span class="sb-item-num">22</span><span class="sb-item-title">构建与发布</span></a>
+        <a class="sb-item" href="../python/23-gong-cheng-hua-gong-ju-lian.html"><span class="sb-item-num">23</span><span class="sb-item-title">工程化工具链</span></a>
+        <a class="sb-item" href="../python/24-monorepo-yu-tiao-shi.html"><span class="sb-item-num">24</span><span class="sb-item-title">monorepo 与调试</span></a>
+        <a class="sb-item" href="../python/25-jupyter-jiao-hu-huan-jing.html"><span class="sb-item-num">25</span><span class="sb-item-title">Jupyter 交互环境</span></a>
+        <a class="sb-item" href="../python/26-numpy-shu-zu-yu-xiang-liang-hua.html"><span class="sb-item-num">26</span><span class="sb-item-title">NumPy 数组与向量化</span></a>
+        <a class="sb-item" href="../python/27-pandas-shu-ju-jie-gou.html"><span class="sb-item-num">27</span><span class="sb-item-title">Pandas 数据结构</span></a>
+        <a class="sb-item" href="../python/28-pandas-shu-ju-qing-xi.html"><span class="sb-item-num">28</span><span class="sb-item-title">Pandas 数据清洗</span></a>
+        <a class="sb-item" href="../python/29-matplotlib-hui-tu-ti-xi.html"><span class="sb-item-num">29</span><span class="sb-item-title">Matplotlib 绘图体系</span></a>
+        <a class="sb-item" href="../python/30-matplotlib-dong-hua-yu-jiao-hu.html"><span class="sb-item-num">30</span><span class="sb-item-title">Matplotlib 动画与交互</span></a>
+        <a class="sb-item" href="../python/31-seaborn-tong-ji-ke-shi-hua.html"><span class="sb-item-num">31</span><span class="sb-item-title">Seaborn 统计可视化</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="agent">
+      <a class="sb-group-title" href="../modules/agent.html" data-toggle="agent">
+        <span class="sb-num">02</span>
+        <span class="sb-group-text"><b>Agent 核心</b><i>15 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../agent/01-token-yu-ci-qian-ru.html"><span class="sb-item-num">01</span><span class="sb-item-title">Token 与词嵌入</span></a>
+        <a class="sb-item" href="../agent/02-qian-xiang-chuan-bo-yu-fan-xiang-chuan-bo.html"><span class="sb-item-num">02</span><span class="sb-item-title">前向传播与反向传播</span></a>
+        <a class="sb-item" href="../agent/03-zhu-yi-li-ji-zhi-yu-transformer-jia-gou.html"><span class="sb-item-num">03</span><span class="sb-item-title">注意力机制与 Transformer 架构</span></a>
+        <a class="sb-item" href="../agent/04-yu-xun-lian-rlhf-yu-cai-yang-kv-cache.html"><span class="sb-item-num">04</span><span class="sb-item-title">预训练、RLHF 与采样（KV Cache）</span></a>
+        <a class="sb-item" href="../agent/05-ben-di-mo-xing-yu-xiao-xi-jie-gou.html"><span class="sb-item-num">05</span><span class="sb-item-title">本地模型与消息结构</span></a>
+        <a class="sb-item" href="../agent/06-hui-hua-guan-li-yu-json-shu-chu.html"><span class="sb-item-num">06</span><span class="sb-item-title">会话管理与 JSON 输出</span></a>
+        <a class="sb-item" href="../agent/07-tool-calling-xie-yi-yu-feng-zhuang.html"><span class="sb-item-num">07</span><span class="sb-item-title">Tool Calling：协议与封装</span></a>
+        <a class="sb-item" href="../agent/08-react-mo-shi-yu-zhu-xun-huan.html"><span class="sb-item-num">08</span><span class="sb-item-title">ReAct 模式与主循环</span></a>
+        <a class="sb-item" href="../agent/09-shi-zhan-deep-research-agent.html"><span class="sb-item-num">09</span><span class="sb-item-title">实战：Deep Research Agent</span></a>
+        <a class="sb-item" href="../agent/10-skill-yu-jian-jin-shi-pi-lu.html"><span class="sb-item-num">10</span><span class="sb-item-title">Skill 与渐进式披露</span></a>
+        <a class="sb-item" href="../agent/11-mcp-quan-jing.html"><span class="sb-item-num">11</span><span class="sb-item-title">MCP 全景</span></a>
+        <a class="sb-item" href="../agent/12-duo-agent-yu-xuan-xing-ce-lve.html"><span class="sb-item-num">12</span><span class="sb-item-title">多 Agent 与选型策略</span></a>
+        <a class="sb-item" href="../agent/13-ti-shi-ci-gong-cheng-yu-shang-xia-wen-gong.html"><span class="sb-item-num">13</span><span class="sb-item-title">提示词工程与上下文工程</span></a>
+        <a class="sb-item" href="../agent/14-xun-huan-tu-yu-gu-jia-gong-cheng.html"><span class="sb-item-num">14</span><span class="sb-item-title">循环、图与骨架工程</span></a>
+        <a class="sb-item" href="../agent/15-ji-yi-quan-xian-yu-ping-ce.html"><span class="sb-item-num">15</span><span class="sb-item-title">记忆、权限与评测</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="langchain">
+      <a class="sb-group-title" href="../modules/langchain.html" data-toggle="langchain">
+        <span class="sb-num">03</span>
+        <span class="sb-group-text"><b>LangChain 指南</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langchain/01-ren-shi-langchain.html"><span class="sb-item-num">01</span><span class="sb-item-title">认识 LangChain</span></a>
+        <a class="sb-item" href="../langchain/02-ti-shi-ci-mu-ban-yu-xiao-xi.html"><span class="sb-item-num">02</span><span class="sb-item-title">提示词模板与消息</span></a>
+        <a class="sb-item" href="../langchain/03-lcel-yu-runnable.html"><span class="sb-item-num">03</span><span class="sb-item-title">LCEL 与 Runnable</span></a>
+        <a class="sb-item" href="../langchain/04-liu-shi-yu-bing-fa.html"><span class="sb-item-num">04</span><span class="sb-item-title">流式与并发</span></a>
+        <a class="sb-item" href="../langchain/05-shu-chu-jie-xi-qi.html"><span class="sb-item-num">05</span><span class="sb-item-title">输出解析器</span></a>
+        <a class="sb-item" href="../langchain/06-wen-dang-jia-zai-yu-qie-ge.html"><span class="sb-item-num">06</span><span class="sb-item-title">文档加载与切割</span></a>
+        <a class="sb-item" href="../langchain/07-qian-ru-yu-xiang-liang-ku.html"><span class="sb-item-num">07</span><span class="sb-item-title">嵌入与向量库</span></a>
+        <a class="sb-item" href="../langchain/08-jian-suo-yu-rag.html"><span class="sb-item-num">08</span><span class="sb-item-title">检索与RAG</span></a>
+        <a class="sb-item" href="../langchain/09-dui-hua-ji-yi.html"><span class="sb-item-num">09</span><span class="sb-item-title">对话记忆</span></a>
+        <a class="sb-item" href="../langchain/10-gong-ju-diao-yong.html"><span class="sb-item-num">10</span><span class="sb-item-title">工具调用</span></a>
+        <a class="sb-item" href="../langchain/11-agent.html"><span class="sb-item-num">11</span><span class="sb-item-title">Agent</span></a>
+        <a class="sb-item" href="../langchain/12-hui-diao-yu-tiao-shi-quan-ke-cheng-shou-guan.html"><span class="sb-item-num">12</span><span class="sb-item-title">回调与调试（全课程收官章）</span></a>
+      </div>
+    </section>
+    <section class="sb-group open" data-mod="langgraph">
+      <a class="sb-group-title" href="../modules/langgraph.html" data-toggle="langgraph">
+        <span class="sb-num">04</span>
+        <span class="sb-group-text"><b>LangGraph 框架指南</b><i>17 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langgraph/01-di-1-zhang-cong-yi-ge-shi-kong-de-jiao.html"><span class="sb-item-num">01</span><span class="sb-item-title">第 1 章 从一个失控的脚本说起</span></a>
+        <a class="sb-item" href="../langgraph/02-di-2-zhang-zui-xiao-ke-yun-xing-tu.html"><span class="sb-item-num">02</span><span class="sb-item-title">第 2 章 最小可运行图</span></a>
+        <a class="sb-item" href="../langgraph/03-di-3-zhang-zhuang-tai-tu-de-shu-ju-xin.html"><span class="sb-item-num">03</span><span class="sb-item-title">第 3 章 状态：图的数据心脏</span></a>
+        <a class="sb-item" href="../langgraph/04-di-4-zhang-rang-liu-cheng-xue-hui-jue-ce.html"><span class="sb-item-num">04</span><span class="sb-item-title">第 4 章 让流程学会决策</span></a>
+        <a class="sb-item" href="../langgraph/05-di-5-zhang-bing-xing-shi-jie-chao-bu-zhi.html"><span class="sb-item-num">05</span><span class="sb-item-title">第 5 章 并行世界：超步执行模型</span></a>
+        <a class="sb-item" href="../langgraph/06-di-6-zhang-command-ba-kong-zhi-quan-jiao-jin.html"><span class="sb-item-num">06</span><span class="sb-item-title">第 6 章 Command：把控制权交进节点</span></a>
+        <a class="sb-item" href="../langgraph/07-di-7-zhang-dong-tai-bing-xing-send-yu-mapreduce.html"><span class="sb-item-num">07</span><span class="sb-item-title">第 7 章 动态并行：Send 与 MapReduce</span></a>
+        <a class="sb-item" href="../langgraph/08-di-8-zhang-gei-tu-zhuang-shang-shou-jiao-gong.html"><span class="sb-item-num">08</span><span class="sb-item-title">第 8 章 给图装上手脚：工具调用</span></a>
+        <a class="sb-item" href="../langgraph/09-di-9-zhang-fu-yong-yu-feng-zhuang-zi-tu.html"><span class="sb-item-num">09</span><span class="sb-item-title">第 9 章 复用与封装：子图</span></a>
+        <a class="sb-item" href="../langgraph/10-di-10-zhang-cong-dan-tu-dao-tuan-dui-duo.html"><span class="sb-item-num">10</span><span class="sb-item-title">第 10 章 从单图到团队：多 Agent 架构</span></a>
+        <a class="sb-item" href="../langgraph/11-di-11-zhang-liu-shi-shu-chu.html"><span class="sb-item-num">11</span><span class="sb-item-title">第 11 章 流式输出</span></a>
+        <a class="sb-item" href="../langgraph/12-di-12-zhang-chi-jiu-hua-checkpointer-yu-xian-cheng.html"><span class="sb-item-num">12</span><span class="sb-item-title">第 12 章 持久化：Checkpointer 与线程</span></a>
+        <a class="sb-item current" href="../langgraph/13-di-13-zhang-shi-jian-lv-xing.html"><span class="sb-item-num">13</span><span class="sb-item-title">第 13 章 时间旅行</span></a>
+        <a class="sb-item" href="../langgraph/14-di-14-zhang-zhong-duan-yu-ren-zai-hui-lu.html"><span class="sb-item-num">14</span><span class="sb-item-title">第 14 章 中断与人在回路</span></a>
+        <a class="sb-item" href="../langgraph/15-di-15-zhang-ji-yi-guan-li.html"><span class="sb-item-num">15</span><span class="sb-item-title">第 15 章 记忆管理</span></a>
+        <a class="sb-item" href="../langgraph/16-di-16-zhang-rong-cuo-zhong-shi-chao-shi-yu.html"><span class="sb-item-num">16</span><span class="sb-item-title">第 16 章 容错：重试、超时与兜底</span></a>
+        <a class="sb-item" href="../langgraph/17-di-17-zhang-quan-jing-hui-gu.html"><span class="sb-item-num">17</span><span class="sb-item-title">第 17 章 全景回顾</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="backend">
+      <a class="sb-group-title" href="../modules/backend.html" data-toggle="backend">
+        <span class="sb-num">05</span>
+        <span class="sb-group-text"><b>Python 框架指南</b><i>14 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../backend/01-fastapi-ru-men-yu-asgi.html"><span class="sb-item-num">01</span><span class="sb-item-title">FastAPI 入门与 ASGI</span></a>
+        <a class="sb-item" href="../backend/02-lu-you-yu-qing-qiu-xiang-ying.html"><span class="sb-item-num">02</span><span class="sb-item-title">路由与请求响应</span></a>
+        <a class="sb-item" href="../backend/03-pydantic-shu-ju-jiao-yan-yu-pei-zhi.html"><span class="sb-item-num">03</span><span class="sb-item-title">Pydantic 数据校验与配置</span></a>
+        <a class="sb-item" href="../backend/04-sqlalchemy-yi-bu-yin-qing-yu-hui-hua.html"><span class="sb-item-num">04</span><span class="sb-item-title">SQLAlchemy 异步引擎与会话</span></a>
+        <a class="sb-item" href="../backend/05-orm-jian-mo.html"><span class="sb-item-num">05</span><span class="sb-item-title">ORM 建模</span></a>
+        <a class="sb-item" href="../backend/06-sql-biao-da-shi-yu-shu-ju-cao-zuo.html"><span class="sb-item-num">06</span><span class="sb-item-title">SQL 表达式与数据操作</span></a>
+        <a class="sb-item" href="../backend/07-alembic-shu-ju-qian-yi.html"><span class="sb-item-num">07</span><span class="sb-item-title">Alembic 数据迁移</span></a>
+        <a class="sb-item" href="../backend/08-yi-lai-zhu-ru.html"><span class="sb-item-num">08</span><span class="sb-item-title">依赖注入</span></a>
+        <a class="sb-item" href="../backend/09-tong-yi-yi-chang-chu-li.html"><span class="sb-item-num">09</span><span class="sb-item-title">统一异常处理</span></a>
+        <a class="sb-item" href="../backend/10-zhong-jian-jian.html"><span class="sb-item-num">10</span><span class="sb-item-title">中间件</span></a>
+        <a class="sb-item" href="../backend/11-ren-zheng-yu-jwt.html"><span class="sb-item-num">11</span><span class="sb-item-title">认证与 JWT</span></a>
+        <a class="sb-item" href="../backend/12-pytest-ce-shi.html"><span class="sb-item-num">12</span><span class="sb-item-title">pytest 测试</span></a>
+        <a class="sb-item" href="../backend/13-ri-zhi-loguru.html"><span class="sb-item-num">13</span><span class="sb-item-title">日志 loguru</span></a>
+        <a class="sb-item" href="../backend/14-liu-shi-xiang-ying-sse-yu-websocket.html"><span class="sb-item-num">14</span><span class="sb-item-title">流式响应 SSE 与 WebSocket</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="interview">
+      <a class="sb-group-title" href="../modules/interview.html" data-toggle="interview">
+        <span class="sb-num">06</span>
+        <span class="sb-group-text"><b>面试题库</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../interview/01-llm-yuan-li-pian.html"><span class="sb-item-num">01</span><span class="sb-item-title">LLM 原理篇</span></a>
+        <a class="sb-item" href="../interview/02-rag-yu-jian-suo-pian.html"><span class="sb-item-num">02</span><span class="sb-item-title">RAG 与检索篇</span></a>
+        <a class="sb-item" href="../interview/03-agent-he-xin-pian.html"><span class="sb-item-num">03</span><span class="sb-item-title">Agent 核心篇</span></a>
+        <a class="sb-item" href="../interview/04-langgraph-pian.html"><span class="sb-item-num">04</span><span class="sb-item-title">LangGraph 篇</span></a>
+        <a class="sb-item" href="../interview/05-langchain-pian.html"><span class="sb-item-num">05</span><span class="sb-item-title">LangChain 篇</span></a>
+        <a class="sb-item" href="../interview/06-xi-tong-she-ji-pian.html"><span class="sb-item-num">06</span><span class="sb-item-title">系统设计篇</span></a>
+        <a class="sb-item" href="../interview/07-xiang-mu-shen-wa-pian.html"><span class="sb-item-num">07</span><span class="sb-item-title">项目深挖篇</span></a>
+        <a class="sb-item" href="../interview/08-gu-zhang-pai-cha-pian.html"><span class="sb-item-num">08</span><span class="sb-item-title">故障排查篇</span></a>
+        <a class="sb-item" href="../interview/09-python-ji-chu-pian.html"><span class="sb-item-num">09</span><span class="sb-item-title">Python 基础篇</span></a>
+        <a class="sb-item" href="../interview/10-fastapi-yu-hou-duan-pian.html"><span class="sb-item-num">10</span><span class="sb-item-title">FastAPI 与后端篇</span></a>
+        <a class="sb-item" href="../interview/11-ti-shi-ci-gong-cheng-yu-an-quan-pian.html"><span class="sb-item-num">11</span><span class="sb-item-title">提示词工程与安全篇</span></a>
+        <a class="sb-item" href="../interview/12-mo-xing-xuan-xing-yu-jiang-ben-pian.html"><span class="sb-item-num">12</span><span class="sb-item-title">模型选型与降本篇</span></a>
+      </div>
+    </section>
+    <div class="sb-sep"></div>
+    <a class="sb-home" href="../camp.html">
+      <span class="sb-home-ico">◆</span>
+      <span class="sb-home-text"><b>训练营介绍</b><i>课程总览</i></span>
+    </a>
+  </nav>
+</aside>
+  <main class="main">
+    <header class="topbar">
+      <button class="menu-btn" id="menuBtn" aria-label="目录">☰</button>
+      <div class="crumbs"><a href="../index.html">首页</a><span>/</span><a href="../modules/langgraph.html">LangGraph 框架指南</a><span>/</span><span class="cur">第 13 章 时间旅行</span></div>
+      <div class="topbar-actions">
+        <button class="icon-btn" id="themeBtn" title="切换深浅色" aria-label="切换深浅色">◐</button>
+      </div>
+    </header>
+    <div class="content">
+      <article class="article">
+
+<header class="page-head">
+  <div class="page-kicker">LangGraph 框架指南 · 第 13 章</div>
+  <h1 class="page-title">第 13 章 时间旅行</h1>
+  <p class="page-desc">本章目标：在第 12 章的检查点机制之上，掌握回放（replay）与分叉（fork）两种时间旅行形态。前者&quot;重看历史&quot;，后者&quot;改写历史&quot;——它们是调试复杂工作流和做 A/B 对比实验的核心武器</p>
+  <div class="page-meta">
+    <span>约 14 分钟</span><span>5,793 字</span><span>6 个代码示例</span>
+  </div>
+</header>
+<div class="md"><blockquote>
+<p>本章目标：在第 12 章的检查点机制之上，掌握回放（replay）与分叉（fork）两种时间旅行形态。前者"重看历史"，后者"改写历史"——它们是调试复杂工作流和做 A/B 对比实验的核心武器。</p>
+</blockquote>
+<h2 id="131-调试工作流的老大难">13.1 调试工作流的老大难</h2>
+<p>评估系统上线后收到投诉：某份简历被打了个离谱的低分。复盘时你面对一串问题：</p>
+<ul>
+<li>当时模型到底输出了什么？中间状态长什么样？</li>
+<li>如果当时的评分 prompt 换一个版本，结果会不同吗？</li>
+<li>如果在"解析完成"那个时刻插一步人工校验，后续会怎么走？</li>
+</ul>
+<p>传统应用的调试手段——断点、日志、单步——对图工作流都嫌笨拙，因为<strong>图执行的"时刻"不是代码行号，而是检查点</strong>。LangGraph 的答案优雅得近乎奢侈：既然每个超步都有快照，那就<strong>让时间回到任意快照</strong>。</p>
+<p>时间旅行两种形态，先建立总览：</p>
+<table>
+<thead>
+<tr>
+<th>形态</th>
+<th>回到过去做什么</th>
+<th>历史是否改变</th>
+<th>典型场景</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>replay（回放）</strong></td>
+<td>用<strong>当时的代码</strong>从该检查点重跑后续</td>
+<td>长出新分支，原历史保留</td>
+<td>复盘"当时发生了什么"</td>
+</tr>
+<tr>
+<td><strong>fork（分叉）</strong></td>
+<td>用<strong>现在的代码</strong>从该检查点另起一路</td>
+<td>长出新分支，原历史保留</td>
+<td>实验"如果当时……会怎样"</td>
+</tr>
+</tbody>
+</table>
+<p>两种形态都不改写历史（第 12 章末尾的规则：回退产生新分支）——时间旅行是安全的，原始记录永远在。</p>
+<h2 id="132-共同的地基定位历史时刻">13.2 共同的地基：定位历史时刻</h2>
+<p>两种形态的第一步相同：从检查点历史里挑一个时刻。第 12 章的 <code>get_state_history</code> 返回的每条记录自带 <code>checkpoint_id</code>：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Annotated</span><span class="p">,</span> <span class="n">TypedDict</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">operator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langgraph.graph</span><span class="w"> </span><span class="kn">import</span> <span class="n">StateGraph</span><span class="p">,</span> <span class="n">START</span><span class="p">,</span> <span class="n">END</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langgraph.checkpoint.memory</span><span class="w"> </span><span class="kn">import</span> <span class="n">InMemorySaver</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">ScreenState</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
+    <span class="n">resume_text</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">score</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">operator</span><span class="o">.</span><span class="n">add</span><span class="p">]</span>
+    <span class="n">log</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">operator</span><span class="o">.</span><span class="n">add</span><span class="p">]</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">extract</span><span class="p">(</span><span class="n">state</span><span class="p">:</span> <span class="n">ScreenState</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">"log"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"extract 完成"</span><span class="p">]}</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">evaluate</span><span class="p">(</span><span class="n">state</span><span class="p">:</span> <span class="n">ScreenState</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">"score"</span><span class="p">:</span> <span class="mi">42</span><span class="p">,</span> <span class="s2">"log"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"evaluate 完成"</span><span class="p">]}</span>
+
+<span class="n">builder</span> <span class="o">=</span> <span class="n">StateGraph</span><span class="p">(</span><span class="n">ScreenState</span><span class="p">)</span>
+<span class="n">builder</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="s2">"extract"</span><span class="p">,</span> <span class="n">extract</span><span class="p">)</span>
+<span class="n">builder</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="s2">"evaluate"</span><span class="p">,</span> <span class="n">evaluate</span><span class="p">)</span>
+<span class="n">builder</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="n">START</span><span class="p">,</span> <span class="s2">"extract"</span><span class="p">)</span>
+<span class="n">builder</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="s2">"extract"</span><span class="p">,</span> <span class="s2">"evaluate"</span><span class="p">)</span>
+<span class="n">builder</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="s2">"evaluate"</span><span class="p">,</span> <span class="n">END</span><span class="p">)</span>
+
+<span class="n">memory</span> <span class="o">=</span> <span class="n">InMemorySaver</span><span class="p">()</span>
+<span class="n">graph</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">checkpointer</span><span class="o">=</span><span class="n">memory</span><span class="p">)</span>
+
+<span class="n">config</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"configurable"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"thread_id"</span><span class="p">:</span> <span class="s2">"debug-001"</span><span class="p">}}</span>
+<span class="n">graph</span><span class="o">.</span><span class="n">invoke</span><span class="p">({</span><span class="s2">"resume_text"</span><span class="p">:</span> <span class="s2">"李思远 ..."</span><span class="p">},</span> <span class="n">config</span><span class="p">)</span>
+
+<span class="c1"># 拉出全部历史时刻</span>
+<span class="n">history</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">graph</span><span class="o">.</span><span class="n">get_state_history</span><span class="p">(</span><span class="n">config</span><span class="p">))</span>
+<span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">history</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">"configurable"</span><span class="p">][</span><span class="s2">"checkpoint_id"</span><span class="p">],</span> <span class="n">s</span><span class="o">.</span><span class="n">next</span><span class="p">)</span>
+<span class="c1"># 每个 checkpoint_id 形如 1ef4f797-8b5f-6bc8-8001-8b417b28a1d3 的 UUID</span>
+</code></pre></div>
+<p>挑时刻的实用技巧：<code>get_state_history</code> 按时间<strong>倒序</strong>返回（最新在前）。想找"evaluate 节点执行前"的时刻，认准 <code>s.next == ('evaluate',)</code> 的那条——"next 是 evaluate"意味着这是 evaluate 即将启动前的快照。</p>
+<h2 id="133-replay原样重跑">13.3 replay：原样重跑</h2>
+<p>replay 的诉求：<strong>不改任何东西，把某时刻之后的执行再看一遍</strong>。方法是拿那个历史 config 再 stream 一遍（输入传 None，表示"不注入新输入"）：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 选中"evaluate 执行前"的快照</span>
+<span class="n">target</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">history</span> <span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">next</span> <span class="o">==</span> <span class="p">(</span><span class="s2">"evaluate"</span><span class="p">,))</span>
+
+<span class="c1"># replay：从该时刻重跑后续节点</span>
+<span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">target</span><span class="o">.</span><span class="n">config</span><span class="p">,</span> <span class="n">stream_mode</span><span class="o">=</span><span class="s2">"updates"</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">chunk</span><span class="p">)</span>
+<span class="c1"># {'evaluate': {'score': 42, 'log': ['evaluate 完成']}}</span>
+</code></pre></div>
+<p>replay 的第一用途是<strong>取证复盘</strong>：逐事件观察"当时每一步做了什么"。配合 <code>stream_mode="values"</code>，能看到从那个时刻起的完整状态演进。</p>
+<p>它的第二用途藏在"重跑"两个字里：<strong>当时因故障中断的运行，现在恢复执行</strong>。第 12 章的断点续跑，本质就是 replay 的工程化包装——从最新检查点 replay 剩余部分。注意措辞的精确性：replay 重跑的是<strong>该检查点之后的节点</strong>，已完成的节点（如本例的 extract）不会重新执行。</p>
+<p>有个细节容易忽略：replay 用的仍是<strong>当前进程里的图代码</strong>。如果你 replay 时已经改了 evaluate 的实现，重跑的是新代码。想看"当时的代码跑出的当时的结果"，翻原始历史检查点的 values 即可——那才是历史原貌。</p>
+<h2 id="134-fork从历史时刻另起一路">13.4 fork：从历史时刻另起一路</h2>
+<p>fork 与 replay 的操作几乎一样，意图完全不同：<strong>我要修改这个时刻的状态/输入，看看另一条时间线</strong>。</p>
+<p>方法一：在历史 config 上叠加新输入 invoke：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 同样从"evaluate 执行前"分叉，但这次换一份简历</span>
+<span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span>
+    <span class="p">{</span><span class="s2">"resume_text"</span><span class="p">:</span> <span class="s2">"王敏：金融系统后端"</span><span class="p">},</span>   <span class="c1"># fork 的新输入（会合并进该时刻状态）</span>
+    <span class="n">target</span><span class="o">.</span><span class="n">config</span><span class="p">,</span>
+    <span class="n">stream_mode</span><span class="o">=</span><span class="s2">"updates"</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">chunk</span><span class="p">)</span>
+<span class="c1"># {'evaluate': {'score': 42, 'log': ['evaluate 完成']}}</span>
+</code></pre></div>
+<p>方法二：先用 <code>update_state</code> 直接改写某时刻的状态，再从那里续跑。注意 <code>update_state</code> 会产生一个<strong>新的检查点</strong>并返回指向它的 config——续跑要用返回值，而不是原来的 <code>target.config</code>（后者仍指向改写前的旧检查点）：</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 在目标时刻上手动改状态：预置一个分数</span>
+<span class="n">forked_config</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">update_state</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">config</span><span class="p">,</span> <span class="p">{</span><span class="s2">"score"</span><span class="p">:</span> <span class="mi">20</span><span class="p">})</span>
+
+<span class="c1"># 查看分叉后的状态：分数已变，且记录了这次手工更新</span>
+<span class="n">snap</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">get_state</span><span class="p">(</span><span class="n">forked_config</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">snap</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="s2">"score"</span><span class="p">])</span>   <span class="c1"># 20（首次写入直接生效）</span>
+
+<span class="c1"># 从改写后的时刻继续执行</span>
+<span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">forked_config</span><span class="p">,</span> <span class="n">stream_mode</span><span class="o">=</span><span class="s2">"updates"</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">chunk</span><span class="p">)</span>
+</code></pre></div>
+<p><code>update_state</code> 相当于"插入一个虚拟节点的补丁"：按各字段的 reducer 合并进指定时刻，产生一个新的检查点。fork 的典型实验就长这样：</p>
+<blockquote>
+<p>"如果当时 extract 解析出的技能多两项，评分会差多少？"——<code>update_state</code> 改 skills，从 evaluate 前的时刻 fork，对比两条时间线的最终 score。</p>
+</blockquote>
+<div class="mermaid" data-code="flowchart TB
+    C0[ckpt 0&lt;br/&gt;初始] --&gt; C1[ckpt 1&lt;br/&gt;extract 完成] --&gt; C2[ckpt 2&lt;br/&gt;evaluate 完成&lt;br/&gt;score=42 原时间线]
+    C1 --&gt;|fork: update_state + stream| C2b[ckpt 2&#x27;&lt;br/&gt;新时间线&lt;br/&gt;score=62]
+    C1 -.-&gt;|replay| C2">flowchart TB
+    C0[ckpt 0&lt;br/&gt;初始] --&gt; C1[ckpt 1&lt;br/&gt;extract 完成] --&gt; C2[ckpt 2&lt;br/&gt;evaluate 完成&lt;br/&gt;score=42 原时间线]
+    C1 --&gt;|fork: update_state + stream| C2b[ckpt 2&#x27;&lt;br/&gt;新时间线&lt;br/&gt;score=62]
+    C1 -.-&gt;|replay| C2</div>
+<p>A/B 对比、回归测试（"图结构升级后，同一批历史输入的结论是否漂移"）、反事实分析——都建立在这套机制上。</p>
+<h2 id="135-一个完整的取证实验">13.5 一个完整的取证实验</h2>
+<p>把两种形态串成一个真实工作流：发现某次评估分数异常，先 replay 定位问题，再 fork 验证猜想：</p>
+<div class="highlight"><pre><span></span><code><span class="n">config_bad</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"configurable"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"thread_id"</span><span class="p">:</span> <span class="s2">"case-042"</span><span class="p">}}</span>
+
+<span class="c1"># ...（假设该线程已经跑完一次评估，分数异常低）</span>
+
+<span class="c1"># 第一步：replay 取证——从 evaluate 前的时刻重看一遍</span>
+<span class="n">history</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">graph</span><span class="o">.</span><span class="n">get_state_history</span><span class="p">(</span><span class="n">config_bad</span><span class="p">))</span>
+<span class="n">before_eval</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">history</span> <span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">next</span> <span class="o">==</span> <span class="p">(</span><span class="s2">"evaluate"</span><span class="p">,))</span>
+<span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">before_eval</span><span class="o">.</span><span class="n">config</span><span class="p">,</span> <span class="n">stream_mode</span><span class="o">=</span><span class="s2">"values"</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">chunk</span><span class="p">)</span>          <span class="c1"># 观察状态演进，发现 evaluate 输出异常</span>
+
+<span class="c1"># 第二步：fork 验证——手工修正解析结果，看评分是否恢复</span>
+<span class="n">forked</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">update_state</span><span class="p">(</span><span class="n">before_eval</span><span class="o">.</span><span class="n">config</span><span class="p">,</span> <span class="p">{</span>
+    <span class="s2">"log"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"手工修正：补充技能字段"</span><span class="p">],</span>
+<span class="p">})</span>
+<span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">forked</span><span class="p">,</span> <span class="n">stream_mode</span><span class="o">=</span><span class="s2">"values"</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">chunk</span><span class="p">)</span>          <span class="c1"># 对比两条时间线的 score</span>
+</code></pre></div>
+<p>取证 → 猜想 → fork 验证 → 修复代码，整个闭环不碰生产输入、不改历史记录。这就是时间旅行给 LLM 工作流带来的调试范式——<strong>对"当时的决策"做受控实验</strong>。</p>
+<h2 id="常见坑与排错">常见坑与排错</h2>
+<ol>
+<li>
+<p><strong>把 get_state_history 当正序列表用</strong>。它按时间倒序返回（最新在前）。<code>history[0]</code> 是最新时刻不是最初时刻；要找最早时刻取 <code>history[-1]</code>，要找特定节点前找 <code>s.next</code> 匹配项。</p>
+</li>
+<li>
+<p><strong>replay 时期望已完成节点重跑</strong>。replay 从选中检查点的 <code>next</code> 开始执行，该检查点之前完成的节点不会重跑。想从头跑，选 <code>next == ('extract',)</code>（即第一个节点将执行）的检查点，或干脆新开线程。</p>
+</li>
+<li>
+<p><strong>fork 忘了输入传 None</strong>。从历史 config stream 时传了完整新输入（如 <code>{"resume_text": ...}</code>），会与该时刻的历史状态合并——有时正是你要的（方法一），有时是意外污染。想"纯粹改几个字段"，用 <code>update_state</code> 而不是塞输入。</p>
+</li>
+<li>
+<p><strong>update_state 对 reducer 字段的语义想当然</strong>。<code>update_state</code> 的补丁同样走 reducer：对 <code>operator.add</code> 的 score 写 20 是"加 20"不是"设为 20"。想设置绝对值，要么算好差值，要么用 <code>as_node</code> 配合无 reducer 字段。这一坑是第 3 章规则在时间旅行场景的重演。</p>
+</li>
+<li>
+<p><strong>时间旅行之后接着用原 config 操作</strong>。fork 后线程的"最新检查点"变成了新分支。原 config（不带 checkpoint_id 的裸 thread_id）再 invoke 会从新分支最新处继续——如果你期望的是原时间线，会得到意外结果。取证实验做完，明确下一步要用哪个 config。</p>
+</li>
+<li>
+<p><strong>在 InMemorySaver 上演示时间旅行后直接上生产</strong>。开发时一切正常，生产换 Postgres 后行为不变（协议一致），但<strong>性能特征不同</strong>：长线程的检查点历史查询会随长度变慢。高频时间旅行操作的大线程，注意存储端的索引与清理策略。</p>
+</li>
+<li>
+<p><strong>以为时间旅行能恢复"模型的随机性"</strong>。replay 重跑 evaluate 时，如果节点内部模型 temperature &gt; 0，两次结果可能不同——检查点保存的是状态不是模型权重与采样种子。要可复现，节点内固定 temperature 或固定随机种子。</p>
+</li>
+</ol>
+<h2 id="动手练习">动手练习</h2>
+<ol>
+<li>
+<p>给 13.2 的图增加 <code>report</code> 节点，完整跑一个线程后：找到"evaluate 执行前"的检查点，replay 一遍，对比两次执行的 <code>log</code> 字段是否一致。</p>
+</li>
+<li>
+<p>fork 实验：从"evaluate 执行前"分叉，用 <code>update_state</code> 给 <code>score</code> 预置 30 分（注意 reducer 语义，想清楚写多少），再续跑到 END。最终 score 与原时间线差多少？</p>
+</li>
+<li>
+<p>综合：构造一个三节点图（parse → evaluate → report），故意让 evaluate 节点在简历包含"赌博"关键词时返回异常低的分数。用 replay 定位该行为，用 fork 验证"如果 parse 阶段过滤掉该关键词，评分正常"。全程不修改原始线程的历史记录，最后用 <code>get_state_history</code> 确认历史未被改写。</p>
+</li>
+</ol>
+<h2 id="本章速查">本章速查</h2>
+<table>
+<thead>
+<tr>
+<th>API / 概念</th>
+<th>一句话</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>时间旅行</td>
+<td>基于（12 章）检查点历史，回到任意历史时刻</td>
+</tr>
+<tr>
+<td>replay</td>
+<td>原样重跑某时刻之后的节点；取证复盘、断点恢复</td>
+</tr>
+<tr>
+<td>fork</td>
+<td>从历史时刻另起时间线：改输入或改状态再跑</td>
+</tr>
+<tr>
+<td><code>get_state_history</code></td>
+<td>倒序返回全部检查点，靠 <code>s.next</code> 定位"某节点执行前"</td>
+</tr>
+<tr>
+<td><code>graph.stream(None, 历史config)</code></td>
+<td>从历史时刻续跑（不注入新输入）</td>
+</tr>
+<tr>
+<td><code>graph.update_state(config, 补丁)</code></td>
+<td>在指定时刻按 reducer 合并补丁，产生新检查点</td>
+</tr>
+<tr>
+<td>安全性</td>
+<td>两种形态都不改写历史，只长新分支</td>
+</tr>
+<tr>
+<td>replay 用当前代码</td>
+<td>想看历史原貌读检查点 values，想重跑用当前实现</td>
+</tr>
+<tr>
+<td>可复现性</td>
+<td>检查点不保存采样种子，重跑结果受模型随机性影响</td>
+</tr>
+</tbody>
+</table></div>
+
+      </article>
+<nav class="pager"><a class="pg-card pg-prev" href="../langgraph/12-di-12-zhang-chi-jiu-hua-checkpointer-yu-xian-cheng.html"><span class="pg-label">← 上一篇</span><span class="pg-title">第 12 章 持久化：Checkpointer 与线程</span><span class="pg-mod">LangGraph 框架指南</span></a><a class="pg-card pg-next" href="../langgraph/14-di-14-zhang-zhong-duan-yu-ren-zai-hui-lu.html"><span class="pg-label">下一篇 →</span><span class="pg-title">第 14 章 中断与人在回路</span><span class="pg-mod">LangGraph 框架指南</span></a></nav>
+    </div>
+    <footer class="foot">
+      <span>AI Agent 工程师转型训练营配套文档</span>
+    </footer>
+  </main>
+<nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#131-调试工作流的老大难">13.1 调试工作流的老大难</a><a class="toc-link toc-h2" href="#132-共同的地基定位历史时刻">13.2 共同的地基：定位历史时刻</a><a class="toc-link toc-h2" href="#133-replay原样重跑">13.3 replay：原样重跑</a><a class="toc-link toc-h2" href="#134-fork从历史时刻另起一路">13.4 fork：从历史时刻另起一路</a><a class="toc-link toc-h2" href="#135-一个完整的取证实验">13.5 一个完整的取证实验</a><a class="toc-link toc-h2" href="#常见坑与排错">常见坑与排错</a><a class="toc-link toc-h2" href="#动手练习">动手练习</a><a class="toc-link toc-h2" href="#本章速查">本章速查</a></nav>
+</div>
+<div class="sb-mask" id="sbMask"></div>
+<script src="../assets/app.js"></script>
+</body>
+</html>

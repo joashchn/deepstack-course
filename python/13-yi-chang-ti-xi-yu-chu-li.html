@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>13 · 异常体系与处理 · InfiSpace 课程文档</title>
+<meta name="description" content="程序只要在跑，就免不了出岔子：文件找不到、网络断了、用户输入了奇怪的东西……出错本身并不可怕，可怕的是程序直接躺平——屏幕上甩出一大坨红色 traceback，然后整个进程退场。Python 为此准备了一整套&quot;异常处理&quot;…">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%232DD4D4' text-anchor='middle'%3E%E2%88%9E%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+<div class="progress" id="progress"></div>
+
+<div class="layout">
+<aside class="sidebar" id="sidebar">
+  <div class="sb-head">
+    <a class="brand" href="../index.html">
+      <img class="brand-mark" src="../assets/infispace-logo-1.png" alt="InfiSpace">
+    </a>
+    <button class="sb-close" id="sbClose" aria-label="关闭目录">✕</button>
+  </div>
+  <div class="sb-search"><input type="search" id="searchInput" placeholder="搜索 123 篇文档… ( / )" autocomplete="off">
+    <div class="sb-results" id="searchResults"></div></div>
+  <nav class="sb-nav">
+    <section class="sb-group">
+      <a class="sb-group-title" href="../index.html">
+        <span class="sb-num">00</span>
+        <span class="sb-group-text"><b>学习导航</b><i>课程首页</i></span>
+      </a>
+    </section>
+    <section class="sb-group open" data-mod="python">
+      <a class="sb-group-title" href="../modules/python.html" data-toggle="python">
+        <span class="sb-num">01</span>
+        <span class="sb-group-text"><b>Python 与数据实践</b><i>31 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../python/01-huan-jing-da-jian-yu-ban-ben-guan-li.html"><span class="sb-item-num">01</span><span class="sb-item-title">环境搭建与版本管理</span></a>
+        <a class="sb-item" href="../python/02-bian-liang-biao-da-shi-yu-liu-cheng-kong-zhi.html"><span class="sb-item-num">02</span><span class="sb-item-title">变量、表达式与流程控制</span></a>
+        <a class="sb-item" href="../python/03-xu-lie-zi-dian-yu-ji-he.html"><span class="sb-item-num">03</span><span class="sb-item-title">序列、字典与集合</span></a>
+        <a class="sb-item" href="../python/04-han-shu-she-ji-yu-lambda.html"><span class="sb-item-num">04</span><span class="sb-item-title">函数设计与 lambda</span></a>
+        <a class="sb-item" href="../python/05-zuo-yong-yu-gui-ze-yu-bi-bao.html"><span class="sb-item-num">05</span><span class="sb-item-title">作用域规则与闭包</span></a>
+        <a class="sb-item" href="../python/06-lei-de-ding-yi-yu-shi-li-hua.html"><span class="sb-item-num">06</span><span class="sb-item-title">类的定义与实例化</span></a>
+        <a class="sb-item" href="../python/07-lei-xing-pan-ding-yu-chou-xiang-ji-lei.html"><span class="sb-item-num">07</span><span class="sb-item-title">类型判定与抽象基类</span></a>
+        <a class="sb-item" href="../python/08-mo-shu-fang-fa-quan-jing.html"><span class="sb-item-num">08</span><span class="sb-item-title">魔术方法全景</span></a>
+        <a class="sb-item" href="../python/09-miao-shu-fu-yu-yuan-lei.html"><span class="sb-item-num">09</span><span class="sb-item-title">描述符与元类</span></a>
+        <a class="sb-item" href="../python/10-zhuang-shi-qi.html"><span class="sb-item-num">10</span><span class="sb-item-title">装饰器</span></a>
+        <a class="sb-item" href="../python/11-die-dai-xie-yi-yu-sheng-cheng-qi.html"><span class="sb-item-num">11</span><span class="sb-item-title">迭代协议与生成器</span></a>
+        <a class="sb-item" href="../python/12-with-yu-shang-xia-wen-xie-yi.html"><span class="sb-item-num">12</span><span class="sb-item-title">with 与上下文协议</span></a>
+        <a class="sb-item current" href="../python/13-yi-chang-ti-xi-yu-chu-li.html"><span class="sb-item-num">13</span><span class="sb-item-title">异常体系与处理</span></a>
+        <a class="sb-item" href="../python/14-lei-xing-biao-zhu.html"><span class="sb-item-num">14</span><span class="sb-item-title">类型标注</span></a>
+        <a class="sb-item" href="../python/15-mo-kuai-yu-bao-de-zu-zhi.html"><span class="sb-item-num">15</span><span class="sb-item-title">模块与包的组织</span></a>
+        <a class="sb-item" href="../python/16-biao-zhun-ku-xun-li.html"><span class="sb-item-num">16</span><span class="sb-item-title">标准库巡礼</span></a>
+        <a class="sb-item" href="../python/17-yi-lai-guan-li-yu-di-san-fang-ku.html"><span class="sb-item-num">17</span><span class="sb-item-title">依赖管理与第三方库</span></a>
+        <a class="sb-item" href="../python/18-xian-cheng-yu-jin-cheng.html"><span class="sb-item-num">18</span><span class="sb-item-title">线程与进程</span></a>
+        <a class="sb-item" href="../python/19-shi-jian-xun-huan.html"><span class="sb-item-num">19</span><span class="sb-item-title">事件循环</span></a>
+        <a class="sb-item" href="../python/20-future-yu-xie-cheng.html"><span class="sb-item-num">20</span><span class="sb-item-title">Future 与协程</span></a>
+        <a class="sb-item" href="../python/21-asyncio-shi-zhan.html"><span class="sb-item-num">21</span><span class="sb-item-title">asyncio 实战</span></a>
+        <a class="sb-item" href="../python/22-gou-jian-yu-fa-bu.html"><span class="sb-item-num">22</span><span class="sb-item-title">构建与发布</span></a>
+        <a class="sb-item" href="../python/23-gong-cheng-hua-gong-ju-lian.html"><span class="sb-item-num">23</span><span class="sb-item-title">工程化工具链</span></a>
+        <a class="sb-item" href="../python/24-monorepo-yu-tiao-shi.html"><span class="sb-item-num">24</span><span class="sb-item-title">monorepo 与调试</span></a>
+        <a class="sb-item" href="../python/25-jupyter-jiao-hu-huan-jing.html"><span class="sb-item-num">25</span><span class="sb-item-title">Jupyter 交互环境</span></a>
+        <a class="sb-item" href="../python/26-numpy-shu-zu-yu-xiang-liang-hua.html"><span class="sb-item-num">26</span><span class="sb-item-title">NumPy 数组与向量化</span></a>
+        <a class="sb-item" href="../python/27-pandas-shu-ju-jie-gou.html"><span class="sb-item-num">27</span><span class="sb-item-title">Pandas 数据结构</span></a>
+        <a class="sb-item" href="../python/28-pandas-shu-ju-qing-xi.html"><span class="sb-item-num">28</span><span class="sb-item-title">Pandas 数据清洗</span></a>
+        <a class="sb-item" href="../python/29-matplotlib-hui-tu-ti-xi.html"><span class="sb-item-num">29</span><span class="sb-item-title">Matplotlib 绘图体系</span></a>
+        <a class="sb-item" href="../python/30-matplotlib-dong-hua-yu-jiao-hu.html"><span class="sb-item-num">30</span><span class="sb-item-title">Matplotlib 动画与交互</span></a>
+        <a class="sb-item" href="../python/31-seaborn-tong-ji-ke-shi-hua.html"><span class="sb-item-num">31</span><span class="sb-item-title">Seaborn 统计可视化</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="agent">
+      <a class="sb-group-title" href="../modules/agent.html" data-toggle="agent">
+        <span class="sb-num">02</span>
+        <span class="sb-group-text"><b>Agent 核心</b><i>15 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../agent/01-token-yu-ci-qian-ru.html"><span class="sb-item-num">01</span><span class="sb-item-title">Token 与词嵌入</span></a>
+        <a class="sb-item" href="../agent/02-qian-xiang-chuan-bo-yu-fan-xiang-chuan-bo.html"><span class="sb-item-num">02</span><span class="sb-item-title">前向传播与反向传播</span></a>
+        <a class="sb-item" href="../agent/03-zhu-yi-li-ji-zhi-yu-transformer-jia-gou.html"><span class="sb-item-num">03</span><span class="sb-item-title">注意力机制与 Transformer 架构</span></a>
+        <a class="sb-item" href="../agent/04-yu-xun-lian-rlhf-yu-cai-yang-kv-cache.html"><span class="sb-item-num">04</span><span class="sb-item-title">预训练、RLHF 与采样（KV Cache）</span></a>
+        <a class="sb-item" href="../agent/05-ben-di-mo-xing-yu-xiao-xi-jie-gou.html"><span class="sb-item-num">05</span><span class="sb-item-title">本地模型与消息结构</span></a>
+        <a class="sb-item" href="../agent/06-hui-hua-guan-li-yu-json-shu-chu.html"><span class="sb-item-num">06</span><span class="sb-item-title">会话管理与 JSON 输出</span></a>
+        <a class="sb-item" href="../agent/07-tool-calling-xie-yi-yu-feng-zhuang.html"><span class="sb-item-num">07</span><span class="sb-item-title">Tool Calling：协议与封装</span></a>
+        <a class="sb-item" href="../agent/08-react-mo-shi-yu-zhu-xun-huan.html"><span class="sb-item-num">08</span><span class="sb-item-title">ReAct 模式与主循环</span></a>
+        <a class="sb-item" href="../agent/09-shi-zhan-deep-research-agent.html"><span class="sb-item-num">09</span><span class="sb-item-title">实战：Deep Research Agent</span></a>
+        <a class="sb-item" href="../agent/10-skill-yu-jian-jin-shi-pi-lu.html"><span class="sb-item-num">10</span><span class="sb-item-title">Skill 与渐进式披露</span></a>
+        <a class="sb-item" href="../agent/11-mcp-quan-jing.html"><span class="sb-item-num">11</span><span class="sb-item-title">MCP 全景</span></a>
+        <a class="sb-item" href="../agent/12-duo-agent-yu-xuan-xing-ce-lve.html"><span class="sb-item-num">12</span><span class="sb-item-title">多 Agent 与选型策略</span></a>
+        <a class="sb-item" href="../agent/13-ti-shi-ci-gong-cheng-yu-shang-xia-wen-gong.html"><span class="sb-item-num">13</span><span class="sb-item-title">提示词工程与上下文工程</span></a>
+        <a class="sb-item" href="../agent/14-xun-huan-tu-yu-gu-jia-gong-cheng.html"><span class="sb-item-num">14</span><span class="sb-item-title">循环、图与骨架工程</span></a>
+        <a class="sb-item" href="../agent/15-ji-yi-quan-xian-yu-ping-ce.html"><span class="sb-item-num">15</span><span class="sb-item-title">记忆、权限与评测</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="langchain">
+      <a class="sb-group-title" href="../modules/langchain.html" data-toggle="langchain">
+        <span class="sb-num">03</span>
+        <span class="sb-group-text"><b>LangChain 指南</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langchain/01-ren-shi-langchain.html"><span class="sb-item-num">01</span><span class="sb-item-title">认识 LangChain</span></a>
+        <a class="sb-item" href="../langchain/02-ti-shi-ci-mu-ban-yu-xiao-xi.html"><span class="sb-item-num">02</span><span class="sb-item-title">提示词模板与消息</span></a>
+        <a class="sb-item" href="../langchain/03-lcel-yu-runnable.html"><span class="sb-item-num">03</span><span class="sb-item-title">LCEL 与 Runnable</span></a>
+        <a class="sb-item" href="../langchain/04-liu-shi-yu-bing-fa.html"><span class="sb-item-num">04</span><span class="sb-item-title">流式与并发</span></a>
+        <a class="sb-item" href="../langchain/05-shu-chu-jie-xi-qi.html"><span class="sb-item-num">05</span><span class="sb-item-title">输出解析器</span></a>
+        <a class="sb-item" href="../langchain/06-wen-dang-jia-zai-yu-qie-ge.html"><span class="sb-item-num">06</span><span class="sb-item-title">文档加载与切割</span></a>
+        <a class="sb-item" href="../langchain/07-qian-ru-yu-xiang-liang-ku.html"><span class="sb-item-num">07</span><span class="sb-item-title">嵌入与向量库</span></a>
+        <a class="sb-item" href="../langchain/08-jian-suo-yu-rag.html"><span class="sb-item-num">08</span><span class="sb-item-title">检索与RAG</span></a>
+        <a class="sb-item" href="../langchain/09-dui-hua-ji-yi.html"><span class="sb-item-num">09</span><span class="sb-item-title">对话记忆</span></a>
+        <a class="sb-item" href="../langchain/10-gong-ju-diao-yong.html"><span class="sb-item-num">10</span><span class="sb-item-title">工具调用</span></a>
+        <a class="sb-item" href="../langchain/11-agent.html"><span class="sb-item-num">11</span><span class="sb-item-title">Agent</span></a>
+        <a class="sb-item" href="../langchain/12-hui-diao-yu-tiao-shi-quan-ke-cheng-shou-guan.html"><span class="sb-item-num">12</span><span class="sb-item-title">回调与调试（全课程收官章）</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="langgraph">
+      <a class="sb-group-title" href="../modules/langgraph.html" data-toggle="langgraph">
+        <span class="sb-num">04</span>
+        <span class="sb-group-text"><b>LangGraph 框架指南</b><i>17 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langgraph/01-di-1-zhang-cong-yi-ge-shi-kong-de-jiao.html"><span class="sb-item-num">01</span><span class="sb-item-title">第 1 章 从一个失控的脚本说起</span></a>
+        <a class="sb-item" href="../langgraph/02-di-2-zhang-zui-xiao-ke-yun-xing-tu.html"><span class="sb-item-num">02</span><span class="sb-item-title">第 2 章 最小可运行图</span></a>
+        <a class="sb-item" href="../langgraph/03-di-3-zhang-zhuang-tai-tu-de-shu-ju-xin.html"><span class="sb-item-num">03</span><span class="sb-item-title">第 3 章 状态：图的数据心脏</span></a>
+        <a class="sb-item" href="../langgraph/04-di-4-zhang-rang-liu-cheng-xue-hui-jue-ce.html"><span class="sb-item-num">04</span><span class="sb-item-title">第 4 章 让流程学会决策</span></a>
+        <a class="sb-item" href="../langgraph/05-di-5-zhang-bing-xing-shi-jie-chao-bu-zhi.html"><span class="sb-item-num">05</span><span class="sb-item-title">第 5 章 并行世界：超步执行模型</span></a>
+        <a class="sb-item" href="../langgraph/06-di-6-zhang-command-ba-kong-zhi-quan-jiao-jin.html"><span class="sb-item-num">06</span><span class="sb-item-title">第 6 章 Command：把控制权交进节点</span></a>
+        <a class="sb-item" href="../langgraph/07-di-7-zhang-dong-tai-bing-xing-send-yu-mapreduce.html"><span class="sb-item-num">07</span><span class="sb-item-title">第 7 章 动态并行：Send 与 MapReduce</span></a>
+        <a class="sb-item" href="../langgraph/08-di-8-zhang-gei-tu-zhuang-shang-shou-jiao-gong.html"><span class="sb-item-num">08</span><span class="sb-item-title">第 8 章 给图装上手脚：工具调用</span></a>
+        <a class="sb-item" href="../langgraph/09-di-9-zhang-fu-yong-yu-feng-zhuang-zi-tu.html"><span class="sb-item-num">09</span><span class="sb-item-title">第 9 章 复用与封装：子图</span></a>
+        <a class="sb-item" href="../langgraph/10-di-10-zhang-cong-dan-tu-dao-tuan-dui-duo.html"><span class="sb-item-num">10</span><span class="sb-item-title">第 10 章 从单图到团队：多 Agent 架构</span></a>
+        <a class="sb-item" href="../langgraph/11-di-11-zhang-liu-shi-shu-chu.html"><span class="sb-item-num">11</span><span class="sb-item-title">第 11 章 流式输出</span></a>
+        <a class="sb-item" href="../langgraph/12-di-12-zhang-chi-jiu-hua-checkpointer-yu-xian-cheng.html"><span class="sb-item-num">12</span><span class="sb-item-title">第 12 章 持久化：Checkpointer 与线程</span></a>
+        <a class="sb-item" href="../langgraph/13-di-13-zhang-shi-jian-lv-xing.html"><span class="sb-item-num">13</span><span class="sb-item-title">第 13 章 时间旅行</span></a>
+        <a class="sb-item" href="../langgraph/14-di-14-zhang-zhong-duan-yu-ren-zai-hui-lu.html"><span class="sb-item-num">14</span><span class="sb-item-title">第 14 章 中断与人在回路</span></a>
+        <a class="sb-item" href="../langgraph/15-di-15-zhang-ji-yi-guan-li.html"><span class="sb-item-num">15</span><span class="sb-item-title">第 15 章 记忆管理</span></a>
+        <a class="sb-item" href="../langgraph/16-di-16-zhang-rong-cuo-zhong-shi-chao-shi-yu.html"><span class="sb-item-num">16</span><span class="sb-item-title">第 16 章 容错：重试、超时与兜底</span></a>
+        <a class="sb-item" href="../langgraph/17-di-17-zhang-quan-jing-hui-gu.html"><span class="sb-item-num">17</span><span class="sb-item-title">第 17 章 全景回顾</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="backend">
+      <a class="sb-group-title" href="../modules/backend.html" data-toggle="backend">
+        <span class="sb-num">05</span>
+        <span class="sb-group-text"><b>Python 框架指南</b><i>14 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../backend/01-fastapi-ru-men-yu-asgi.html"><span class="sb-item-num">01</span><span class="sb-item-title">FastAPI 入门与 ASGI</span></a>
+        <a class="sb-item" href="../backend/02-lu-you-yu-qing-qiu-xiang-ying.html"><span class="sb-item-num">02</span><span class="sb-item-title">路由与请求响应</span></a>
+        <a class="sb-item" href="../backend/03-pydantic-shu-ju-jiao-yan-yu-pei-zhi.html"><span class="sb-item-num">03</span><span class="sb-item-title">Pydantic 数据校验与配置</span></a>
+        <a class="sb-item" href="../backend/04-sqlalchemy-yi-bu-yin-qing-yu-hui-hua.html"><span class="sb-item-num">04</span><span class="sb-item-title">SQLAlchemy 异步引擎与会话</span></a>
+        <a class="sb-item" href="../backend/05-orm-jian-mo.html"><span class="sb-item-num">05</span><span class="sb-item-title">ORM 建模</span></a>
+        <a class="sb-item" href="../backend/06-sql-biao-da-shi-yu-shu-ju-cao-zuo.html"><span class="sb-item-num">06</span><span class="sb-item-title">SQL 表达式与数据操作</span></a>
+        <a class="sb-item" href="../backend/07-alembic-shu-ju-qian-yi.html"><span class="sb-item-num">07</span><span class="sb-item-title">Alembic 数据迁移</span></a>
+        <a class="sb-item" href="../backend/08-yi-lai-zhu-ru.html"><span class="sb-item-num">08</span><span class="sb-item-title">依赖注入</span></a>
+        <a class="sb-item" href="../backend/09-tong-yi-yi-chang-chu-li.html"><span class="sb-item-num">09</span><span class="sb-item-title">统一异常处理</span></a>
+        <a class="sb-item" href="../backend/10-zhong-jian-jian.html"><span class="sb-item-num">10</span><span class="sb-item-title">中间件</span></a>
+        <a class="sb-item" href="../backend/11-ren-zheng-yu-jwt.html"><span class="sb-item-num">11</span><span class="sb-item-title">认证与 JWT</span></a>
+        <a class="sb-item" href="../backend/12-pytest-ce-shi.html"><span class="sb-item-num">12</span><span class="sb-item-title">pytest 测试</span></a>
+        <a class="sb-item" href="../backend/13-ri-zhi-loguru.html"><span class="sb-item-num">13</span><span class="sb-item-title">日志 loguru</span></a>
+        <a class="sb-item" href="../backend/14-liu-shi-xiang-ying-sse-yu-websocket.html"><span class="sb-item-num">14</span><span class="sb-item-title">流式响应 SSE 与 WebSocket</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="interview">
+      <a class="sb-group-title" href="../modules/interview.html" data-toggle="interview">
+        <span class="sb-num">06</span>
+        <span class="sb-group-text"><b>面试题库</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../interview/01-llm-yuan-li-pian.html"><span class="sb-item-num">01</span><span class="sb-item-title">LLM 原理篇</span></a>
+        <a class="sb-item" href="../interview/02-rag-yu-jian-suo-pian.html"><span class="sb-item-num">02</span><span class="sb-item-title">RAG 与检索篇</span></a>
+        <a class="sb-item" href="../interview/03-agent-he-xin-pian.html"><span class="sb-item-num">03</span><span class="sb-item-title">Agent 核心篇</span></a>
+        <a class="sb-item" href="../interview/04-langgraph-pian.html"><span class="sb-item-num">04</span><span class="sb-item-title">LangGraph 篇</span></a>
+        <a class="sb-item" href="../interview/05-langchain-pian.html"><span class="sb-item-num">05</span><span class="sb-item-title">LangChain 篇</span></a>
+        <a class="sb-item" href="../interview/06-xi-tong-she-ji-pian.html"><span class="sb-item-num">06</span><span class="sb-item-title">系统设计篇</span></a>
+        <a class="sb-item" href="../interview/07-xiang-mu-shen-wa-pian.html"><span class="sb-item-num">07</span><span class="sb-item-title">项目深挖篇</span></a>
+        <a class="sb-item" href="../interview/08-gu-zhang-pai-cha-pian.html"><span class="sb-item-num">08</span><span class="sb-item-title">故障排查篇</span></a>
+        <a class="sb-item" href="../interview/09-python-ji-chu-pian.html"><span class="sb-item-num">09</span><span class="sb-item-title">Python 基础篇</span></a>
+        <a class="sb-item" href="../interview/10-fastapi-yu-hou-duan-pian.html"><span class="sb-item-num">10</span><span class="sb-item-title">FastAPI 与后端篇</span></a>
+        <a class="sb-item" href="../interview/11-ti-shi-ci-gong-cheng-yu-an-quan-pian.html"><span class="sb-item-num">11</span><span class="sb-item-title">提示词工程与安全篇</span></a>
+        <a class="sb-item" href="../interview/12-mo-xing-xuan-xing-yu-jiang-ben-pian.html"><span class="sb-item-num">12</span><span class="sb-item-title">模型选型与降本篇</span></a>
+      </div>
+    </section>
+    <div class="sb-sep"></div>
+    <a class="sb-home" href="../camp.html">
+      <span class="sb-home-ico">◆</span>
+      <span class="sb-home-text"><b>训练营介绍</b><i>课程总览</i></span>
+    </a>
+  </nav>
+</aside>
+  <main class="main">
+    <header class="topbar">
+      <button class="menu-btn" id="menuBtn" aria-label="目录">☰</button>
+      <div class="crumbs"><a href="../index.html">首页</a><span>/</span><a href="../modules/python.html">Python 与数据实践</a><span>/</span><span class="cur">异常体系与处理</span></div>
+      <div class="topbar-actions">
+        <button class="icon-btn" id="themeBtn" title="切换深浅色" aria-label="切换深浅色">◐</button>
+      </div>
+    </header>
+    <div class="content">
+      <article class="article">
+
+<header class="page-head">
+  <div class="page-kicker">Python 与数据实践 · 第 13 章</div>
+  <h1 class="page-title">异常体系与处理</h1>
+  <p class="page-desc">程序只要在跑，就免不了出岔子：文件找不到、网络断了、用户输入了奇怪的东西……出错本身并不可怕，可怕的是程序直接躺平——屏幕上甩出一大坨红色 traceback，然后整个进程退场。Python 为此准备了一整套&quot;异常处理&quot;…</p>
+  <div class="page-meta">
+    <span>约 16 分钟</span><span>6,254 字</span><span>16 个代码示例</span>
+  </div>
+</header>
+<div class="md"><p>程序只要在跑，就免不了出岔子：文件找不到、网络断了、用户输入了奇怪的东西……出错本身并不可怕，可怕的是程序直接躺平——屏幕上甩出一大坨红色 traceback，然后整个进程退场。Python 为此准备了一整套"异常处理"机制：既能优雅地接住错误、就地恢复，也能在必要的时候主动制造错误，把错误的原因一层层传递下去。</p>
+<p>上一章拆解 <code>with</code> 语句时你应该已经注意到了，它底层翻译出来赫然写着 <code>try / except / raise</code>。本章就把这套语法正式讲透——它是后面写健壮的数据处理脚本的地基。</p>
+<hr />
+<h2 id="1-接住异常try-except-全家桶">1. 接住异常：try / except 全家桶</h2>
+<h3 id="11-最基本的接法">1.1 最基本的接法</h3>
+<p>把"可能出事"的代码圈进 <code>try</code>，把"出了事怎么办"写进 <code>except</code>：</p>
+<div class="highlight"><pre><span></span><code><span class="k">try</span><span class="p">:</span>
+    <span class="n">count</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="s2">"十二"</span><span class="p">)</span>  <span class="c1"># 这行必然出事</span>
+<span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"这不是一个能转成整数的字符串"</span><span class="p">)</span>
+</code></pre></div>
+<p>如果没有 try，<code>int("十二")</code> 会当场把程序打死；现在它只是被拦下来，打印一句话之后，程序还活着。</p>
+<h3 id="12-多路拦截顺便拿到异常对象">1.2 多路拦截，顺便拿到异常对象</h3>
+<p>不同的问题对应不同的异常类型，可以写多个 except 分支分别对待；再加个 <code>as</code>，还能把异常对象本身抓在手里：</p>
+<div class="highlight"><pre><span></span><code><span class="k">try</span><span class="p">:</span>
+    <span class="n">ratio</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s2">"95%"</span><span class="p">)</span>
+<span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"内容转不成数字: </span><span class="si">{</span><span class="n">err</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="k">except</span> <span class="ne">TypeError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"类型根本不对: </span><span class="si">{</span><span class="n">err</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"一路平安，才轮到我执行"</span><span class="p">)</span>
+<span class="k">finally</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"不管上面闹成什么样，我都会执行"</span><span class="p">)</span>
+</code></pre></div>
+<p>四个关键字各司其职：</p>
+<ul>
+<li><code>try</code>：圈出"危险区"，区内的代码一抛异常就立刻跳走；</li>
+<li><code>except</code>：按类型"认领"异常，命中哪个分支就走哪个；</li>
+<li><code>else</code>：try 里从头到尾没出过任何事，才会执行；</li>
+<li><code>finally</code>：收尾工作，出不出事都执行（关文件、释放连接这类事放这里最合适）。</li>
+</ul>
+<h3 id="13-异常对象身上有什么">1.3 异常对象身上有什么</h3>
+<div class="highlight"><pre><span></span><code><span class="k">try</span><span class="p">:</span>
+    <span class="n">top</span> <span class="o">=</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">30</span><span class="p">][</span><span class="mi">5</span><span class="p">]</span>
+<span class="k">except</span> <span class="ne">IndexError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">err</span><span class="o">.</span><span class="n">args</span><span class="p">)</span>           <span class="c1"># ('list index out of range',) —— 构造异常时传入的参数</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">err</span><span class="o">.</span><span class="n">__traceback__</span><span class="p">)</span>  <span class="c1"># 堆栈跟踪对象，记录异常是在哪一行冒出来的</span>
+</code></pre></div>
+<h2 id="2-内置异常是一棵家族树">2. 内置异常是一棵家族树</h2>
+<p>Python 的内置异常不是一盘散沙，而是一棵继承树。捕获父类，等于把它的全部子孙一网打尽：</p>
+<div class="highlight"><pre><span></span><code>BaseException
+ ├── SystemExit          # sys.exit() 触发
+ ├── KeyboardInterrupt   # Ctrl+C 触发
+ └── Exception           # 日常异常的总祖先
+      ├── ArithmeticError
+      │    └── ZeroDivisionError
+      ├── LookupError
+      │    ├── IndexError
+      │    └── KeyError
+      ├── TypeError
+      ├── ValueError
+      │    └── UnicodeError
+      └── ...
+</code></pre></div>
+<p>这张图透露出两条实用信息。</p>
+<p><strong>其一，父类可以代收子类。</strong> 当你并不在乎"到底是哪种查不到"时，拦父类最省事：</p>
+<div class="highlight"><pre><span></span><code><span class="n">profile</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"name"</span><span class="p">:</span> <span class="s2">"Alex"</span><span class="p">}</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">profile</span><span class="p">[</span><span class="s2">"age"</span><span class="p">])</span>
+<span class="k">except</span> <span class="ne">LookupError</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"没查到这个键"</span><span class="p">)</span>
+</code></pre></div>
+<p><code>KeyError</code> 是 <code>LookupError</code> 的子类，所以这一个分支就能把它接住。</p>
+<p><strong>其二，拦 <code>Exception</code> 等于拦下几乎所有常规异常</strong>，写起来最省心：</p>
+<div class="highlight"><pre><span></span><code><span class="k">try</span><span class="p">:</span>
+    <span class="n">run_migration</span><span class="p">()</span>  <span class="c1"># 什么异常都可能冒出来</span>
+<span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"迁移失败: </span><span class="si">{</span><span class="n">err</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</code></pre></div>
+<p>但省心的代价是"无差别捕获"：连本该暴露出来的 bug 也被一并吞掉了。原则上，<strong>能拦多窄就拦多窄</strong>，只处理你确实有能力处理的异常；其余的让它炸出来，交给上层调用者或日志去管。</p>
+<p>另外注意 <code>SystemExit</code> 和 <code>KeyboardInterrupt</code> 挂在 <code>Exception</code> 之外——所以 <code>except Exception</code> 拦不住它们，你按 Ctrl+C 依然能终止程序，这是刻意的设计。</p>
+<h2 id="3-主动抛出raise">3. 主动抛出：raise</h2>
+<p>异常不光能被动接，还能主动制造。当函数发现调用者传来的参数不讲道理时，最好的做法不是默默返回一个错误值，而是 <code>raise</code> 一个异常，把问题大声嚷出来：</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">deduct_stock</span><span class="p">(</span><span class="n">stock</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">ordered</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""扣减库存，返回剩余数量"""</span>
+    <span class="k">if</span> <span class="n">ordered</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"下单数量必须是正数"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">ordered</span> <span class="o">&gt;</span> <span class="n">stock</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"库存不足，无法下单"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">stock</span> <span class="o">-</span> <span class="n">ordered</span>
+
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">deduct_stock</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+<span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>  <span class="c1"># 库存不足，无法下单</span>
+</code></pre></div>
+<p>跟返回 <code>None</code>、返回 <code>-1</code> 之类的"暗号"相比，raise 的好处一目了然：错误带类型、带说明，调用方想装看不见都难。</p>
+<h3 id="31-转手再抛光杆-raise">3.1 转手再抛：光杆 raise</h3>
+<p>有时接住异常只是为了记一笔日志、做点善后，处理完还打算让它继续往上走。这时用不带参数的 <code>raise</code>，把手里正处理着的异常原样抛回去：</p>
+<div class="highlight"><pre><span></span><code><span class="k">try</span><span class="p">:</span>
+    <span class="n">fetch_remote_stats</span><span class="p">()</span>
+<span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"抓取远端数据失败，先记一笔日志"</span><span class="p">)</span>
+    <span class="k">raise</span>  <span class="c1"># 原封不动地重新抛出</span>
+</code></pre></div>
+<p>注意光杆 <code>raise</code> 只在 except 块里有效，它抛的就是当前正在处理的那个异常，堆栈信息一点不丢。</p>
+<h2 id="4-打造你自己的异常">4. 打造你自己的异常</h2>
+<p>内置异常终究是通用词汇。真实项目里，我们更希望异常能"自报家门"——一看到异常名就知道是哪块业务出了问题。做法很简单：继承 <code>Exception</code>。</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">InvalidCodeError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""编号本身不合法"""</span>
+    <span class="k">pass</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">CourseMissingError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""编号在系统里查无此课"""</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">course_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">code</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">course_name</span> <span class="o">=</span> <span class="n">course_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">=</span> <span class="n">code</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">course_name</span><span class="si">}</span><span class="s2">（编号 </span><span class="si">{</span><span class="n">code</span><span class="si">}</span><span class="s2">）不在课程表中"</span><span class="p">)</span>
+</code></pre></div>
+<p><code>CourseMissingError</code> 的写法值得细看：重写 <code>__init__</code>，把业务数据（课程名、编号）存进实例属性，再调用 <code>super().__init__</code> 把拼好的消息交给父类。这样一来，<code>print(err)</code> 有可读的输出；<code>except</code> 住之后，还能直接取 <code>err.code</code> 继续编程。</p>
+<div class="highlight"><pre><span></span><code><span class="n">course_table</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="mi">101</span><span class="p">:</span> <span class="s2">"Python 与数据实践"</span><span class="p">,</span>
+    <span class="mi">102</span><span class="p">:</span> <span class="s2">"统计思维入门"</span><span class="p">,</span>
+<span class="p">}</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">lookup_course</span><span class="p">(</span><span class="n">code</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">code</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">InvalidCodeError</span><span class="p">(</span><span class="s2">"课程编号必须是正整数"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">code</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">course_table</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">CourseMissingError</span><span class="p">(</span><span class="s2">"未命名课程"</span><span class="p">,</span> <span class="n">code</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">course_table</span><span class="p">[</span><span class="n">code</span><span class="p">]</span>
+</code></pre></div>
+<h2 id="5-异常链把前因挂在后果上">5. 异常链：把"前因"挂在"后果"上</h2>
+<p>在 except 块里再抛一个新异常，是极其常见的操作——底层错误往往要"翻译"成上层语言再往上报告。可新异常抛出去之后，最初那个错误去哪了？Python 的答案是：把它们<strong>串成链</strong>，并且提供了两种串法。</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">relay_implicitly</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""串法一：直接抛新异常（隐式关联）"""</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">"原始故障：缓存键失效"</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+        <span class="c1"># 这里可以先做一点补救动作。</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">"上层故障：页面渲染中断"</span><span class="p">)</span>  <span class="c1"># __context__ 自动记录</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">relay_explicitly</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""串法二：用 from 手动指定因果（显式关联）"""</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">"原始故障：缓存键失效"</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+        <span class="c1"># 做了一点补救动作。</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">"上层故障：页面渲染中断"</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">err</span>  <span class="c1"># __cause__ 明确记录</span>
+</code></pre></div>
+<p>两种串法的差别，藏在异常对象的两个属性里：</p>
+<div class="highlight"><pre><span></span><code><span class="k">try</span><span class="p">:</span>
+    <span class="n">relay_implicitly</span><span class="p">()</span>
+<span class="k">except</span> <span class="ne">RuntimeError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"隐式关联:"</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  __cause__:   </span><span class="si">{</span><span class="n">err</span><span class="o">.</span><span class="n">__cause__</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>   <span class="c1"># None —— 没声明过因果关系</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  __context__: </span><span class="si">{</span><span class="n">err</span><span class="o">.</span><span class="n">__context__</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span> <span class="c1"># KeyError —— 上下文自动记录</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">relay_explicitly</span><span class="p">()</span>
+<span class="k">except</span> <span class="ne">RuntimeError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"显式关联:"</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  __cause__:   </span><span class="si">{</span><span class="n">err</span><span class="o">.</span><span class="n">__cause__</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>   <span class="c1"># KeyError —— from 指认的"元凶"</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  __context__: </span><span class="si">{</span><span class="n">err</span><span class="o">.</span><span class="n">__context__</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span> <span class="c1"># KeyError —— 上下文同样有记录</span>
+</code></pre></div>
+<p>规律可以这样记：</p>
+<ul>
+<li>在 except 块里抛异常，Python 会自动把"当时正在处理的异常"记到 <code>__context__</code> 上，这叫<strong>隐式关联</strong>；</li>
+<li>写 <code>raise 新异常 from 旧异常</code>，旧异常会被记到 <code>__cause__</code> 上，明确宣告"它是因、我是果"，这叫<strong>显式关联</strong>。</li>
+</ul>
+<p>终端里那句 <code>During handling of the above exception, another exception occurred:</code> 就是隐式链在说话；而 <code>The above exception was the direct cause of the following exception:</code> 则是显式链。排查问题时顺着链条往下挖，往往一挖一个准。</p>
+<hr />
+<h2 id="习题">习题</h2>
+<h3 id="一容错的比值计算">一、容错的比值计算</h3>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">success_rate</span><span class="p">(</span><span class="n">hits</span><span class="p">,</span> <span class="n">trials</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    计算命中率，要求：</span>
+<span class="sd">    1. trials 为 0 时捕获 ZeroDivisionError，返回 0</span>
+<span class="sd">    2. 参数类型不对时捕获 TypeError，打印"统计数字类型不对"并返回 None</span>
+<span class="sd">    """</span>
+    <span class="c1"># 你的代码</span>
+    <span class="k">pass</span>
+
+
+<span class="nb">print</span><span class="p">(</span><span class="n">success_rate</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>    <span class="c1"># 0.8</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">success_rate</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>     <span class="c1"># 0</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">success_rate</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="s2">"10"</span><span class="p">))</span>  <span class="c1"># 统计数字类型不对，None</span>
+</code></pre></div>
+<h3 id="二自动重试装饰器-retry">二、自动重试装饰器 retry</h3>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">retry</span><span class="p">(</span><span class="n">times</span><span class="p">,</span> <span class="n">wait</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    自动重试装饰器</span>
+<span class="sd">    被装饰的函数若抛出异常，先等待 wait 秒再重试；最多尝试 times 次，</span>
+<span class="sd">    全部失败则把最后一次的异常抛出去</span>
+<span class="sd">    """</span>
+    <span class="c1"># 你的代码</span>
+    <span class="k">pass</span>
+
+
+<span class="nd">@retry</span><span class="p">(</span><span class="n">times</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">wait</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">pull_sensor_data</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""模拟一个时好时坏的数据采集接口"""</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">random</span>
+    <span class="k">if</span> <span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">&lt;</span> <span class="mf">0.7</span><span class="p">:</span>  <span class="c1"># 70% 概率失败</span>
+        <span class="k">raise</span> <span class="ne">ConnectionError</span><span class="p">(</span><span class="s2">"采集器无响应"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="s2">"采集成功"</span>
+
+
+<span class="c1"># 应当能扛住失败并自动重试，最终返回"采集成功"，或在三次全败后抛出异常</span>
+</code></pre></div>
+<p><strong>提示：</strong> 带参数的装饰器怎么写，可以回看第 10 章；本题的关键在于"最后一次失败就别再吞了，用光杆 <code>raise</code> 抛出去"。</p>
+<h3 id="三网盘配额管理">三、网盘配额管理</h3>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">QuotaExceededError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""存储配额已用尽"""</span>
+    <span class="k">pass</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">AccountLockedError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""账号处于锁定状态"""</span>
+    <span class="k">pass</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">CloudDrive</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">quota</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">used</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">locked</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">quota</span> <span class="o">=</span> <span class="n">quota</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">used</span> <span class="o">=</span> <span class="n">used</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">locked</span> <span class="o">=</span> <span class="n">locked</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">upload</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        上传文件，要求：</span>
+<span class="sd">        1. locked=True 时，抛出 AccountLockedError</span>
+<span class="sd">        2. size &lt;= 0 时，抛出 ValueError</span>
+<span class="sd">        3. used + size &gt; quota 时，抛出 QuotaExceededError</span>
+<span class="sd">        """</span>
+        <span class="c1"># 你的代码</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        删除文件以释放空间，要求：</span>
+<span class="sd">        1. locked=True 时，抛出 AccountLockedError</span>
+<span class="sd">        2. size &lt;= 0 时，抛出 ValueError</span>
+<span class="sd">        """</span>
+        <span class="c1"># 你的代码</span>
+        <span class="k">pass</span>
+
+
+<span class="c1"># 测试</span>
+<span class="n">drive</span> <span class="o">=</span> <span class="n">CloudDrive</span><span class="p">(</span><span class="n">quota</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+<span class="n">drive</span><span class="o">.</span><span class="n">upload</span><span class="p">(</span><span class="mi">30</span><span class="p">)</span>  <span class="c1"># used = 30</span>
+<span class="n">drive</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>  <span class="c1"># used = 20</span>
+
+<span class="c1"># drive.upload(200)       # QuotaExceededError</span>
+<span class="c1"># drive.upload(-5)        # ValueError</span>
+
+<span class="n">locked_drive</span> <span class="o">=</span> <span class="n">CloudDrive</span><span class="p">(</span><span class="n">quota</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">locked</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="c1"># locked_drive.upload(10)  # AccountLockedError</span>
+</code></pre></div>
+<h3 id="四把杂音翻译成同一种异常">四、把杂音翻译成同一种异常</h3>
+<p>实现一个函数，把数据采集环节可能冒出来的各种异常，统一转换成 <code>PipelineError</code>：</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">PipelineError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">code</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">=</span> <span class="n">code</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="n">message</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">read_sensor</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""模拟读取传感器，可能抛出各种异常"""</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">random</span>
+    <span class="n">failures</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"字段格式不合法"</span><span class="p">),</span>
+        <span class="ne">ConnectionError</span><span class="p">(</span><span class="s2">"采集器掉线"</span><span class="p">),</span>
+        <span class="ne">TimeoutError</span><span class="p">(</span><span class="s2">"读取超时"</span><span class="p">),</span>
+        <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">"固件内部崩溃"</span><span class="p">),</span>
+    <span class="p">]</span>
+    <span class="k">raise</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">failures</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">guarded_read</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    调用 read_sensor()，把异常统一翻译成 PipelineError：</span>
+<span class="sd">    - ValueError → PipelineError(400, "输入数据不合法")</span>
+<span class="sd">    - ConnectionError / TimeoutError → PipelineError(503, "采集服务暂不可用")</span>
+<span class="sd">    - 其他异常 → PipelineError(500, "采集服务内部错误")</span>
+<span class="sd">    """</span>
+    <span class="c1"># 你的代码</span>
+    <span class="k">pass</span>
+</code></pre></div>
+<p><strong>提示：</strong> 转换时用 <code>from</code> 把原始异常挂到链上，报错时能看到完整的来龙去脉。</p>
+<hr />
+<p><strong>下一章</strong>：<a href="../python/14-lei-xing-biao-zhu.html">14 · 类型标注</a></p></div>
+
+      </article>
+<nav class="pager"><a class="pg-card pg-prev" href="../python/12-with-yu-shang-xia-wen-xie-yi.html"><span class="pg-label">← 上一篇</span><span class="pg-title">with 与上下文协议</span><span class="pg-mod">Python 与数据实践</span></a><a class="pg-card pg-next" href="../python/14-lei-xing-biao-zhu.html"><span class="pg-label">下一篇 →</span><span class="pg-title">类型标注</span><span class="pg-mod">Python 与数据实践</span></a></nav>
+    </div>
+    <footer class="foot">
+      <span>AI Agent 工程师转型训练营配套文档</span>
+    </footer>
+  </main>
+<nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#1-接住异常try-except-全家桶">1. 接住异常：try / except 全家桶</a><a class="toc-link toc-h3" href="#11-最基本的接法">1.1 最基本的接法</a><a class="toc-link toc-h3" href="#12-多路拦截顺便拿到异常对象">1.2 多路拦截，顺便拿到异常对象</a><a class="toc-link toc-h3" href="#13-异常对象身上有什么">1.3 异常对象身上有什么</a><a class="toc-link toc-h2" href="#2-内置异常是一棵家族树">2. 内置异常是一棵家族树</a><a class="toc-link toc-h2" href="#3-主动抛出raise">3. 主动抛出：raise</a><a class="toc-link toc-h3" href="#31-转手再抛光杆-raise">3.1 转手再抛：光杆 raise</a><a class="toc-link toc-h2" href="#4-打造你自己的异常">4. 打造你自己的异常</a><a class="toc-link toc-h2" href="#5-异常链把前因挂在后果上">5. 异常链：把&quot;前因&quot;挂在&quot;后果&quot;上</a><a class="toc-link toc-h2" href="#习题">习题</a><a class="toc-link toc-h3" href="#一容错的比值计算">一、容错的比值计算</a><a class="toc-link toc-h3" href="#二自动重试装饰器-retry">二、自动重试装饰器 retry</a><a class="toc-link toc-h3" href="#三网盘配额管理">三、网盘配额管理</a><a class="toc-link toc-h3" href="#四把杂音翻译成同一种异常">四、把杂音翻译成同一种异常</a></nav>
+</div>
+<div class="sb-mask" id="sbMask"></div>
+<script src="../assets/app.js"></script>
+</body>
+</html>

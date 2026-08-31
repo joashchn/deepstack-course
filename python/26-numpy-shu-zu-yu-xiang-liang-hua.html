@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>26 · NumPy 数组与向量化 · InfiSpace 课程文档</title>
+<meta name="description" content="上一章，notebook 实验台已经搭好，也试了试手。但很快你就撞上新麻烦：手里只有 Python 列表，算个均值要 sum(x) / len(x)，两列数据对应相乘得写 for 循环——数据一多，代码臃肿，速度还慢">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%232DD4D4' text-anchor='middle'%3E%E2%88%9E%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+<div class="progress" id="progress"></div>
+
+<div class="layout">
+<aside class="sidebar" id="sidebar">
+  <div class="sb-head">
+    <a class="brand" href="../index.html">
+      <img class="brand-mark" src="../assets/infispace-logo-1.png" alt="InfiSpace">
+    </a>
+    <button class="sb-close" id="sbClose" aria-label="关闭目录">✕</button>
+  </div>
+  <div class="sb-search"><input type="search" id="searchInput" placeholder="搜索 123 篇文档… ( / )" autocomplete="off">
+    <div class="sb-results" id="searchResults"></div></div>
+  <nav class="sb-nav">
+    <section class="sb-group">
+      <a class="sb-group-title" href="../index.html">
+        <span class="sb-num">00</span>
+        <span class="sb-group-text"><b>学习导航</b><i>课程首页</i></span>
+      </a>
+    </section>
+    <section class="sb-group open" data-mod="python">
+      <a class="sb-group-title" href="../modules/python.html" data-toggle="python">
+        <span class="sb-num">01</span>
+        <span class="sb-group-text"><b>Python 与数据实践</b><i>31 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../python/01-huan-jing-da-jian-yu-ban-ben-guan-li.html"><span class="sb-item-num">01</span><span class="sb-item-title">环境搭建与版本管理</span></a>
+        <a class="sb-item" href="../python/02-bian-liang-biao-da-shi-yu-liu-cheng-kong-zhi.html"><span class="sb-item-num">02</span><span class="sb-item-title">变量、表达式与流程控制</span></a>
+        <a class="sb-item" href="../python/03-xu-lie-zi-dian-yu-ji-he.html"><span class="sb-item-num">03</span><span class="sb-item-title">序列、字典与集合</span></a>
+        <a class="sb-item" href="../python/04-han-shu-she-ji-yu-lambda.html"><span class="sb-item-num">04</span><span class="sb-item-title">函数设计与 lambda</span></a>
+        <a class="sb-item" href="../python/05-zuo-yong-yu-gui-ze-yu-bi-bao.html"><span class="sb-item-num">05</span><span class="sb-item-title">作用域规则与闭包</span></a>
+        <a class="sb-item" href="../python/06-lei-de-ding-yi-yu-shi-li-hua.html"><span class="sb-item-num">06</span><span class="sb-item-title">类的定义与实例化</span></a>
+        <a class="sb-item" href="../python/07-lei-xing-pan-ding-yu-chou-xiang-ji-lei.html"><span class="sb-item-num">07</span><span class="sb-item-title">类型判定与抽象基类</span></a>
+        <a class="sb-item" href="../python/08-mo-shu-fang-fa-quan-jing.html"><span class="sb-item-num">08</span><span class="sb-item-title">魔术方法全景</span></a>
+        <a class="sb-item" href="../python/09-miao-shu-fu-yu-yuan-lei.html"><span class="sb-item-num">09</span><span class="sb-item-title">描述符与元类</span></a>
+        <a class="sb-item" href="../python/10-zhuang-shi-qi.html"><span class="sb-item-num">10</span><span class="sb-item-title">装饰器</span></a>
+        <a class="sb-item" href="../python/11-die-dai-xie-yi-yu-sheng-cheng-qi.html"><span class="sb-item-num">11</span><span class="sb-item-title">迭代协议与生成器</span></a>
+        <a class="sb-item" href="../python/12-with-yu-shang-xia-wen-xie-yi.html"><span class="sb-item-num">12</span><span class="sb-item-title">with 与上下文协议</span></a>
+        <a class="sb-item" href="../python/13-yi-chang-ti-xi-yu-chu-li.html"><span class="sb-item-num">13</span><span class="sb-item-title">异常体系与处理</span></a>
+        <a class="sb-item" href="../python/14-lei-xing-biao-zhu.html"><span class="sb-item-num">14</span><span class="sb-item-title">类型标注</span></a>
+        <a class="sb-item" href="../python/15-mo-kuai-yu-bao-de-zu-zhi.html"><span class="sb-item-num">15</span><span class="sb-item-title">模块与包的组织</span></a>
+        <a class="sb-item" href="../python/16-biao-zhun-ku-xun-li.html"><span class="sb-item-num">16</span><span class="sb-item-title">标准库巡礼</span></a>
+        <a class="sb-item" href="../python/17-yi-lai-guan-li-yu-di-san-fang-ku.html"><span class="sb-item-num">17</span><span class="sb-item-title">依赖管理与第三方库</span></a>
+        <a class="sb-item" href="../python/18-xian-cheng-yu-jin-cheng.html"><span class="sb-item-num">18</span><span class="sb-item-title">线程与进程</span></a>
+        <a class="sb-item" href="../python/19-shi-jian-xun-huan.html"><span class="sb-item-num">19</span><span class="sb-item-title">事件循环</span></a>
+        <a class="sb-item" href="../python/20-future-yu-xie-cheng.html"><span class="sb-item-num">20</span><span class="sb-item-title">Future 与协程</span></a>
+        <a class="sb-item" href="../python/21-asyncio-shi-zhan.html"><span class="sb-item-num">21</span><span class="sb-item-title">asyncio 实战</span></a>
+        <a class="sb-item" href="../python/22-gou-jian-yu-fa-bu.html"><span class="sb-item-num">22</span><span class="sb-item-title">构建与发布</span></a>
+        <a class="sb-item" href="../python/23-gong-cheng-hua-gong-ju-lian.html"><span class="sb-item-num">23</span><span class="sb-item-title">工程化工具链</span></a>
+        <a class="sb-item" href="../python/24-monorepo-yu-tiao-shi.html"><span class="sb-item-num">24</span><span class="sb-item-title">monorepo 与调试</span></a>
+        <a class="sb-item" href="../python/25-jupyter-jiao-hu-huan-jing.html"><span class="sb-item-num">25</span><span class="sb-item-title">Jupyter 交互环境</span></a>
+        <a class="sb-item current" href="../python/26-numpy-shu-zu-yu-xiang-liang-hua.html"><span class="sb-item-num">26</span><span class="sb-item-title">NumPy 数组与向量化</span></a>
+        <a class="sb-item" href="../python/27-pandas-shu-ju-jie-gou.html"><span class="sb-item-num">27</span><span class="sb-item-title">Pandas 数据结构</span></a>
+        <a class="sb-item" href="../python/28-pandas-shu-ju-qing-xi.html"><span class="sb-item-num">28</span><span class="sb-item-title">Pandas 数据清洗</span></a>
+        <a class="sb-item" href="../python/29-matplotlib-hui-tu-ti-xi.html"><span class="sb-item-num">29</span><span class="sb-item-title">Matplotlib 绘图体系</span></a>
+        <a class="sb-item" href="../python/30-matplotlib-dong-hua-yu-jiao-hu.html"><span class="sb-item-num">30</span><span class="sb-item-title">Matplotlib 动画与交互</span></a>
+        <a class="sb-item" href="../python/31-seaborn-tong-ji-ke-shi-hua.html"><span class="sb-item-num">31</span><span class="sb-item-title">Seaborn 统计可视化</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="agent">
+      <a class="sb-group-title" href="../modules/agent.html" data-toggle="agent">
+        <span class="sb-num">02</span>
+        <span class="sb-group-text"><b>Agent 核心</b><i>15 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../agent/01-token-yu-ci-qian-ru.html"><span class="sb-item-num">01</span><span class="sb-item-title">Token 与词嵌入</span></a>
+        <a class="sb-item" href="../agent/02-qian-xiang-chuan-bo-yu-fan-xiang-chuan-bo.html"><span class="sb-item-num">02</span><span class="sb-item-title">前向传播与反向传播</span></a>
+        <a class="sb-item" href="../agent/03-zhu-yi-li-ji-zhi-yu-transformer-jia-gou.html"><span class="sb-item-num">03</span><span class="sb-item-title">注意力机制与 Transformer 架构</span></a>
+        <a class="sb-item" href="../agent/04-yu-xun-lian-rlhf-yu-cai-yang-kv-cache.html"><span class="sb-item-num">04</span><span class="sb-item-title">预训练、RLHF 与采样（KV Cache）</span></a>
+        <a class="sb-item" href="../agent/05-ben-di-mo-xing-yu-xiao-xi-jie-gou.html"><span class="sb-item-num">05</span><span class="sb-item-title">本地模型与消息结构</span></a>
+        <a class="sb-item" href="../agent/06-hui-hua-guan-li-yu-json-shu-chu.html"><span class="sb-item-num">06</span><span class="sb-item-title">会话管理与 JSON 输出</span></a>
+        <a class="sb-item" href="../agent/07-tool-calling-xie-yi-yu-feng-zhuang.html"><span class="sb-item-num">07</span><span class="sb-item-title">Tool Calling：协议与封装</span></a>
+        <a class="sb-item" href="../agent/08-react-mo-shi-yu-zhu-xun-huan.html"><span class="sb-item-num">08</span><span class="sb-item-title">ReAct 模式与主循环</span></a>
+        <a class="sb-item" href="../agent/09-shi-zhan-deep-research-agent.html"><span class="sb-item-num">09</span><span class="sb-item-title">实战：Deep Research Agent</span></a>
+        <a class="sb-item" href="../agent/10-skill-yu-jian-jin-shi-pi-lu.html"><span class="sb-item-num">10</span><span class="sb-item-title">Skill 与渐进式披露</span></a>
+        <a class="sb-item" href="../agent/11-mcp-quan-jing.html"><span class="sb-item-num">11</span><span class="sb-item-title">MCP 全景</span></a>
+        <a class="sb-item" href="../agent/12-duo-agent-yu-xuan-xing-ce-lve.html"><span class="sb-item-num">12</span><span class="sb-item-title">多 Agent 与选型策略</span></a>
+        <a class="sb-item" href="../agent/13-ti-shi-ci-gong-cheng-yu-shang-xia-wen-gong.html"><span class="sb-item-num">13</span><span class="sb-item-title">提示词工程与上下文工程</span></a>
+        <a class="sb-item" href="../agent/14-xun-huan-tu-yu-gu-jia-gong-cheng.html"><span class="sb-item-num">14</span><span class="sb-item-title">循环、图与骨架工程</span></a>
+        <a class="sb-item" href="../agent/15-ji-yi-quan-xian-yu-ping-ce.html"><span class="sb-item-num">15</span><span class="sb-item-title">记忆、权限与评测</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="langchain">
+      <a class="sb-group-title" href="../modules/langchain.html" data-toggle="langchain">
+        <span class="sb-num">03</span>
+        <span class="sb-group-text"><b>LangChain 指南</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langchain/01-ren-shi-langchain.html"><span class="sb-item-num">01</span><span class="sb-item-title">认识 LangChain</span></a>
+        <a class="sb-item" href="../langchain/02-ti-shi-ci-mu-ban-yu-xiao-xi.html"><span class="sb-item-num">02</span><span class="sb-item-title">提示词模板与消息</span></a>
+        <a class="sb-item" href="../langchain/03-lcel-yu-runnable.html"><span class="sb-item-num">03</span><span class="sb-item-title">LCEL 与 Runnable</span></a>
+        <a class="sb-item" href="../langchain/04-liu-shi-yu-bing-fa.html"><span class="sb-item-num">04</span><span class="sb-item-title">流式与并发</span></a>
+        <a class="sb-item" href="../langchain/05-shu-chu-jie-xi-qi.html"><span class="sb-item-num">05</span><span class="sb-item-title">输出解析器</span></a>
+        <a class="sb-item" href="../langchain/06-wen-dang-jia-zai-yu-qie-ge.html"><span class="sb-item-num">06</span><span class="sb-item-title">文档加载与切割</span></a>
+        <a class="sb-item" href="../langchain/07-qian-ru-yu-xiang-liang-ku.html"><span class="sb-item-num">07</span><span class="sb-item-title">嵌入与向量库</span></a>
+        <a class="sb-item" href="../langchain/08-jian-suo-yu-rag.html"><span class="sb-item-num">08</span><span class="sb-item-title">检索与RAG</span></a>
+        <a class="sb-item" href="../langchain/09-dui-hua-ji-yi.html"><span class="sb-item-num">09</span><span class="sb-item-title">对话记忆</span></a>
+        <a class="sb-item" href="../langchain/10-gong-ju-diao-yong.html"><span class="sb-item-num">10</span><span class="sb-item-title">工具调用</span></a>
+        <a class="sb-item" href="../langchain/11-agent.html"><span class="sb-item-num">11</span><span class="sb-item-title">Agent</span></a>
+        <a class="sb-item" href="../langchain/12-hui-diao-yu-tiao-shi-quan-ke-cheng-shou-guan.html"><span class="sb-item-num">12</span><span class="sb-item-title">回调与调试（全课程收官章）</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="langgraph">
+      <a class="sb-group-title" href="../modules/langgraph.html" data-toggle="langgraph">
+        <span class="sb-num">04</span>
+        <span class="sb-group-text"><b>LangGraph 框架指南</b><i>17 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langgraph/01-di-1-zhang-cong-yi-ge-shi-kong-de-jiao.html"><span class="sb-item-num">01</span><span class="sb-item-title">第 1 章 从一个失控的脚本说起</span></a>
+        <a class="sb-item" href="../langgraph/02-di-2-zhang-zui-xiao-ke-yun-xing-tu.html"><span class="sb-item-num">02</span><span class="sb-item-title">第 2 章 最小可运行图</span></a>
+        <a class="sb-item" href="../langgraph/03-di-3-zhang-zhuang-tai-tu-de-shu-ju-xin.html"><span class="sb-item-num">03</span><span class="sb-item-title">第 3 章 状态：图的数据心脏</span></a>
+        <a class="sb-item" href="../langgraph/04-di-4-zhang-rang-liu-cheng-xue-hui-jue-ce.html"><span class="sb-item-num">04</span><span class="sb-item-title">第 4 章 让流程学会决策</span></a>
+        <a class="sb-item" href="../langgraph/05-di-5-zhang-bing-xing-shi-jie-chao-bu-zhi.html"><span class="sb-item-num">05</span><span class="sb-item-title">第 5 章 并行世界：超步执行模型</span></a>
+        <a class="sb-item" href="../langgraph/06-di-6-zhang-command-ba-kong-zhi-quan-jiao-jin.html"><span class="sb-item-num">06</span><span class="sb-item-title">第 6 章 Command：把控制权交进节点</span></a>
+        <a class="sb-item" href="../langgraph/07-di-7-zhang-dong-tai-bing-xing-send-yu-mapreduce.html"><span class="sb-item-num">07</span><span class="sb-item-title">第 7 章 动态并行：Send 与 MapReduce</span></a>
+        <a class="sb-item" href="../langgraph/08-di-8-zhang-gei-tu-zhuang-shang-shou-jiao-gong.html"><span class="sb-item-num">08</span><span class="sb-item-title">第 8 章 给图装上手脚：工具调用</span></a>
+        <a class="sb-item" href="../langgraph/09-di-9-zhang-fu-yong-yu-feng-zhuang-zi-tu.html"><span class="sb-item-num">09</span><span class="sb-item-title">第 9 章 复用与封装：子图</span></a>
+        <a class="sb-item" href="../langgraph/10-di-10-zhang-cong-dan-tu-dao-tuan-dui-duo.html"><span class="sb-item-num">10</span><span class="sb-item-title">第 10 章 从单图到团队：多 Agent 架构</span></a>
+        <a class="sb-item" href="../langgraph/11-di-11-zhang-liu-shi-shu-chu.html"><span class="sb-item-num">11</span><span class="sb-item-title">第 11 章 流式输出</span></a>
+        <a class="sb-item" href="../langgraph/12-di-12-zhang-chi-jiu-hua-checkpointer-yu-xian-cheng.html"><span class="sb-item-num">12</span><span class="sb-item-title">第 12 章 持久化：Checkpointer 与线程</span></a>
+        <a class="sb-item" href="../langgraph/13-di-13-zhang-shi-jian-lv-xing.html"><span class="sb-item-num">13</span><span class="sb-item-title">第 13 章 时间旅行</span></a>
+        <a class="sb-item" href="../langgraph/14-di-14-zhang-zhong-duan-yu-ren-zai-hui-lu.html"><span class="sb-item-num">14</span><span class="sb-item-title">第 14 章 中断与人在回路</span></a>
+        <a class="sb-item" href="../langgraph/15-di-15-zhang-ji-yi-guan-li.html"><span class="sb-item-num">15</span><span class="sb-item-title">第 15 章 记忆管理</span></a>
+        <a class="sb-item" href="../langgraph/16-di-16-zhang-rong-cuo-zhong-shi-chao-shi-yu.html"><span class="sb-item-num">16</span><span class="sb-item-title">第 16 章 容错：重试、超时与兜底</span></a>
+        <a class="sb-item" href="../langgraph/17-di-17-zhang-quan-jing-hui-gu.html"><span class="sb-item-num">17</span><span class="sb-item-title">第 17 章 全景回顾</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="backend">
+      <a class="sb-group-title" href="../modules/backend.html" data-toggle="backend">
+        <span class="sb-num">05</span>
+        <span class="sb-group-text"><b>Python 框架指南</b><i>14 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../backend/01-fastapi-ru-men-yu-asgi.html"><span class="sb-item-num">01</span><span class="sb-item-title">FastAPI 入门与 ASGI</span></a>
+        <a class="sb-item" href="../backend/02-lu-you-yu-qing-qiu-xiang-ying.html"><span class="sb-item-num">02</span><span class="sb-item-title">路由与请求响应</span></a>
+        <a class="sb-item" href="../backend/03-pydantic-shu-ju-jiao-yan-yu-pei-zhi.html"><span class="sb-item-num">03</span><span class="sb-item-title">Pydantic 数据校验与配置</span></a>
+        <a class="sb-item" href="../backend/04-sqlalchemy-yi-bu-yin-qing-yu-hui-hua.html"><span class="sb-item-num">04</span><span class="sb-item-title">SQLAlchemy 异步引擎与会话</span></a>
+        <a class="sb-item" href="../backend/05-orm-jian-mo.html"><span class="sb-item-num">05</span><span class="sb-item-title">ORM 建模</span></a>
+        <a class="sb-item" href="../backend/06-sql-biao-da-shi-yu-shu-ju-cao-zuo.html"><span class="sb-item-num">06</span><span class="sb-item-title">SQL 表达式与数据操作</span></a>
+        <a class="sb-item" href="../backend/07-alembic-shu-ju-qian-yi.html"><span class="sb-item-num">07</span><span class="sb-item-title">Alembic 数据迁移</span></a>
+        <a class="sb-item" href="../backend/08-yi-lai-zhu-ru.html"><span class="sb-item-num">08</span><span class="sb-item-title">依赖注入</span></a>
+        <a class="sb-item" href="../backend/09-tong-yi-yi-chang-chu-li.html"><span class="sb-item-num">09</span><span class="sb-item-title">统一异常处理</span></a>
+        <a class="sb-item" href="../backend/10-zhong-jian-jian.html"><span class="sb-item-num">10</span><span class="sb-item-title">中间件</span></a>
+        <a class="sb-item" href="../backend/11-ren-zheng-yu-jwt.html"><span class="sb-item-num">11</span><span class="sb-item-title">认证与 JWT</span></a>
+        <a class="sb-item" href="../backend/12-pytest-ce-shi.html"><span class="sb-item-num">12</span><span class="sb-item-title">pytest 测试</span></a>
+        <a class="sb-item" href="../backend/13-ri-zhi-loguru.html"><span class="sb-item-num">13</span><span class="sb-item-title">日志 loguru</span></a>
+        <a class="sb-item" href="../backend/14-liu-shi-xiang-ying-sse-yu-websocket.html"><span class="sb-item-num">14</span><span class="sb-item-title">流式响应 SSE 与 WebSocket</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="interview">
+      <a class="sb-group-title" href="../modules/interview.html" data-toggle="interview">
+        <span class="sb-num">06</span>
+        <span class="sb-group-text"><b>面试题库</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../interview/01-llm-yuan-li-pian.html"><span class="sb-item-num">01</span><span class="sb-item-title">LLM 原理篇</span></a>
+        <a class="sb-item" href="../interview/02-rag-yu-jian-suo-pian.html"><span class="sb-item-num">02</span><span class="sb-item-title">RAG 与检索篇</span></a>
+        <a class="sb-item" href="../interview/03-agent-he-xin-pian.html"><span class="sb-item-num">03</span><span class="sb-item-title">Agent 核心篇</span></a>
+        <a class="sb-item" href="../interview/04-langgraph-pian.html"><span class="sb-item-num">04</span><span class="sb-item-title">LangGraph 篇</span></a>
+        <a class="sb-item" href="../interview/05-langchain-pian.html"><span class="sb-item-num">05</span><span class="sb-item-title">LangChain 篇</span></a>
+        <a class="sb-item" href="../interview/06-xi-tong-she-ji-pian.html"><span class="sb-item-num">06</span><span class="sb-item-title">系统设计篇</span></a>
+        <a class="sb-item" href="../interview/07-xiang-mu-shen-wa-pian.html"><span class="sb-item-num">07</span><span class="sb-item-title">项目深挖篇</span></a>
+        <a class="sb-item" href="../interview/08-gu-zhang-pai-cha-pian.html"><span class="sb-item-num">08</span><span class="sb-item-title">故障排查篇</span></a>
+        <a class="sb-item" href="../interview/09-python-ji-chu-pian.html"><span class="sb-item-num">09</span><span class="sb-item-title">Python 基础篇</span></a>
+        <a class="sb-item" href="../interview/10-fastapi-yu-hou-duan-pian.html"><span class="sb-item-num">10</span><span class="sb-item-title">FastAPI 与后端篇</span></a>
+        <a class="sb-item" href="../interview/11-ti-shi-ci-gong-cheng-yu-an-quan-pian.html"><span class="sb-item-num">11</span><span class="sb-item-title">提示词工程与安全篇</span></a>
+        <a class="sb-item" href="../interview/12-mo-xing-xuan-xing-yu-jiang-ben-pian.html"><span class="sb-item-num">12</span><span class="sb-item-title">模型选型与降本篇</span></a>
+      </div>
+    </section>
+    <div class="sb-sep"></div>
+    <a class="sb-home" href="../camp.html">
+      <span class="sb-home-ico">◆</span>
+      <span class="sb-home-text"><b>训练营介绍</b><i>课程总览</i></span>
+    </a>
+  </nav>
+</aside>
+  <main class="main">
+    <header class="topbar">
+      <button class="menu-btn" id="menuBtn" aria-label="目录">☰</button>
+      <div class="crumbs"><a href="../index.html">首页</a><span>/</span><a href="../modules/python.html">Python 与数据实践</a><span>/</span><span class="cur">NumPy 数组与向量化</span></div>
+      <div class="topbar-actions">
+        <button class="icon-btn" id="themeBtn" title="切换深浅色" aria-label="切换深浅色">◐</button>
+      </div>
+    </header>
+    <div class="content">
+      <article class="article">
+
+<header class="page-head">
+  <div class="page-kicker">Python 与数据实践 · 第 26 章</div>
+  <h1 class="page-title">NumPy 数组与向量化</h1>
+  <p class="page-desc">上一章，notebook 实验台已经搭好，也试了试手。但很快你就撞上新麻烦：手里只有 Python 列表，算个均值要 sum(x) / len(x)，两列数据对应相乘得写 for 循环——数据一多，代码臃肿，速度还慢</p>
+  <div class="page-meta">
+    <span>约 40 分钟</span><span>16,022 字</span><span>46 个代码示例</span>
+  </div>
+</header>
+<div class="md"><p>上一章，notebook 实验台已经搭好，也试了试手。但很快你就撞上新麻烦：手里只有 Python 列表，算个均值要 <code>sum(x) / len(x)</code>，两列数据对应相乘得写 for 循环——数据一多，代码臃肿，速度还慢。</p>
+<p>这一章，数据实践的第一件正式工具登场：<strong>NumPy</strong>。它是整个 Python 科学计算生态的地基——下一章的 Pandas 直接建在它上面，AI 领域的张量库（如 PyTorch）虽然自成体系，但"形状、轴、广播"这套思维方式也是从这里的数组概念一路传承下来的。NumPy 的计算核心由 C/C++ 实现，处理大规模数值数据时，性能和原生 Python 完全不是一个量级。</p>
+<p>本章分两段，对应一件事情的两面：</p>
+<ul>
+<li><strong>前半段解剖 ndarray 这个数据结构本身</strong>——形状、类型、内存排布、轴。看懂这四样，任何数组摆在眼前你都能"读"出来；</li>
+<li><strong>后半段把日常操作过一遍</strong>——造数、取数、变形、运算、统计、拼接、排序，最后以广播收尾。</li>
+</ul>
+<p>这些操作都是通用底座，等进入 Pandas（27-28 章）和可视化（29-31 章）后，它们会以各种化身反复出现。建议开着 notebook，跟着敲。</p>
+<h2 id="1-上手装库与导入">1. 上手：装库与导入</h2>
+<p>还记得上一章的 Shell 逃逸吗？在 notebook 的 cell 里直接写：</p>
+<div class="highlight"><pre><span></span><code><span class="err">!</span><span class="n">uv</span> <span class="n">add</span> <span class="n">numpy</span>
+</code></pre></div>
+<p>或者回到终端执行 <code>uv add numpy</code> 也一样。装完导入：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+</code></pre></div>
+<p><code>np</code> 这个别名是全世界约定俗成的写法——NumPy 官方文档、几乎所有开源项目都这么导入，不要标新立异。</p>
+<h2 id="2-ndarray给一大批数安的家">2. ndarray：给"一大批数"安的家</h2>
+<h3 id="21-和列表比它牺牲了什么换来了什么">2.1 和列表比，它牺牲了什么、换来了什么</h3>
+<p><code>ndarray</code>（N 维数组）是 NumPy 的核心数据结构。要理解它，最好的切入点是拿 Python 列表做对照：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>列表</th>
+<th>ndarray</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>元素类型</td>
+<td>随意混装（<code>[1, "a", 3.0]</code> 合法）</td>
+<td><strong>全体同一种类型</strong>（dtype）</td>
+</tr>
+<tr>
+<td>存储方式</td>
+<td>一排指针，指向散落在内存各处的对象</td>
+<td><strong>一整块连续内存</strong></td>
+</tr>
+<tr>
+<td>批量运算</td>
+<td>写 for 循环逐个处理</td>
+<td><strong>一行表达式，整组一起算</strong></td>
+</tr>
+</tbody>
+</table>
+<p>这三条是一体的：正因为每个元素类型固定、长度固定，才能紧凑地码进一块连续内存；正因为内存连续，C 层才能一口气对整块数据做运算——这就是<strong>向量化（vectorization）</strong>。代价也明摆着：失去了列表"想装什么装什么"的自由。数据计算恰恰不需要这种自由，这笔交易非常划算。</p>
+<h3 id="22-创建一个数组顺便做个体检">2.2 创建一个数组，顺便做个体检</h3>
+<p>最直接的创建方式：把（嵌套的）列表交给 <code>np.array</code>。拿两家门店三种饮品的日销量当例子：</p>
+<div class="highlight"><pre><span></span><code><span class="n">sales</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">86</span><span class="p">,</span> <span class="mi">92</span><span class="p">,</span> <span class="mi">79</span><span class="p">],</span>
+                  <span class="p">[</span><span class="mi">74</span><span class="p">,</span> <span class="mi">105</span><span class="p">,</span> <span class="mi">68</span><span class="p">]])</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">sales</span><span class="p">)</span>
+<span class="c1"># [[ 86  92  79]</span>
+<span class="c1">#  [ 74 105  68]]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">sales</span><span class="p">))</span>
+<span class="c1"># &lt;class 'numpy.ndarray'&gt;</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"形状 </span><span class="si">{</span><span class="n">sales</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">，维度数 </span><span class="si">{</span><span class="n">sales</span><span class="o">.</span><span class="n">ndim</span><span class="si">}</span><span class="s2">，元素总数 </span><span class="si">{</span><span class="n">sales</span><span class="o">.</span><span class="n">size</span><span class="si">}</span><span class="s2">，元素类型 </span><span class="si">{</span><span class="n">sales</span><span class="o">.</span><span class="n">dtype</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="c1"># 形状 (2, 3)，维度数 2，元素总数 6，元素类型 int64</span>
+</code></pre></div>
+<p>最后那行打印的四个属性，就是一份"体检报告"，逐个认识：</p>
+<ul>
+<li><code>shape</code>：形状，一个元组，描述每根轴有多长</li>
+<li><code>ndim</code>：维度数（轴的数量）</li>
+<li><code>size</code>：元素总数</li>
+<li><code>dtype</code>：所有元素共用的那个类型</li>
+</ul>
+<h3 id="23-形状数组的骨架">2.3 形状：数组的骨架</h3>
+<p><code>shape</code> 是读懂数组的起点。它是元组，<strong>第 i 个数字就是第 i 根轴的长度</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="n">hr_1d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">72</span><span class="p">,</span> <span class="mi">75</span><span class="p">,</span> <span class="mi">71</span><span class="p">,</span> <span class="mi">78</span><span class="p">,</span> <span class="mi">74</span><span class="p">,</span> <span class="mi">76</span><span class="p">])</span>      <span class="c1"># 一维：6 次心率采样</span>
+<span class="n">scores_2d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">92</span><span class="p">,</span> <span class="mi">88</span><span class="p">,</span> <span class="mi">95</span><span class="p">],</span>
+                      <span class="p">[</span><span class="mi">78</span><span class="p">,</span> <span class="mi">85</span><span class="p">,</span> <span class="mi">82</span><span class="p">],</span>
+                      <span class="p">[</span><span class="mi">90</span><span class="p">,</span> <span class="mi">91</span><span class="p">,</span> <span class="mi">87</span><span class="p">],</span>
+                      <span class="p">[</span><span class="mi">66</span><span class="p">,</span> <span class="mi">72</span><span class="p">,</span> <span class="mi">70</span><span class="p">]])</span>             <span class="c1"># 二维：4 名学生 × 3 门课</span>
+<span class="n">jump_3d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[[</span><span class="mi">215</span><span class="p">],</span> <span class="p">[</span><span class="mi">198</span><span class="p">],</span> <span class="p">[</span><span class="mi">240</span><span class="p">]],</span>
+                    <span class="p">[[</span><span class="mi">186</span><span class="p">],</span> <span class="p">[</span><span class="mi">225</span><span class="p">],</span> <span class="p">[</span><span class="mi">209</span><span class="p">]]])</span>      <span class="c1"># 三维：2 个小组 × 3 名成员 × 1 项成绩</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">hr_1d</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">scores_2d</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">jump_3d</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="c1"># (6,) (4, 3) (2, 3, 1)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">jump_3d</span><span class="o">.</span><span class="n">ndim</span><span class="p">,</span> <span class="n">jump_3d</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+<span class="c1"># 3 6</span>
+</code></pre></div>
+<p>三个细节：</p>
+<ul>
+<li>一维数组的 shape 是 <code>(6,)</code>——<strong>元组里只有一个数也要带逗号</strong>，不带就变成普通整数了；</li>
+<li>二维 <code>(4, 3)</code> 按"行、列"读：4 行 3 列，可以想象一张表；</li>
+<li>三维 <code>(2, 3, 1)</code> 按"层、行、列"读：两张 3×1 的小表摞在一起。<code>size</code> 恒等于 shape 各项相乘：2×3×1 = 6。</li>
+</ul>
+<h3 id="24-想一想">2.4 想一想</h3>
+<p>你在做评论分析任务：每条评论被编码成一个 <strong>512 维的语义向量</strong>，手头共有 <strong>300 条</strong>评论，全部装进一个 ndarray。这个数组是几维的？shape 是什么？size 是多少？</p>
+<p>对一下答案：</p>
+<div class="highlight"><pre><span></span><code><span class="n">vecs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">300</span><span class="p">,</span> <span class="mi">512</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">vecs</span><span class="o">.</span><span class="n">ndim</span><span class="p">,</span> <span class="n">vecs</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">vecs</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+<span class="c1"># 2 (300, 512) 153600</span>
+</code></pre></div>
+<p>"批量 × 每条维度"——<code>(条数, 维度数)</code> 这个形状，后面凡是和向量数据（embedding）打交道的场合都会反复见到。</p>
+<h2 id="3-dtype一种数组一种类型">3. dtype：一种数组，一种类型</h2>
+<p>ndarray 是同质的，<code>dtype</code> 就是描述"全体元素是哪种类型"的属性。常用的有这么几类：</p>
+<ul>
+<li>浮点：<code>float64</code>（默认浮点）、<code>float32</code>（省一半内存，向量数据常用）</li>
+<li>整数：<code>int64</code>（默认整数）、<code>int32</code>、<code>int8</code></li>
+<li>布尔：<code>bool</code></li>
+<li><code>object</code>：装 Python 对象——<strong>尽量别用</strong>，等于放弃连续内存和向量化，退回列表时代</li>
+</ul>
+<p>为什么类型要这么细分？因为 ndarray 的类型系统本质上<strong>把 C 的类型系统直接搬进了 Python</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>NumPy dtype</th>
+<th>对应 C 类型</th>
+<th>占用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>int64</code></td>
+<td><code>int64_t</code></td>
+<td>8 字节</td>
+</tr>
+<tr>
+<td><code>int32</code></td>
+<td><code>int32_t</code></td>
+<td>4 字节</td>
+</tr>
+<tr>
+<td><code>float64</code></td>
+<td><code>double</code></td>
+<td>8 字节</td>
+</tr>
+<tr>
+<td><code>float32</code></td>
+<td><code>float</code></td>
+<td>4 字节</td>
+</tr>
+</tbody>
+</table>
+<p>对照之下，Python 的 <code>int</code> 是个"不定长"的完整对象，光是对象头部就要吃掉 28 字节往上，值本身还散在别处。ndarray 用 C 的定长类型把数据码成一片，才换来了高速的整块运算。<code>itemsize</code> 属性可以看到每个元素占几字节：</p>
+<div class="highlight"><pre><span></span><code><span class="n">temps</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">36.5</span><span class="p">,</span> <span class="mf">37.1</span><span class="p">,</span> <span class="mf">36.8</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+<span class="n">uids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">10001</span><span class="p">,</span> <span class="mi">10002</span><span class="p">,</span> <span class="mi">10003</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+<span class="n">flags</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">bool_</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">temps</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">temps</span><span class="o">.</span><span class="n">itemsize</span><span class="p">)</span>   <span class="c1"># float32 4</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">uids</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">uids</span><span class="o">.</span><span class="n">itemsize</span><span class="p">)</span>     <span class="c1"># int64 8</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">flags</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">flags</span><span class="o">.</span><span class="n">itemsize</span><span class="p">)</span>   <span class="c1"># bool 1</span>
+</code></pre></div>
+<p>一字之差，账单翻倍。算笔内存账：</p>
+<div class="highlight"><pre><span></span><code><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"一千万个 float64 读数: </span><span class="si">{</span><span class="mi">10_000_000</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">8</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">1024</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">1024</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> MB"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"一千万个 float32 读数: </span><span class="si">{</span><span class="mi">10_000_000</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">4</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">1024</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">1024</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> MB"</span><span class="p">)</span>
+<span class="c1"># 一千万个 float64 读数: 76.29 MB</span>
+<span class="c1"># 一千万个 float32 读数: 38.15 MB</span>
+</code></pre></div>
+<p>所以实践中有个共识：<strong>向量数据用 <code>float32</code></strong>（精度够用、内存减半）、<strong>编号 ID 用 <code>int64</code></strong>、<strong>开关掩码用 <code>bool</code></strong>。</p>
+<p>那如果硬塞进不匹配的数据呢？显式指定 dtype 时，NumPy 不会含糊，直接报错：</p>
+<div class="highlight"><pre><span></span><code><span class="k">try</span><span class="p">:</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="s2">"七"</span><span class="p">,</span> <span class="mi">9</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+<span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+<span class="c1"># invalid literal for int() with base 10: '七'</span>
+</code></pre></div>
+<p>更要提防的是<strong>不指定 dtype</strong> 的情况：NumPy 会悄悄"就高"——整数碰上浮点全部变浮点，只要混进一个字符串就全体变字符串。类型被无声地改变，比报错危险得多。所以创建数组时，类型敏感的场合<strong>显式传 <code>dtype</code></strong>，是更稳的习惯。</p>
+<h2 id="4-strides数据在内存里怎么摆">4. strides：数据在内存里怎么摆</h2>
+<p><code>strides</code>（步幅）回答一个很底层的问题：<strong>沿某根轴往前挪一格，内存里要跳过多少字节？</strong> 它是 NumPy 在内存里的"行走指令"。</p>
+<p>一块 <code>shape (2, 3)</code>、<code>int64</code>（每元素 8 字节）的数组，内存里实际就是一排 6 个格子：</p>
+<div class="highlight"><pre><span></span><code>        列0   列1   列2
+行0   [ 10 ][ 20 ][ 30 ]
+行1   [ 40 ][ 50 ][ 60 ]
+
+内存实况（每格 8 字节，首尾相接）：
+[10][20][30][40][50][60]
+
+· 从 10 走到 20（列方向挪一格）：跳过 1 格 = 8 字节   → axis 1 的步幅
+· 从 10 走到 40（行方向挪一格）：跳过 3 格 = 24 字节  → axis 0 的步幅
+</code></pre></div>
+<p>验证一下：</p>
+<div class="highlight"><pre><span></span><code><span class="n">grid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">30</span><span class="p">],</span>
+                 <span class="p">[</span><span class="mi">40</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">60</span><span class="p">]],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">grid</span><span class="o">.</span><span class="n">strides</span><span class="p">,</span> <span class="n">grid</span><span class="o">.</span><span class="n">itemsize</span><span class="p">)</span>
+<span class="c1"># (2, 3) (24, 8) 8</span>
+</code></pre></div>
+<p><code>strides</code> 是 <code>(24, 8)</code>：行方向 24 字节，列方向 8 字节——和图上推的一致。有个通用规律：某根轴的步幅 = 它右边所有轴长度的乘积 × 每元素字节数（行方向 = 3 × 8 = 24）。</p>
+<p>这个属性看似冷门，却解释了一个高频"灵异现象"。看转置：</p>
+<div class="highlight"><pre><span></span><code><span class="n">flipped</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">T</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">flipped</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">flipped</span><span class="o">.</span><span class="n">strides</span><span class="p">)</span>
+<span class="c1"># (3, 2) (8, 24)   ← 步幅只是被原样对调了！</span>
+
+<span class="n">flipped</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">99</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">grid</span><span class="p">)</span>
+<span class="c1"># [[99 20 30]</span>
+<span class="c1">#  [40 50 60]]     ← 原数组被改了</span>
+</code></pre></div>
+<p>转置<strong>没有搬动一个字节的数据</strong>——只是把两根轴的步幅互换，"解读同一块内存的方式"变了。这类不复制数据的操作叫<strong>零拷贝</strong>。改转置会波及原数组，根源就在这里；下一节切片的"视图"行为，同样是这个原理。</p>
+<h2 id="5-axis运算沿着哪根轴走">5. axis：运算沿着哪根轴走</h2>
+<p><code>axis</code>（轴）就是一个整数：<strong>第几根轴</strong>。它出现在几乎所有接受方向的函数里，用来指定"这个操作沿着哪根轴进行"。</p>
+<div class="highlight"><pre><span></span><code>              axis=1 →（横着走）
+          ┌─────────────────────┐
+   axis=0 │    10     20     30 │
+     ↓    │    40     50     60 │
+ （竖着走）└─────────────────────┘
+</code></pre></div>
+<p>一个实用的记法：<strong>沿 axis=0 求和，是把每一列压成一个数；沿 axis=1，是把每一行压成一个数。</strong> 也可以倒过来记：运算沿哪根轴走，哪根轴就从结果里消失。</p>
+<div class="highlight"><pre><span></span><code><span class="n">grid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">30</span><span class="p">],</span>
+                 <span class="p">[</span><span class="mi">40</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">60</span><span class="p">]])</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>   <span class="c1"># [50 70 90]   每列求和（竖着压）</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>   <span class="c1"># [ 60 150]    每行求和（横着压）</span>
+</code></pre></div>
+<p>axis 这个概念后面会反复回来：统计、排序、拼接，全都用它指路。现在先把二维的情形焊牢，高维不过是同一逻辑的延续。</p>
+<h2 id="6-造数组不止-nparray-一条路">6. 造数组：不止 np.array 一条路</h2>
+<p><code>np.array</code> 适合从手头现成的数据建数组；更多时候，我们要的是"凭空生成一批数"。NumPy 提供了一整组构造工具。</p>
+<h3 id="61-预填值zeros-ones-eye">6.1 预填值：zeros / ones / eye</h3>
+<div class="highlight"><pre><span></span><code><span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)))</span>
+<span class="c1"># [[0. 0. 0.]</span>
+<span class="c1">#  [0. 0. 0.]]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">))</span>
+<span class="c1"># [[1. 1. 1.]</span>
+<span class="c1">#  [1. 1. 1.]]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+<span class="c1"># [[1. 0. 0.]</span>
+<span class="c1">#  [0. 1. 0.]</span>
+<span class="c1">#  [0. 0. 1.]]</span>
+</code></pre></div>
+<p><code>zeros</code> 的常见用途是<strong>预分配结果容器</strong>——先开好一块内存，再往里填数。<code>eye</code> 生成单位矩阵（对角线为 1），线性代数里的常客。注意形状参数是<strong>一个元组</strong> <code>(2, 3)</code>，不是两个参数。</p>
+<h3 id="62-序列arange-linspace">6.2 序列：arange / linspace</h3>
+<div class="highlight"><pre><span></span><code><span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="c1"># [ 5 10 15 20 25]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="c1"># [  0.  25.  50.  75. 100.]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+<span class="c1"># [ 0. 20. 40. 60. 80.]</span>
+</code></pre></div>
+<p>哥俩分工明确：<code>arange</code> 管<strong>步长</strong>（起点、终点不含、步长），<code>linspace</code> 管<strong>个数</strong>（起点、终点含、总共几个点）。<code>linspace</code> 默认把右端点算进序列，<code>endpoint=False</code> 可以把它掐掉。画坐标轴采样点、做数值实验时，<code>linspace</code> 出场率极高。</p>
+<h3 id="63-随机数default_rng">6.3 随机数：default_rng</h3>
+<p>现代 NumPy 生成随机数的标准姿势是先创建一个<strong>随机数生成器</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">rng</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mi">60</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)))</span>    <span class="c1"># 均匀分布：区间 [60, 100) 内</span>
+<span class="c1"># [[85.00381866 95.88855204 91.02742761]</span>
+<span class="c1">#  [69.0082876  72.0066514  94.94213782]]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">170</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)))</span>      <span class="c1"># 正态分布：均值 170、标准差 6</span>
+<span class="c1"># [[170.36086162 178.04129147 167.04676089]</span>
+<span class="c1">#  [166.2771506  172.9390523  172.14132205]]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">rng</span><span class="o">.</span><span class="n">integers</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)))</span>      <span class="c1"># 随机整数：[1, 7)，掷骰子</span>
+<span class="c1"># [[5 2 6]</span>
+<span class="c1">#  [3 3 4]]</span>
+</code></pre></div>
+<p>传入生成器的 <code>7</code> 是<strong>种子</strong>：种子固定，这批"随机"数每次都一模一样。这让带随机性的分析也能复现——交给同事的 notebook，别人跑出来的数字和你一致。旧教程里全局的 <code>np.random.seed()</code> 写法已被这套 <code>default_rng</code> 取代，见到新代码不必惊讶。</p>
+<h3 id="64-练手场景现造一批模拟数据">6.4 练手场景：现造一批模拟数据</h3>
+<p>分析流程还没写完，又想先拿数据试试？自己造。比如模拟 10 款饮品的单价与销量：</p>
+<div class="highlight"><pre><span></span><code><span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>
+<span class="n">drink_price</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>   <span class="c1"># 单价：12~32 元</span>
+<span class="n">drink_sold</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">integers</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="mi">500</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>           <span class="c1"># 销量：50~499 杯</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">drink_price</span><span class="p">)</span>
+<span class="c1"># [18.5 31.7 18.4 27.8 29.4 19.8 20.8 19.5 14.1 21.6]</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">drink_sold</span><span class="p">)</span>
+<span class="c1"># [481 158 432 165 114 133 229 137 453 416]</span>
+</code></pre></div>
+<p><code>uniform</code> + <code>integers</code> 两行，排序、筛选、统计的逻辑立刻就能开测——不用干等真实数据。</p>
+<h2 id="7-取数索引切片与掩码">7. 取数：索引、切片与掩码</h2>
+<p>有了数组，下一步是"把我要的那部分拿出来"。</p>
+<h3 id="71-基本索引与切片小心视图">7.1 基本索引与切片：小心"视图"</h3>
+<p>语法和列表一脉相承：<code>arr[start:stop:step]</code>，多维之间用<strong>逗号</strong>分隔——逗号前管第 0 轴，逗号后管第 1 轴，以此类推。<code>start</code> 默认 0，<code>stop</code> 默认到头（不含），<code>step</code> 默认 1。</p>
+<div class="highlight"><pre><span></span><code><span class="n">grid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">grid</span><span class="p">)</span>
+<span class="c1"># [[ 0  1  2  3  4]</span>
+<span class="c1">#  [ 5  6  7  8  9]</span>
+<span class="c1">#  [10 11 12 13 14]</span>
+<span class="c1">#  [15 16 17 18 19]]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">grid</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>          <span class="c1"># 第 0 行</span>
+<span class="c1"># [0 1 2 3 4]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">grid</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">:])</span>      <span class="c1"># 所有行，从第 1 列起</span>
+<span class="c1"># [[ 1  2  3  4]</span>
+<span class="c1">#  [ 6  7  8  9]</span>
+<span class="c1">#  [11 12 13 14]</span>
+<span class="c1">#  [16 17 18 19]]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">grid</span><span class="p">[</span><span class="mi">1</span><span class="p">:,</span> <span class="mi">2</span><span class="p">:])</span>     <span class="c1"># 第 1 行起、第 2 列起</span>
+<span class="c1"># [[ 7  8  9]</span>
+<span class="c1">#  [12 13 14]</span>
+<span class="c1">#  [17 18 19]]</span>
+</code></pre></div>
+<p>读法：把 <code>grid[1:, 2:]</code> 拆成"行取 1:、列取 2:"，逗号两边各自独立。</p>
+<p><strong>重头戏来了：切片返回的不是副本，而是视图（view）。</strong> 想想第 4 节的 strides——切一片，只需要挪挪起点、改改步幅，根本不用搬数据，何乐而不为？但代价是：切片和原数组<strong>共享同一块内存</strong>。</p>
+<div class="highlight"><pre><span></span><code><span class="n">block</span> <span class="o">=</span> <span class="n">grid</span><span class="p">[</span><span class="mi">1</span><span class="p">:,</span> <span class="mi">3</span><span class="p">:]</span>
+<span class="n">block</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">99</span>          <span class="c1"># 只改了切片</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">grid</span><span class="p">)</span>
+<span class="c1"># [[ 0  1  2  3  4]</span>
+<span class="c1">#  [ 5  6  7 99  9]      ← 原数组跟着变了</span>
+<span class="c1">#  [10 11 12 13 14]</span>
+<span class="c1">#  [15 16 17 18 19]]</span>
+</code></pre></div>
+<p>想要一份"随便改、不影响原数组"的数据，必须显式复制：</p>
+<div class="highlight"><pre><span></span><code><span class="n">safe</span> <span class="o">=</span> <span class="n">grid</span><span class="p">[</span><span class="mi">1</span><span class="p">:,</span> <span class="mi">3</span><span class="p">:]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>   <span class="c1"># 真正的独立副本</span>
+</code></pre></div>
+<p>视图是 NumPy 高性能的来源之一，也是新手数据被"莫名改坏"的头号案发现场。记住：<strong>切片是视图，<code>.copy()</code> 才是副本。</strong></p>
+<h3 id="72-花式索引">7.2 花式索引</h3>
+<p>想一次抽出<strong>不连续</strong>的若干行、若干位置？用一个整数列表（或数组）当索引：</p>
+<div class="highlight"><pre><span></span><code><span class="n">grid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">21</span><span class="p">,</span> <span class="mi">33</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">grid</span><span class="p">)</span>
+<span class="c1"># [[21 22 23]</span>
+<span class="c1">#  [24 25 26]</span>
+<span class="c1">#  [27 28 29]</span>
+<span class="c1">#  [30 31 32]]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">grid</span><span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">]])</span>       <span class="c1"># 一次取第 1、3 两行</span>
+<span class="c1"># [[24 25 26]</span>
+<span class="c1">#  [30 31 32]]</span>
+
+<span class="n">rows</span> <span class="o">=</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
+<span class="n">cols</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">grid</span><span class="p">[</span><span class="n">rows</span><span class="p">,</span> <span class="n">cols</span><span class="p">])</span>   <span class="c1"># 行、列配对取三个点</span>
+<span class="c1"># [31 23 27]</span>
+</code></pre></div>
+<p>最后一条要格外注意：两个列表<strong>按位置一一配对</strong>，取的是 <code>(3,1)</code>、<code>(0,2)</code>、<code>(2,0)</code> 三个点——不是"这些行 × 这些列"的组合。另外，花式索引返回的是<strong>拷贝</strong>，改它不影响原数组（和切片相反）。</p>
+<h3 id="73-布尔索引">7.3 布尔索引</h3>
+<p>如果说花式索引是"按编号点名"，布尔索引就是"按条件筛选"。把条件表达式套在数组上，会得到一个同形状的布尔数组——<strong>掩码（mask）</strong>；用掩码做索引，True 位置的元素被留下：</p>
+<div class="highlight"><pre><span></span><code><span class="n">revenue</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">8200</span><span class="p">,</span> <span class="mi">5600</span><span class="p">,</span> <span class="mi">12400</span><span class="p">,</span> <span class="mi">4100</span><span class="p">,</span> <span class="mi">9800</span><span class="p">,</span> <span class="mi">7300</span><span class="p">])</span>
+
+<span class="n">mask</span> <span class="o">=</span> <span class="n">revenue</span> <span class="o">&gt;</span> <span class="mi">6000</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span>
+<span class="c1"># [ True False  True False  True  True]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">revenue</span><span class="p">[</span><span class="n">mask</span><span class="p">])</span>
+<span class="c1"># [ 8200 12400  9800  7300]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">revenue</span><span class="p">[</span><span class="n">revenue</span> <span class="o">&lt;=</span> <span class="mi">5600</span><span class="p">])</span>
+<span class="c1"># [5600 4100]</span>
+</code></pre></div>
+<p>布尔索引返回的也是<strong>拷贝</strong>。筛选条件可以组合，但要注意两个 Python 语法细节：</p>
+<div class="highlight"><pre><span></span><code><span class="nb">print</span><span class="p">(</span><span class="n">revenue</span><span class="p">[(</span><span class="n">revenue</span> <span class="o">&gt;</span> <span class="mi">5000</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">revenue</span> <span class="o">&lt;</span> <span class="mi">10000</span><span class="p">)])</span>
+<span class="c1"># [ 8200  5600  9800  7300]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">revenue</span><span class="p">[(</span><span class="n">revenue</span> <span class="o">&lt;</span> <span class="mi">5000</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">revenue</span> <span class="o">&gt;</span> <span class="mi">10000</span><span class="p">)])</span>
+<span class="c1"># [12400  4100]</span>
+</code></pre></div>
+<p>其一，组合条件用 <code>&amp;</code>（与）、<code>|</code>（或）这两个<strong>按位运算符</strong>——<code>and</code> / <code>or</code> 是 Python 关键字，没法参与数组的逐元素运算；其二，<strong>括号不能省</strong>，<code>&amp;</code> 的优先级比 <code>&gt;</code> 高，少了括号整个表达式会被拆错。这两条是布尔索引的头号报错来源，值得背下来。</p>
+<h2 id="8-变形reshape-与-resize">8. 变形：reshape 与 resize</h2>
+<p>数据还是那些数据，只是换一种"行列姿势"看——<code>reshape</code> 干的就是这个：</p>
+<div class="highlight"><pre><span></span><code><span class="n">seq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">13</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">seq</span><span class="p">)</span>
+<span class="c1"># [ 1  2  3  4  5  6  7  8  9 10 11 12]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">seq</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="c1"># [[ 1  2  3  4]</span>
+<span class="c1">#  [ 5  6  7  8]</span>
+<span class="c1">#  [ 9 10 11 12]]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">seq</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>       <span class="c1"># -1：这根轴的长度让 NumPy 自己算</span>
+<span class="c1"># [[ 1  2  3  4  5  6]</span>
+<span class="c1">#  [ 7  8  9 10 11 12]]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">seq</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<span class="c1"># [[[ 1  2  3]</span>
+<span class="c1">#   [ 4  5  6]]</span>
+<span class="c1">#</span>
+<span class="c1">#  [[ 7  8  9]</span>
+<span class="c1">#   [10 11 12]]]</span>
+</code></pre></div>
+<p>两条规则：<strong>新形状的元素总数必须和原来一致</strong>（12 个数怎么摆都是 12 个，多一个少一个都报错）；<code>-1</code> 表示"这根轴你看着办"，只能用一次。另外 <code>reshape</code> 基于第 4 节的步幅机制，通常<strong>不复制数据</strong>——返回的往往是原数组的视图。</p>
+<p>亲戚 <code>np.resize</code> 则允许改变元素总数：新形状要的数不够，它就把原数据<strong>循环重复</strong>填充（要的少就截断）：</p>
+<div class="highlight"><pre><span></span><code><span class="n">base</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">20</span><span class="p">])</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)))</span>
+<span class="c1"># [[ 5 10 15]</span>
+<span class="c1">#  [20  5 10]]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)))</span>
+<span class="c1"># [[ 5 10]</span>
+<span class="c1">#  [15 20]]</span>
+</code></pre></div>
+<p>这个"自动复读"的行为容易埋 bug，用得不多，认识即可——但看到输出里数据诡异地重复，要想到它。</p>
+<h3 id="练手场景">练手场景</h3>
+<p>传感器接口每分钟吐一个读数，一天下来你拿到 24 个数的一维数组，但报表要按"3 个班次 × 每班 8 小时"呈现：</p>
+<div class="highlight"><pre><span></span><code><span class="n">hourly</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">24</span><span class="p">)</span>          <span class="c1"># 24 个整点读数（示意）</span>
+<span class="n">shift_table</span> <span class="o">=</span> <span class="n">hourly</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">shift_table</span><span class="p">)</span>
+<span class="c1"># [[ 0  1  2  3  4  5  6  7]</span>
+<span class="c1">#  [ 8  9 10 11 12 13 14 15]</span>
+<span class="c1">#  [16 17 18 19 20 21 22 23]]</span>
+</code></pre></div>
+<p>一维"流水账"到二维"表格"，一个 reshape 的事。</p>
+<h2 id="9-向量化运算把-for-循环还回去">9. 向量化运算：把 for 循环还回去</h2>
+<p>NumPy 的运算符几乎全部是<strong>向量化的</strong>：一个表达式，同时作用到每个元素，循环发生在 C 层，你一个 <code>for</code> 都不用写。</p>
+<h3 id="91-数组-标量">9.1 数组 × 标量</h3>
+<div class="highlight"><pre><span></span><code><span class="n">n</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">8</span><span class="p">])</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">n</span> <span class="o">+</span> <span class="mi">10</span><span class="p">)</span>   <span class="c1"># [12 14 16 18]</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">n</span> <span class="o">*</span> <span class="mi">3</span><span class="p">)</span>    <span class="c1"># [ 6 12 18 24]</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">n</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>   <span class="c1"># [ 4 16 36 64]</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">n</span> <span class="o">&gt;</span> <span class="mi">5</span><span class="p">)</span>    <span class="c1"># [False False  True  True]</span>
+</code></pre></div>
+<p>注意最后一条：比较运算也是向量化的，产出布尔数组——第 7.3 节的掩码正是这么来的。</p>
+<h3 id="92-数组-数组">9.2 数组 × 数组</h3>
+<p>两个<strong>形状相同</strong>的数组运算，就是逐个位置对应计算：</p>
+<div class="highlight"><pre><span></span><code><span class="n">unit_price</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">12</span><span class="p">,</span> <span class="mi">18</span><span class="p">,</span> <span class="mi">25</span><span class="p">])</span>
+<span class="n">quantity</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">unit_price</span> <span class="o">+</span> <span class="n">quantity</span><span class="p">)</span>   <span class="c1"># [15 20 29]</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">unit_price</span> <span class="o">-</span> <span class="n">quantity</span><span class="p">)</span>   <span class="c1"># [ 9 16 21]</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">unit_price</span> <span class="o">*</span> <span class="n">quantity</span><span class="p">)</span>   <span class="c1"># [ 36  36 100]   三种商品各自的金额</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">unit_price</span> <span class="o">/</span> <span class="n">quantity</span><span class="p">)</span>   <span class="c1"># [4.   9.   6.25]</span>
+</code></pre></div>
+<h3 id="93-练手场景批量换算">9.3 练手场景：批量换算</h3>
+<p>手头一排标价，促销统一打 85 折；跑步 App 记录了一串公里数，要换算成英里给海外朋友看：</p>
+<div class="highlight"><pre><span></span><code><span class="n">list_price</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">199</span><span class="p">,</span> <span class="mi">259</span><span class="p">,</span> <span class="mi">329</span><span class="p">,</span> <span class="mi">499</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">list_price</span> <span class="o">*</span> <span class="mf">0.85</span><span class="p">)</span>
+<span class="c1"># [169.15 220.15 279.65 424.15]</span>
+
+<span class="n">km</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mf">21.5</span><span class="p">,</span> <span class="mi">42</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">km</span> <span class="o">*</span> <span class="mf">0.6214</span><span class="p">)</span>
+<span class="c1"># [ 3.107   6.214  13.3601 26.0988]</span>
+</code></pre></div>
+<p>不写循环、不建新列表、不改原数组——这就是向量化思维的日常形态。用上一章的 <code>%timeit</code> 测一测"循环逐个算 vs 向量化一把算"，你会对它快多少有直观感受。</p>
+<h2 id="10-聚合统计把一摞数压成几个数">10. 聚合统计：把一摞数压成几个数</h2>
+<p>聚合（aggregate）运算是向量化的另一面：进去一个数组，出来一个（或一排）概括性的数字。</p>
+<h3 id="101-基础统计与-axis">10.1 基础统计与 axis</h3>
+<div class="highlight"><pre><span></span><code><span class="n">quarterly</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">13</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>   <span class="c1"># 3 名销售 × 4 个季度</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">quarterly</span><span class="p">)</span>
+<span class="c1"># [[ 1.  2.  3.  4.]</span>
+<span class="c1">#  [ 5.  6.  7.  8.]</span>
+<span class="c1">#  [ 9. 10. 11. 12.]]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">quarterly</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>          <span class="c1"># 78.0   全部加总</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">quarterly</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>         <span class="c1"># 6.5    平均值</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">quarterly</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>    <span class="c1"># [15. 18. 21. 24.]   每个季度三人合计（竖着压）</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">quarterly</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>    <span class="c1"># [10. 26. 42.]       每人全年合计（横着压）</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">quarterly</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">quarterly</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>           <span class="c1"># 1.0 12.0</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">quarterly</span><span class="o">.</span><span class="n">argmin</span><span class="p">(),</span> <span class="n">quarterly</span><span class="o">.</span><span class="n">argmax</span><span class="p">())</span>     <span class="c1"># 0 11   最值出现的位置（拉平后的下标）</span>
+</code></pre></div>
+<p><code>axis</code> 在这里兑现了第 5 节的诺言：不传 axis 就压成单个数；传了 axis，就沿那根轴压、那根轴消失。<code>argmin</code> / <code>argmax</code> 返回的不是值本身，而是<strong>值在哪儿</strong>——"最佳员工是第几个人"往往比"最高业绩是多少"更有用。</p>
+<h3 id="102-标准差总体与样本">10.2 标准差：总体与样本</h3>
+<p>均值告诉你"平均水平"，标准差告诉你<strong>大家离平均有多远</strong>——标准差小，数据扎堆，均值很能代表整体；标准差大，数据散开，均值开始失真（有人考 100 有人考 0，平均 50 分不代表大家都考 50）。</p>
+<p>它有两个版本，区别只在分母：</p>
+<p>$$\sigma = \sqrt{\frac{\sum_{i=1}^{N}(x_i - \mu)^2}{N}} \qquad s = \sqrt{\frac{\sum_{i=1}^{n}(x_i - \bar{x})^2}{n-1}}$$</p>
+<p>左边是<strong>总体标准差</strong>（除以 N）：手上的数据就是全部，比如全班每个人的分数；右边是<strong>样本标准差</strong>（除以 n-1）：手上的数据只是抽样，要靠它估计整体的波动，除以 n-1 是修正小样本带来的偏差。NumPy 的 <code>std()</code> 默认算总体，<code>ddof=1</code> 切到样本：</p>
+<div class="highlight"><pre><span></span><code><span class="nb">print</span><span class="p">(</span><span class="n">quarterly</span><span class="o">.</span><span class="n">std</span><span class="p">())</span>          <span class="c1"># 3.452052529534663   总体标准差</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">quarterly</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">ddof</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>    <span class="c1"># 3.605551275463989   样本标准差</span>
+</code></pre></div>
+<p>数据分析里多数场景拿的是样本，<strong><code>ddof=1</code> 这个参数要眼熟</strong>——用错版本，结论可能悄悄偏掉。</p>
+<h3 id="103-变异系数不同量纲怎么比波动">10.3 变异系数：不同量纲怎么比波动</h3>
+<p>身高（单位厘米）的标准差 6，和收入（单位千元）的标准差 8，能说收入"更波动"吗？不能——量纲都不一样。这时候用<strong>变异系数（CV）</strong>：标准差除以均值，得到一个无单位的相对波动：</p>
+<div class="highlight"><pre><span></span><code><span class="nb">print</span><span class="p">(</span><span class="n">quarterly</span><span class="o">.</span><span class="n">std</span><span class="p">()</span> <span class="o">/</span> <span class="n">quarterly</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
+<span class="c1"># 0.5310850045437943</span>
+</code></pre></div>
+<p>CV 完全去掉了量纲，"谁更散"就有了公平的尺子。几个经验区间：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">CV 区间</th>
+<th style="text-align: left;">波动水平</th>
+<th style="text-align: left;">直观感受</th>
+<th style="text-align: left;">大致场景</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">&lt; 10%</td>
+<td style="text-align: left;">极低</td>
+<td style="text-align: left;">几乎齐步走</td>
+<td style="text-align: left;">精密加工的零件尺寸</td>
+</tr>
+<tr>
+<td style="text-align: left;">10% ~ 20%</td>
+<td style="text-align: left;">低</td>
+<td style="text-align: left;">有起伏，但均值可靠</td>
+<td style="text-align: left;">成年人身高、日常气温</td>
+</tr>
+<tr>
+<td style="text-align: left;">20% ~ 30%</td>
+<td style="text-align: left;">中</td>
+<td style="text-align: left;">正常波动范围</td>
+<td style="text-align: left;">考试成绩、绩效评分</td>
+</tr>
+<tr>
+<td style="text-align: left;">30% ~ 50%</td>
+<td style="text-align: left;">高</td>
+<td style="text-align: left;">明显分散，均值代表性下滑</td>
+<td style="text-align: left;">不同城市房价、薪资</td>
+</tr>
+<tr>
+<td style="text-align: left;">&gt; 50%</td>
+<td style="text-align: left;">极高</td>
+<td style="text-align: left;">高度分散，均值基本没有意义</td>
+<td style="text-align: left;">股票日收益率、创业公司估值</td>
+</tr>
+</tbody>
+</table>
+<p>不必死记数字，记住结论就够用：<strong>CV 越大，越要警惕"只报一个平均值"的结论。</strong></p>
+<h2 id="11-npwhere一行写完一整排-if-else">11. np.where：一行写完一整排 if-else</h2>
+<p>"对这列数的每一个：满足条件就取甲，否则取乙"——这类逐元素的条件分支，<code>np.where</code> 一个表达式搞定，可以理解为<strong>向量化的三元表达式</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="n">delta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">delta</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">delta</span><span class="p">))</span>
+<span class="c1"># [2 0 5 0 0 4]     负数一律清零（只保留上涨）</span>
+</code></pre></div>
+<p>三个参数依次是：条件、满足时取的值、不满足时取的值；后两个也都可以是数组。如果<strong>只传条件</strong>，<code>np.where</code> 改行另一份工作——返回满足条件的位置：</p>
+<div class="highlight"><pre><span></span><code><span class="n">latency</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">45</span><span class="p">,</span> <span class="mi">120</span><span class="p">,</span> <span class="mi">88</span><span class="p">,</span> <span class="mi">230</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">310</span><span class="p">,</span> <span class="mi">95</span><span class="p">])</span>
+
+<span class="n">pos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">latency</span> <span class="o">&gt;</span> <span class="mi">100</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span>
+<span class="c1"># (array([1, 3, 5]),)        满足条件的下标，装在一个元组里</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">latency</span><span class="p">[</span><span class="n">pos</span><span class="p">])</span>
+<span class="c1"># [120 230 310]              按位置取回对应的值</span>
+</code></pre></div>
+<h3 id="练手场景_1">练手场景</h3>
+<p>给一批静息心率数据打标签：75 以上记"偏高"，其余记"正常"：</p>
+<div class="highlight"><pre><span></span><code><span class="n">hr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">58</span><span class="p">,</span> <span class="mi">72</span><span class="p">,</span> <span class="mi">91</span><span class="p">,</span> <span class="mi">65</span><span class="p">,</span> <span class="mi">84</span><span class="p">,</span> <span class="mi">77</span><span class="p">,</span> <span class="mi">62</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">hr</span> <span class="o">&gt;=</span> <span class="mi">75</span><span class="p">,</span> <span class="s2">"偏高"</span><span class="p">,</span> <span class="s2">"正常"</span><span class="p">))</span>
+<span class="c1"># ['正常' '正常' '偏高' '正常' '偏高' '偏高' '正常']</span>
+</code></pre></div>
+<p>一条命令完成整列打标，这在 Pandas 里也照样用得上。</p>
+<h2 id="12-拼接与拆分">12. 拼接与拆分</h2>
+<p>数据常常分头而来：不同来源的表要<strong>拼</strong>成一张，一张大表又要<strong>拆</strong>成几段。上下摞（行变多）用 <code>vstack</code>，左右拼（列变多）用 <code>hstack</code>；两者都有个通用版本 <code>concatenate</code>，用 <code>axis</code> 指定拼接方向：</p>
+<div class="highlight"><pre><span></span><code><span class="n">top</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">7</span><span class="p">,</span> <span class="mi">14</span><span class="p">],</span>
+                <span class="p">[</span><span class="mi">21</span><span class="p">,</span> <span class="mi">28</span><span class="p">]])</span>
+<span class="n">extra_row</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">35</span><span class="p">,</span> <span class="mi">42</span><span class="p">]])</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">top</span><span class="p">,</span> <span class="n">extra_row</span><span class="p">]))</span>
+<span class="c1"># [[ 7 14]</span>
+<span class="c1">#  [21 28]</span>
+<span class="c1">#  [35 42]]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">top</span><span class="p">,</span> <span class="n">extra_row</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>   <span class="c1"># 等价于 vstack</span>
+<span class="c1"># [[ 7 14]</span>
+<span class="c1">#  [21 28]</span>
+<span class="c1">#  [35 42]]</span>
+
+<span class="n">extra_col</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">3</span><span class="p">],</span>
+                      <span class="p">[</span><span class="mi">6</span><span class="p">]])</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">top</span><span class="p">,</span> <span class="n">extra_col</span><span class="p">]))</span>
+<span class="c1"># [[ 7 14  3]</span>
+<span class="c1">#  [21 28  6]]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">top</span><span class="p">,</span> <span class="n">extra_col</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>   <span class="c1"># 等价于 hstack</span>
+<span class="c1"># [[ 7 14  3]</span>
+<span class="c1">#  [21 28  6]]</span>
+</code></pre></div>
+<p>拼接的唯一硬要求：沿着拼接方向以外的轴，长度必须对得上（上下摞就要求列数相同，左右拼就要求行数相同），否则报错。</p>
+<p>拆分是拼接的逆操作。<code>np.split</code> 传入一组<strong>切分位置</strong>，在指定轴上把数组切开：</p>
+<div class="highlight"><pre><span></span><code><span class="n">big</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="n">head</span><span class="p">,</span> <span class="n">middle</span><span class="p">,</span> <span class="n">tail</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">big</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>   <span class="c1"># 在行下标 1、3 处下刀，切三段</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">head</span><span class="p">)</span>
+<span class="c1"># [[0 1 2 3]]</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">middle</span><span class="p">)</span>
+<span class="c1"># [[ 4  5  6  7]</span>
+<span class="c1">#  [ 8  9 10 11]]</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">tail</span><span class="p">)</span>
+<span class="c1"># [[12 13 14 15]</span>
+<span class="c1">#  [16 17 18 19]]</span>
+</code></pre></div>
+<p><code>hsplit</code> 沿列方向对半拆：</p>
+<div class="highlight"><pre><span></span><code><span class="n">wide</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">16</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="n">left</span><span class="p">,</span> <span class="n">right</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hsplit</span><span class="p">(</span><span class="n">wide</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">left</span><span class="p">)</span>
+<span class="c1"># [[ 0  1]</span>
+<span class="c1">#  [ 4  5]</span>
+<span class="c1">#  [ 8  9]</span>
+<span class="c1">#  [12 13]]</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">right</span><span class="p">)</span>
+<span class="c1"># [[ 2  3]</span>
+<span class="c1">#  [ 6  7]</span>
+<span class="c1">#  [10 11]</span>
+<span class="c1">#  [14 15]]</span>
+</code></pre></div>
+<p>实际工作里，"上半年 + 下半年拼成全年""把数据集拆成训练 / 验证两块"，用的就是这对操作。</p>
+<h2 id="13-排序与-top-n">13. 排序与 Top N</h2>
+<div class="highlight"><pre><span></span><code><span class="n">ms</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">23</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">41</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">29</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">24</span><span class="p">])</span>   <span class="c1"># 8 次接口响应耗时（毫秒）</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">ms</span><span class="p">))</span>
+<span class="c1"># [ 8  8 10 15 23 24 29 41]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">ms</span><span class="p">))</span>
+<span class="c1"># [1 3 6 4 0 7 5 2]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">ms</span><span class="p">))</span>
+<span class="c1"># [ 8 10 15 23 24 29 41]</span>
+</code></pre></div>
+<p>三个函数各司其职：</p>
+<ul>
+<li><code>np.sort</code> 返回排好序的<strong>新数组</strong>，原数组不动；</li>
+<li><code>np.argsort</code> 返回<strong>排好序后元素对应的原下标</strong>——<code>[1, 3, ...]</code> 的意思是"最小的数在下标 1"。这才是真正的明星：拿到下标，就能去<strong>别的数组</strong>里按同样的顺序取记录；</li>
+<li><code>np.unique</code> 去重且顺便排好序。</li>
+</ul>
+<p>二维数组排序，用 <code>axis</code> 指定方向（每行各自排 / 每列各自排）；方法 <code>arr.sort()</code> 则是<strong>原地</strong>排序——没有返回值，数组自己变了，用之前想清楚：</p>
+<div class="highlight"><pre><span></span><code><span class="n">board</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">9</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">7</span><span class="p">],</span>
+                  <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">]])</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">board</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>   <span class="c1"># 每行各自升序</span>
+<span class="c1"># [[4 7 9]</span>
+<span class="c1">#  [1 2 5]]</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">board</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>   <span class="c1"># 每列各自升序</span>
+<span class="c1"># [[2 4 1]</span>
+<span class="c1">#  [9 5 7]]</span>
+
+<span class="n">ms</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>       <span class="c1"># 原地排序：ms 本身被改写</span>
+</code></pre></div>
+<h3 id="练手场景top-n">练手场景：Top N</h3>
+<p>"找出阅读量最高的 3 篇文章"——<code>argsort</code> 加一点下标戏法：</p>
+<div class="highlight"><pre><span></span><code><span class="n">views</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1200</span><span class="p">,</span> <span class="mi">3500</span><span class="p">,</span> <span class="mi">800</span><span class="p">,</span> <span class="mi">4200</span><span class="p">,</span> <span class="mi">2600</span><span class="p">,</span> <span class="mi">900</span><span class="p">,</span> <span class="mi">3100</span><span class="p">])</span>
+
+<span class="n">top3_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">views</span><span class="p">)[::</span><span class="o">-</span><span class="mi">1</span><span class="p">][:</span><span class="mi">3</span><span class="p">]</span>   <span class="c1"># 升序下标 → 反转成降序 → 取前 3</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">top3_idx</span><span class="p">)</span>
+<span class="c1"># [3 1 6]</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">views</span><span class="p">[</span><span class="n">top3_idx</span><span class="p">])</span>
+<span class="c1"># [4200 3500 3100]</span>
+</code></pre></div>
+<p>有了下标 <code>[3, 1, 6]</code>，文章标题、作者、发布时间这些存在<strong>其他数组</strong>里的信息，都能按名次同步取出来——这就是 <code>argsort</code> 比 <code>sort</code> 好用的地方。</p>
+<h2 id="14-广播形状不同也能一起算">14. 广播：形状不同，也能一起算</h2>
+<p>第 9.2 节说过，数组间运算要求形状相同——其实不完全对。NumPy 有一套聪明的补位机制：<strong>广播（broadcasting）</strong>。两个形状不同的数组运算时，小的那个会被<strong>虚拟地</strong>扩展成大的形状参与计算。注意"虚拟"二字——不复制任何数据，只是按第 4 节的步幅魔法重复读取，所以零开销。</p>
+<p>规则一句话：<strong>从最后一根轴向前逐对比较，每对轴要么长度相等，要么有一方为 1（长度 1 的轴被拉长）；否则报错。</strong></p>
+<h3 id="标量最简单的广播">标量：最简单的广播</h3>
+<p>其实你早就用过广播了——所有"数组 × 标量"都是：</p>
+<div class="highlight"><pre><span></span><code><span class="n">price</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">30</span><span class="p">,</span> <span class="mi">45</span><span class="p">,</span> <span class="mi">60</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">price</span> <span class="o">*</span> <span class="mf">0.9</span><span class="p">)</span>
+<span class="c1"># [27.  40.5 54. ]</span>
+</code></pre></div>
+<p>标量被视为零维，能广播到任何形状。</p>
+<h3 id="一行加到每一行">一行加到每一行</h3>
+<p><code>(3, 4)</code> 的表格，加上长度 4 的一维数组——<code>(4,)</code> 先补成 <code>(1, 4)</code>，再沿第 0 轴拉长成 <code>(3, 4)</code>：</p>
+<div class="highlight"><pre><span></span><code><span class="n">grid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">13</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="n">row_off</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">100</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">300</span><span class="p">,</span> <span class="mi">400</span><span class="p">])</span>   <span class="c1"># 每列各自的偏移</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">grid</span> <span class="o">+</span> <span class="n">row_off</span><span class="p">)</span>
+<span class="c1"># [[101 202 303 404]</span>
+<span class="c1">#  [105 206 307 408]</span>
+<span class="c1">#  [109 210 311 412]]</span>
+</code></pre></div>
+<p>四个偏移量被"复印"到每一行——<code>(3, 4) + (4,)</code> 得到 <code>(3, 4)</code>。</p>
+<h3 id="一列加到每一列">一列加到每一列</h3>
+<p>想给<strong>每行</strong>加不同的值，得准备一个 <code>(3, 1)</code> 的列向量，让它沿第 1 轴广播：</p>
+<div class="highlight"><pre><span></span><code><span class="n">col_off</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1000</span><span class="p">],</span>
+                    <span class="p">[</span><span class="mi">2000</span><span class="p">],</span>
+                    <span class="p">[</span><span class="mi">3000</span><span class="p">]])</span>   <span class="c1"># 每行各自的偏移</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">grid</span> <span class="o">+</span> <span class="n">col_off</span><span class="p">)</span>
+<span class="c1"># [[1001 1002 1003 1004]</span>
+<span class="c1">#  [2005 2006 2007 2008]</span>
+<span class="c1">#  [3009 3010 3011 3012]]</span>
+</code></pre></div>
+<p><code>(3, 4) + (3, 1)</code>：第 0 轴 3 对 3 相等；第 1 轴 4 对 1，把 1 拉长成 4。</p>
+<h3 id="双向同时扩">双向同时扩</h3>
+<p>两个"瘦"数组相遇，可以一起长胖——<code>(3, 1)</code> 配 <code>(4,)</code>：</p>
+<div class="highlight"><pre><span></span><code><span class="n">col</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">2</span><span class="p">],</span>
+                <span class="p">[</span><span class="mi">4</span><span class="p">],</span>
+                <span class="p">[</span><span class="mi">6</span><span class="p">]])</span>                  <span class="c1"># (3, 1)</span>
+<span class="n">row</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">1000</span><span class="p">])</span>    <span class="c1"># (4,)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">col</span> <span class="o">+</span> <span class="n">row</span><span class="p">)</span>
+<span class="c1"># [[   3   12  102 1002]</span>
+<span class="c1">#  [   5   14  104 1004]</span>
+<span class="c1">#  [   7   16  106 1006]]</span>
+</code></pre></div>
+<p><code>(3, 1)</code> 的第 1 轴拉长到 4，<code>(4,)</code> 先补成 <code>(1, 4)</code> 再把第 0 轴拉长到 3，双方在 <code>(3, 4)</code> 会合。一张加法表就这么"凭空"长了出来。</p>
+<h3 id="练手场景_2">练手场景</h3>
+<p>3 家门店 × 3 个月的销量表，每个月各有一档全店促销的追加量：</p>
+<div class="highlight"><pre><span></span><code><span class="n">store_sales</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">430</span><span class="p">,</span> <span class="mi">380</span><span class="p">,</span> <span class="mi">510</span><span class="p">],</span>
+                        <span class="p">[</span><span class="mi">520</span><span class="p">,</span> <span class="mi">460</span><span class="p">,</span> <span class="mi">480</span><span class="p">],</span>
+                        <span class="p">[</span><span class="mi">310</span><span class="p">,</span> <span class="mi">350</span><span class="p">,</span> <span class="mi">405</span><span class="p">]])</span>
+<span class="n">monthly_boost</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">120</span><span class="p">,</span> <span class="mi">80</span><span class="p">,</span> <span class="mi">200</span><span class="p">])</span>   <span class="c1"># 每个月各自的追加量</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">store_sales</span> <span class="o">+</span> <span class="n">monthly_boost</span><span class="p">)</span>
+<span class="c1"># [[550 460 710]</span>
+<span class="c1">#  [640 540 680]</span>
+<span class="c1">#  [430 430 605]]</span>
+</code></pre></div>
+<p>不用写任何循环，也不用手动复制三份——这就是广播的价值：<strong>用"形状设计"代替"数据搬运"</strong>。反过来，当两个形状怎么都对不上时会得到 <code>ValueError: operands could not be broadcast together with shapes (3,) (4,)</code> 这样的报错，先手算一遍 shape 对不对，九成的广播问题当场就能定位。</p>
+<h2 id="15-小结">15. 小结</h2>
+<p>本章信息量不小，收个尾。理解 ndarray 抓四把钥匙——<strong>shape</strong>（骨架）、<strong>dtype</strong>（类型契约）、<strong>strides</strong>（内存步幅，视图与零拷贝的根源）、<strong>axis</strong>（运算方向）；操作层面一张速查表带走：</p>
+<table>
+<thead>
+<tr>
+<th>想做什么</th>
+<th>顺手工具</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>创建</td>
+<td><code>array</code>、<code>zeros</code>、<code>ones</code>、<code>eye</code>、<code>arange</code>、<code>linspace</code>、<code>default_rng</code></td>
+</tr>
+<tr>
+<td>取数</td>
+<td>基本切片（视图）、花式索引（拷贝）、布尔索引（<code>&amp;</code> / <code>|</code>）</td>
+</tr>
+<tr>
+<td>变形</td>
+<td><code>reshape</code>（含 <code>-1</code>）、<code>np.resize</code></td>
+</tr>
+<tr>
+<td>逐元素运算</td>
+<td><code>+ - * / **</code>、比较运算，全部向量化</td>
+</tr>
+<tr>
+<td>聚合</td>
+<td><code>sum</code>、<code>mean</code>、<code>std</code>（<code>ddof=1</code>）、<code>min</code> / <code>max</code> / <code>argmin</code> / <code>argmax</code>，配 <code>axis</code></td>
+</tr>
+<tr>
+<td>条件分支</td>
+<td><code>np.where</code>（三参替换 / 单参找位置）</td>
+</tr>
+<tr>
+<td>拼接拆分</td>
+<td><code>vstack</code> / <code>hstack</code> / <code>concatenate</code>、<code>split</code> / <code>hsplit</code></td>
+</tr>
+<tr>
+<td>排序去重</td>
+<td><code>sort</code>、<code>argsort</code>、<code>unique</code>（Top N 用 <code>argsort</code>）</td>
+</tr>
+<tr>
+<td>形状补位</td>
+<td>广播：尾部对齐，相等或为 1</td>
+</tr>
+</tbody>
+</table>
+<p>两条最容易翻车的规则再敲一遍黑板：<strong>切片是视图、花式/布尔索引是拷贝</strong>；<strong>广播从尾部轴对齐、长度 1 才能拉长</strong>。</p>
+<p>不过你也感觉到了：ndarray 只认"位置"，没有列名、没有索引标签，处理带表头的真实业务数据还是别扭。下一章的 Pandas 会在 ndarray 之上盖起一层"带标签的表格"——Series 和 DataFrame，而你现在掌握的形状、轴、广播，全部原样通用。</p>
+<hr />
+<p><strong>下一章</strong>：<a href="../python/27-pandas-shu-ju-jie-gou.html">27 · Pandas 数据结构</a></p></div>
+
+      </article>
+<nav class="pager"><a class="pg-card pg-prev" href="../python/25-jupyter-jiao-hu-huan-jing.html"><span class="pg-label">← 上一篇</span><span class="pg-title">Jupyter 交互环境</span><span class="pg-mod">Python 与数据实践</span></a><a class="pg-card pg-next" href="../python/27-pandas-shu-ju-jie-gou.html"><span class="pg-label">下一篇 →</span><span class="pg-title">Pandas 数据结构</span><span class="pg-mod">Python 与数据实践</span></a></nav>
+    </div>
+    <footer class="foot">
+      <span>AI Agent 工程师转型训练营配套文档</span>
+    </footer>
+  </main>
+<nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#1-上手装库与导入">1. 上手：装库与导入</a><a class="toc-link toc-h2" href="#2-ndarray给一大批数安的家">2. ndarray：给&quot;一大批数&quot;安的家</a><a class="toc-link toc-h3" href="#21-和列表比它牺牲了什么换来了什么">2.1 和列表比，它牺牲了什么、换来了什么</a><a class="toc-link toc-h3" href="#22-创建一个数组顺便做个体检">2.2 创建一个数组，顺便做个体检</a><a class="toc-link toc-h3" href="#23-形状数组的骨架">2.3 形状：数组的骨架</a><a class="toc-link toc-h3" href="#24-想一想">2.4 想一想</a><a class="toc-link toc-h2" href="#3-dtype一种数组一种类型">3. dtype：一种数组，一种类型</a><a class="toc-link toc-h2" href="#4-strides数据在内存里怎么摆">4. strides：数据在内存里怎么摆</a><a class="toc-link toc-h2" href="#5-axis运算沿着哪根轴走">5. axis：运算沿着哪根轴走</a><a class="toc-link toc-h2" href="#6-造数组不止-nparray-一条路">6. 造数组：不止 np.array 一条路</a><a class="toc-link toc-h3" href="#61-预填值zeros-ones-eye">6.1 预填值：zeros / ones / eye</a><a class="toc-link toc-h3" href="#62-序列arange-linspace">6.2 序列：arange / linspace</a><a class="toc-link toc-h3" href="#63-随机数default_rng">6.3 随机数：default_rng</a><a class="toc-link toc-h3" href="#64-练手场景现造一批模拟数据">6.4 练手场景：现造一批模拟数据</a><a class="toc-link toc-h2" href="#7-取数索引切片与掩码">7. 取数：索引、切片与掩码</a><a class="toc-link toc-h3" href="#71-基本索引与切片小心视图">7.1 基本索引与切片：小心&quot;视图&quot;</a><a class="toc-link toc-h3" href="#72-花式索引">7.2 花式索引</a><a class="toc-link toc-h3" href="#73-布尔索引">7.3 布尔索引</a><a class="toc-link toc-h2" href="#8-变形reshape-与-resize">8. 变形：reshape 与 resize</a><a class="toc-link toc-h3" href="#练手场景">练手场景</a><a class="toc-link toc-h2" href="#9-向量化运算把-for-循环还回去">9. 向量化运算：把 for 循环还回去</a><a class="toc-link toc-h3" href="#91-数组-标量">9.1 数组 × 标量</a><a class="toc-link toc-h3" href="#92-数组-数组">9.2 数组 × 数组</a><a class="toc-link toc-h3" href="#93-练手场景批量换算">9.3 练手场景：批量换算</a><a class="toc-link toc-h2" href="#10-聚合统计把一摞数压成几个数">10. 聚合统计：把一摞数压成几个数</a><a class="toc-link toc-h3" href="#101-基础统计与-axis">10.1 基础统计与 axis</a><a class="toc-link toc-h3" href="#102-标准差总体与样本">10.2 标准差：总体与样本</a><a class="toc-link toc-h3" href="#103-变异系数不同量纲怎么比波动">10.3 变异系数：不同量纲怎么比波动</a><a class="toc-link toc-h2" href="#11-npwhere一行写完一整排-if-else">11. np.where：一行写完一整排 if-else</a><a class="toc-link toc-h3" href="#练手场景_1">练手场景</a><a class="toc-link toc-h2" href="#12-拼接与拆分">12. 拼接与拆分</a><a class="toc-link toc-h2" href="#13-排序与-top-n">13. 排序与 Top N</a><a class="toc-link toc-h3" href="#练手场景top-n">练手场景：Top N</a><a class="toc-link toc-h2" href="#14-广播形状不同也能一起算">14. 广播：形状不同，也能一起算</a><a class="toc-link toc-h3" href="#标量最简单的广播">标量：最简单的广播</a><a class="toc-link toc-h3" href="#一行加到每一行">一行加到每一行</a><a class="toc-link toc-h3" href="#一列加到每一列">一列加到每一列</a><a class="toc-link toc-h3" href="#双向同时扩">双向同时扩</a><a class="toc-link toc-h3" href="#练手场景_2">练手场景</a><a class="toc-link toc-h2" href="#15-小结">15. 小结</a></nav>
+</div>
+<div class="sb-mask" id="sbMask"></div>
+<script src="../assets/app.js"></script>
+</body>
+</html>
