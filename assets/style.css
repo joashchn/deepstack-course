@@ -101,7 +101,8 @@ code{font-family:var(--mono)}
 /* ---------- 顶栏 ---------- */
 .topbar{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:12px;
   padding:10px 40px;background:color-mix(in srgb,var(--bg) 88%,transparent);
-  backdrop-filter:saturate(180%) blur(12px);border-bottom:1px solid var(--line-soft)}
+  backdrop-filter:saturate(180%) blur(12px);border-bottom:1px solid var(--line-soft);
+  width:calc(100% + var(--toc-w))}
 .menu-btn{display:none;background:none;border:0;font-size:17px;color:var(--fg-soft);cursor:pointer}
 .crumbs{flex:1;font-size:13px;color:var(--fg-mute);display:flex;gap:7px;align-items:center;
   min-width:0;overflow:hidden;white-space:nowrap}
@@ -175,8 +176,7 @@ code{font-family:var(--mono)}
 
 /* ---------- 目录 ---------- */
 .toc{width:var(--toc-w);flex:0 0 var(--toc-w);position:sticky;top:0;height:100vh;
-  overflow-y:auto;padding:52px 20px 40px 8px;font-size:13px;
-  border-top:1px solid var(--line-soft)}
+  overflow-y:auto;padding:52px 20px 40px 8px;font-size:13px}
 .toc-title{font-size:11px;letter-spacing:.08em;color:var(--fg-mute);font-weight:600;
   margin-bottom:10px;text-transform:uppercase}
 .toc-link{display:block;padding:4px 10px;color:var(--fg-mute);border-left:2px solid var(--line);
@@ -278,7 +278,10 @@ code{font-family:var(--mono)}
 .ch-body em{font-style:normal;font-size:11.5px;color:var(--fg-mute);margin-top:2px}
 
 /* ---------- 响应式 ---------- */
-@media(max-width:1180px){.toc{display:none}}
+@media(max-width:1180px){
+  .toc{display:none}
+  .topbar{width:100%}
+}
 @media(max-width:960px){
   .sidebar{position:fixed;left:0;top:0;transform:translateX(-100%);transition:transform .22s;
     box-shadow:var(--shadow)}
