@@ -6,10 +6,11 @@
 <title>InfiSpace · AI Agent 工程师转型训练营</title>
 <style>
   :root{
-    --bg:#0A1228; --bg-soft:#0E1730; --bg-side:#0B1124; --panel:#111A30;
-    --line:#1E2A45; --line-soft:#172238;
-    --fg:#E6EDF3; --fg-soft:#A9B4C9; --fg-mute:#6B7894;
-    --gold:#22D3D4; --gold-deep:#0E7490; --gold-soft:#0C2E33;
+    --bg:#F7F9FC; --bg-soft:#EEF2F8; --bg-side:#FFFFFF; --panel:#FFFFFF;
+    --line:#DCE3EE; --line-soft:#E8EDF4;
+    --fg:#0E1B33; --fg-soft:#3A4A66; --fg-mute:#6B7894;
+    --gold:#0E9AA7; --gold-deep:#0E7490; --gold-soft:#E3F7F8;
+    --shadow:0 1px 2px rgba(14,27,51,.05),0 8px 24px rgba(14,27,51,.06);
   }
   *{box-sizing:border-box;margin:0;padding:0}
   html{scroll-behavior:smooth}
@@ -21,9 +22,9 @@
   .wrap{max-width:1120px;margin:0 auto;padding:0 24px 80px}
 
   /* NAV */
-  .nav{position:sticky;top:0;z-index:50;background:rgba(10,18,40,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+  .nav{position:sticky;top:0;z-index:50;background:rgba(247,249,252,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
   .nav .inner{max-width:1120px;margin:0 auto;padding:12px 24px;display:flex;align-items:center;gap:18px;flex-wrap:wrap}
-  .nav .brand{height:34px;width:auto;display:block;background:#FDFCFA;padding:7px 12px;border-radius:9px}
+  .nav .brand{height:34px;width:auto;display:block}
   .nav .links{display:flex;gap:14px;flex-wrap:wrap;margin-left:auto}
   .nav .links a{color:var(--fg-soft);font-size:13px;padding:4px 8px;border-radius:6px;transition:.2s}
   .nav .links a:hover{color:var(--gold);background:var(--gold-soft)}
@@ -54,7 +55,7 @@
   /* BOARD NAV (三大板块) */
   .boards{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px}
   .board{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:22px;transition:.2s}
-  .board:hover{border-color:var(--gold);box-shadow:0 8px 24px rgba(0,0,0,.35);transform:translateY(-2px)}
+  .board:hover{border-color:var(--gold);box-shadow:var(--shadow);transform:translateY(-2px)}
   .board .pn{font-size:12px;font-weight:800;color:var(--gold-deep);letter-spacing:.12em}
   .board h3{font-size:19px;color:var(--fg);margin:6px 0 8px}
   .board p{font-size:13.5px;color:var(--fg-soft)}
@@ -118,7 +119,8 @@
   .cta{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:34px 28px;text-align:center;margin-top:54px}
   .cta h3{font-size:21px;color:var(--fg);margin-bottom:10px}
   .cta p{color:var(--fg-soft);font-size:14px;margin-bottom:18px;max-width:640px;margin-left:auto;margin-right:auto}
-  .cta .btn{display:inline-block;background:var(--gold);color:#0B1124;font-weight:800;padding:12px 30px;border-radius:30px;font-size:14px}
+  .cta .btn{display:inline-block;background:#1A1A1A;color:#F3EEE2;font-weight:800;padding:12px 30px;border-radius:30px;font-size:14px;border:1px solid #1A1A1A;transition:.2s}
+  .cta .btn:hover{background:var(--gold-deep);border-color:var(--gold-deep);color:#fff}
   .foot{text-align:center;color:var(--fg-mute);font-size:12px;margin-top:34px}
 
   @media print{
