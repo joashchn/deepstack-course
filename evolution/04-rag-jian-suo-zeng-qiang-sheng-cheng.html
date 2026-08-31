@@ -224,12 +224,11 @@
   <h1 class="page-title">RAG 检索增强生成</h1>
   <p class="page-desc">模型参数里沉淀的知识是「训练时快照」：会过时、会缺失、无法覆盖私有资料。RAG（Retrieval-Augmented Generation，检索增强生成）的思路是不依赖模型记住知识，而是让它在生成前先检索——先从外部知…</p>
   <div class="page-meta">
-    <span>约 7 分钟</span><span>2,980 字</span><span>1 个代码示例</span>
+    <span>约 8 分钟</span><span>3,025 字</span><span>1 个代码示例</span>
   </div>
 </header>
 <div class="md"><blockquote>
 <p>模型参数里沉淀的知识是「训练时快照」：会过时、会缺失、无法覆盖私有资料。RAG（Retrieval-Augmented Generation，检索增强生成）的思路是<strong>不依赖模型记住知识，而是让它在生成前先检索</strong>——先从外部知识库检索相关信息，再结合这些信息一起生成回答，从而提升准确性和知识时效性。这个思路 2020 年由论文提出，2023 年在企业应用里大爆发，至今仍是落地最广、收益最直接的 AI 应用技术之一。这一章讲清楚 RAG 的三段式结构、演进路线，以及它与微调、长上下文的关系。代码级的完整实践在 <a href="../langchain/06-wen-dang-jia-zai-yu-qie-ge.html">LangChain 06-08 · 文档加载、嵌入向量库、检索与 RAG</a>，本章聚焦概念与决策。</p>
-<p>▶ <strong>对应视频</strong>：3:50–9:13 · 提示词工程 &amp; 微调 &amp; RAG（<a href="https://www.bilibili.com/video/BV1zSDMBUE5o">B 站原视频</a>）</p>
 </blockquote>
 <h2 id="1-演进脉络从论文到企业标配">1. 演进脉络：从论文到企业标配</h2>
 <h3 id="11-提出2020把知识外挂">1.1 提出（2020）：把知识外挂</h3>
@@ -292,6 +291,9 @@
 <h3 id="23-生成阶段在线">2.3 生成阶段（在线）</h3>
 <p>把检索结果拼进提示词（通常带引用标注），让模型<strong>基于检索内容</strong>生成答案——并要求它「只依据提供的内容回答，不知道就说不知道」。</p>
 <h2 id="3-关键认知rag-的质量从哪来">3. 关键认知：RAG 的质量从哪来</h2>
+<blockquote>
+<p>先划清一条边界：<strong>RAG 不动模型本身</strong>——不改变任何参数，也不让模型「变聪明」。它解决的是「知识可得性」，不是「推理能力」。而且把 RAG 用好远比想象中难：切分粒度、多模态数据入库、嵌入模型选型、检索方式、低相似度兜底……它是系统工程，不是「接个向量库就行」。</p>
+</blockquote>
 <p>RAG 的效果取决于三个环节，任何一个掉链子都白搭：</p>
 <ol>
 <li><strong>检索质量</strong>：召回的知识与问题无关，再强的模型也答不好。优化手段：切分策略、混合检索（关键词+向量）、重排序（Rerank）</li>

@@ -224,23 +224,23 @@
   <h1 class="page-title">Agent Skill 技能封装</h1>
   <p class="page-desc">工具解决了「单个操作」的复用（MCP 第 06 章），但现实中需要复用的常常是「一整套能力」：不只一个函数，还有配套的 prompt、知识文件、脚本、使用流程。Agent Skills 就是一种轻量级的开放格式，用于把一…</p>
   <div class="page-meta">
-    <span>约 8 分钟</span><span>3,164 字</span><span>2 个代码示例</span>
+    <span>约 8 分钟</span><span>3,382 字</span><span>2 个代码示例</span>
   </div>
 </header>
 <div class="md"><blockquote>
 <p>工具解决了「单个操作」的复用（MCP 第 06 章），但现实中需要复用的常常是「一整套能力」：不只一个函数，还有配套的 prompt、知识文件、脚本、使用流程。Agent Skills 就是一种<strong>轻量级的开放格式，用于把一整套 Agent 能力（prompt、工具脚本、知识文件等）封装为可复用模块，实现低门槛的分享与复用</strong>。它本质上约等于一个子 Agent——只是更轻、更结构化、更适合沉淀。Agent Skill 特别适合 <strong>SOP 的沉淀和复用</strong>，社区里流传着一句很实在的话：<strong>「离职的同事终将化作温暖的 Skill」</strong>。这一章讲清楚 Skill 的格式、加载机制（渐进式披露）和它与 MCP、子 Agent 的边界。深度版见 <a href="../agent/10-skill-yu-jian-jin-shi-pi-lu.html">Agent 核心 10 · Skill 与渐进式披露</a>。</p>
-<p>▶ <strong>对应视频</strong>：19:22–26:50 · 上下文工程 &amp; Agent Skill（<a href="https://www.bilibili.com/video/BV1zSDMBUE5o">B 站原视频</a>）</p>
 </blockquote>
 <h2 id="1-演进脉络从文档到能力包">1. 演进脉络：从「文档」到「能力包」</h2>
 <h3 id="11-背景技能为什么难沉淀">1.1 背景：技能为什么难沉淀</h3>
 <p>在 Skill 出现之前，经验沉淀靠两样东西：<strong>文档</strong>（写了没人读）和<strong>代码</strong>（可复用但只有能力强的工程师能用）。而 LLM 时代出现了一种新的可能：<strong>如果能用「人类可读的文本 + 少量代码」描述一套做法，模型本身就能照着执行</strong>——SOP 第一次可以「直接变成可执行的能力」。</p>
+<p>「让一整个 Agent 被复用」在 Skill 之前同样困难：换一个框架、换一个平台，提示词、工具配置、脚本全部要重写一遍；非专业用户想低门槛搭 Agent，只能借助低代码平台（如 Coze），本质仍是复制提示词、重新配置工具。<strong>「整套能力」的搬运始终没有通用格式</strong>——这正是 Skill 要解决的：把一整个 Agent 需要的东西打包成一个文件夹，甚至不懂 AI 的人也能通过发文件把它分享出去，解压即用。</p>
 <h3 id="12-202412agent-skills-规范提出">1.2 2024.12：Agent Skills 规范提出</h3>
 <p>2024 年底，Anthropic 提出 Agent Skills 规范（Claude Skills），核心是一个 <code>SKILL.md</code> 文件：用 Markdown 描述能力是什么、怎么用、何时用。配套脚本与知识文件打包成一个目录，即成为一个 Skill。</p>
 <p>关键设计（渐进式披露，Progressive Disclosure）：</p>
 <blockquote>
 <p>Skill 不是一次性把全部内容塞进上下文——<strong>Agent 先只读取 SKILL.md 的概要，需要时再按需加载细节文件</strong>。</p>
 </blockquote>
-<p>这个设计解决了 Agent 能力的「上下文成本」问题：装 50 个 Skill 不意味着 50 份完整内容常驻窗口，而是 50 份「目录卡」+ 按需展开。</p>
+<p>这个设计解决了 Agent 能力的「上下文成本」问题：装 50 个 Skill 不意味着 50 份完整内容常驻窗口，而是 50 份「目录卡」+ 按需展开。加载时，Agent 可以像浏览文件系统一样逐层查看 Skill 的目录结构，自己决定展开哪一部分——这种「让 AI 自己搜索该加载什么」的方式，本质上是一种 <strong>Agentic Search（自主检索）</strong>：模型先看到「有什么」，再决定「取什么」。</p>
 <h3 id="13-2025-2026开放生态形成">1.3 2025-2026：开放生态形成</h3>
 <ul>
 <li><strong>规范开放</strong>：<a href="https://agentskills.io/home">agentskills.io</a> 成为 Skill 的社区仓库与规范中心</li>

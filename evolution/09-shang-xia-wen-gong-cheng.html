@@ -224,12 +224,11 @@
   <h1 class="page-title">上下文工程</h1>
   <p class="page-desc">Agent 运行中需要提供给 LLM 的一切相关信息——对话历史、用户输入、背景知识、工具结果——都是上下文。进入模型窗口的每个 token 都是资源：窗口有限、注意力会稀释、位置有远近之分。上下文工程（Context …</p>
   <div class="page-meta">
-    <span>约 8 分钟</span><span>3,031 字</span><span>1 个代码示例</span>
+    <span>约 8 分钟</span><span>3,164 字</span><span>1 个代码示例</span>
   </div>
 </header>
 <div class="md"><blockquote>
 <p>Agent 运行中需要提供给 LLM 的一切相关信息——对话历史、用户输入、背景知识、工具结果——都是<strong>上下文</strong>。进入模型窗口的每个 token 都是资源：窗口有限、注意力会稀释、位置有远近之分。上下文工程（Context Engineering）关注的就是<strong>如何高质量地筛选、压缩、组织上下文，从而最大化模型的决策与推理能力</strong>。2025 年这个词开始取代「提示词工程」成为行业关键词——因为单 Agent 时代已经过去，决定 Agent 质量的不再是「提示词写得好不好」，而是「整个上下文窗口被管理得好不好」。这一章讲清楚上下文工程的来源、核心方法和它为什么是 Agent 时代的必修课。深度工程细节见 <a href="../agent/13-ti-shi-ci-gong-cheng-yu-shang-xia-wen-gong.html">Agent 核心 13 · 提示词工程与上下文工程</a>。</p>
-<p>▶ <strong>对应视频</strong>：19:22–26:50 · 上下文工程 &amp; Agent Skill（<a href="https://www.bilibili.com/video/BV1zSDMBUE5o">B 站原视频</a>）</p>
 </blockquote>
 <h2 id="1-演进脉络从-prompt-到-context-的关键词变迁">1. 演进脉络：从 Prompt 到 Context 的关键词变迁</h2>
 <h3 id="11-为什么-prompt-engineering-不够了">1.1 为什么 Prompt Engineering 不够了</h3>
@@ -291,13 +290,14 @@
 </table>
 <h3 id="21-两个底层规律为什么这些手段有效">2.1 两个底层规律（为什么这些手段有效）</h3>
 <ol>
-<li><strong>注意力经济学</strong>：模型的注意力是稀缺资源——无关 token 稀释关键信息的权重。<strong>每少一个噪声 token，关键 token 的「浓度」就高一分</strong>。这就是「筛选」的价值</li>
+<li><strong>注意力经济学</strong>：模型的注意力是稀缺资源——无关 token 稀释关键信息的权重。<strong>每少一个噪声 token，关键 token 的「浓度」就高一分</strong>。这就是「筛选」的价值。机制上：Transformer 的自注意力要求每个 token 与输入中的所有其他 token 建立关联，每多一个 token 都在消耗这份注意力预算——上下文越长，「找到关键信息」越难，模型越容易抓不住重点</li>
 <li><strong>位置敏感</strong>：模型对上下文开头和结尾的记忆显著优于中间（「中段遗忘」）。这就是「组织」的价值——关键信息放首尾</li>
 </ol>
-<h3 id="22-三个核心手段">2.2 三个核心手段</h3>
+<h3 id="22-四个核心手段">2.2 四个核心手段</h3>
 <p><strong>筛选（Selection）</strong>：不是所有工具结果都值得进窗口。检索 Top-K 截断、工具输出精简、去重合并——「少而精」胜过「多而全」。</p>
 <p><strong>压缩（Compression）</strong>：窗口满了不丢信息，而是降级存储——对话历史摘要化、长文档分层（先摘要后细节）、记忆外置到向量库。</p>
 <p><strong>组织（Organization）</strong>：用分区标签、固定顺序、角色划分让模型知道「哪里是指令、哪里是数据、哪里是约束」——结构本身就是提示。</p>
+<p><strong>隔离（Isolation）</strong>：不同子任务、不同角色使用彼此独立的上下文，互不污染——单 Agent 塞不下时拆成多 Agent（第 08 章），或在系统内部按职责分区。<strong>上下文隔离正是「多 Agent 架构」真正的价值来源</strong>——拆 Agent 的本质，是拆上下文。</p>
 <h2 id="3-关键认知上下文工程和什么绑在一起">3. 关键认知：上下文工程和什么绑在一起</h2>
 <ol>
 <li><strong>与成本强相关</strong>：Token 即金钱。上下文工程是 Agent 应用「降本增效」的第一抓手——同样的任务，上下文管理得好能省 50%+ 的 token</li>
@@ -359,7 +359,7 @@
 <nav class="pager"><a class="pg-card pg-prev" href="../evolution/08-multi-agent-duo-zhi-neng-ti.html"><span class="pg-label">← 上一篇</span><span class="pg-title">Multi-Agent 多智能体</span><span class="pg-mod">AI 应用技术演进</span></a><a class="pg-card pg-next" href="../evolution/10-agent-skill-ji-neng-feng-zhuang.html"><span class="pg-label">下一篇 →</span><span class="pg-title">Agent Skill 技能封装</span><span class="pg-mod">AI 应用技术演进</span></a></nav>
     </div>
   </main>
-<nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#1-演进脉络从-prompt-到-context-的关键词变迁">1. 演进脉络：从 Prompt 到 Context 的关键词变迁</a><a class="toc-link toc-h3" href="#11-为什么-prompt-engineering-不够了">1.1 为什么 Prompt Engineering 不够了</a><a class="toc-link toc-h3" href="#12-2025context-engineering-概念成形">1.2 2025：Context Engineering 概念成形</a><a class="toc-link toc-h3" href="#13-2026工程化落地">1.3 2026：工程化落地</a><a class="toc-link toc-h2" href="#2-核心概念上下文的生命周期">2. 核心概念：上下文的生命周期</a><a class="toc-link toc-h3" href="#21-两个底层规律为什么这些手段有效">2.1 两个底层规律（为什么这些手段有效）</a><a class="toc-link toc-h3" href="#22-三个核心手段">2.2 三个核心手段</a><a class="toc-link toc-h2" href="#3-关键认知上下文工程和什么绑在一起">3. 关键认知：上下文工程和什么绑在一起</a><a class="toc-link toc-h2" href="#4-现状与趋势2026">4. 现状与趋势（2026）</a><a class="toc-link toc-h2" href="#5-记忆上下文工程的长周期延伸">5. 记忆：上下文工程的长周期延伸</a><a class="toc-link toc-h2" href="#延伸阅读">延伸阅读</a></nav>
+<nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#1-演进脉络从-prompt-到-context-的关键词变迁">1. 演进脉络：从 Prompt 到 Context 的关键词变迁</a><a class="toc-link toc-h3" href="#11-为什么-prompt-engineering-不够了">1.1 为什么 Prompt Engineering 不够了</a><a class="toc-link toc-h3" href="#12-2025context-engineering-概念成形">1.2 2025：Context Engineering 概念成形</a><a class="toc-link toc-h3" href="#13-2026工程化落地">1.3 2026：工程化落地</a><a class="toc-link toc-h2" href="#2-核心概念上下文的生命周期">2. 核心概念：上下文的生命周期</a><a class="toc-link toc-h3" href="#21-两个底层规律为什么这些手段有效">2.1 两个底层规律（为什么这些手段有效）</a><a class="toc-link toc-h3" href="#22-四个核心手段">2.2 四个核心手段</a><a class="toc-link toc-h2" href="#3-关键认知上下文工程和什么绑在一起">3. 关键认知：上下文工程和什么绑在一起</a><a class="toc-link toc-h2" href="#4-现状与趋势2026">4. 现状与趋势（2026）</a><a class="toc-link toc-h2" href="#5-记忆上下文工程的长周期延伸">5. 记忆：上下文工程的长周期延伸</a><a class="toc-link toc-h2" href="#延伸阅读">延伸阅读</a></nav>
 </div>
 <div class="sb-mask" id="sbMask"></div>
 <script src="../assets/app.js?v=e6b97c57"></script>

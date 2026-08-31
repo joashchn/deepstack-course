@@ -224,16 +224,16 @@
   <h1 class="page-title">MCP 模型上下文协议</h1>
   <p class="page-desc">Function Calling 解决了「模型怎么决策调用」，却留下一个更麻烦的问题：每个工具都要为每个 AI 应用单独接线——同样的数据库工具，ChatGPT 接一遍、Claude 接一遍、自己的应用再接一遍，接口各写…</p>
   <div class="page-meta">
-    <span>约 7 分钟</span><span>2,992 字</span><span>1 个代码示例</span>
+    <span>约 8 分钟</span><span>3,022 字</span><span>1 个代码示例</span>
   </div>
 </header>
 <div class="md"><blockquote>
 <p>Function Calling 解决了「模型怎么决策调用」，却留下一个更麻烦的问题：<strong>每个工具都要为每个 AI 应用单独接线</strong>——同样的数据库工具，ChatGPT 接一遍、Claude 接一遍、自己的应用再接一遍，接口各写各的，形成工具孤岛。MCP（Model Context Protocol，模型上下文协议）在 2024 年 11 月由 Anthropic 开源，目标就是做「工具的 USB 接口」：<strong>用统一的方式让大模型连接外部工具、数据源和服务</strong>。它最重要的贡献，是让工具可以跨 AI 应用复用，推动社区生态发展。这一章讲清楚 MCP 解决什么、架构怎么设计、以及它在 2026 年的生态位置。完整的工程实践见 <a href="../agent/11-mcp-quan-jing.html">Agent 核心 11 · MCP 全景</a>。</p>
-<p>▶ <strong>对应视频</strong>：9:13–12:28 · Function Call &amp; MCP（<a href="https://www.bilibili.com/video/BV1zSDMBUE5o">B 站原视频</a>）</p>
 </blockquote>
 <h2 id="1-演进脉络从工具孤岛到统一协议">1. 演进脉络：从工具孤岛到统一协议</h2>
 <h3 id="11-痛点2023-2024nm-的连接噩梦">1.1 痛点（2023-2024）：N×M 的连接噩梦</h3>
 <p>随着 Function Calling 普及，每个 AI 应用都要实现自己的工具接入层：应用 A 的数据库连接器、应用 B 的数据库连接器、应用 C 的……工具开发者要为每个平台各写一遍适配；应用开发者每接入一个工具，都要处理一套新协议。生态被割裂成一个个孤岛——这就是经典的 <strong>N×M 集成问题</strong>（N 个应用 × M 个工具）。</p>
+<p>一个典型画面：A 团队做「异常请求 AI 归因」，B 团队做「异常指标自动告警」，两边都需要同一个能力——查日志并让模型分析。没有统一协议时，同样的日志工具每个团队都要各接一遍、各写一遍提示词。MCP 要消灭的，正是这种「同一个工具反复接线」的重复开发。</p>
 <h3 id="12-标准化202411mcp-开源">1.2 标准化（2024.11）：MCP 开源</h3>
 <p>2024 年 11 月 25 日，Anthropic 发布 MCP 并开源，提出一个类比：<strong>MCP 之于 AI 应用，如同 USB 之于外设</strong>——一个通用接口，插上就能用。</p>
 <p>核心设计（与 Function Calling 的分工）：</p>
