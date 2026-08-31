@@ -224,11 +224,12 @@
   <h1 class="page-title">RAG 检索增强生成</h1>
   <p class="page-desc">模型参数里沉淀的知识是「训练时快照」：会过时、会缺失、无法覆盖私有资料。RAG（Retrieval-Augmented Generation，检索增强生成）的思路是不依赖模型记住知识，而是让它在生成前先检索——先从外部知…</p>
   <div class="page-meta">
-    <span>约 6 分钟</span><span>2,500 字</span><span>1 个代码示例</span>
+    <span>约 7 分钟</span><span>2,980 字</span><span>1 个代码示例</span>
   </div>
 </header>
 <div class="md"><blockquote>
 <p>模型参数里沉淀的知识是「训练时快照」：会过时、会缺失、无法覆盖私有资料。RAG（Retrieval-Augmented Generation，检索增强生成）的思路是<strong>不依赖模型记住知识，而是让它在生成前先检索</strong>——先从外部知识库检索相关信息，再结合这些信息一起生成回答，从而提升准确性和知识时效性。这个思路 2020 年由论文提出，2023 年在企业应用里大爆发，至今仍是落地最广、收益最直接的 AI 应用技术之一。这一章讲清楚 RAG 的三段式结构、演进路线，以及它与微调、长上下文的关系。代码级的完整实践在 <a href="../langchain/06-wen-dang-jia-zai-yu-qie-ge.html">LangChain 06-08 · 文档加载、嵌入向量库、检索与 RAG</a>，本章聚焦概念与决策。</p>
+<p>▶ <strong>对应视频</strong>：3:50–9:13 · 提示词工程 &amp; 微调 &amp; RAG（<a href="https://www.bilibili.com/video/BV1zSDMBUE5o">B 站原视频</a>）</p>
 </blockquote>
 <h2 id="1-演进脉络从论文到企业标配">1. 演进脉络：从论文到企业标配</h2>
 <h3 id="11-提出2020把知识外挂">1.1 提出（2020）：把知识外挂</h3>
@@ -348,6 +349,49 @@
 <li><strong>Agentic RAG</strong>：检索由 Agent 编排——查询改写、多路检索、检索失败重试，从「流水线」走向「自主判断」</li>
 <li><strong>RAG 评测成为工程必备</strong>：检索命中率、答案准确率、引用正确率被纳入持续评估，RAG 从「跑通」走向「可度量」</li>
 </ul>
+<h2 id="6-rag-评测指标速查">6. RAG 评测指标速查</h2>
+<p>「跑通了」不等于「做对了」。上线一个 RAG 系统前，至少用下面四类指标各过一遍（按环节分）：</p>
+<table>
+<thead>
+<tr>
+<th>环节</th>
+<th>指标</th>
+<th>衡量什么</th>
+<th>常用口径</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>检索</td>
+<td>Recall@K</td>
+<td>正确答案有没有被召回</td>
+<td>Top-K 结果里包含黄金答案的比例</td>
+</tr>
+<tr>
+<td>检索</td>
+<td>MRR</td>
+<td>正确答案排得多靠前</td>
+<td>首个正确答案位置的倒数均值</td>
+</tr>
+<tr>
+<td>生成</td>
+<td>Faithfulness（忠实度）</td>
+<td>答案是否依据检索内容</td>
+<td>答案中的主张能否在检索片段中找到依据</td>
+</tr>
+<tr>
+<td>生成</td>
+<td>引用正确率</td>
+<td>引用的来源是否真实对应</td>
+<td>引文与检索片段的一致性</td>
+</tr>
+</tbody>
+</table>
+<p>两个实务提醒：</p>
+<ol>
+<li><strong>先分开测，再合起来测</strong>：检索差时先修切分/嵌入/重排序，别急着调提示词——检索是上游，上游坏了下游怎么调都白搭</li>
+<li><strong>建一个固定评测集</strong>：50-100 个覆盖典型问题形态的样本，每次改检索或改提示词都跑一遍——「RAG 改不动，一改就崩」的根源就是没有回归评测</li>
+</ol>
 <h2 id="延伸阅读">延伸阅读</h2>
 <ul>
 <li>原始论文：《<a href="https://arxiv.org/abs/2005.11401">Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks</a>》（2020）</li>
@@ -358,7 +402,7 @@
 <nav class="pager"><a class="pg-card pg-prev" href="../evolution/03-wei-diao-yu-lora.html"><span class="pg-label">← 上一篇</span><span class="pg-title">微调与 LoRA</span><span class="pg-mod">AI 应用技术演进</span></a><a class="pg-card pg-next" href="../evolution/05-function-calling.html"><span class="pg-label">下一篇 →</span><span class="pg-title">Function Calling</span><span class="pg-mod">AI 应用技术演进</span></a></nav>
     </div>
   </main>
-<nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#1-演进脉络从论文到企业标配">1. 演进脉络：从论文到企业标配</a><a class="toc-link toc-h3" href="#11-提出2020把知识外挂">1.1 提出（2020）：把知识外挂</a><a class="toc-link toc-h3" href="#12-爆发2023大模型幻觉催生刚需">1.2 爆发（2023）：大模型幻觉催生刚需</a><a class="toc-link toc-h3" href="#13-成熟2024-2026从朴素到高级">1.3 成熟（2024-2026）：从朴素到高级</a><a class="toc-link toc-h2" href="#2-核心概念三段式流水线">2. 核心概念：三段式流水线</a><a class="toc-link toc-h3" href="#21-索引阶段离线">2.1 索引阶段（离线）</a><a class="toc-link toc-h3" href="#22-检索阶段在线">2.2 检索阶段（在线）</a><a class="toc-link toc-h3" href="#23-生成阶段在线">2.3 生成阶段（在线）</a><a class="toc-link toc-h2" href="#3-关键认知rag-的质量从哪来">3. 关键认知：RAG 的质量从哪来</a><a class="toc-link toc-h2" href="#4-rag-vs-微调-vs-长上下文决策表">4. RAG vs 微调 vs 长上下文：决策表</a><a class="toc-link toc-h2" href="#5-现状与趋势2026">5. 现状与趋势（2026）</a><a class="toc-link toc-h2" href="#延伸阅读">延伸阅读</a></nav>
+<nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#1-演进脉络从论文到企业标配">1. 演进脉络：从论文到企业标配</a><a class="toc-link toc-h3" href="#11-提出2020把知识外挂">1.1 提出（2020）：把知识外挂</a><a class="toc-link toc-h3" href="#12-爆发2023大模型幻觉催生刚需">1.2 爆发（2023）：大模型幻觉催生刚需</a><a class="toc-link toc-h3" href="#13-成熟2024-2026从朴素到高级">1.3 成熟（2024-2026）：从朴素到高级</a><a class="toc-link toc-h2" href="#2-核心概念三段式流水线">2. 核心概念：三段式流水线</a><a class="toc-link toc-h3" href="#21-索引阶段离线">2.1 索引阶段（离线）</a><a class="toc-link toc-h3" href="#22-检索阶段在线">2.2 检索阶段（在线）</a><a class="toc-link toc-h3" href="#23-生成阶段在线">2.3 生成阶段（在线）</a><a class="toc-link toc-h2" href="#3-关键认知rag-的质量从哪来">3. 关键认知：RAG 的质量从哪来</a><a class="toc-link toc-h2" href="#4-rag-vs-微调-vs-长上下文决策表">4. RAG vs 微调 vs 长上下文：决策表</a><a class="toc-link toc-h2" href="#5-现状与趋势2026">5. 现状与趋势（2026）</a><a class="toc-link toc-h2" href="#6-rag-评测指标速查">6. RAG 评测指标速查</a><a class="toc-link toc-h2" href="#延伸阅读">延伸阅读</a></nav>
 </div>
 <div class="sb-mask" id="sbMask"></div>
 <script src="../assets/app.js?v=e6b97c57"></script>

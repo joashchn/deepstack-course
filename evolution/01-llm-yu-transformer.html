@@ -224,11 +224,12 @@
   <h1 class="page-title">LLM 与 Transformer</h1>
   <p class="page-desc">一切 AI 应用技术——提示词、RAG、Agent、MCP、Harness——都建立在一个底座之上：大语言模型（LLM）。而 LLM 的起点是 2017 年那篇标题像宣言一样的论文《Attention Is All Yo…</p>
   <div class="page-meta">
-    <span>约 8 分钟</span><span>3,111 字</span><span>0 个代码示例</span>
+    <span>约 9 分钟</span><span>3,529 字</span><span>0 个代码示例</span>
   </div>
 </header>
 <div class="md"><blockquote>
 <p>一切 AI 应用技术——提示词、RAG、Agent、MCP、Harness——都建立在一个底座之上：<strong>大语言模型（LLM）</strong>。而 LLM 的起点是 2017 年那篇标题像宣言一样的论文《Attention Is All You Need》。它提出 Transformer 架构，用注意力机制取代了循环神经网络，从此「基于注意力机制的生成模型」成为主流。这一章讲清楚三件事：Transformer 是什么、三种架构变体如何演化、为什么最终 <strong>Decoder-Only（仅解码器）</strong> 一统天下。这是本模块十二个节点的第一个——后面的每一章，都是在为这个底座接上新的能力。</p>
+<p>▶ <strong>对应视频</strong>：2:11–3:50 · Transformer（<a href="https://www.bilibili.com/video/BV1zSDMBUE5o">B 站原视频</a>）</p>
 </blockquote>
 <h2 id="1-演进起点2017-年那篇论文">1. 演进起点：2017 年那篇论文</h2>
 <p>在 Transformer 出现之前，处理序列数据的标准架构是循环神经网络（RNN/LSTM）：逐字读入，把历史信息压进一个隐藏状态向量。它的致命伤是<strong>串行</strong>——读第 1000 个字时，必须等前 999 个字算完；而且长距离依赖会随着步数衰减（梯度消失）。</p>
@@ -288,7 +289,40 @@
 <p>想象你在翻译「The animal didn't cross the street <strong>because it</strong> was too tired」——理解 <code>it</code> 指代 <code>animal</code> 还是 <code>street</code>，模型需要「把注意力」放到句子中相关的位置。注意力机制就是为每个位置计算一组权重（Query/Key/Value），让模型在生成时动态决定「看哪里」。</p>
 <h3 id="32-自回归autoregressive">3.2 自回归（Autoregressive）</h3>
 <p>Decoder-Only 的生成方式是<strong>自回归</strong>：把已生成的内容接回输入，预测下一个 token，再把这个 token 拼回去继续预测，直到输出结束标记。这个「生成即上下文」的循环看似简单，却是后续一切能力的基石——<strong>Agent 的思考-行动循环、工具调用、上下文工程，本质上都在利用「模型看到什么，就基于什么继续生成」这个性质。</strong></p>
-<h2 id="4-从-llm-到-ai-应用的接力">4. 从 LLM 到 AI 应用的接力</h2>
+<h2 id="4-贯穿全模块的基础词汇">4. 贯穿全模块的基础词汇</h2>
+<p>后面十一章会反复用到几个词，这里一次性锚定，后面不再解释：</p>
+<table>
+<thead>
+<tr>
+<th>词汇</th>
+<th>含义</th>
+<th>为什么重要</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Token（词元）</strong></td>
+<td>模型处理文本的最小单位（约等于半个词到几个汉字）</td>
+<td>计费、上下文长度、压缩优化都以 token 为单位</td>
+</tr>
+<tr>
+<td><strong>上下文窗口（Context Window）</strong></td>
+<td>模型一次能「看到」的 token 上限</td>
+<td>决定一次能读入多少内容，是上下文工程（第 09 章）的物理边界</td>
+</tr>
+<tr>
+<td><strong>温度（Temperature）</strong></td>
+<td>控制采样随机性：低温度更确定、高温度更多样</td>
+<td>事实型任务用低温，创意任务用高温</td>
+</tr>
+<tr>
+<td><strong>生成即上下文</strong></td>
+<td>模型生成的内容会接回输入，影响后续生成</td>
+<td>自回归的天然属性，也是 Agent 循环、CoT、工具调用的机制基础</td>
+</tr>
+</tbody>
+</table>
+<h2 id="5-从-llm-到-ai-应用的接力">5. 从 LLM 到 AI 应用的接力</h2>
 <p>Transformer 奠定生成能力之后，预训练-微调范式确立：先在海量文本上预训练（学会语言与知识），再针对任务微调（学会行为）。2018-2022 年，这条路从 GPT-1 走到 GPT-3 的 1750 亿参数，再到 2022 年 11 月 ChatGPT 发布——AI 应用从研究走向大众。</p>
 <p>站在 2026 年回头看，LLM 之后的每一次技术跃迁，都在回答同一个问题：<strong>如何让这个「会说话的模型」在真实世界里可靠地干活？</strong></p>
 <ul>
@@ -317,7 +351,7 @@
 <nav class="pager"><a class="pg-card pg-prev" href="../modules/evolution.html"><span class="pg-label">← 上一篇</span><span class="pg-title">AI 应用技术演进 · 使用指南</span><span class="pg-mod">AI 应用技术演进</span></a><a class="pg-card pg-next" href="../evolution/02-ti-shi-ci-gong-cheng.html"><span class="pg-label">下一篇 →</span><span class="pg-title">提示词工程</span><span class="pg-mod">AI 应用技术演进</span></a></nav>
     </div>
   </main>
-<nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#1-演进起点2017-年那篇论文">1. 演进起点：2017 年那篇论文</a><a class="toc-link toc-h2" href="#2-三种架构变体一场自然选择">2. 三种架构变体：一场自然选择</a><a class="toc-link toc-h2" href="#3-核心概念注意力与自回归">3. 核心概念：注意力与自回归</a><a class="toc-link toc-h3" href="#31-注意力机制attention">3.1 注意力机制（Attention）</a><a class="toc-link toc-h3" href="#32-自回归autoregressive">3.2 自回归（Autoregressive）</a><a class="toc-link toc-h2" href="#4-从-llm-到-ai-应用的接力">4. 从 LLM 到 AI 应用的接力</a><a class="toc-link toc-h2" href="#5-现状与关键认知">5. 现状与关键认知</a><a class="toc-link toc-h2" href="#延伸阅读">延伸阅读</a></nav>
+<nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#1-演进起点2017-年那篇论文">1. 演进起点：2017 年那篇论文</a><a class="toc-link toc-h2" href="#2-三种架构变体一场自然选择">2. 三种架构变体：一场自然选择</a><a class="toc-link toc-h2" href="#3-核心概念注意力与自回归">3. 核心概念：注意力与自回归</a><a class="toc-link toc-h3" href="#31-注意力机制attention">3.1 注意力机制（Attention）</a><a class="toc-link toc-h3" href="#32-自回归autoregressive">3.2 自回归（Autoregressive）</a><a class="toc-link toc-h2" href="#4-贯穿全模块的基础词汇">4. 贯穿全模块的基础词汇</a><a class="toc-link toc-h2" href="#5-从-llm-到-ai-应用的接力">5. 从 LLM 到 AI 应用的接力</a><a class="toc-link toc-h2" href="#5-现状与关键认知">5. 现状与关键认知</a><a class="toc-link toc-h2" href="#延伸阅读">延伸阅读</a></nav>
 </div>
 <div class="sb-mask" id="sbMask"></div>
 <script src="../assets/app.js?v=e6b97c57"></script>

@@ -224,11 +224,12 @@
   <h1 class="page-title">OpenClaw 与个人 AI 助手</h1>
   <p class="page-desc">前面十章都在讨论「技术」，这一章讨论「产品形态」。2025-2026 年出现的一波个人 AI 助手框架，把 Agent 从「开发者的玩具」变成了「普通人的日常工具」——而它们的共同特征，是拓展了 Agent 的交互入口：…</p>
   <div class="page-meta">
-    <span>约 6 分钟</span><span>2,528 字</span><span>1 个代码示例</span>
+    <span>约 8 分钟</span><span>3,021 字</span><span>1 个代码示例</span>
   </div>
 </header>
 <div class="md"><blockquote>
 <p>前面十章都在讨论「技术」，这一章讨论「产品形态」。2025-2026 年出现的一波个人 AI 助手框架，把 Agent 从「开发者的玩具」变成了「普通人的日常工具」——而它们的共同特征，是<strong>拓展了 Agent 的交互入口</strong>：不再局限于聊天对话框，而是走进飞书、微信、Telegram 等日常 IM，成为随时待命的私人助手。OpenClaw 是其中代表——一款<strong>开源、高可扩展的 AI Agent 框架</strong>，基于 TypeScript 开发，核心用途是构建可自定义的私人 AI 助手。这一章讲清楚这一类框架解决了什么、OpenClaw 的设计特点，以及它在这一技术演进序列中的位置。</p>
+<p>▶ <strong>对应视频</strong>：26:50–31:53 · 龙虾（OpenClaw）&amp; Harness 工程（<a href="https://www.bilibili.com/video/BV1zSDMBUE5o">B 站原视频</a>）</p>
 </blockquote>
 <h2 id="1-演进脉络agent-走下开发者神坛">1. 演进脉络：Agent 走下「开发者神坛」</h2>
 <h3 id="11-前史agent-的交互入口问题">1.1 前史：Agent 的交互入口问题</h3>
@@ -317,6 +318,36 @@
 <li><strong>多平台入口是标配</strong>：飞书、微信、Telegram、Discord 多通道接入，消息路由成为标准组件</li>
 <li><strong>与 Harness 工程（第 12 章）汇合</strong>：个人助手要长期稳定运行，同样需要受控环境、权限边界、反馈回路——<strong>工程化是个人助手从小众走向可靠的必经之路</strong></li>
 </ul>
+<h2 id="5-部署形态与龙虾昵称">5. 部署形态与「龙虾」昵称</h2>
+<p><strong>为什么社区叫它「龙虾」</strong>：OpenClaw 的中文社区昵称（「Claw」被形象地联想为龙虾的钳子，音形双关），视频官方看点里也直接写作「龙虾 &amp; Harness 工程」。这个叫法已经成为圈内黑话——看到「养龙虾」「龙虾部署」，指的就是 OpenClaw 类自托管个人助手项目。</p>
+<p><strong>典型的部署形态（三选一）</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>形态</th>
+<th>做法</th>
+<th>适合</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>本地 Docker</td>
+<td>官方镜像一条命令拉起，接 LLM API</td>
+<td>个人尝鲜、隐私敏感</td>
+</tr>
+<tr>
+<td>云服务器自托管</td>
+<td>VPS 上常驻运行，7×24 待命</td>
+<td>长期使用、多平台接入</td>
+</tr>
+<tr>
+<td>家庭 NAS/内网</td>
+<td>部署在家庭网络内，仅内网可见</td>
+<td>极客、家庭自动化</td>
+</tr>
+</tbody>
+</table>
+<p>部署前想清楚三件事：<strong>API 成本</strong>（助手长时间待命会持续产生调用）、<strong>权限边界</strong>（接入 IM 前先配好工具白名单与敏感操作确认）、<strong>升级维护</strong>（开源框架迭代快，长期使用要跟上版本）。</p>
 <h2 id="延伸阅读">延伸阅读</h2>
 <ul>
 <li><a href="https://github.com/HKUDS/nanobot">nanobot（HKUDS）</a>——OpenClaw 的精简版，理解 Agent 接入 IM 的最佳入门代码</li>
@@ -327,7 +358,7 @@
 <nav class="pager"><a class="pg-card pg-prev" href="../evolution/10-agent-skill-ji-neng-feng-zhuang.html"><span class="pg-label">← 上一篇</span><span class="pg-title">Agent Skill 技能封装</span><span class="pg-mod">AI 应用技术演进</span></a><a class="pg-card pg-next" href="../evolution/12-harness-engineering-yue-shu-gong-cheng.html"><span class="pg-label">下一篇 →</span><span class="pg-title">Harness Engineering 约束工程</span><span class="pg-mod">AI 应用技术演进</span></a></nav>
     </div>
   </main>
-<nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#1-演进脉络agent-走下开发者神坛">1. 演进脉络：Agent 走下「开发者神坛」</a><a class="toc-link toc-h3" href="#11-前史agent-的交互入口问题">1.1 前史：Agent 的交互入口问题</a><a class="toc-link toc-h3" href="#12-2025clawdbot-与个人助手浪潮">1.2 2025：Clawdbot 与个人助手浪潮</a><a class="toc-link toc-h3" href="#13-openclaw2025-2026开源与高可扩展">1.3 OpenClaw（2025-2026）：开源与高可扩展</a><a class="toc-link toc-h3" href="#14-nanobot一个精简版-openclaw">1.4 nanobot：一个「精简版 OpenClaw」</a><a class="toc-link toc-h2" href="#2-核心概念个人-ai-助手的三个设计要点">2. 核心概念：个人 AI 助手的三个设计要点</a><a class="toc-link toc-h3" href="#21-交互入口channel">2.1 交互入口（Channel）</a><a class="toc-link toc-h3" href="#22-可扩展性extensibility">2.2 可扩展性（Extensibility）</a><a class="toc-link toc-h3" href="#23-权限与安全最容易被忽略">2.3 权限与安全（最容易被忽略）</a><a class="toc-link toc-h2" href="#3-关键认知这一类框架在演进序列中的位置">3. 关键认知：这一类框架在演进序列中的位置</a><a class="toc-link toc-h2" href="#4-现状与趋势2026">4. 现状与趋势（2026）</a><a class="toc-link toc-h2" href="#延伸阅读">延伸阅读</a></nav>
+<nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#1-演进脉络agent-走下开发者神坛">1. 演进脉络：Agent 走下「开发者神坛」</a><a class="toc-link toc-h3" href="#11-前史agent-的交互入口问题">1.1 前史：Agent 的交互入口问题</a><a class="toc-link toc-h3" href="#12-2025clawdbot-与个人助手浪潮">1.2 2025：Clawdbot 与个人助手浪潮</a><a class="toc-link toc-h3" href="#13-openclaw2025-2026开源与高可扩展">1.3 OpenClaw（2025-2026）：开源与高可扩展</a><a class="toc-link toc-h3" href="#14-nanobot一个精简版-openclaw">1.4 nanobot：一个「精简版 OpenClaw」</a><a class="toc-link toc-h2" href="#2-核心概念个人-ai-助手的三个设计要点">2. 核心概念：个人 AI 助手的三个设计要点</a><a class="toc-link toc-h3" href="#21-交互入口channel">2.1 交互入口（Channel）</a><a class="toc-link toc-h3" href="#22-可扩展性extensibility">2.2 可扩展性（Extensibility）</a><a class="toc-link toc-h3" href="#23-权限与安全最容易被忽略">2.3 权限与安全（最容易被忽略）</a><a class="toc-link toc-h2" href="#3-关键认知这一类框架在演进序列中的位置">3. 关键认知：这一类框架在演进序列中的位置</a><a class="toc-link toc-h2" href="#4-现状与趋势2026">4. 现状与趋势（2026）</a><a class="toc-link toc-h2" href="#5-部署形态与龙虾昵称">5. 部署形态与「龙虾」昵称</a><a class="toc-link toc-h2" href="#延伸阅读">延伸阅读</a></nav>
 </div>
 <div class="sb-mask" id="sbMask"></div>
 <script src="../assets/app.js?v=e6b97c57"></script>

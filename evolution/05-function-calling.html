@@ -224,11 +224,12 @@
   <h1 class="page-title">Function Calling</h1>
   <p class="page-desc">到这一章为止的模型都还停留在「说话」：提示词引导它说、RAG 帮它说对。Function Calling 是让模型「做事」的第一步——按约定格式输出调用指令，由外部系统真正去执行具体操作。2023 年 6 月 OpenA…</p>
   <div class="page-meta">
-    <span>约 6 分钟</span><span>2,267 字</span><span>1 个代码示例</span>
+    <span>约 7 分钟</span><span>2,856 字</span><span>1 个代码示例</span>
   </div>
 </header>
 <div class="md"><blockquote>
 <p>到这一章为止的模型都还停留在「说话」：提示词引导它说、RAG 帮它说对。Function Calling 是让模型「<strong>做事</strong>」的第一步——<strong>按约定格式输出调用指令，由外部系统真正去执行具体操作</strong>。2023 年 6 月 OpenAI 发布 Function Calling 后，「模型会调用工具」成为所有 AI 应用的前提能力：没有它，就没有 Agent（第 07 章）、没有 MCP（第 06 章）的用武之地。这一章讲清楚它的机制、为什么是 Agent 时代的里程碑，以及它与后续标准的演进关系。协议级细节与工程封装见 <a href="../agent/07-tool-calling-xie-yi-yu-feng-zhuang.html">Agent 核心 07 · Tool Calling 协议与封装</a>。</p>
+<p>▶ <strong>对应视频</strong>：9:13–12:28 · Function Call &amp; MCP（<a href="https://www.bilibili.com/video/BV1zSDMBUE5o">B 站原视频</a>）</p>
 </blockquote>
 <h2 id="1-演进脉络模型第一次动手">1. 演进脉络：模型第一次「动手」</h2>
 <h3 id="11-前史2022-2023夹缝中的工具使用">1.1 前史（2022-2023）：夹缝中的工具使用</h3>
@@ -306,6 +307,39 @@
 <li><strong>推理模型 + 工具调用</strong>：带思维链的推理模型在执行复杂工具流程（多步调用、依赖式调用）上显著更强</li>
 <li><strong>与 Agent 协议栈融合</strong>：Function Calling（决策层）+ MCP（连接层）+ Skill（能力封装层，第 10 章）构成 2026 年 Agent 工具体系的三件套</li>
 </ul>
+<h2 id="5-术语澄清function-callingtool-calling-与-tool-use">5. 术语澄清：Function Calling、Tool Calling 与 Tool Use</h2>
+<p>这章的名字里有个历史遗留：OpenAI 在 2023 年 6 月发布时叫 <strong>Function Calling</strong>，2024 年起官方文档改称 <strong>Tool Calling</strong>；Anthropic 那边则叫 <strong>Tool Use</strong>。它们指的基本是同一件事——<strong>让模型按结构化格式请求调用外部工具</strong>。区别只在细节：</p>
+<table>
+<thead>
+<tr>
+<th>术语</th>
+<th>出处</th>
+<th>侧重</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Function Calling</td>
+<td>OpenAI 早期叫法</td>
+<td>偏「函数」语义</td>
+</tr>
+<tr>
+<td>Tool Calling</td>
+<td>OpenAI 现行叫法</td>
+<td>覆盖更广：函数、API、MCP 工具都算</td>
+</tr>
+<tr>
+<td>Tool Use</td>
+<td>Anthropic 叫法</td>
+<td>同样含义，侧重使用动作</td>
+</tr>
+</tbody>
+</table>
+<p>工程上不用纠结名字，但要注意两点：</p>
+<ol>
+<li><strong>读文档时按厂商对号入座</strong>：搜 OpenAI 看 Tool Calling、搜 Anthropic 看 Tool Use，别被旧名误导</li>
+<li><strong>「工具」的外延在扩大</strong>：2026 年的工具不只有函数——MCP Server（第 06 章）、Skill（第 10 章）都通过同样的「决策-执行-回填」机制被模型使用，这套机制才是本质</li>
+</ol>
 <h2 id="延伸阅读">延伸阅读</h2>
 <ul>
 <li>官方文档：《<a href="https://platform.openai.com/docs/guides/function-calling">OpenAI Function Calling Guide</a>》——协议与最佳实践的第一手来源</li>
@@ -316,7 +350,7 @@
 <nav class="pager"><a class="pg-card pg-prev" href="../evolution/04-rag-jian-suo-zeng-qiang-sheng-cheng.html"><span class="pg-label">← 上一篇</span><span class="pg-title">RAG 检索增强生成</span><span class="pg-mod">AI 应用技术演进</span></a><a class="pg-card pg-next" href="../evolution/06-mcp-mo-xing-shang-xia-wen-xie-yi.html"><span class="pg-label">下一篇 →</span><span class="pg-title">MCP 模型上下文协议</span><span class="pg-mod">AI 应用技术演进</span></a></nav>
     </div>
   </main>
-<nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#1-演进脉络模型第一次动手">1. 演进脉络：模型第一次「动手」</a><a class="toc-link toc-h3" href="#11-前史2022-2023夹缝中的工具使用">1.1 前史（2022-2023）：夹缝中的工具使用</a><a class="toc-link toc-h3" href="#12-官方化202306function-calling-发布">1.2 官方化（2023.06）：Function Calling 发布</a><a class="toc-link toc-h3" href="#13-标配化2024-2026从-feature-到基础设施">1.3 标配化（2024-2026）：从 feature 到基础设施</a><a class="toc-link toc-h2" href="#2-核心概念好工具的三要素">2. 核心概念：好工具的三要素</a><a class="toc-link toc-h2" href="#3-关键认知function-calling-打开了什么">3. 关键认知：Function Calling 打开了什么</a><a class="toc-link toc-h2" href="#4-现状与趋势2026">4. 现状与趋势（2026）</a><a class="toc-link toc-h2" href="#延伸阅读">延伸阅读</a></nav>
+<nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#1-演进脉络模型第一次动手">1. 演进脉络：模型第一次「动手」</a><a class="toc-link toc-h3" href="#11-前史2022-2023夹缝中的工具使用">1.1 前史（2022-2023）：夹缝中的工具使用</a><a class="toc-link toc-h3" href="#12-官方化202306function-calling-发布">1.2 官方化（2023.06）：Function Calling 发布</a><a class="toc-link toc-h3" href="#13-标配化2024-2026从-feature-到基础设施">1.3 标配化（2024-2026）：从 feature 到基础设施</a><a class="toc-link toc-h2" href="#2-核心概念好工具的三要素">2. 核心概念：好工具的三要素</a><a class="toc-link toc-h2" href="#3-关键认知function-calling-打开了什么">3. 关键认知：Function Calling 打开了什么</a><a class="toc-link toc-h2" href="#4-现状与趋势2026">4. 现状与趋势（2026）</a><a class="toc-link toc-h2" href="#5-术语澄清function-callingtool-calling-与-tool-use">5. 术语澄清：Function Calling、Tool Calling 与 Tool Use</a><a class="toc-link toc-h2" href="#延伸阅读">延伸阅读</a></nav>
 </div>
 <div class="sb-mask" id="sbMask"></div>
 <script src="../assets/app.js?v=e6b97c57"></script>

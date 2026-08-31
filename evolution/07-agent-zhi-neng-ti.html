@@ -224,11 +224,12 @@
   <h1 class="page-title">Agent 智能体</h1>
   <p class="page-desc">有了工具调用，模型可以「动手」了，但还差一个灵魂：自主性。Agent 就是这样一种系统——能够基于目标进行「思考-行动-观察」循环、自主调用工具来完成复杂任务的智能系统。它本质上是对人类的模拟：人做事不也是「想清楚 → …</p>
   <div class="page-meta">
-    <span>约 8 分钟</span><span>3,061 字</span><span>2 个代码示例</span>
+    <span>约 9 分钟</span><span>3,684 字</span><span>2 个代码示例</span>
   </div>
 </header>
 <div class="md"><blockquote>
 <p>有了工具调用，模型可以「动手」了，但还差一个灵魂：<strong>自主性</strong>。Agent 就是这样一种系统——<strong>能够基于目标进行「思考-行动-观察」循环、自主调用工具来完成复杂任务的智能系统</strong>。它本质上是对人类的模拟：人做事不也是「想清楚 → 动手 → 看结果 → 再想」的循环吗？最朴素的理解是：<strong>「提示词 + LLM + Tools」就可以构成一个最简单的 Agent</strong>。这一章讲清楚 Agent 的思想源头、循环结构、以及它如何成为 2026 年 AI 应用的核心范式。代码级实现见 <a href="../agent/08-react-mo-shi-yu-zhu-xun-huan.html">Agent 核心 08 · ReAct 模式与主循环</a> 与 <a href="../agent/09-shi-zhan-deep-research-agent.html">09 · 实战：Deep Research Agent</a>。</p>
+<p>▶ <strong>对应视频</strong>：12:28–19:22 · Agent &amp; Multi-Agent（<a href="https://www.bilibili.com/video/BV1zSDMBUE5o">B 站原视频</a>）</p>
 </blockquote>
 <h2 id="1-演进脉络agent-思想的三次点燃">1. 演进脉络：Agent 思想的三次点燃</h2>
 <h3 id="11-思想源头202212react-论文">1.1 思想源头（2022.12）：ReAct 论文</h3>
@@ -345,6 +346,51 @@
 <li><strong>Agent 协议标准化</strong>：Agent 间通信（A2A 等）与工具接入（MCP）标准逐步落地</li>
 <li><strong>从「单任务循环」到「长周期系统」</strong>：Agent 开始承担持续数天/数周的任务，可靠性工程（第 12 章）成为成败关键</li>
 </ul>
+<h2 id="6-react-之外agent-的模式家族">6. ReAct 之外：Agent 的模式家族</h2>
+<p>ReAct（思考-行动-观察）是最广为人知的模式，但它不是唯一的。了解整个模式家族，才能根据任务选对骨架：</p>
+<table>
+<thead>
+<tr>
+<th>模式</th>
+<th>核心思想</th>
+<th>适合场景</th>
+<th>代表</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>ReAct</strong></td>
+<td>边想边做，行动结果反哺思考</td>
+<td>路径不确定、需要探索</td>
+<td>本章主循环</td>
+</tr>
+<tr>
+<td><strong>Plan-and-Execute</strong></td>
+<td>先做计划，再逐步执行，计划可中途修订</td>
+<td>目标明确、步骤多的长任务</td>
+<td>经典规划式 Agent</td>
+</tr>
+<tr>
+<td><strong>Reflection</strong></td>
+<td>生成 → 自我评审 → 修订，循环至达标</td>
+<td>写作、代码、内容质量敏感</td>
+<td>Self-Refine</td>
+</tr>
+<tr>
+<td><strong>ReWOO</strong></td>
+<td>规划与执行分离，避免中间推理污染上下文</td>
+<td>长任务、上下文敏感</td>
+<td>上下文省 token</td>
+</tr>
+<tr>
+<td><strong>工具内置推理（Reasoning Tools）</strong></td>
+<td>把推理写进工具调用，适合推理模型</td>
+<td>复杂数学/逻辑/代码题</td>
+<td>2025-2026 推理模型范式</td>
+</tr>
+</tbody>
+</table>
+<p>选型直觉：<strong>任务要探索 → ReAct；任务要规划 → Plan-and-Execute；任务要质量 → Reflection；任务要省上下文 → ReWOO；推理模型 → 工具内置推理</strong>。实际系统常混用——比如「Plan-and-Execute 的外壳 + 每步 ReAct 的内核」。</p>
 <h2 id="延伸阅读">延伸阅读</h2>
 <ul>
 <li>思想源头：《<a href="https://arxiv.org/abs/2210.03629">ReAct: Synergizing Reasoning and Acting in Language Models</a>》（2022）——Agent 循环的奠基论文</li>
@@ -356,7 +402,7 @@
 <nav class="pager"><a class="pg-card pg-prev" href="../evolution/06-mcp-mo-xing-shang-xia-wen-xie-yi.html"><span class="pg-label">← 上一篇</span><span class="pg-title">MCP 模型上下文协议</span><span class="pg-mod">AI 应用技术演进</span></a><a class="pg-card pg-next" href="../evolution/08-multi-agent-duo-zhi-neng-ti.html"><span class="pg-label">下一篇 →</span><span class="pg-title">Multi-Agent 多智能体</span><span class="pg-mod">AI 应用技术演进</span></a></nav>
     </div>
   </main>
-<nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#1-演进脉络agent-思想的三次点燃">1. 演进脉络：Agent 思想的三次点燃</a><a class="toc-link toc-h3" href="#11-思想源头202212react-论文">1.1 思想源头（2022.12）：ReAct 论文</a><a class="toc-link toc-h3" href="#12-大众点燃2023chatgpt-plugins-与-autogpt">1.2 大众点燃（2023）：ChatGPT Plugins 与 AutoGPT</a><a class="toc-link toc-h3" href="#13-工程化成熟2024-2026从玩具到系统">1.3 工程化成熟（2024-2026）：从玩具到系统</a><a class="toc-link toc-h2" href="#2-核心概念agent-循环的解剖">2. 核心概念：Agent 循环的解剖</a><a class="toc-link toc-h2" href="#3-关键认知agent-的成与败">3. 关键认知：Agent 的成与败</a><a class="toc-link toc-h2" href="#4-agent-vs-workflow一个重要的区分">4. Agent vs Workflow：一个重要的区分</a><a class="toc-link toc-h2" href="#5-现状与趋势2026">5. 现状与趋势（2026）</a><a class="toc-link toc-h2" href="#延伸阅读">延伸阅读</a></nav>
+<nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#1-演进脉络agent-思想的三次点燃">1. 演进脉络：Agent 思想的三次点燃</a><a class="toc-link toc-h3" href="#11-思想源头202212react-论文">1.1 思想源头（2022.12）：ReAct 论文</a><a class="toc-link toc-h3" href="#12-大众点燃2023chatgpt-plugins-与-autogpt">1.2 大众点燃（2023）：ChatGPT Plugins 与 AutoGPT</a><a class="toc-link toc-h3" href="#13-工程化成熟2024-2026从玩具到系统">1.3 工程化成熟（2024-2026）：从玩具到系统</a><a class="toc-link toc-h2" href="#2-核心概念agent-循环的解剖">2. 核心概念：Agent 循环的解剖</a><a class="toc-link toc-h2" href="#3-关键认知agent-的成与败">3. 关键认知：Agent 的成与败</a><a class="toc-link toc-h2" href="#4-agent-vs-workflow一个重要的区分">4. Agent vs Workflow：一个重要的区分</a><a class="toc-link toc-h2" href="#5-现状与趋势2026">5. 现状与趋势（2026）</a><a class="toc-link toc-h2" href="#6-react-之外agent-的模式家族">6. ReAct 之外：Agent 的模式家族</a><a class="toc-link toc-h2" href="#延伸阅读">延伸阅读</a></nav>
 </div>
 <div class="sb-mask" id="sbMask"></div>
 <script src="../assets/app.js?v=e6b97c57"></script>

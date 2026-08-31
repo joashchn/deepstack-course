@@ -224,11 +224,12 @@
   <h1 class="page-title">Agent Skill 技能封装</h1>
   <p class="page-desc">工具解决了「单个操作」的复用（MCP 第 06 章），但现实中需要复用的常常是「一整套能力」：不只一个函数，还有配套的 prompt、知识文件、脚本、使用流程。Agent Skills 就是一种轻量级的开放格式，用于把一…</p>
   <div class="page-meta">
-    <span>约 6 分钟</span><span>2,600 字</span><span>2 个代码示例</span>
+    <span>约 8 分钟</span><span>3,164 字</span><span>2 个代码示例</span>
   </div>
 </header>
 <div class="md"><blockquote>
 <p>工具解决了「单个操作」的复用（MCP 第 06 章），但现实中需要复用的常常是「一整套能力」：不只一个函数，还有配套的 prompt、知识文件、脚本、使用流程。Agent Skills 就是一种<strong>轻量级的开放格式，用于把一整套 Agent 能力（prompt、工具脚本、知识文件等）封装为可复用模块，实现低门槛的分享与复用</strong>。它本质上约等于一个子 Agent——只是更轻、更结构化、更适合沉淀。Agent Skill 特别适合 <strong>SOP 的沉淀和复用</strong>，社区里流传着一句很实在的话：<strong>「离职的同事终将化作温暖的 Skill」</strong>。这一章讲清楚 Skill 的格式、加载机制（渐进式披露）和它与 MCP、子 Agent 的边界。深度版见 <a href="../agent/10-skill-yu-jian-jin-shi-pi-lu.html">Agent 核心 10 · Skill 与渐进式披露</a>。</p>
+<p>▶ <strong>对应视频</strong>：19:22–26:50 · 上下文工程 &amp; Agent Skill（<a href="https://www.bilibili.com/video/BV1zSDMBUE5o">B 站原视频</a>）</p>
 </blockquote>
 <h2 id="1-演进脉络从文档到能力包">1. 演进脉络：从「文档」到「能力包」</h2>
 <h3 id="11-背景技能为什么难沉淀">1.1 背景：技能为什么难沉淀</h3>
@@ -329,6 +330,16 @@ description: 输入课程主题，输出结构化课程大纲。
 <li><strong>Skill 与 MCP 的分工日益清晰</strong>：方法论用 Skill、执行用 MCP，Agent 框架负责两者编排</li>
 <li><strong>Skill 生态交易</strong>：优质 Skill 的分享、交易平台出现——「能力包」开始成为可流通的资产</li>
 </ul>
+<h2 id="5-写好-skillmd-的实践要点">5. 写好 SKILL.md 的实践要点</h2>
+<p>Skill 的效果一半由内容决定，一半由「写的方式」决定。社区实践沉淀出几条要点：</p>
+<ol>
+<li><strong>description 是门面，决定「何时被触发」</strong>：写得越具体，Agent 越能在正确时机加载它——「输入课程主题，输出结构化大纲，当用户需要课程设计时使用」优于「课程大纲生成工具」</li>
+<li><strong>一个 Skill 只做一件事</strong>：粒度要小、职责单一。塞了五件事的 Skill 既难触发、又难复用</li>
+<li><strong>步骤写给模型看，也写给人看</strong>：步骤要可执行（模型照着做不会歧义），同时人类同事也能 review——这是 SOP 沉淀的核心价值</li>
+<li><strong>把「坑」写进注意事项</strong>：反例、边界、常见错误是 Skill 里最值钱的部分——「不添加未经验证的数据」「遇到 X 时改为走 Y 流程」</li>
+<li><strong>知识文件走渐进式披露</strong>：大段背景知识放 references/，SKILL.md 里只放摘要与触发条件，别把全部内容塞进主文件</li>
+</ol>
+<p>判断 Skill 好坏的终极标准：<strong>一个不了解该领域的新人（或新 Agent），照着 SKILL.md 能否独立完成任务</strong>。能，就是好 Skill。</p>
 <h2 id="延伸阅读">延伸阅读</h2>
 <ul>
 <li>官方博客：《<a href="https://claude.com/blog/equipping-agents-for-the-real-world-with-agent-skills">Equipping Agents for the Real World with Agent Skills</a>》（2024.12）——Skill 的设计动机</li>
@@ -341,7 +352,7 @@ description: 输入课程主题，输出结构化课程大纲。
 <nav class="pager"><a class="pg-card pg-prev" href="../evolution/09-shang-xia-wen-gong-cheng.html"><span class="pg-label">← 上一篇</span><span class="pg-title">上下文工程</span><span class="pg-mod">AI 应用技术演进</span></a><a class="pg-card pg-next" href="../evolution/11-openclaw-yu-ge-ren-ai-zhu-shou.html"><span class="pg-label">下一篇 →</span><span class="pg-title">OpenClaw 与个人 AI 助手</span><span class="pg-mod">AI 应用技术演进</span></a></nav>
     </div>
   </main>
-<nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#1-演进脉络从文档到能力包">1. 演进脉络：从「文档」到「能力包」</a><a class="toc-link toc-h3" href="#11-背景技能为什么难沉淀">1.1 背景：技能为什么难沉淀</a><a class="toc-link toc-h3" href="#12-202412agent-skills-规范提出">1.2 2024.12：Agent Skills 规范提出</a><a class="toc-link toc-h3" href="#13-2025-2026开放生态形成">1.3 2025-2026：开放生态形成</a><a class="toc-link toc-h2" href="#2-核心概念一个-skill-长什么样">2. 核心概念：一个 Skill 长什么样</a><a class="toc-link toc-h2" href="#3-关键认知skill-是什么不是什么">3. 关键认知：Skill 是什么、不是什么</a><a class="toc-link toc-h2" href="#4-现状与趋势2026">4. 现状与趋势（2026）</a><a class="toc-link toc-h2" href="#延伸阅读">延伸阅读</a></nav>
+<nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#1-演进脉络从文档到能力包">1. 演进脉络：从「文档」到「能力包」</a><a class="toc-link toc-h3" href="#11-背景技能为什么难沉淀">1.1 背景：技能为什么难沉淀</a><a class="toc-link toc-h3" href="#12-202412agent-skills-规范提出">1.2 2024.12：Agent Skills 规范提出</a><a class="toc-link toc-h3" href="#13-2025-2026开放生态形成">1.3 2025-2026：开放生态形成</a><a class="toc-link toc-h2" href="#2-核心概念一个-skill-长什么样">2. 核心概念：一个 Skill 长什么样</a><a class="toc-link toc-h2" href="#3-关键认知skill-是什么不是什么">3. 关键认知：Skill 是什么、不是什么</a><a class="toc-link toc-h2" href="#4-现状与趋势2026">4. 现状与趋势（2026）</a><a class="toc-link toc-h2" href="#5-写好-skillmd-的实践要点">5. 写好 SKILL.md 的实践要点</a><a class="toc-link toc-h2" href="#延伸阅读">延伸阅读</a></nav>
 </div>
 <div class="sb-mask" id="sbMask"></div>
 <script src="../assets/app.js?v=e6b97c57"></script>

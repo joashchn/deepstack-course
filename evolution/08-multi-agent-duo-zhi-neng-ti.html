@@ -224,11 +224,12 @@
   <h1 class="page-title">Multi-Agent 多智能体</h1>
   <p class="page-desc">单 Agent 能完成的任务有上限：任务太复杂，一个循环里既要做 A 又要做 B，上下文互相干扰、每一步都在掉质量。Multi-Agent 的思路是从单兵到团队——由多个分工协作的 Agent 共同完成任务，通过拆分任务…</p>
   <div class="page-meta">
-    <span>约 6 分钟</span><span>2,443 字</span><span>3 个代码示例</span>
+    <span>约 7 分钟</span><span>2,966 字</span><span>3 个代码示例</span>
   </div>
 </header>
 <div class="md"><blockquote>
 <p>单 Agent 能完成的任务有上限：任务太复杂，一个循环里既要做 A 又要做 B，上下文互相干扰、每一步都在掉质量。Multi-Agent 的思路是<strong>从单兵到团队</strong>——由多个分工协作的 Agent 共同完成任务，通过拆分任务与隔离上下文，解决单 Agent 系统难以处理的复杂问题。但团队不是银弹：<strong>Token 消耗量大、协作效率低、系统复杂度过高</strong>，用得不好比单 Agent 更糟。这一章讲清楚多 Agent 解决什么、有哪些组织模式、什么时候该用什么时候坚决别用。工程实现见 <a href="../agent/12-duo-agent-yu-xuan-xing-ce-lve.html">Agent 核心 12 · 多 Agent 与选型策略</a> 与 <a href="../langgraph/10-di-10-zhang-cong-dan-tu-dao-tuan-dui-duo.html">LangGraph 10 · 多 Agent 架构</a>。</p>
+<p>▶ <strong>对应视频</strong>：12:28–19:22 · Agent &amp; Multi-Agent（<a href="https://www.bilibili.com/video/BV1zSDMBUE5o">B 站原视频</a>）</p>
 </blockquote>
 <h2 id="1-演进脉络为什么需要团队">1. 演进脉络：为什么需要团队</h2>
 <h3 id="11-单-agent-的天花板2023-2024">1.1 单 Agent 的天花板（2023-2024）</h3>
@@ -288,6 +289,16 @@
 <li><strong>与 LangGraph 深度绑定</strong>：图编排（状态、超步、子图、检查点）成为多 Agent 的生产级基础设施</li>
 <li><strong>成本治理成为议题</strong>：多 Agent 的 Token 消耗、模型选型（子 Agent 用小模型）成为工程必修课</li>
 </ul>
+<h2 id="5-警惕伪多-agent">5. 警惕「伪多 Agent」</h2>
+<p>2025-2026 年最常见的架构失误，是把单 Agent 能做的事硬拆成多 Agent：</p>
+<p><strong>伪多 Agent 的典型形态</strong>：给同一个模型换了三套提示词，就宣称是「三 Agent 协作系统」。问题在于——拆出来的「角色」共享同一个模型、同一个知识、同一份上下文需求，拆了不仅没带来隔离收益，反而引入角色切换开销和编排复杂度。</p>
+<p><strong>判断真伪的标准（三个问题）</strong>：</p>
+<ol>
+<li><strong>拆开后上下文是否真的隔离了？</strong>——如果所有子任务都要看同一份长文档，拆开只会每份都重读一遍</li>
+<li><strong>角色之间是否有真实的信息壁垒？</strong>——研究员和审稿人若看到的东西完全一样，「独立视角」就是假的</li>
+<li><strong>协作是否有真实开销？</strong>——如果「协作」只是把 A 的输出拼给 B，那只是顺序调用，不是多 Agent</li>
+</ol>
+<p><strong>经验法则升级版：先证明单 Agent 不够（上下文冲突、职责冲突、并行需求），再拆；拆的时候先拆「上下文」，再拆「角色」。</strong> 多 Agent 的价值来源是上下文隔离，不是「数量多」。</p>
 <h2 id="延伸阅读">延伸阅读</h2>
 <ul>
 <li>《<a href="https://claude.com/blog/building-multi-agent-systems-when-and-how-to-use-them">Building Multi-Agent Systems: When and How to Use Them</a>》（Anthropic，2024.12）——多 Agent 的「为什么/何时/怎么」权威解读</li>
@@ -298,7 +309,7 @@
 <nav class="pager"><a class="pg-card pg-prev" href="../evolution/07-agent-zhi-neng-ti.html"><span class="pg-label">← 上一篇</span><span class="pg-title">Agent 智能体</span><span class="pg-mod">AI 应用技术演进</span></a><a class="pg-card pg-next" href="../evolution/09-shang-xia-wen-gong-cheng.html"><span class="pg-label">下一篇 →</span><span class="pg-title">上下文工程</span><span class="pg-mod">AI 应用技术演进</span></a></nav>
     </div>
   </main>
-<nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#1-演进脉络为什么需要团队">1. 演进脉络：为什么需要团队</a><a class="toc-link toc-h3" href="#11-单-agent-的天花板2023-2024">1.1 单 Agent 的天花板（2023-2024）</a><a class="toc-link toc-h3" href="#12-框架催熟2024多-agent-成为热点">1.2 框架催熟（2024）：多 Agent 成为热点</a><a class="toc-link toc-h3" href="#13-研究验证202412anthropic-的规模化实践">1.3 研究验证（2024.12）：Anthropic 的规模化实践</a><a class="toc-link toc-h2" href="#2-核心概念三种典型组织模式">2. 核心概念：三种典型组织模式</a><a class="toc-link toc-h3" href="#21-路由模式router">2.1 路由模式（Router）</a><a class="toc-link toc-h3" href="#22-编排-执行模式orchestrator-workers">2.2 编排-执行模式（Orchestrator-Workers）</a><a class="toc-link toc-h3" href="#23-协作评审模式collaborative">2.3 协作/评审模式（Collaborative）</a><a class="toc-link toc-h2" href="#3-关键认知多-agent-的账要算清楚">3. 关键认知：多 Agent 的账要算清楚</a><a class="toc-link toc-h2" href="#4-现状与趋势2026">4. 现状与趋势（2026）</a><a class="toc-link toc-h2" href="#延伸阅读">延伸阅读</a></nav>
+<nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#1-演进脉络为什么需要团队">1. 演进脉络：为什么需要团队</a><a class="toc-link toc-h3" href="#11-单-agent-的天花板2023-2024">1.1 单 Agent 的天花板（2023-2024）</a><a class="toc-link toc-h3" href="#12-框架催熟2024多-agent-成为热点">1.2 框架催熟（2024）：多 Agent 成为热点</a><a class="toc-link toc-h3" href="#13-研究验证202412anthropic-的规模化实践">1.3 研究验证（2024.12）：Anthropic 的规模化实践</a><a class="toc-link toc-h2" href="#2-核心概念三种典型组织模式">2. 核心概念：三种典型组织模式</a><a class="toc-link toc-h3" href="#21-路由模式router">2.1 路由模式（Router）</a><a class="toc-link toc-h3" href="#22-编排-执行模式orchestrator-workers">2.2 编排-执行模式（Orchestrator-Workers）</a><a class="toc-link toc-h3" href="#23-协作评审模式collaborative">2.3 协作/评审模式（Collaborative）</a><a class="toc-link toc-h2" href="#3-关键认知多-agent-的账要算清楚">3. 关键认知：多 Agent 的账要算清楚</a><a class="toc-link toc-h2" href="#4-现状与趋势2026">4. 现状与趋势（2026）</a><a class="toc-link toc-h2" href="#5-警惕伪多-agent">5. 警惕「伪多 Agent」</a><a class="toc-link toc-h2" href="#延伸阅读">延伸阅读</a></nav>
 </div>
 <div class="sb-mask" id="sbMask"></div>
 <script src="../assets/app.js?v=e6b97c57"></script>

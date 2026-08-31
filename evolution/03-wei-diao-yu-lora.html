@@ -224,11 +224,12 @@
   <h1 class="page-title">微调与 LoRA</h1>
   <p class="page-desc">提示词工程不改变模型参数，微调（Fine-tuning）恰恰相反：在已有模型基础上，用特定数据再训练，让模型更适合某个具体任务或场景。它训练的是模型的参数——这是与提示词工程最本质的区别。但「训练」二字听起来昂贵，LoR…</p>
   <div class="page-meta">
-    <span>约 6 分钟</span><span>2,292 字</span><span>0 个代码示例</span>
+    <span>约 7 分钟</span><span>2,785 字</span><span>0 个代码示例</span>
   </div>
 </header>
 <div class="md"><blockquote>
 <p>提示词工程不改变模型参数，微调（Fine-tuning）恰恰相反：<strong>在已有模型基础上，用特定数据再训练，让模型更适合某个具体任务或场景</strong>。它训练的是模型的参数——这是与提示词工程最本质的区别。但「训练」二字听起来昂贵，LoRA（Low-Rank Adaptation）的出现改变了这一切：<strong>只训练少量低秩参数，就把微调成本压缩了几个数量级</strong>，让「给模型定制」从大厂特权变成了个人开发者也能用的日常手段。这一章讲清楚微调解决什么问题、LoRA 为什么有效、以及微调与 RAG、提示词的分工。</p>
+<p>▶ <strong>对应视频</strong>：3:50–9:13 · 提示词工程 &amp; 微调 &amp; RAG（<a href="https://www.bilibili.com/video/BV1zSDMBUE5o">B 站原视频</a>）</p>
 </blockquote>
 <h2 id="1-演进脉络从全量微调到-lora">1. 演进脉络：从全量微调到 LoRA</h2>
 <h3 id="11-预训练-微调范式2018-2020">1.1 预训练-微调范式（2018-2020）</h3>
@@ -306,6 +307,16 @@
 <li><strong>微调 + Agent 结合</strong>：为 Agent 微调「工具调用协议」和「系统提示词遵循度」成为新热点——让模型更听话、更少幻觉式调用工具</li>
 <li><strong>蒸馏与合成数据</strong>：用强模型生成训练数据（蒸馏）微调小模型，是「用小模型达到大模型效果」的主流路线</li>
 </ul>
+<h2 id="5-一个最小微调流程把概念落到动作">5. 一个最小微调流程（把概念落到动作）</h2>
+<p>不深入框架细节，一次像样的微调至少包含五步（用 LoRA/QLoRA 时总成本可控）：</p>
+<ol>
+<li><strong>准备数据</strong>：收集几百到几千条高质量样本，覆盖目标场景的边界情况——<strong>数据质量决定微调上限，是全部工作里最值得投入的一步</strong></li>
+<li><strong>格式化</strong>：按模型的训练格式组织（如「指令-回答」对），指令微调（SFT）最常用</li>
+<li><strong>训练</strong>：用 PEFT/LoRA 在底座模型上训练，关注训练损失与过拟合信号</li>
+<li><strong>评测</strong>：在<strong>与训练集隔离</strong>的测试集上对比微调前后输出——只凭训练集上的表现下结论是新手最常见错误</li>
+<li><strong>部署对比</strong>：与「微调前 + 提示词」方案做 AB 对比，确认提升真实存在——<strong>如果提示词已经够用，微调的收益可能不值得</strong></li>
+</ol>
+<p>一个关键提醒：微调是「行为重塑」，<strong>评测必须围绕行为（格式、风格、遵循度）设计</strong>，而不是拿知识问答当测试——知识类的提升应该靠 RAG（第 04 章）。</p>
 <h2 id="延伸阅读">延伸阅读</h2>
 <ul>
 <li>原始论文：《<a href="https://arxiv.org/abs/2106.09685">LoRA: Low-Rank Adaptation of Large Language Models</a>》（2021）</li>
@@ -317,7 +328,7 @@
 <nav class="pager"><a class="pg-card pg-prev" href="../evolution/02-ti-shi-ci-gong-cheng.html"><span class="pg-label">← 上一篇</span><span class="pg-title">提示词工程</span><span class="pg-mod">AI 应用技术演进</span></a><a class="pg-card pg-next" href="../evolution/04-rag-jian-suo-zeng-qiang-sheng-cheng.html"><span class="pg-label">下一篇 →</span><span class="pg-title">RAG 检索增强生成</span><span class="pg-mod">AI 应用技术演进</span></a></nav>
     </div>
   </main>
-<nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#1-演进脉络从全量微调到-lora">1. 演进脉络：从全量微调到 LoRA</a><a class="toc-link toc-h3" href="#11-预训练-微调范式2018-2020">1.1 预训练-微调范式（2018-2020）</a><a class="toc-link toc-h3" href="#12-全量微调的成本危机">1.2 全量微调的成本危机</a><a class="toc-link toc-h3" href="#13-lora-登场2021参数高效微调">1.3 LoRA 登场（2021）：参数高效微调</a><a class="toc-link toc-h3" href="#14-后续演化2023-2026">1.4 后续演化（2023-2026）</a><a class="toc-link toc-h2" href="#2-核心概念微调到底在调什么">2. 核心概念：微调到底在调什么</a><a class="toc-link toc-h3" href="#21-三个层次">2.1 三个层次</a><a class="toc-link toc-h3" href="#22-关键认知微调改变的是行为不只是知识">2.2 关键认知：微调改变的是行为，不只是知识</a><a class="toc-link toc-h2" href="#3-lora-的工程直觉一个比喻">3. LoRA 的工程直觉：一个比喻</a><a class="toc-link toc-h2" href="#4-现状与趋势2026">4. 现状与趋势（2026）</a><a class="toc-link toc-h2" href="#延伸阅读">延伸阅读</a></nav>
+<nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#1-演进脉络从全量微调到-lora">1. 演进脉络：从全量微调到 LoRA</a><a class="toc-link toc-h3" href="#11-预训练-微调范式2018-2020">1.1 预训练-微调范式（2018-2020）</a><a class="toc-link toc-h3" href="#12-全量微调的成本危机">1.2 全量微调的成本危机</a><a class="toc-link toc-h3" href="#13-lora-登场2021参数高效微调">1.3 LoRA 登场（2021）：参数高效微调</a><a class="toc-link toc-h3" href="#14-后续演化2023-2026">1.4 后续演化（2023-2026）</a><a class="toc-link toc-h2" href="#2-核心概念微调到底在调什么">2. 核心概念：微调到底在调什么</a><a class="toc-link toc-h3" href="#21-三个层次">2.1 三个层次</a><a class="toc-link toc-h3" href="#22-关键认知微调改变的是行为不只是知识">2.2 关键认知：微调改变的是行为，不只是知识</a><a class="toc-link toc-h2" href="#3-lora-的工程直觉一个比喻">3. LoRA 的工程直觉：一个比喻</a><a class="toc-link toc-h2" href="#4-现状与趋势2026">4. 现状与趋势（2026）</a><a class="toc-link toc-h2" href="#5-一个最小微调流程把概念落到动作">5. 一个最小微调流程（把概念落到动作）</a><a class="toc-link toc-h2" href="#延伸阅读">延伸阅读</a></nav>
 </div>
 <div class="sb-mask" id="sbMask"></div>
 <script src="../assets/app.js?v=e6b97c57"></script>

@@ -415,6 +415,10 @@
 <td><a href="../agent/10-skill-yu-jian-jin-shi-pi-lu.html">Agent 核心 10 · Skill 与渐进式披露</a></td>
 </tr>
 <tr>
+<td>11 OpenClaw 与个人 AI 助手</td>
+<td>（本模块独有章节，暂无独立深度版）</td>
+</tr>
+<tr>
 <td>12 Harness Engineering</td>
 <td><a href="../agent/14-xun-huan-tu-yu-gu-jia-gong-cheng.html">Agent 核心 14 · 循环、图与骨架工程</a></td>
 </tr>
@@ -424,15 +428,79 @@
 <p><strong>全景路线</strong>（推荐）：00 → 01 → 02 → … → 12 顺序阅读。十二章就是一条完整的演进时间线，每章约 15-20 分钟。</p>
 <p><strong>按需查阅</strong>（只对某个主题感兴趣）：直接跳到对应章节。每章都自包含：不依赖前面的章节也能读懂。</p>
 <p><strong>对照深读</strong>（学完某个模块后回来串一遍）：读完 Agent 核心任意一章，回到本模块找对应章节，看它在这条演进线上处于什么位置——你会发现很多「为什么这样设计」的答案其实写在演进历史里。</p>
-<h2 id="关于更新">关于「更新」</h2>
-<p>这份串讲的底稿源自一份流传很广的技术串讲文档（Agent、Skill、OpenClaw、Harness……）。本模块保留其十二节点的骨架结构，但对每一节点做了三件事：<strong>补齐演进脉络</strong>（什么时候、因何出现）、<strong>展开核心概念</strong>（是什么、怎么工作）、<strong>更新到 2026 年的现状</strong>（今天的主流实践是什么）。文末的延伸阅读清单来自原文档的优质资源，并做了失效排查与补充。</p></div>
-<section class="ch-section"><h2 class="ch-section-title">章节清单</h2><div class="ch-grid"><a class="ch-card" href="../evolution/01-llm-yu-transformer.html"><span class="ch-num">01</span><span class="ch-body"><b>LLM 与 Transformer</b><i>一切 AI 应用技术——提示词、RAG、Agent、MCP、Harness——都建立在一个底座之上：大语言模型（LLM）。而 LLM 的起点是 2017 年那篇标题像宣言一样的论文《Attention Is All Yo…</i><em>8 分钟 · 0 个代码示例</em></span></a><a class="ch-card" href="../evolution/02-ti-shi-ci-gong-cheng.html"><span class="ch-num">02</span><span class="ch-body"><b>提示词工程</b><i>如果说 LLM 是发动机，提示词就是方向盘。提示词（Prompt）是引导模型按特定意图生成输出的输入指令，主要由「系统提示词」和「用户提示词」构成；提示词工程则是通过设计和优化提示词，让大模型更准确、可控地产生所需输出…</i><em>6 分钟 · 0 个代码示例</em></span></a><a class="ch-card" href="../evolution/03-wei-diao-yu-lora.html"><span class="ch-num">03</span><span class="ch-body"><b>微调与 LoRA</b><i>提示词工程不改变模型参数，微调（Fine-tuning）恰恰相反：在已有模型基础上，用特定数据再训练，让模型更适合某个具体任务或场景。它训练的是模型的参数——这是与提示词工程最本质的区别。但「训练」二字听起来昂贵，LoR…</i><em>6 分钟 · 0 个代码示例</em></span></a><a class="ch-card" href="../evolution/04-rag-jian-suo-zeng-qiang-sheng-cheng.html"><span class="ch-num">04</span><span class="ch-body"><b>RAG 检索增强生成</b><i>模型参数里沉淀的知识是「训练时快照」：会过时、会缺失、无法覆盖私有资料。RAG（Retrieval-Augmented Generation，检索增强生成）的思路是不依赖模型记住知识，而是让它在生成前先检索——先从外部知…</i><em>6 分钟 · 1 个代码示例</em></span></a><a class="ch-card" href="../evolution/05-function-calling.html"><span class="ch-num">05</span><span class="ch-body"><b>Function Calling</b><i>到这一章为止的模型都还停留在「说话」：提示词引导它说、RAG 帮它说对。Function Calling 是让模型「做事」的第一步——按约定格式输出调用指令，由外部系统真正去执行具体操作。2023 年 6 月 OpenA…</i><em>6 分钟 · 1 个代码示例</em></span></a><a class="ch-card" href="../evolution/06-mcp-mo-xing-shang-xia-wen-xie-yi.html"><span class="ch-num">06</span><span class="ch-body"><b>MCP 模型上下文协议</b><i>Function Calling 解决了「模型怎么决策调用」，却留下一个更麻烦的问题：每个工具都要为每个 AI 应用单独接线——同样的数据库工具，ChatGPT 接一遍、Claude 接一遍、自己的应用再接一遍，接口各写…</i><em>6 分钟 · 1 个代码示例</em></span></a><a class="ch-card" href="../evolution/07-agent-zhi-neng-ti.html"><span class="ch-num">07</span><span class="ch-body"><b>Agent 智能体</b><i>有了工具调用，模型可以「动手」了，但还差一个灵魂：自主性。Agent 就是这样一种系统——能够基于目标进行「思考-行动-观察」循环、自主调用工具来完成复杂任务的智能系统。它本质上是对人类的模拟：人做事不也是「想清楚 → …</i><em>8 分钟 · 2 个代码示例</em></span></a><a class="ch-card" href="../evolution/08-multi-agent-duo-zhi-neng-ti.html"><span class="ch-num">08</span><span class="ch-body"><b>Multi-Agent 多智能体</b><i>单 Agent 能完成的任务有上限：任务太复杂，一个循环里既要做 A 又要做 B，上下文互相干扰、每一步都在掉质量。Multi-Agent 的思路是从单兵到团队——由多个分工协作的 Agent 共同完成任务，通过拆分任务…</i><em>6 分钟 · 3 个代码示例</em></span></a><a class="ch-card" href="../evolution/09-shang-xia-wen-gong-cheng.html"><span class="ch-num">09</span><span class="ch-body"><b>上下文工程</b><i>Agent 运行中需要提供给 LLM 的一切相关信息——对话历史、用户输入、背景知识、工具结果——都是上下文。进入模型窗口的每个 token 都是资源：窗口有限、注意力会稀释、位置有远近之分。上下文工程（Context …</i><em>6 分钟 · 1 个代码示例</em></span></a><a class="ch-card" href="../evolution/10-agent-skill-ji-neng-feng-zhuang.html"><span class="ch-num">10</span><span class="ch-body"><b>Agent Skill 技能封装</b><i>工具解决了「单个操作」的复用（MCP 第 06 章），但现实中需要复用的常常是「一整套能力」：不只一个函数，还有配套的 prompt、知识文件、脚本、使用流程。Agent Skills 就是一种轻量级的开放格式，用于把一…</i><em>6 分钟 · 2 个代码示例</em></span></a><a class="ch-card" href="../evolution/11-openclaw-yu-ge-ren-ai-zhu-shou.html"><span class="ch-num">11</span><span class="ch-body"><b>OpenClaw 与个人 AI 助手</b><i>前面十章都在讨论「技术」，这一章讨论「产品形态」。2025-2026 年出现的一波个人 AI 助手框架，把 Agent 从「开发者的玩具」变成了「普通人的日常工具」——而它们的共同特征，是拓展了 Agent 的交互入口：…</i><em>6 分钟 · 1 个代码示例</em></span></a><a class="ch-card" href="../evolution/12-harness-engineering-yue-shu-gong-cheng.html"><span class="ch-num">12</span><span class="ch-body"><b>Harness Engineering 约束工程</b><i>走到这一章，演进序列来到了 2026 年的前沿。前十一章的共识是「模型越来越强，但不可靠」——提示词会跑偏、循环会失控、多 Agent 会协作失败。Harness Engineering（约束工程）不再纠结「换个更强的模…</i><em>7 分钟 · 1 个代码示例</em></span></a></div></section>
+<h2 id="内容来源与原始资料">内容来源与原始资料</h2>
+<p>本模块的骨架源自一份流传很广的技术串讲——<strong>B 站视频《<a href="https://www.bilibili.com/video/BV1zSDMBUE5o">近年AI应用技术串讲与优质文档分享｜Agent、Skill、OpenClaw、Harness……</a>》（UP 主：堂吉诃德拉曼查的英豪，2026-04 发布，时长约 34 分钟，站内 20 万+ 播放）</strong>，以及视频配套分享的<a href="https://oigi8odzc5w.feishu.cn/wiki/WBMfwiNkfi6uNFkRtXdcavDzn0e">飞书文档</a>。视频的讲述顺序（官方 AI 看点共 8 段）与本模块 12 章严格对应——它本身就是在一条时间线上把「LLM → 提示词 → 微调 → RAG → 工具调用 → Agent → 上下文工程 → Harness」串讲了一遍。</p>
+<p>本模块不是照搬：在保留十二节点骨架的基础上，对每一节点做了四件事——</p>
+<ol>
+<li><strong>补齐演进脉络</strong>：每个节点「什么时候出现、因何出现、解决了前代的什么问题」</li>
+<li><strong>展开核心概念</strong>：是什么、怎么工作、关键设计点</li>
+<li><strong>更新到 2026 年的现状</strong>：今天的主流实践与趋势</li>
+<li><strong>交叉引用课程</strong>：每个节点都对应课程里的深度章节，串讲负责「织网」，深度章节负责「打桩」</li>
+</ol>
+<p>延伸阅读清单来自原视频/文档分享的优质资源，并做了失效排查与补充。</p>
+<h2 id="对照视频观看可选">对照视频观看（可选）</h2>
+<p>每个章节的导语处都标注了对应的视频时间段。想「边看原视频边读文档」的话，可以按下面这张官方看点时间表对照——视频里 UP 主讲的每个话题，正好对应本模块的某一章或某几章：</p>
+<table>
+<thead>
+<tr>
+<th>视频时间段</th>
+<th>视频看点（官方 AI 分段）</th>
+<th>对应章节</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0:00 – 2:11</td>
+<td>开头：整体框架与观看指南</td>
+<td>本指南</td>
+</tr>
+<tr>
+<td>2:11 – 3:50</td>
+<td>Transformer</td>
+<td>第 01 章</td>
+</tr>
+<tr>
+<td>3:50 – 9:13</td>
+<td>提示词工程 &amp; 微调 &amp; RAG</td>
+<td>第 02 / 03 / 04 章</td>
+</tr>
+<tr>
+<td>9:13 – 12:28</td>
+<td>Function Call &amp; MCP</td>
+<td>第 05 / 06 章</td>
+</tr>
+<tr>
+<td>12:28 – 19:22</td>
+<td>Agent &amp; Multi-Agent</td>
+<td>第 07 / 08 章</td>
+</tr>
+<tr>
+<td>19:22 – 26:50</td>
+<td>上下文工程 &amp; Agent Skill</td>
+<td>第 09 / 10 章</td>
+</tr>
+<tr>
+<td>26:50 – 31:53</td>
+<td>龙虾（OpenClaw）&amp; Harness 工程</td>
+<td>第 11 / 12 章</td>
+</tr>
+<tr>
+<td>31:53 – 33:45</td>
+<td>结尾：资源汇总</td>
+<td>各章「延伸阅读」</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>注：视频里的「龙虾」即 OpenClaw 的社区昵称（见第 11 章）。视频与文档中的资源链接已并入各章「延伸阅读」，并做了可用性排查。</p>
+</blockquote></div>
+<section class="ch-section"><h2 class="ch-section-title">章节清单</h2><div class="ch-grid"><a class="ch-card" href="../evolution/01-llm-yu-transformer.html"><span class="ch-num">01</span><span class="ch-body"><b>LLM 与 Transformer</b><i>一切 AI 应用技术——提示词、RAG、Agent、MCP、Harness——都建立在一个底座之上：大语言模型（LLM）。而 LLM 的起点是 2017 年那篇标题像宣言一样的论文《Attention Is All Yo…</i><em>9 分钟 · 0 个代码示例</em></span></a><a class="ch-card" href="../evolution/02-ti-shi-ci-gong-cheng.html"><span class="ch-num">02</span><span class="ch-body"><b>提示词工程</b><i>如果说 LLM 是发动机，提示词就是方向盘。提示词（Prompt）是引导模型按特定意图生成输出的输入指令，主要由「系统提示词」和「用户提示词」构成；提示词工程则是通过设计和优化提示词，让大模型更准确、可控地产生所需输出…</i><em>8 分钟 · 0 个代码示例</em></span></a><a class="ch-card" href="../evolution/03-wei-diao-yu-lora.html"><span class="ch-num">03</span><span class="ch-body"><b>微调与 LoRA</b><i>提示词工程不改变模型参数，微调（Fine-tuning）恰恰相反：在已有模型基础上，用特定数据再训练，让模型更适合某个具体任务或场景。它训练的是模型的参数——这是与提示词工程最本质的区别。但「训练」二字听起来昂贵，LoR…</i><em>7 分钟 · 0 个代码示例</em></span></a><a class="ch-card" href="../evolution/04-rag-jian-suo-zeng-qiang-sheng-cheng.html"><span class="ch-num">04</span><span class="ch-body"><b>RAG 检索增强生成</b><i>模型参数里沉淀的知识是「训练时快照」：会过时、会缺失、无法覆盖私有资料。RAG（Retrieval-Augmented Generation，检索增强生成）的思路是不依赖模型记住知识，而是让它在生成前先检索——先从外部知…</i><em>7 分钟 · 1 个代码示例</em></span></a><a class="ch-card" href="../evolution/05-function-calling.html"><span class="ch-num">05</span><span class="ch-body"><b>Function Calling</b><i>到这一章为止的模型都还停留在「说话」：提示词引导它说、RAG 帮它说对。Function Calling 是让模型「做事」的第一步——按约定格式输出调用指令，由外部系统真正去执行具体操作。2023 年 6 月 OpenA…</i><em>7 分钟 · 1 个代码示例</em></span></a><a class="ch-card" href="../evolution/06-mcp-mo-xing-shang-xia-wen-xie-yi.html"><span class="ch-num">06</span><span class="ch-body"><b>MCP 模型上下文协议</b><i>Function Calling 解决了「模型怎么决策调用」，却留下一个更麻烦的问题：每个工具都要为每个 AI 应用单独接线——同样的数据库工具，ChatGPT 接一遍、Claude 接一遍、自己的应用再接一遍，接口各写…</i><em>7 分钟 · 1 个代码示例</em></span></a><a class="ch-card" href="../evolution/07-agent-zhi-neng-ti.html"><span class="ch-num">07</span><span class="ch-body"><b>Agent 智能体</b><i>有了工具调用，模型可以「动手」了，但还差一个灵魂：自主性。Agent 就是这样一种系统——能够基于目标进行「思考-行动-观察」循环、自主调用工具来完成复杂任务的智能系统。它本质上是对人类的模拟：人做事不也是「想清楚 → …</i><em>9 分钟 · 2 个代码示例</em></span></a><a class="ch-card" href="../evolution/08-multi-agent-duo-zhi-neng-ti.html"><span class="ch-num">08</span><span class="ch-body"><b>Multi-Agent 多智能体</b><i>单 Agent 能完成的任务有上限：任务太复杂，一个循环里既要做 A 又要做 B，上下文互相干扰、每一步都在掉质量。Multi-Agent 的思路是从单兵到团队——由多个分工协作的 Agent 共同完成任务，通过拆分任务…</i><em>7 分钟 · 3 个代码示例</em></span></a><a class="ch-card" href="../evolution/09-shang-xia-wen-gong-cheng.html"><span class="ch-num">09</span><span class="ch-body"><b>上下文工程</b><i>Agent 运行中需要提供给 LLM 的一切相关信息——对话历史、用户输入、背景知识、工具结果——都是上下文。进入模型窗口的每个 token 都是资源：窗口有限、注意力会稀释、位置有远近之分。上下文工程（Context …</i><em>8 分钟 · 1 个代码示例</em></span></a><a class="ch-card" href="../evolution/10-agent-skill-ji-neng-feng-zhuang.html"><span class="ch-num">10</span><span class="ch-body"><b>Agent Skill 技能封装</b><i>工具解决了「单个操作」的复用（MCP 第 06 章），但现实中需要复用的常常是「一整套能力」：不只一个函数，还有配套的 prompt、知识文件、脚本、使用流程。Agent Skills 就是一种轻量级的开放格式，用于把一…</i><em>8 分钟 · 2 个代码示例</em></span></a><a class="ch-card" href="../evolution/11-openclaw-yu-ge-ren-ai-zhu-shou.html"><span class="ch-num">11</span><span class="ch-body"><b>OpenClaw 与个人 AI 助手</b><i>前面十章都在讨论「技术」，这一章讨论「产品形态」。2025-2026 年出现的一波个人 AI 助手框架，把 Agent 从「开发者的玩具」变成了「普通人的日常工具」——而它们的共同特征，是拓展了 Agent 的交互入口：…</i><em>8 分钟 · 1 个代码示例</em></span></a><a class="ch-card" href="../evolution/12-harness-engineering-yue-shu-gong-cheng.html"><span class="ch-num">12</span><span class="ch-body"><b>Harness Engineering 约束工程</b><i>走到这一章，演进序列来到了 2026 年的前沿。前十一章的共识是「模型越来越强，但不可靠」——提示词会跑偏、循环会失控、多 Agent 会协作失败。Harness Engineering（约束工程）不再纠结「换个更强的模…</i><em>8 分钟 · 1 个代码示例</em></span></a></div></section>
 
       </article>
 
     </div>
   </main>
-<nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#这个模块解决什么问题">这个模块解决什么问题</a><a class="toc-link toc-h2" href="#演进时间线一图看懂">演进时间线（一图看懂）</a><a class="toc-link toc-h2" href="#完整目录">完整目录</a><a class="toc-link toc-h2" href="#与课程其他模块的对照">与课程其他模块的对照</a><a class="toc-link toc-h2" href="#阅读路线">阅读路线</a><a class="toc-link toc-h2" href="#关于更新">关于「更新」</a></nav>
+<nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#这个模块解决什么问题">这个模块解决什么问题</a><a class="toc-link toc-h2" href="#演进时间线一图看懂">演进时间线（一图看懂）</a><a class="toc-link toc-h2" href="#完整目录">完整目录</a><a class="toc-link toc-h2" href="#与课程其他模块的对照">与课程其他模块的对照</a><a class="toc-link toc-h2" href="#阅读路线">阅读路线</a><a class="toc-link toc-h2" href="#内容来源与原始资料">内容来源与原始资料</a><a class="toc-link toc-h2" href="#对照视频观看可选">对照视频观看（可选）</a></nav>
 </div>
 <div class="sb-mask" id="sbMask"></div>
 <script src="../assets/app.js?v=e6b97c57"></script>
