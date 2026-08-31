@@ -3,137 +3,128 @@
 <head data-page-node-id="F7CoIgsbRGiLwxFYGmMi47">
 <meta charset="UTF-8" data-page-node-id="DdSIdp5v8GprT9pHitHJFK">
 <meta name="viewport" content="width=device-width, initial-scale=1.0" data-page-node-id="urzvaoOok3SojfB1CWjPdf">
-<title>InfiSpace · AI Agent 工程师转型课 · 完整课程网页</title>
+<title>InfiSpace · AI Agent 工程师转型训练营</title>
 <style>
   :root{
-    --black:#0B1124;           /* inset dark surface (hero/story/cta) — matches doc --bg-side */
-    --ink:#E6EDF3;             /* primary text — matches doc --fg */
-    --muted:#6B7894;           /* muted text — matches doc --fg-mute */
-    --line:#1E2A45;            /* borders on dark — matches doc --line */
-    --paper:#0A1228;           /* page background (navy) — matches doc --bg */
-    --card:#111A30;            /* panel background — matches doc --panel */
-    --gold:#22D3D4;            /* teal accent (matches logo + doc --gold) */
-    --gold-soft:#5FD4DC;       /* readable light teal (labels/text on dark) */
-    --gold-deep:#5FD4DC;       /* readable teal (legacy label color) */
+    --bg:#0A1228; --bg-soft:#0E1730; --bg-side:#0B1124; --panel:#111A30;
+    --line:#1E2A45; --line-soft:#172238;
+    --fg:#E6EDF3; --fg-soft:#A9B4C9; --fg-mute:#6B7894;
+    --gold:#22D3D4; --gold-deep:#0E7490; --gold-soft:#0C2E33;
   }
   *{box-sizing:border-box;margin:0;padding:0}
   html{scroll-behavior:smooth}
   body{
     font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
-    background:var(--paper); color:var(--ink); line-height:1.75; -webkit-font-smoothing:antialiased;
+    background:var(--bg); color:var(--fg); line-height:1.75; -webkit-font-smoothing:antialiased;
   }
   a{color:inherit;text-decoration:none}
   .wrap{max-width:1120px;margin:0 auto;padding:0 24px 80px}
 
   /* NAV */
-  .nav{position:sticky;top:0;z-index:50;background:rgba(10,18,40,.96);backdrop-filter:blur(8px);border-bottom:1px solid rgba(20,184,194,.40)}
+  .nav{position:sticky;top:0;z-index:50;background:rgba(10,18,40,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
   .nav .inner{max-width:1120px;margin:0 auto;padding:12px 24px;display:flex;align-items:center;gap:18px;flex-wrap:wrap}
   .nav .brand{height:34px;width:auto;display:block;background:#FDFCFA;padding:7px 12px;border-radius:9px}
   .nav .links{display:flex;gap:14px;flex-wrap:wrap;margin-left:auto}
-  .nav .links a{color:#9fb0c8;font-size:13px;padding:4px 8px;border-radius:6px;transition:.2s}
-  .nav .links a:hover{color:var(--gold-soft);background:rgba(20,184,194,.15)}
+  .nav .links a{color:var(--fg-soft);font-size:13px;padding:4px 8px;border-radius:6px;transition:.2s}
+  .nav .links a:hover{color:var(--gold);background:var(--gold-soft)}
 
   /* HERO */
-  .hero{background:var(--black);color:#fff;padding:64px 24px 54px;text-align:center;position:relative;overflow:hidden}
-  .hero::after{content:"";position:absolute;inset:0;background:radial-gradient(900px 400px at 50% -10%,rgba(20,184,194,.22),transparent 60%);pointer-events:none}
-  .hero .kicker{color:var(--gold-soft);letter-spacing:.34em;font-size:13px;font-weight:600;text-transform:uppercase}
-  .hero h1{font-size:36px;font-weight:800;margin:16px 0 12px;letter-spacing:.5px;position:relative}
-  .hero p{color:#B6C2D6;font-size:15px;max-width:720px;margin:0 auto;position:relative}
-  .badge{display:inline-block;margin-top:18px;background:rgba(20,184,194,.18);border:1px solid var(--gold);color:var(--gold-soft);font-size:12px;font-weight:700;padding:5px 14px;border-radius:30px;letter-spacing:.05em}
-  .stats{display:flex;flex-wrap:wrap;justify-content:center;gap:14px;margin-top:34px;position:relative}
-  .stat{background:rgba(20,184,194,.08);border:1px solid rgba(20,184,194,.45);border-radius:12px;padding:14px 22px;min-width:124px}
-  .stat b{display:block;color:var(--gold-soft);font-size:25px;font-weight:800}
-  .stat span{font-size:12px;color:#9fb0c8}
+  .hero{padding:56px 24px 44px;text-align:center;border-bottom:1px solid var(--line)}
+  .hero h1{font-size:36px;font-weight:800;margin:0 0 14px;letter-spacing:.5px}
+  .hero p{color:var(--fg-soft);font-size:15px;max-width:720px;margin:0 auto}
+  .stats{display:flex;flex-wrap:wrap;justify-content:center;gap:14px;margin-top:34px}
+  .stat{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 22px;min-width:124px}
+  .stat b{display:block;color:var(--fg);font-size:25px;font-weight:800}
+  .stat span{font-size:12px;color:var(--fg-mute)}
 
   /* SECTION TITLE */
   .sec{margin-top:58px}
   .sec-title{display:flex;align-items:center;gap:12px;margin-bottom:22px}
-  .sec-title .num{display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;background:var(--gold);color:#0A1228;font-weight:800;font-size:15px;flex-shrink:0}
-  .sec-title h2{font-size:22px;font-weight:800;color:var(--ink)}
-  .sec-title .sub{font-size:13px;color:var(--muted);margin-left:auto}
-  .lead{font-size:14.5px;color:var(--muted);margin:-8px 0 22px;max-width:860px}
+  .sec-title .num{display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;background:var(--gold-soft);color:var(--gold-deep);font-weight:800;font-size:15px;flex-shrink:0}
+  .sec-title h2{font-size:22px;font-weight:800;color:var(--fg)}
+  .sec-title .sub{font-size:13px;color:var(--fg-mute);margin-left:auto}
+  .lead{font-size:14.5px;color:var(--fg-soft);margin:-8px 0 22px;max-width:860px}
 
   /* OVERVIEW GRID */
   .ov{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
-  .ov .c{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px}
+  .ov .c{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px}
   .ov .c h4{font-size:13px;color:var(--gold-deep);font-weight:800;letter-spacing:.08em;margin-bottom:8px}
-  .ov .c p{font-size:13.5px;color:var(--ink)}
+  .ov .c p{font-size:13.5px;color:var(--fg-soft)}
 
   /* BOARD NAV (三大板块) */
   .boards{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px}
-  .board{background:var(--card);border:1px solid var(--line);border-top:4px solid var(--gold);border-radius:14px;padding:22px;transition:.2s}
-  .board:hover{box-shadow:0 10px 30px rgba(20,184,194,.18);transform:translateY(-3px)}
+  .board{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:22px;transition:.2s}
+  .board:hover{border-color:var(--gold);box-shadow:0 8px 24px rgba(0,0,0,.35);transform:translateY(-2px)}
   .board .pn{font-size:12px;font-weight:800;color:var(--gold-deep);letter-spacing:.12em}
-  .board h3{font-size:19px;color:var(--ink);margin:6px 0 8px}
-  .board p{font-size:13.5px;color:var(--muted)}
-  .board .tag{display:inline-block;margin-top:12px;font-size:12px;font-weight:700;color:var(--gold-soft);background:rgba(20,184,194,.15);border:1px solid var(--gold);padding:3px 10px;border-radius:6px}
+  .board h3{font-size:19px;color:var(--fg);margin:6px 0 8px}
+  .board p{font-size:13.5px;color:var(--fg-soft)}
+  .board .tag{display:inline-block;margin-top:12px;font-size:12px;font-weight:700;color:var(--gold-deep);background:var(--gold-soft);padding:3px 10px;border-radius:6px}
 
   /* TIMELINE (AI 基础) */
   .timeline{position:relative;padding-left:34px}
-  .timeline::before{content:"";position:absolute;left:11px;top:6px;bottom:6px;width:2px;background:linear-gradient(var(--gold),var(--line))}
+  .timeline::before{content:"";position:absolute;left:11px;top:6px;bottom:6px;width:2px;background:var(--line)}
   .node{position:relative;margin-bottom:22px}
-  .node .dot{position:absolute;left:-30px;top:18px;width:20px;height:20px;border-radius:50%;background:var(--card);border:3px solid var(--gold);box-shadow:0 0 0 4px var(--paper)}
-  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 22px}
+  .node .dot{position:absolute;left:-30px;top:18px;width:20px;height:20px;border-radius:50%;background:var(--bg);border:3px solid var(--gold-deep);box-shadow:0 0 0 4px var(--bg)}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px 22px}
   .card .top{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
-  .card .no{font-size:13px;font-weight:800;color:#fff;background:var(--black);border-radius:6px;padding:2px 9px}
-  .card h3{font-size:17px;font-weight:800;color:var(--ink)}
-  .card .meta{margin-left:auto;font-size:12px;color:var(--gold-deep);font-weight:600;white-space:nowrap}
+  .card .no{font-size:13px;font-weight:800;color:var(--gold-deep);background:var(--gold-soft);border-radius:6px;padding:2px 9px}
+  .card h3{font-size:17px;font-weight:800;color:var(--fg)}
+  .card .meta{margin-left:auto;font-size:12px;color:var(--fg-mute);font-weight:600;white-space:nowrap}
   .card ul{margin:12px 0 0;padding-left:18px}
-  .card li{font-size:13.5px;color:var(--ink);margin:5px 0}
+  .card li{font-size:13.5px;color:var(--fg-soft);margin:5px 0}
   .tag{display:inline-block;font-size:11px;padding:1px 7px;border-radius:5px;margin-left:6px;font-weight:600}
-  .tag.opt{background:rgba(20,184,194,.15);color:var(--gold-soft);border:1px solid var(--gold)}
-  .tag.req{background:var(--black);color:#fff}
-  .note{font-size:12px;color:var(--muted);margin-top:8px;font-style:italic}
+  .tag.opt{background:var(--gold-soft);color:var(--gold-deep)}
+  .tag.req{background:var(--bg-side);color:var(--fg-soft);border:1px solid var(--line)}
+  .note{font-size:12px;color:var(--fg-mute);margin-top:8px;font-style:italic}
 
   /* FRAMEWORK MODULES */
   .fw{display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:16px}
-  .fw .m{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--gold);border-radius:12px;padding:16px 18px}
+  .fw .m{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:12px;padding:16px 18px}
   .fw .m .hd{display:flex;align-items:center;gap:10px;margin-bottom:6px}
-  .fw .m .mn{font-size:13px;font-weight:800;color:#0A1228;background:var(--gold);border-radius:6px;padding:2px 9px;flex-shrink:0}
-  .fw .m h4{font-size:15px;color:var(--ink);font-weight:800}
+  .fw .m .mn{font-size:13px;font-weight:800;color:var(--gold-deep);background:var(--gold-soft);border-radius:6px;padding:2px 9px;flex-shrink:0}
+  .fw .m h4{font-size:15px;color:var(--fg);font-weight:800}
   .fw .m .goal{font-size:12.5px;color:var(--gold-deep);margin-bottom:6px}
-  .fw .m p{font-size:12.5px;color:var(--muted)}
-  .fw .m .out{font-size:12.5px;color:var(--ink);margin-top:6px;padding-top:6px;border-top:1px dashed var(--line)}
+  .fw .m p{font-size:12.5px;color:var(--fg-mute)}
+  .fw .m .out{font-size:12.5px;color:var(--fg-soft);margin-top:6px;padding-top:6px;border-top:1px dashed var(--line-soft)}
 
   .chapters{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
-  .chapters .cp{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 14px;font-size:13px;color:var(--ink);flex:1 1 200px}
+  .chapters .cp{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 14px;font-size:13px;color:var(--fg-soft);flex:1 1 200px}
   .chapters .cp b{color:var(--gold-deep);display:block;font-size:12px;margin-bottom:2px}
 
   /* PROJECTS */
   .proj{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:18px}
-  .pc{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px;position:relative;overflow:hidden}
-  .pc::after{content:"";position:absolute;right:-34px;top:-34px;width:110px;height:110px;border-radius:50%;background:radial-gradient(var(--gold-soft),transparent 70%);opacity:.5}
+  .pc{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:22px}
   .pc .pn{font-size:12px;font-weight:800;color:var(--gold-deep);letter-spacing:.1em}
-  .pc h3{font-size:19px;color:var(--ink);margin:6px 0 4px}
-  .pc .stack{font-size:12.5px;color:var(--muted);margin-bottom:12px}
-  .pc .stack code{background:rgba(20,184,194,.15);color:var(--gold-soft);padding:1px 6px;border-radius:4px;font-size:11.5px}
-  .pc .cnt{display:inline-block;font-size:12px;font-weight:700;color:#fff;background:var(--black);padding:3px 10px;border-radius:6px;margin-bottom:12px}
+  .pc h3{font-size:19px;color:var(--fg);margin:6px 0 4px}
+  .pc .stack{font-size:12.5px;color:var(--fg-mute);margin-bottom:12px}
+  .pc .stack code{background:var(--gold-soft);color:var(--gold-deep);padding:1px 6px;border-radius:4px;font-size:11.5px}
+  .pc .cnt{display:inline-block;font-size:12px;font-weight:700;color:var(--gold-deep);background:var(--gold-soft);padding:3px 10px;border-radius:6px;margin-bottom:12px}
   .pc h5{font-size:13px;color:var(--gold-deep);margin:12px 0 6px;font-weight:800}
-  .pc ul{margin:0;padding-left:16px;position:relative;z-index:1}
-  .pc ul li{font-size:12.5px;color:var(--ink);margin:3px 0}
-  .seven{background:rgba(20,184,194,.10);border:1px solid rgba(20,184,194,.35);border-radius:10px;padding:12px 14px;margin-bottom:12px;position:relative;z-index:1}
+  .pc ul{margin:0;padding-left:16px}
+  .pc ul li{font-size:12.5px;color:var(--fg-soft);margin:3px 0}
+  .seven{background:var(--gold-soft);border-left:3px solid var(--gold);border-radius:10px;padding:12px 14px;margin-bottom:12px}
   .seven .lbl{font-size:12px;font-weight:800;color:var(--gold-deep);margin-bottom:5px}
-  .seven p{font-size:12.5px;color:var(--ink);margin:4px 0}
-  .seven .q{color:var(--muted);font-size:12px}
+  .seven p{font-size:12.5px;color:var(--fg-soft);margin:4px 0}
+  .seven .q{color:var(--fg-mute);font-size:12px}
 
   /* NARRATIVE */
-  .story{background:var(--black);color:#e9e6df;border-radius:18px;padding:34px 30px;margin:54px 0}
-  .story h3{color:var(--gold-soft);font-size:20px;margin-bottom:14px}
-  .story p{font-size:14.5px;color:#d6d3cb;margin:12px 0}
-  .story strong{color:#fff}
-  .story .hl{color:var(--gold-soft);font-weight:700}
+  .story{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:34px 30px;margin:54px 0}
+  .story h3{color:var(--fg);font-size:20px;margin-bottom:14px}
+  .story p{font-size:14.5px;color:var(--fg-soft);margin:12px 0}
+  .story strong{color:var(--fg)}
+  .story .hl{color:var(--gold-deep);font-weight:700}
 
   /* CTA */
-  .cta{background:var(--black);color:#fff;border-radius:18px;padding:34px 28px;text-align:center;margin-top:54px}
-  .cta h3{font-size:21px;color:var(--gold-soft);margin-bottom:10px}
-  .cta p{color:#B6C2D6;font-size:14px;margin-bottom:18px;max-width:640px;margin-left:auto;margin-right:auto}
-  .cta .btn{display:inline-block;background:var(--gold);color:#0A1228;font-weight:800;padding:12px 30px;border-radius:30px;font-size:14px}
-  .foot{text-align:center;color:var(--muted);font-size:12px;margin-top:34px}
+  .cta{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:34px 28px;text-align:center;margin-top:54px}
+  .cta h3{font-size:21px;color:var(--fg);margin-bottom:10px}
+  .cta p{color:var(--fg-soft);font-size:14px;margin-bottom:18px;max-width:640px;margin-left:auto;margin-right:auto}
+  .cta .btn{display:inline-block;background:var(--gold);color:#0B1124;font-weight:800;padding:12px 30px;border-radius:30px;font-size:14px}
+  .foot{text-align:center;color:var(--fg-mute);font-size:12px;margin-top:34px}
 
   @media print{
     body{background:#fff}
     .nav{display:none}
-    .hero,.story,.cta{background:#1a1a1a !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .story,.cta{background:#fff !important;border-color:#ddd;-webkit-print-color-adjust:exact;print-color-adjust:exact}
     .board:hover,.card:hover,.pc:hover{transform:none;box-shadow:none}
   }
 </style>
@@ -154,8 +145,7 @@
 </nav>
 
 <header class="hero" data-page-node-id="P1VHhUBloqFpQLunHwO9Pn">
-  <div class="kicker" data-page-node-id="W3SkFpiiIovhaQtjYKU39Z">AI Agent Engineer Course</div>
-  <h1 data-page-node-id="Su5YzVgGtdIgmNSA9XLRpO">AI Agent 工程师转型课</h1>
+  <h1 data-page-node-id="Su5YzVgGtdIgmNSA9XLRpO">AI Agent 工程师转型训练营</h1>
   <p data-page-node-id="B0u5bUjGfXQgYfp8GsUUfy">面向会写代码、但还没系统碰过 AI 的传统研发程序员 —— 以面试求职为出口，从「会调模型」到「能设计、实现、评测、部署 Agent 系统」。</p>
   <div class="stats" data-page-node-id="3umk77YsPp3JBISTLnBttk">
     <div class="stat" data-page-node-id="cl0L4gwfTSQg47KwQwi4Qi"><b data-page-node-id="lJhfLrEgIxUsD9rlrYvlMA">5 阶</b><span data-page-node-id="9Ed8hnE6n3FuGW7Kq2QZ24">AI 基础</span></div>
@@ -308,10 +298,10 @@
       <div class="m" data-page-node-id="n0RNE1ybiC9UosyFRP3DkJ"><div class="hd" data-page-node-id="SRCsG9wHfjMQxMxm5Ub5CX"><span class="mn" data-page-node-id="wlkG8H5tmb9ncRN3vWmWYH">模块八</span><h4 data-page-node-id="oztX1yfoXVjF34JLBPaaC7">项目交付、评测与框架选型</h4></div><div class="goal" data-page-node-id="TpfWyJAaiaWwhCuaJRoFqk">目标：把一次 Demo 收口为可求职展示的工程项目。</div><p data-page-node-id="gAF1T1SMcyT5reHdeigBlR">交付证据清单；固定 Fixture（正常 / 歧义 / 工具失败 / 审批）；同时评价结果与过程；Trace / 回归门；框架选型比较；简历与三分钟介绍。</p><div class="out" data-page-node-id="4Rw42Lh1sfVBB70h74XSEF">项目结果：固定评测集、Trace、回归门、框架选型记录与可接追问的作品集。</div></div>
     </div>
 
-    <h3 style="font-size:16px;color:var(--ink);margin:26px 0 4px" data-page-node-id="pTHpqGEznixLhh5OL3R0cZ">贯穿项目 · 生产事故调查与修复建议 Agent</h3>
+    <h3 style="font-size:16px;color:var(--fg);margin:26px 0 4px" data-page-node-id="pTHpqGEznixLhh5OL3R0cZ">贯穿项目 · 生产事故调查与修复建议 Agent</h3>
     <p class="lead" data-page-node-id="6ZMlGzGDnINQwDiImjJvI2">从一条线上告警开始，在同一项目上逐步加入工具调用、状态管理、流程恢复、安全隔离和评测能力——八大模块共用一个真实场景，避免「学完框架却没写过项目」。</p>
 
-    <h3 style="font-size:16px;color:var(--ink);margin:24px 0 4px" data-page-node-id="LGJ2mDP9g7qgWfOSGVJpX0">LangGraph 深潜 · 7 章完整路径</h3>
+    <h3 style="font-size:16px;color:var(--fg);margin:24px 0 4px" data-page-node-id="LGJ2mDP9g7qgWfOSGVJpX0">LangGraph 深潜 · 7 章完整路径</h3>
     <div class="chapters" data-page-node-id="pQ92myBtnYp5QzDsPkI35G">
       <div class="cp" data-page-node-id="UzSN4gbtu6EGOFre5dT7SU"><b data-page-node-id="Nhz9U099z05lXwnHSw9ajK">第 1 章</b>前置基础与环境搭建（Python 3.10+ / LangChain 基础 / 课程全景）</div>
       <div class="cp" data-page-node-id="R4CH5SwQD2i5UwImWMdm0N"><b data-page-node-id="83IkrKse5plEBdD6uvrnpy">第 2 章</b>快速上手（SDK 安装 / State·Node·Edge / 第一个手动图 / State Schema / Reducer）</div>
