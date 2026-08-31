@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>13 · 异常体系与处理 · 无限空间 InfiSpace 课程文档</title>
+<title>13 · 异常体系与处理 · InfiSpace 课程文档</title>
 <meta name="description" content="程序只要在跑，就免不了出岔子：文件找不到、网络断了、用户输入了奇怪的东西……出错本身并不可怕，可怕的是程序直接躺平——屏幕上甩出一大坨红色 traceback，然后整个进程退场。Python 为此准备了一整套&quot;异常处理&quot;…">
 <link rel="stylesheet" href="../assets/style.css">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%23d9c39a' text-anchor='middle'%3E%E2%88%9E%3C/text%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%232DD4D4' text-anchor='middle'%3E%E2%88%9E%3C/text%3E%3C/svg%3E">
 </head>
 <body>
 <div class="progress" id="progress"></div>
@@ -15,8 +15,8 @@
 <aside class="sidebar" id="sidebar">
   <div class="sb-head">
     <a class="brand" href="../index.html">
-      <img class="brand-mark" src="../assets/infispace-logo-1.jpg" alt="无限空间 InfiSpace">
-      <span class="brand-text"><b>无限空间 InfiSpace</b><i>AI Agent 工程师转型训练营</i></span>
+      <img class="brand-mark" src="../assets/infispace-logo-1.png" alt="InfiSpace">
+      <span class="brand-text"><b>InfiSpace</b><i>AI Agent 工程师转型训练营</i></span>
     </a>
     <button class="sb-close" id="sbClose" aria-label="关闭目录">✕</button>
   </div>
@@ -507,7 +507,7 @@
 <nav class="pager"><a class="pg-card pg-prev" href="../python/12-with-yu-shang-xia-wen-xie-yi.html"><span class="pg-label">← 上一篇</span><span class="pg-title">with 与上下文协议</span><span class="pg-mod">Python 与数据实践</span></a><a class="pg-card pg-next" href="../python/14-lei-xing-biao-zhu.html"><span class="pg-label">下一篇 →</span><span class="pg-title">类型标注</span><span class="pg-mod">Python 与数据实践</span></a></nav>
     </div>
     <footer class="foot">
-      <span>无限空间 InfiSpace · AI Agent 工程师转型训练营配套文档</span>
+      <span>InfiSpace · AI Agent 工程师转型训练营配套文档</span>
     </footer>
   </main>
 <nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#1-接住异常try-except-全家桶">1. 接住异常：try / except 全家桶</a><a class="toc-link toc-h3" href="#11-最基本的接法">1.1 最基本的接法</a><a class="toc-link toc-h3" href="#12-多路拦截顺便拿到异常对象">1.2 多路拦截，顺便拿到异常对象</a><a class="toc-link toc-h3" href="#13-异常对象身上有什么">1.3 异常对象身上有什么</a><a class="toc-link toc-h2" href="#2-内置异常是一棵家族树">2. 内置异常是一棵家族树</a><a class="toc-link toc-h2" href="#3-主动抛出raise">3. 主动抛出：raise</a><a class="toc-link toc-h3" href="#31-转手再抛光杆-raise">3.1 转手再抛：光杆 raise</a><a class="toc-link toc-h2" href="#4-打造你自己的异常">4. 打造你自己的异常</a><a class="toc-link toc-h2" href="#5-异常链把前因挂在后果上">5. 异常链：把&quot;前因&quot;挂在&quot;后果&quot;上</a><a class="toc-link toc-h2" href="#习题">习题</a><a class="toc-link toc-h3" href="#一容错的比值计算">一、容错的比值计算</a><a class="toc-link toc-h3" href="#二自动重试装饰器-retry">二、自动重试装饰器 retry</a><a class="toc-link toc-h3" href="#三网盘配额管理">三、网盘配额管理</a><a class="toc-link toc-h3" href="#四把杂音翻译成同一种异常">四、把杂音翻译成同一种异常</a></nav>

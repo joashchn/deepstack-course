@@ -3,14 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>05 · ORM 建模 · 无限空间 InfiSpace 课程文档</title>
+<title>05 · ORM 建模 · InfiSpace 课程文档</title>
 <meta name="description" content="本章你将学会
 
  - 用 DeclarativeBase + Mapped + mappedcolumn 三件套声明模型
  - 主键 / 自增 / 可空 / 默认值 / 唯一 / 索引的每一种写法
  - 外键 Forei…">
 <link rel="stylesheet" href="../assets/style.css">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%23d9c39a' text-anchor='middle'%3E%E2%88%9E%3C/text%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%232DD4D4' text-anchor='middle'%3E%E2%88%9E%3C/text%3E%3C/svg%3E">
 </head>
 <body>
 <div class="progress" id="progress"></div>
@@ -19,8 +19,8 @@
 <aside class="sidebar" id="sidebar">
   <div class="sb-head">
     <a class="brand" href="../index.html">
-      <img class="brand-mark" src="../assets/infispace-logo-1.jpg" alt="无限空间 InfiSpace">
-      <span class="brand-text"><b>无限空间 InfiSpace</b><i>AI Agent 工程师转型训练营</i></span>
+      <img class="brand-mark" src="../assets/infispace-logo-1.png" alt="InfiSpace">
+      <span class="brand-text"><b>InfiSpace</b><i>AI Agent 工程师转型训练营</i></span>
     </a>
     <button class="sb-close" id="sbClose" aria-label="关闭目录">✕</button>
   </div>
@@ -886,7 +886,7 @@ python<span class="w"> </span>demo_models.py
 <nav class="pager"><a class="pg-card pg-prev" href="../backend/04-sqlalchemy-yi-bu-yin-qing-yu-hui-hua.html"><span class="pg-label">← 上一篇</span><span class="pg-title">SQLAlchemy 异步引擎与会话</span><span class="pg-mod">Python 框架指南</span></a><a class="pg-card pg-next" href="../backend/06-sql-biao-da-shi-yu-shu-ju-cao-zuo.html"><span class="pg-label">下一篇 →</span><span class="pg-title">SQL 表达式与数据操作</span><span class="pg-mod">Python 框架指南</span></a></nav>
     </div>
     <footer class="foot">
-      <span>无限空间 InfiSpace · AI Agent 工程师转型训练营配套文档</span>
+      <span>InfiSpace · AI Agent 工程师转型训练营配套文档</span>
     </footer>
   </main>
 <nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#1-心智模型类是图纸实例是砖">1. 心智模型：类是图纸，实例是砖</a><a class="toc-link toc-h2" href="#2-declarativebase所有模型的户籍管理处">2. DeclarativeBase：所有模型的&quot;户籍管理处&quot;</a><a class="toc-link toc-h2" href="#3-__tablename__给表起名字">3. __tablename__：给表起名字</a><a class="toc-link toc-h2" href="#4-mapped-mapped_column类型标注驱动的列定义">4. Mapped + mapped_column：类型标注驱动的列定义</a><a class="toc-link toc-h2" href="#5-主键与自增">5. 主键与自增</a><a class="toc-link toc-h2" href="#6-可空与默认值default-和-server_default-是两套机制">6. 可空与默认值：default 和 server_default 是两套机制</a><a class="toc-link toc-h2" href="#7-唯一与索引uniqueindex__table_args__">7. 唯一与索引：unique、index、__table_args__</a><a class="toc-link toc-h2" href="#8-foreignkey-与-ondelete外键及其应急预案">8. ForeignKey 与 ondelete：外键及其&quot;应急预案&quot;</a><a class="toc-link toc-h2" href="#9-一对多relationship-back_populates">9. 一对多：relationship + back_populates</a><a class="toc-link toc-h2" href="#10-多对多secondary-关联表与复合主键">10. 多对多：secondary 关联表与复合主键</a><a class="toc-link toc-h2" href="#11-模型拆文件时type_checking-防循环导入">11. 模型拆文件时：TYPE_CHECKING 防循环导入</a><a class="toc-link toc-h2" href="#12-mixin公共字段的预制件">12. Mixin：公共字段的&quot;预制件&quot;</a><a class="toc-link toc-h2" href="#13-pg-特有类型以-jsonb-为代表">13. PG 特有类型：以 JSONB 为代表</a><a class="toc-link toc-h2" href="#14-create_all一键建表但它不是迁移工具">14. create_all：一键建表，但它不是迁移工具</a><a class="toc-link toc-h2" href="#15-跑一下本章-demo">15. 跑一下本章 demo</a><a class="toc-link toc-h2" href="#16-小结速查">16. 小结速查</a></nav>

@@ -3,14 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>10 · 中间件 · 无限空间 InfiSpace 课程文档</title>
+<title>10 · 中间件 · InfiSpace 课程文档</title>
 <meta name="description" content="本章你将学会
 
  - 听懂「横切关注点」「AOP」两个唬人的词，明白中间件到底在替你干什么活
  - 中间件的标准模板：request → callnext → 返回，以及洋葱模型
  - 两种写法的取舍：@app.midd…">
 <link rel="stylesheet" href="../assets/style.css">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%23d9c39a' text-anchor='middle'%3E%E2%88%9E%3C/text%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%232DD4D4' text-anchor='middle'%3E%E2%88%9E%3C/text%3E%3C/svg%3E">
 </head>
 <body>
 <div class="progress" id="progress"></div>
@@ -19,8 +19,8 @@
 <aside class="sidebar" id="sidebar">
   <div class="sb-head">
     <a class="brand" href="../index.html">
-      <img class="brand-mark" src="../assets/infispace-logo-1.jpg" alt="无限空间 InfiSpace">
-      <span class="brand-text"><b>无限空间 InfiSpace</b><i>AI Agent 工程师转型训练营</i></span>
+      <img class="brand-mark" src="../assets/infispace-logo-1.png" alt="InfiSpace">
+      <span class="brand-text"><b>InfiSpace</b><i>AI Agent 工程师转型训练营</i></span>
     </a>
     <button class="sb-close" id="sbClose" aria-label="关闭目录">✕</button>
   </div>
@@ -917,7 +917,7 @@ content-length: 2        ← 预检响应体只是 "OK"，没进信封
 <nav class="pager"><a class="pg-card pg-prev" href="../backend/09-tong-yi-yi-chang-chu-li.html"><span class="pg-label">← 上一篇</span><span class="pg-title">统一异常处理</span><span class="pg-mod">Python 框架指南</span></a><a class="pg-card pg-next" href="../backend/11-ren-zheng-yu-jwt.html"><span class="pg-label">下一篇 →</span><span class="pg-title">认证与 JWT</span><span class="pg-mod">Python 框架指南</span></a></nav>
     </div>
     <footer class="foot">
-      <span>无限空间 InfiSpace · AI Agent 工程师转型训练营配套文档</span>
+      <span>InfiSpace · AI Agent 工程师转型训练营配套文档</span>
     </footer>
   </main>
 <nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#1-先把两个唬人的词拆了横切关注点与-aop">1. 先把两个唬人的词拆了：横切关注点与 AOP</a><a class="toc-link toc-h2" href="#2-中间件的标准模板requestcall_next-和洋葱模型">2. 中间件的标准模板：request、call_next 和洋葱模型</a><a class="toc-link toc-h2" href="#3-两种写法装饰器与-basehttpmiddleware-怎么选">3. 两种写法：装饰器与 BaseHTTPMiddleware 怎么选</a><a class="toc-link toc-h3" href="#31-装饰器写法函数式">3.1 装饰器写法（函数式）</a><a class="toc-link toc-h3" href="#32-类写法继承-basehttpmiddleware">3.2 类写法（继承 BaseHTTPMiddleware）</a><a class="toc-link toc-h3" href="#33-选型速查">3.3 选型速查</a><a class="toc-link toc-h3" href="#34-basehttpmiddleware-的两个真实怪癖实测过">3.4 BaseHTTPMiddleware 的两个真实怪癖（实测过）</a><a class="toc-link toc-h2" href="#4-实战一计时中间件给每个响应盖耗时章">4. 实战一：计时中间件，给每个响应盖耗时章</a><a class="toc-link toc-h2" href="#5-实战二cors-中间件跟浏览器的同源门禁打交道">5. 实战二：CORS 中间件，跟浏览器的「同源门禁」打交道</a><a class="toc-link toc-h3" href="#51-先搞懂敌人同源策略是什么">5.1 先搞懂敌人：同源策略是什么</a><a class="toc-link toc-h3" href="#52-预检请求先敲门再搬家">5.2 预检请求：先敲门，再搬家</a><a class="toc-link toc-h3" href="#53-corsmiddleware-参数手册">5.3 CORSMiddleware 参数手册</a><a class="toc-link toc-h3" href="#54-curl-验证">5.4 curl 验证</a><a class="toc-link toc-h2" href="#6-实战三统一响应信封包裹-09-章的异常响应">6. 实战三：统一响应信封，包裹 09 章的异常响应</a><a class="toc-link toc-h3" href="#61-目标">6.1 目标</a><a class="toc-link toc-h3" href="#62-完整代码分四段讲">6.2 完整代码，分四段讲</a><a class="toc-link toc-h3" href="#63-为什么这活必须在中间件层干">6.3 为什么这活必须在中间件层干</a><a class="toc-link toc-h3" href="#64-常见坑">6.4 常见坑</a><a class="toc-link toc-h2" href="#7-注册顺序的真相后注册的在外层">7. 注册顺序的真相：后注册的在外层</a><a class="toc-link toc-h3" href="#71-为什么看一眼源码机制">7.1 为什么：看一眼源码机制</a><a class="toc-link toc-h3" href="#72-实测别信记忆信-trace">7.2 实测：别信记忆，信 trace</a><a class="toc-link toc-h3" href="#73-本章三件套的排兵布阵">7.3 本章三件套的排兵布阵</a><a class="toc-link toc-h3" href="#74-常见坑">7.4 常见坑</a><a class="toc-link toc-h2" href="#8-add_middleware-与装饰器一个注册口两副面孔">8. add_middleware 与装饰器：一个注册口，两副面孔</a><a class="toc-link toc-h2" href="#9-跑一下本章-demo">9. 跑一下本章 demo</a><a class="toc-link toc-h2" href="#10-小结速查">10. 小结速查</a></nav>

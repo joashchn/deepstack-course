@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>18 · 线程与进程 · 无限空间 InfiSpace 课程文档</title>
+<title>18 · 线程与进程 · InfiSpace 课程文档</title>
 <meta name="description" content="到目前为止，我们写的所有程序都活在单线程世界里：代码从上往下、一件接一件地执行。可现实中的任务常常不是这样——你可能要给几百张照片批量生成缩略图，要同时调用十几个外部接口，要把一段视频逐帧处理。单线程只能老老实实排队，一…">
 <link rel="stylesheet" href="../assets/style.css">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%23d9c39a' text-anchor='middle'%3E%E2%88%9E%3C/text%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%232DD4D4' text-anchor='middle'%3E%E2%88%9E%3C/text%3E%3C/svg%3E">
 </head>
 <body>
 <div class="progress" id="progress"></div>
@@ -15,8 +15,8 @@
 <aside class="sidebar" id="sidebar">
   <div class="sb-head">
     <a class="brand" href="../index.html">
-      <img class="brand-mark" src="../assets/infispace-logo-1.jpg" alt="无限空间 InfiSpace">
-      <span class="brand-text"><b>无限空间 InfiSpace</b><i>AI Agent 工程师转型训练营</i></span>
+      <img class="brand-mark" src="../assets/infispace-logo-1.png" alt="InfiSpace">
+      <span class="brand-text"><b>InfiSpace</b><i>AI Agent 工程师转型训练营</i></span>
     </a>
     <button class="sb-close" id="sbClose" aria-label="关闭目录">✕</button>
   </div>
@@ -815,7 +815,7 @@ print(f"实际库存：{stock.count} 件")  # 2 件，正确
 <nav class="pager"><a class="pg-card pg-prev" href="../python/17-yi-lai-guan-li-yu-di-san-fang-ku.html"><span class="pg-label">← 上一篇</span><span class="pg-title">依赖管理与第三方库</span><span class="pg-mod">Python 与数据实践</span></a><a class="pg-card pg-next" href="../python/19-shi-jian-xun-huan.html"><span class="pg-label">下一篇 →</span><span class="pg-title">事件循环</span><span class="pg-mod">Python 与数据实践</span></a></nav>
     </div>
     <footer class="foot">
-      <span>无限空间 InfiSpace · AI Agent 工程师转型训练营配套文档</span>
+      <span>InfiSpace · AI Agent 工程师转型训练营配套文档</span>
     </footer>
   </main>
 <nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#1-先把任务分进两个筐">1. 先把任务分进两个筐</a><a class="toc-link toc-h2" href="#2-进程线程协程三位选手同场对比">2. 进程、线程、协程：三位选手同场对比</a><a class="toc-link toc-h2" href="#3-threading-上手把函数扔进另一个线程">3. threading 上手：把函数扔进另一个线程</a><a class="toc-link toc-h3" href="#最简用法thread-start-join">最简用法：Thread + start + join</a><a class="toc-link toc-h3" href="#面向对象写法继承-thread">面向对象写法：继承 Thread</a><a class="toc-link toc-h3" href="#守护线程随主线程一起退场">守护线程：随主线程一起退场</a><a class="toc-link toc-h2" href="#4-共享内存的代价竞态条件">4. 共享内存的代价：竞态条件</a><a class="toc-link toc-h2" href="#6-rlock同一扇门可以反复进">6. RLock：同一扇门可以反复进</a><a class="toc-link toc-h2" href="#7-semaphore给房间挂个限流牌">7. Semaphore：给房间挂个限流牌</a><a class="toc-link toc-h2" href="#8-event线程之间的发令枪">8. Event：线程之间的发令枪</a><a class="toc-link toc-h2" href="#9-queue生产者和消费者之间的传送带">9. Queue：生产者和消费者之间的传送带</a><a class="toc-link toc-h2" href="#10-线程池造线程不如租线程">10. 线程池：造线程不如租线程</a><a class="toc-link toc-h2" href="#11-线程池的另一个身份通往异步世界的接口">11. 线程池的另一个身份：通往异步世界的接口</a><a class="toc-link toc-h2" href="#12-threadinglocal给每个线程一个储物柜">12. threading.local：给每个线程一个储物柜</a><a class="toc-link toc-h2" href="#13-gil多线程头顶的天花板">13. GIL：多线程头顶的天花板</a><a class="toc-link toc-h2" href="#14-cpu-密集型的正解多进程">14. CPU 密集型的正解：多进程</a><a class="toc-link toc-h2" href="#15-死锁谁也不撒手谁也走不了">15. 死锁：谁也不撒手，谁也走不了</a><a class="toc-link toc-h2" href="#16-选型速查表">16. 选型速查表</a></nav>

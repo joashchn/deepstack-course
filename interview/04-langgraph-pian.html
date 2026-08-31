@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>04 · LangGraph 篇 · 无限空间 InfiSpace 课程文档</title>
+<title>04 · LangGraph 篇 · InfiSpace 课程文档</title>
 <meta name="description" content="对应课件：langgraph框架指南/01-17。LangGraph 题在面试里的作用是证明你真的搭过 Agent 工作流，而不只是调过 API。面试官通常从&quot;为什么用图&quot;开始，沿&quot;状态 → 并行 → 扇出 → 持久化&quot;…">
 <link rel="stylesheet" href="../assets/style.css">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%23d9c39a' text-anchor='middle'%3E%E2%88%9E%3C/text%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%232DD4D4' text-anchor='middle'%3E%E2%88%9E%3C/text%3E%3C/svg%3E">
 </head>
 <body>
 <div class="progress" id="progress"></div>
@@ -15,8 +15,8 @@
 <aside class="sidebar" id="sidebar">
   <div class="sb-head">
     <a class="brand" href="../index.html">
-      <img class="brand-mark" src="../assets/infispace-logo-1.jpg" alt="无限空间 InfiSpace">
-      <span class="brand-text"><b>无限空间 InfiSpace</b><i>AI Agent 工程师转型训练营</i></span>
+      <img class="brand-mark" src="../assets/infispace-logo-1.png" alt="InfiSpace">
+      <span class="brand-text"><b>InfiSpace</b><i>AI Agent 工程师转型训练营</i></span>
     </a>
     <button class="sb-close" id="sbClose" aria-label="关闭目录">✕</button>
   </div>
@@ -416,7 +416,7 @@
 <nav class="pager"><a class="pg-card pg-prev" href="../interview/03-agent-he-xin-pian.html"><span class="pg-label">← 上一篇</span><span class="pg-title">Agent 核心篇</span><span class="pg-mod">面试题库</span></a><a class="pg-card pg-next" href="../interview/05-langchain-pian.html"><span class="pg-label">下一篇 →</span><span class="pg-title">LangChain 篇</span><span class="pg-mod">面试题库</span></a></nav>
     </div>
     <footer class="foot">
-      <span>无限空间 InfiSpace · AI Agent 工程师转型训练营配套文档</span>
+      <span>InfiSpace · AI Agent 工程师转型训练营配套文档</span>
     </footer>
   </main>
 <nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#q01-为什么需要-langgraph裸写-while-循环不行吗">Q01 · 为什么需要 LangGraph？裸写 while 循环不行吗？</a><a class="toc-link toc-h3" href="#考察意图与踩坑点">考察意图与踩坑点</a><a class="toc-link toc-h2" href="#q02-langgraph-的状态为什么不是普通字典reducer-是干什么的">Q02 · LangGraph 的状态为什么不是普通字典？reducer 是干什么的？</a><a class="toc-link toc-h3" href="#考察意图与踩坑点_1">考察意图与踩坑点</a><a class="toc-link toc-h2" href="#q03-讲讲超步superstep并行节点是怎么执行的汇合有什么坑">Q03 · 讲讲超步（superstep）。并行节点是怎么执行的？&quot;汇合&quot;有什么坑？</a><a class="toc-link toc-h3" href="#考察意图与踩坑点_2">考察意图与踩坑点</a><a class="toc-link toc-h2" href="#q04-条件边commandsend-分别什么时候用">Q04 · 条件边、Command、Send 分别什么时候用？</a><a class="toc-link toc-h3" href="#考察意图与踩坑点_3">考察意图与踩坑点</a><a class="toc-link toc-h2" href="#q05-checkpointer-和-thread-是什么关系人在回路怎么实现">Q05 · Checkpointer 和 Thread 是什么关系？人在回路怎么实现？</a><a class="toc-link toc-h3" href="#考察意图与踩坑点_4">考察意图与踩坑点</a><a class="toc-link toc-h2" href="#q06-时间旅行是什么replay-和-fork-有什么区别">Q06 · 时间旅行是什么？replay 和 fork 有什么区别？</a><a class="toc-link toc-h3" href="#考察意图与踩坑点_5">考察意图与踩坑点</a><a class="toc-link toc-h2" href="#本篇速记卡">本篇速记卡</a></nav>

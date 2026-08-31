@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>05 · 作用域规则与闭包 · 无限空间 InfiSpace 课程文档</title>
+<title>05 · 作用域规则与闭包 · InfiSpace 课程文档</title>
 <meta name="description" content="你一定遇到过这类&quot;灵异事件&quot;：变量明明定义过，换到另一个函数里用，解释器却说&quot;不认识这个名字&quot;；或者在函数里给外面的计数加一，加完一看，外面的值纹丝不动。这些现象背后的机制就是作用域">
 <link rel="stylesheet" href="../assets/style.css">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%23d9c39a' text-anchor='middle'%3E%E2%88%9E%3C/text%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%232DD4D4' text-anchor='middle'%3E%E2%88%9E%3C/text%3E%3C/svg%3E">
 </head>
 <body>
 <div class="progress" id="progress"></div>
@@ -15,8 +15,8 @@
 <aside class="sidebar" id="sidebar">
   <div class="sb-head">
     <a class="brand" href="../index.html">
-      <img class="brand-mark" src="../assets/infispace-logo-1.jpg" alt="无限空间 InfiSpace">
-      <span class="brand-text"><b>无限空间 InfiSpace</b><i>AI Agent 工程师转型训练营</i></span>
+      <img class="brand-mark" src="../assets/infispace-logo-1.png" alt="InfiSpace">
+      <span class="brand-text"><b>InfiSpace</b><i>AI Agent 工程师转型训练营</i></span>
     </a>
     <button class="sb-close" id="sbClose" aria-label="关闭目录">✕</button>
   </div>
@@ -518,7 +518,7 @@
 <nav class="pager"><a class="pg-card pg-prev" href="../python/04-han-shu-she-ji-yu-lambda.html"><span class="pg-label">← 上一篇</span><span class="pg-title">函数设计与 lambda</span><span class="pg-mod">Python 与数据实践</span></a><a class="pg-card pg-next" href="../python/06-lei-de-ding-yi-yu-shi-li-hua.html"><span class="pg-label">下一篇 →</span><span class="pg-title">类的定义与实例化</span><span class="pg-mod">Python 与数据实践</span></a></nav>
     </div>
     <footer class="foot">
-      <span>无限空间 InfiSpace · AI Agent 工程师转型训练营配套文档</span>
+      <span>InfiSpace · AI Agent 工程师转型训练营配套文档</span>
     </footer>
   </main>
 <nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#一名字查找的固定路线legb">一、名字查找的固定路线：LEGB</a><a class="toc-link toc-h2" href="#二最里面的一层局部作用域local">二、最里面的一层：局部作用域（Local）</a><a class="toc-link toc-h2" href="#三最外面的一层全局作用域global">三、最外面的一层：全局作用域（Global）</a><a class="toc-link toc-h3" href="#想在函数里改全局变量">想在函数里改全局变量？</a><a class="toc-link toc-h2" href="#四夹在中间的一层嵌套作用域enclosing">四、夹在中间的一层：嵌套作用域（Enclosing）</a><a class="toc-link toc-h3" href="#想改外层函数的变量">想改外层函数的变量？</a><a class="toc-link toc-h2" href="#五两个高频翻车现场">五、两个高频翻车现场</a><a class="toc-link toc-h3" href="#现场-1同一个函数里又读又写全局变量">现场 1：同一个函数里又读又写全局变量</a><a class="toc-link toc-h3" href="#现场-2可变对象当默认参数">现场 2：可变对象当默认参数</a><a class="toc-link toc-h2" href="#六速查卡三种典型结构">六、速查卡：三种典型结构</a><a class="toc-link toc-h2" href="#作业">作业</a><a class="toc-link toc-h3" href="#作业一作用域判断">作业一：作用域判断</a><a class="toc-link toc-h3" href="#作业二global-的走向">作业二：global 的走向</a><a class="toc-link toc-h3" href="#作业三修复代码">作业三：修复代码</a><a class="toc-link toc-h3" href="#作业四批量定价器闭包工厂">作业四：批量定价器（闭包工厂）</a><a class="toc-link toc-h3" href="#作业五闭包管库存">作业五：闭包管库存</a></nav>

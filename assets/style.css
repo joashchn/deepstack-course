@@ -3,7 +3,7 @@
   --bg:#FDFCFA; --bg-soft:#F7F4EE; --bg-side:#F6F3EC; --panel:#FFFFFF;
   --line:#E7E1D6; --line-soft:#F0EBE1;
   --fg:#24211C; --fg-soft:#4A453D; --fg-mute:#8A8279;
-  --gold:#B8945A; --gold-deep:#8A6A38; --gold-soft:#F3EBDC;
+  --gold:#14B8C2; --gold-deep:#0E7490; --gold-soft:#CFF5F7;  /* accent: brand teal (matches InfiSpace logo teal) */
   --sb-w:302px; --toc-w:236px; --maxw:820px;
   --shadow:0 1px 2px rgba(36,33,28,.05),0 8px 24px rgba(36,33,28,.06);
   --radius:12px;
@@ -14,7 +14,7 @@
   --bg:#14120F; --bg-soft:#1B1815; --bg-side:#18150F; --panel:#1E1B16;
   --line:#322D25; --line-soft:#282319;
   --fg:#E9E3D8; --fg-soft:#C6BFB2; --fg-mute:#8E8677;
-  --gold:#D9C39A; --gold-deep:#C2A870; --gold-soft:#2A2419;
+  --gold:#22D3D4; --gold-deep:#67E8E9; --gold-soft:#134E4A;
   --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.35);
 }
 *{box-sizing:border-box}
@@ -40,7 +40,7 @@ code{font-family:var(--mono)}
   border-bottom:1px solid var(--line-soft)}
 .brand{display:flex;align-items:center;gap:10px;flex:1;min-width:0}
 .brand-mark{height:30px;width:auto;flex:0 0 auto;border-radius:6px;display:block}
-[data-theme="dark"] .brand-mark{background:#D9C39A;color:#1A1A1A}
+[data-theme="dark"] .brand-mark{background:#22D3D4;color:#0A1F2A}
 .brand-text{display:flex;flex-direction:column;line-height:1.25;min-width:0}
 .brand-text b{font-size:14px;font-weight:650}
 .brand-text i{font-style:normal;font-size:11px;color:var(--fg-mute)}

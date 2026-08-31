@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>09 · 描述符与元类 · 无限空间 InfiSpace 课程文档</title>
+<title>09 · 描述符与元类 · InfiSpace 课程文档</title>
 <meta name="description" content="上一章我们见识了一批魔术方法，其中 getattr 一家负责在实例层面拦截属性访问。这一章往更深处走两层：">
 <link rel="stylesheet" href="../assets/style.css">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%23d9c39a' text-anchor='middle'%3E%E2%88%9E%3C/text%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%232DD4D4' text-anchor='middle'%3E%E2%88%9E%3C/text%3E%3C/svg%3E">
 </head>
 <body>
 <div class="progress" id="progress"></div>
@@ -15,8 +15,8 @@
 <aside class="sidebar" id="sidebar">
   <div class="sb-head">
     <a class="brand" href="../index.html">
-      <img class="brand-mark" src="../assets/infispace-logo-1.jpg" alt="无限空间 InfiSpace">
-      <span class="brand-text"><b>无限空间 InfiSpace</b><i>AI Agent 工程师转型训练营</i></span>
+      <img class="brand-mark" src="../assets/infispace-logo-1.png" alt="InfiSpace">
+      <span class="brand-text"><b>InfiSpace</b><i>AI Agent 工程师转型训练营</i></span>
     </a>
     <button class="sb-close" id="sbClose" aria-label="关闭目录">✕</button>
   </div>
@@ -902,7 +902,7 @@
 <nav class="pager"><a class="pg-card pg-prev" href="../python/08-mo-shu-fang-fa-quan-jing.html"><span class="pg-label">← 上一篇</span><span class="pg-title">魔术方法全景</span><span class="pg-mod">Python 与数据实践</span></a><a class="pg-card pg-next" href="../python/10-zhuang-shi-qi.html"><span class="pg-label">下一篇 →</span><span class="pg-title">装饰器</span><span class="pg-mod">Python 与数据实践</span></a></nav>
     </div>
     <footer class="foot">
-      <span>无限空间 InfiSpace · AI Agent 工程师转型训练营配套文档</span>
+      <span>InfiSpace · AI Agent 工程师转型训练营配套文档</span>
     </footer>
   </main>
 <nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#1-从一个数据不同步的-bug-说起">1. 从一个&quot;数据不同步&quot;的 bug 说起</a><a class="toc-link toc-h2" href="#2-描述符协议一份三方契约">2. 描述符协议：一份三方契约</a><a class="toc-link toc-h2" href="#3-属性查找的优先级顺序">3. 属性查找的优先级顺序</a><a class="toc-link toc-h2" href="#4-读写删分别怎么触发">4. 读、写、删，分别怎么触发</a><a class="toc-link toc-h2" href="#5-__set_name__让描述符知道自己姓什么">5. __set_name__：让描述符知道自己&quot;姓什么&quot;</a><a class="toc-link toc-h2" href="#6-修复开篇的-bug">6. 修复开篇的 bug</a><a class="toc-link toc-h2" href="#7-property描述符的官方快捷方式">7. @property：描述符的官方快捷方式</a><a class="toc-link toc-h2" href="#8-亲手造一个-property">8. 亲手造一个 property</a><a class="toc-link toc-h2" href="#9-描述符的两大经典应用">9. 描述符的两大经典应用</a><a class="toc-link toc-h3" href="#91-惰性计算算一次用一辈子">9.1 惰性计算：算一次，用一辈子</a><a class="toc-link toc-h3" href="#92-类型检查一个描述符守住一个字段">9.2 类型检查：一个描述符守住一个字段</a><a class="toc-link toc-h2" href="#10-换个视角类自己也是对象">10. 换个视角：类自己也是对象</a><a class="toc-link toc-h2" href="#11-自定义元类接管造类这件事">11. 自定义元类：接管&quot;造类&quot;这件事</a><a class="toc-link toc-h2" href="#12-元类的继承与冲突">12. 元类的继承与冲突</a><a class="toc-link toc-h2" href="#13-本章总结">13. 本章总结</a><a class="toc-link toc-h2" href="#习题">习题</a><a class="toc-link toc-h3" href="#一只读的扑克牌">一、只读的扑克牌</a><a class="toc-link toc-h3" href="#二工资条校验">二、工资条校验</a><a class="toc-link toc-h3" href="#三带监控的配置项">三、带监控的配置项</a><a class="toc-link toc-h3" href="#四思考题">四、思考题</a><a class="toc-link toc-h3" href="#五单例元类">五、单例元类</a><a class="toc-link toc-h3" href="#六自动注册的导出器">六、自动注册的导出器</a><a class="toc-link toc-h3" href="#七给所有方法装上追踪器">七、给所有方法装上追踪器</a></nav>

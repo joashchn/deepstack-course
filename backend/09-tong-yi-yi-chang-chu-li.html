@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>09 · 统一异常处理 · 无限空间 InfiSpace 课程文档</title>
+<title>09 · 统一异常处理 · InfiSpace 课程文档</title>
 <meta name="description" content="前面你已经见过两种错误出口：02 章的 422 校验错误、路由函数里随手抛的 HTTPException。服务小的时候，各管各的没事；服务一大，错误出口就成了「八国联军」——有的接口回 {&quot;detail&quot;: ...}，有…">
 <link rel="stylesheet" href="../assets/style.css">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%23d9c39a' text-anchor='middle'%3E%E2%88%9E%3C/text%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%232DD4D4' text-anchor='middle'%3E%E2%88%9E%3C/text%3E%3C/svg%3E">
 </head>
 <body>
 <div class="progress" id="progress"></div>
@@ -15,8 +15,8 @@
 <aside class="sidebar" id="sidebar">
   <div class="sb-head">
     <a class="brand" href="../index.html">
-      <img class="brand-mark" src="../assets/infispace-logo-1.jpg" alt="无限空间 InfiSpace">
-      <span class="brand-text"><b>无限空间 InfiSpace</b><i>AI Agent 工程师转型训练营</i></span>
+      <img class="brand-mark" src="../assets/infispace-logo-1.png" alt="InfiSpace">
+      <span class="brand-text"><b>InfiSpace</b><i>AI Agent 工程师转型训练营</i></span>
     </a>
     <button class="sb-close" id="sbClose" aria-label="关闭目录">✕</button>
   </div>
@@ -910,7 +910,7 @@ curl<span class="w"> </span>-i<span class="w"> </span>http://127.0.0.1:8000/arti
 <nav class="pager"><a class="pg-card pg-prev" href="../backend/08-yi-lai-zhu-ru.html"><span class="pg-label">← 上一篇</span><span class="pg-title">依赖注入</span><span class="pg-mod">Python 框架指南</span></a><a class="pg-card pg-next" href="../backend/10-zhong-jian-jian.html"><span class="pg-label">下一篇 →</span><span class="pg-title">中间件</span><span class="pg-mod">Python 框架指南</span></a></nav>
     </div>
     <footer class="foot">
-      <span>无限空间 InfiSpace · AI Agent 工程师转型训练营配套文档</span>
+      <span>InfiSpace · AI Agent 工程师转型训练营配套文档</span>
     </footer>
   </main>
 <nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#本章你会用到的东西">本章你会用到的东西</a><a class="toc-link toc-h2" href="#91-三条家规出了错先守规矩">9.1 三条家规：出了错，先守规矩</a><a class="toc-link toc-h2" href="#92-默认异常链路fastapi-出错时都发生了什么">9.2 默认异常链路：FastAPI 出错时都发生了什么</a><a class="toc-link toc-h2" href="#93-appexception_handler接管异常出口">9.3 @app.exception_handler：接管异常出口</a><a class="toc-link toc-h2" href="#94-businessexception给业务异常发工牌">9.4 BusinessException：给业务异常发工牌</a><a class="toc-link toc-h2" href="#95-子类体系与-default_message三行代码新增一种错误">9.5 子类体系与 default_message：三行代码新增一种错误</a><a class="toc-link toc-h2" href="#96-错误码设计楼层-房间号">9.6 错误码设计：楼层 + 房间号</a><a class="toc-link toc-h2" href="#97-integrityerror-转译数据库黑话翻译官">9.7 IntegrityError 转译：数据库黑话翻译官</a><a class="toc-link toc-h2" href="#98-注册中心一处注册全家生效">9.8 注册中心：一处注册，全家生效</a><a class="toc-link toc-h2" href="#99-错误码表自动进-docs">9.9 错误码表自动进 /docs</a><a class="toc-link toc-h2" href="#910-小结速查">9.10 小结速查</a><a class="toc-link toc-h3" href="#作业">作业</a></nav>

@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>06 · 会话管理与 JSON 输出 · 无限空间 InfiSpace 课程文档</title>
+<title>06 · 会话管理与 JSON 输出 · InfiSpace 课程文档</title>
 <meta name="description" content="第 5 章把模型跑通了：本地推理服务就位，system / user / assistant 的消息体系也建立起来。但离&quot;用好&quot;还差两块拼图。其一是跨轮次的记忆管理——所谓&quot;连续对话&quot;，其实是你的代码在维护一个不断增长的…">
 <link rel="stylesheet" href="../assets/style.css">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%23d9c39a' text-anchor='middle'%3E%E2%88%9E%3C/text%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%232DD4D4' text-anchor='middle'%3E%E2%88%9E%3C/text%3E%3C/svg%3E">
 </head>
 <body>
 <div class="progress" id="progress"></div>
@@ -15,8 +15,8 @@
 <aside class="sidebar" id="sidebar">
   <div class="sb-head">
     <a class="brand" href="../index.html">
-      <img class="brand-mark" src="../assets/infispace-logo-1.jpg" alt="无限空间 InfiSpace">
-      <span class="brand-text"><b>无限空间 InfiSpace</b><i>AI Agent 工程师转型训练营</i></span>
+      <img class="brand-mark" src="../assets/infispace-logo-1.png" alt="InfiSpace">
+      <span class="brand-text"><b>InfiSpace</b><i>AI Agent 工程师转型训练营</i></span>
     </a>
     <button class="sb-close" id="sbClose" aria-label="关闭目录">✕</button>
   </div>
@@ -620,7 +620,7 @@
 <nav class="pager"><a class="pg-card pg-prev" href="../agent/05-ben-di-mo-xing-yu-xiao-xi-jie-gou.html"><span class="pg-label">← 上一篇</span><span class="pg-title">本地模型与消息结构</span><span class="pg-mod">Agent 核心</span></a><a class="pg-card pg-next" href="../agent/07-tool-calling-xie-yi-yu-feng-zhuang.html"><span class="pg-label">下一篇 →</span><span class="pg-title">Tool Calling：协议与封装</span><span class="pg-mod">Agent 核心</span></a></nav>
     </div>
     <footer class="foot">
-      <span>无限空间 InfiSpace · AI Agent 工程师转型训练营配套文档</span>
+      <span>InfiSpace · AI Agent 工程师转型训练营配套文档</span>
     </footer>
   </main>
 <nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#1-最小会话20-行的记忆幻觉">1. 最小会话：20 行的&quot;记忆幻觉&quot;</a><a class="toc-link toc-h2" href="#2-算清-token-账事前估算事后校准">2. 算清 token 账：事前估算，事后校准</a><a class="toc-link toc-h2" href="#3-历史裁剪三种策略">3. 历史裁剪：三种策略</a><a class="toc-link toc-h3" href="#31-截断保头保尾">3.1 截断（保头保尾）</a><a class="toc-link toc-h3" href="#32-滑动窗口-摘要压缩">3.2 滑动窗口 + 摘要压缩</a><a class="toc-link toc-h3" href="#33-检索式记忆外挂">3.3 检索式（记忆外挂）</a><a class="toc-link toc-h3" href="#34-策略选择">3.4 策略选择</a><a class="toc-link toc-h2" href="#4-缓存命中省钱的隐形杠杆">4. 缓存命中：省钱的隐形杠杆</a><a class="toc-link toc-h2" href="#5-生产级-session-的完整形态">5. 生产级 Session 的完整形态</a><a class="toc-link toc-h2" href="#6-问题自由文本是程序的地雷">6. 问题：自由文本是程序的地雷</a><a class="toc-link toc-h2" href="#7-第一道防线json-模式">7. 第一道防线：JSON 模式</a><a class="toc-link toc-h2" href="#8-第二道防线pydantic-校验">8. 第二道防线：Pydantic 校验</a><a class="toc-link toc-h2" href="#9-第三道防线校验-重试循环">9. 第三道防线：校验-重试循环</a><a class="toc-link toc-h2" href="#10-终极方案约束解码constrained-decoding">10. 终极方案：约束解码（constrained decoding）</a><a class="toc-link toc-h2" href="#11-schema-设计的实战建议">11. Schema 设计的实战建议</a><a class="toc-link toc-h2" href="#本章小结">本章小结</a></nav>
