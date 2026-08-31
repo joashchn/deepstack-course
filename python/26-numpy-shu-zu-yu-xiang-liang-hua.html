@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>26 · NumPy 数组与向量化 · 深栈 DeepStack 课程文档</title>
+<title>26 · NumPy 数组与向量化 · 无限空间 InfiSpace 课程文档</title>
 <meta name="description" content="上一章，notebook 实验台已经搭好，也试了试手。但很快你就撞上新麻烦：手里只有 Python 列表，算个均值要 sum(x) / len(x)，两列数据对应相乘得写 for 循环——数据一多，代码臃肿，速度还慢">
 <link rel="stylesheet" href="../assets/style.css">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%23d9c39a' text-anchor='middle'%3EDS%3C/text%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%23d9c39a' text-anchor='middle'%3E%E2%88%9E%3C/text%3E%3C/svg%3E">
 </head>
 <body>
 <div class="progress" id="progress"></div>
@@ -15,8 +15,8 @@
 <aside class="sidebar" id="sidebar">
   <div class="sb-head">
     <a class="brand" href="../index.html">
-      <span class="brand-mark">DS</span>
-      <span class="brand-text"><b>深栈 DeepStack</b><i>AI Agent 工程师转型训练营</i></span>
+      <img class="brand-mark" src="../assets/infispace-logo-1.jpg" alt="无限空间 InfiSpace">
+      <span class="brand-text"><b>无限空间 InfiSpace</b><i>AI Agent 工程师转型训练营</i></span>
     </a>
     <button class="sb-close" id="sbClose" aria-label="关闭目录">✕</button>
   </div>
@@ -949,7 +949,7 @@
 <nav class="pager"><a class="pg-card pg-prev" href="../python/25-jupyter-jiao-hu-huan-jing.html"><span class="pg-label">← 上一篇</span><span class="pg-title">Jupyter 交互环境</span><span class="pg-mod">Python 与数据实践</span></a><a class="pg-card pg-next" href="../python/27-pandas-shu-ju-jie-gou.html"><span class="pg-label">下一篇 →</span><span class="pg-title">Pandas 数据结构</span><span class="pg-mod">Python 与数据实践</span></a></nav>
     </div>
     <footer class="foot">
-      <span>深栈 DeepStack · AI Agent 工程师转型训练营配套文档</span>
+      <span>无限空间 InfiSpace · AI Agent 工程师转型训练营配套文档</span>
     </footer>
   </main>
 <nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#1-上手装库与导入">1. 上手：装库与导入</a><a class="toc-link toc-h2" href="#2-ndarray给一大批数安的家">2. ndarray：给&quot;一大批数&quot;安的家</a><a class="toc-link toc-h3" href="#21-和列表比它牺牲了什么换来了什么">2.1 和列表比，它牺牲了什么、换来了什么</a><a class="toc-link toc-h3" href="#22-创建一个数组顺便做个体检">2.2 创建一个数组，顺便做个体检</a><a class="toc-link toc-h3" href="#23-形状数组的骨架">2.3 形状：数组的骨架</a><a class="toc-link toc-h3" href="#24-想一想">2.4 想一想</a><a class="toc-link toc-h2" href="#3-dtype一种数组一种类型">3. dtype：一种数组，一种类型</a><a class="toc-link toc-h2" href="#4-strides数据在内存里怎么摆">4. strides：数据在内存里怎么摆</a><a class="toc-link toc-h2" href="#5-axis运算沿着哪根轴走">5. axis：运算沿着哪根轴走</a><a class="toc-link toc-h2" href="#6-造数组不止-nparray-一条路">6. 造数组：不止 np.array 一条路</a><a class="toc-link toc-h3" href="#61-预填值zeros-ones-eye">6.1 预填值：zeros / ones / eye</a><a class="toc-link toc-h3" href="#62-序列arange-linspace">6.2 序列：arange / linspace</a><a class="toc-link toc-h3" href="#63-随机数default_rng">6.3 随机数：default_rng</a><a class="toc-link toc-h3" href="#64-练手场景现造一批模拟数据">6.4 练手场景：现造一批模拟数据</a><a class="toc-link toc-h2" href="#7-取数索引切片与掩码">7. 取数：索引、切片与掩码</a><a class="toc-link toc-h3" href="#71-基本索引与切片小心视图">7.1 基本索引与切片：小心&quot;视图&quot;</a><a class="toc-link toc-h3" href="#72-花式索引">7.2 花式索引</a><a class="toc-link toc-h3" href="#73-布尔索引">7.3 布尔索引</a><a class="toc-link toc-h2" href="#8-变形reshape-与-resize">8. 变形：reshape 与 resize</a><a class="toc-link toc-h3" href="#练手场景">练手场景</a><a class="toc-link toc-h2" href="#9-向量化运算把-for-循环还回去">9. 向量化运算：把 for 循环还回去</a><a class="toc-link toc-h3" href="#91-数组-标量">9.1 数组 × 标量</a><a class="toc-link toc-h3" href="#92-数组-数组">9.2 数组 × 数组</a><a class="toc-link toc-h3" href="#93-练手场景批量换算">9.3 练手场景：批量换算</a><a class="toc-link toc-h2" href="#10-聚合统计把一摞数压成几个数">10. 聚合统计：把一摞数压成几个数</a><a class="toc-link toc-h3" href="#101-基础统计与-axis">10.1 基础统计与 axis</a><a class="toc-link toc-h3" href="#102-标准差总体与样本">10.2 标准差：总体与样本</a><a class="toc-link toc-h3" href="#103-变异系数不同量纲怎么比波动">10.3 变异系数：不同量纲怎么比波动</a><a class="toc-link toc-h2" href="#11-npwhere一行写完一整排-if-else">11. np.where：一行写完一整排 if-else</a><a class="toc-link toc-h3" href="#练手场景_1">练手场景</a><a class="toc-link toc-h2" href="#12-拼接与拆分">12. 拼接与拆分</a><a class="toc-link toc-h2" href="#13-排序与-top-n">13. 排序与 Top N</a><a class="toc-link toc-h3" href="#练手场景top-n">练手场景：Top N</a><a class="toc-link toc-h2" href="#14-广播形状不同也能一起算">14. 广播：形状不同，也能一起算</a><a class="toc-link toc-h3" href="#标量最简单的广播">标量：最简单的广播</a><a class="toc-link toc-h3" href="#一行加到每一行">一行加到每一行</a><a class="toc-link toc-h3" href="#一列加到每一列">一列加到每一列</a><a class="toc-link toc-h3" href="#双向同时扩">双向同时扩</a><a class="toc-link toc-h3" href="#练手场景_2">练手场景</a><a class="toc-link toc-h2" href="#15-小结">15. 小结</a></nav>

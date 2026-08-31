@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>06 · 类的定义与实例化 · 深栈 DeepStack 课程文档</title>
+<title>06 · 类的定义与实例化 · 无限空间 InfiSpace 课程文档</title>
 <meta name="description" content="Python 是一门彻头彻尾的面向对象语言。所谓类（Class），可以理解成一张图纸；所谓对象（Object），就是照着图纸造出来的零件。图纸画一次，零件可以造无数个，每个零件身上带着自己的数据（属性），也带着自己的行为…">
 <link rel="stylesheet" href="../assets/style.css">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%23d9c39a' text-anchor='middle'%3EDS%3C/text%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%23d9c39a' text-anchor='middle'%3E%E2%88%9E%3C/text%3E%3C/svg%3E">
 </head>
 <body>
 <div class="progress" id="progress"></div>
@@ -15,8 +15,8 @@
 <aside class="sidebar" id="sidebar">
   <div class="sb-head">
     <a class="brand" href="../index.html">
-      <span class="brand-mark">DS</span>
-      <span class="brand-text"><b>深栈 DeepStack</b><i>AI Agent 工程师转型训练营</i></span>
+      <img class="brand-mark" src="../assets/infispace-logo-1.jpg" alt="无限空间 InfiSpace">
+      <span class="brand-text"><b>无限空间 InfiSpace</b><i>AI Agent 工程师转型训练营</i></span>
     </a>
     <button class="sb-close" id="sbClose" aria-label="关闭目录">✕</button>
   </div>
@@ -842,7 +842,7 @@
 <nav class="pager"><a class="pg-card pg-prev" href="../python/05-zuo-yong-yu-gui-ze-yu-bi-bao.html"><span class="pg-label">← 上一篇</span><span class="pg-title">作用域规则与闭包</span><span class="pg-mod">Python 与数据实践</span></a><a class="pg-card pg-next" href="../python/07-lei-xing-pan-ding-yu-chou-xiang-ji-lei.html"><span class="pg-label">下一篇 →</span><span class="pg-title">类型判定与抽象基类</span><span class="pg-mod">Python 与数据实践</span></a></nav>
     </div>
     <footer class="foot">
-      <span>深栈 DeepStack · AI Agent 工程师转型训练营配套文档</span>
+      <span>无限空间 InfiSpace · AI Agent 工程师转型训练营配套文档</span>
     </footer>
   </main>
 <nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#一从一张空图纸开始">一、从一张空图纸开始</a><a class="toc-link toc-h3" href="#用-type-三参形式现场造图纸">用 type() 三参形式&quot;现场造图纸&quot;</a><a class="toc-link toc-h2" href="#二__init__对象的出厂设置">二、__init__：对象的出厂设置</a><a class="toc-link toc-h2" href="#三实例属性与类属性一人一份-vs-全员共享">三、实例属性与类属性：一人一份 vs 全员共享</a><a class="toc-link toc-h3" href="#实例属性跟着对象走">实例属性：跟着对象走</a><a class="toc-link toc-h3" href="#类属性挂在图纸上">类属性：挂在图纸上</a><a class="toc-link toc-h2" href="#四三种方法实例方法类方法静态方法">四、三种方法：实例方法、类方法、静态方法</a><a class="toc-link toc-h3" href="#实例方法最常见的那种">实例方法：最常见的那种</a><a class="toc-link toc-h3" href="#类方法classmethod">类方法：@classmethod</a><a class="toc-link toc-h3" href="#静态方法staticmethod">静态方法：@staticmethod</a><a class="toc-link toc-h2" href="#五继承站在父类的肩膀上">五、继承：站在父类的肩膀上</a><a class="toc-link toc-h3" href="#用-super-把活儿递给父类">用 super() 把活儿递给父类</a><a class="toc-link toc-h3" href="#多继承一个子类多张图纸">多继承：一个子类，多张图纸</a><a class="toc-link toc-h3" href="#方法解析顺序mro">方法解析顺序（MRO）</a><a class="toc-link toc-h3" href="#super-在多继承里听-mro-的">super() 在多继承里听 MRO 的</a><a class="toc-link toc-h2" href="#六下划线约定python-的软私有">六、下划线约定：Python 的&quot;软私有&quot;</a><a class="toc-link toc-h2" href="#七对象自带的身份证内置属性">七、对象自带的&quot;身份证&quot;：内置属性</a><a class="toc-link toc-h2" href="#八类型判断与内容查看">八、类型判断与内容查看</a><a class="toc-link toc-h3" href="#type对象由哪个类造的">type()：对象由哪个类造的</a><a class="toc-link toc-h3" href="#isinstance是不是这个类或其子类的实例">isinstance()：是不是这个类（或其子类）的实例</a><a class="toc-link toc-h3" href="#issubclass类和类之间的血缘">issubclass()：类和类之间的血缘</a><a class="toc-link toc-h3" href="#dir把对象的成员全列出来">dir()：把对象的成员全列出来</a><a class="toc-link toc-h3" href="#vars属性字典一览">vars()：属性字典一览</a><a class="toc-link toc-h2" href="#九属性的动态操作四件套">九、属性的动态操作四件套</a><a class="toc-link toc-h3" href="#getattr取属性取不到还能兜底">getattr()：取属性，取不到还能兜底</a><a class="toc-link toc-h3" href="#setattr设置属性没有就现场创建">setattr()：设置属性，没有就现场创建</a><a class="toc-link toc-h3" href="#hasattr有没有这个属性">hasattr()：有没有这个属性</a><a class="toc-link toc-h3" href="#delattr删掉属性">delattr()：删掉属性</a><a class="toc-link toc-h2" href="#作业">作业</a><a class="toc-link toc-h3" href="#作业一多继承面试题">作业一：多继承面试题</a><a class="toc-link toc-h3" href="#作业二综合预测题">作业二：综合预测题</a><a class="toc-link toc-h3" href="#作业三实现歌单链表">作业三：实现歌单链表</a></nav>

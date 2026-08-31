@@ -3,14 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>08 · 检索与RAG · 深栈 DeepStack 课程文档</title>
+<title>08 · 检索与RAG · 无限空间 InfiSpace 课程文档</title>
 <meta name="description" content="本章配套可运行示例：demo/demorag.py。demo 把书屋读书笔记硬编码在文件里，从切割、入库、检索一路跑到组装问答链；本机没启动 Ollama 时会自动降级，只演示检索部分并打印提示。
 
  本章你将学会
 
  …">
 <link rel="stylesheet" href="../assets/style.css">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%23d9c39a' text-anchor='middle'%3EDS%3C/text%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%23d9c39a' text-anchor='middle'%3E%E2%88%9E%3C/text%3E%3C/svg%3E">
 </head>
 <body>
 <div class="progress" id="progress"></div>
@@ -19,8 +19,8 @@
 <aside class="sidebar" id="sidebar">
   <div class="sb-head">
     <a class="brand" href="../index.html">
-      <span class="brand-mark">DS</span>
-      <span class="brand-text"><b>深栈 DeepStack</b><i>AI Agent 工程师转型训练营</i></span>
+      <img class="brand-mark" src="../assets/infispace-logo-1.jpg" alt="无限空间 InfiSpace">
+      <span class="brand-text"><b>无限空间 InfiSpace</b><i>AI Agent 工程师转型训练营</i></span>
     </a>
     <button class="sb-close" id="sbClose" aria-label="关闭目录">✕</button>
   </div>
@@ -732,7 +732,7 @@ RunnableParallel ──► {"context": 拼好的笔记, "question": 原问题}
 <nav class="pager"><a class="pg-card pg-prev" href="../langchain/07-qian-ru-yu-xiang-liang-ku.html"><span class="pg-label">← 上一篇</span><span class="pg-title">嵌入与向量库</span><span class="pg-mod">LangChain 指南</span></a><a class="pg-card pg-next" href="../langchain/09-dui-hua-ji-yi.html"><span class="pg-label">下一篇 →</span><span class="pg-title">对话记忆</span><span class="pg-mod">LangChain 指南</span></a></nav>
     </div>
     <footer class="foot">
-      <span>深栈 DeepStack · AI Agent 工程师转型训练营配套文档</span>
+      <span>无限空间 InfiSpace · AI Agent 工程师转型训练营配套文档</span>
     </footer>
   </main>
 <nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#1-as_retriever给向量库发一张-runnable-工牌">1. as_retriever：给向量库发一张 Runnable 工牌</a><a class="toc-link toc-h2" href="#2-检索参数三件套kscore_thresholdfilter">2. 检索参数三件套：k、score_threshold、filter</a><a class="toc-link toc-h3" href="#21-k一次抱几本">2.1 k：一次抱几本</a><a class="toc-link toc-h3" href="#22-score_threshold设一条相似度及格线">2.2 score_threshold：设一条相似度及格线</a><a class="toc-link toc-h3" href="#23-filter先锁定书架再往里找">2.3 filter：先锁定书架，再往里找</a><a class="toc-link toc-h2" href="#3-mmr既要最相关也要不重样">3. MMR：既要最相关，也要不重样</a><a class="toc-link toc-h2" href="#4-rag-链组装retriever-format_docs-prompt-model-parser">4. RAG 链组装：retriever | format_docs → prompt | model | parser</a><a class="toc-link toc-h2" href="#5-runnableparallel一手递问题一手取笔记">5. RunnableParallel：一手递问题，一手取笔记</a><a class="toc-link toc-h2" href="#6-来源溯源让答案自带引用列表">6. 来源溯源：让答案自带引用列表</a><a class="toc-link toc-h2" href="#7-多查询检索一个问题换几种问法">7. 多查询检索：一个问题，换几种问法</a><a class="toc-link toc-h2" href="#8-检索优化地图从切块调优到重排">8. 检索优化地图：从切块调优到重排</a><a class="toc-link toc-h2" href="#9-本章小结">9. 本章小结</a></nav>

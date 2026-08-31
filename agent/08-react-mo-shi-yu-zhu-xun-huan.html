@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>08 · ReAct 模式与主循环 · 深栈 DeepStack 课程文档</title>
+<title>08 · ReAct 模式与主循环 · 无限空间 InfiSpace 课程文档</title>
 <meta name="description" content="第 7 章我们把工具接到了模型手上，但每一步都是你牵着模型走：何时调用、传什么参数，全由代码写死。Agent 的关键一跃是反过来——让模型自己决定何时用工具、何时停止。这一章分两步走：先回到原生 tool calling…">
 <link rel="stylesheet" href="../assets/style.css">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%23d9c39a' text-anchor='middle'%3EDS%3C/text%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%23d9c39a' text-anchor='middle'%3E%E2%88%9E%3C/text%3E%3C/svg%3E">
 </head>
 <body>
 <div class="progress" id="progress"></div>
@@ -15,8 +15,8 @@
 <aside class="sidebar" id="sidebar">
   <div class="sb-head">
     <a class="brand" href="../index.html">
-      <span class="brand-mark">DS</span>
-      <span class="brand-text"><b>深栈 DeepStack</b><i>AI Agent 工程师转型训练营</i></span>
+      <img class="brand-mark" src="../assets/infispace-logo-1.jpg" alt="无限空间 InfiSpace">
+      <span class="brand-text"><b>无限空间 InfiSpace</b><i>AI Agent 工程师转型训练营</i></span>
     </a>
     <button class="sb-close" id="sbClose" aria-label="关闭目录">✕</button>
   </div>
@@ -649,7 +649,7 @@ Final Answer: 比亚迪 2024 年销量约 427 万辆比特斯拉的约 179 万�
 <nav class="pager"><a class="pg-card pg-prev" href="../agent/07-tool-calling-xie-yi-yu-feng-zhuang.html"><span class="pg-label">← 上一篇</span><span class="pg-title">Tool Calling：协议与封装</span><span class="pg-mod">Agent 核心</span></a><a class="pg-card pg-next" href="../agent/09-shi-zhan-deep-research-agent.html"><span class="pg-label">下一篇 →</span><span class="pg-title">实战：Deep Research Agent</span><span class="pg-mod">Agent 核心</span></a></nav>
     </div>
     <footer class="foot">
-      <span>深栈 DeepStack · AI Agent 工程师转型训练营配套文档</span>
+      <span>无限空间 InfiSpace · AI Agent 工程师转型训练营配套文档</span>
     </footer>
   </main>
 <nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#1-思想源头2022-年没有工具接口的年代">1. 思想源头：2022 年，没有工具接口的年代</a><a class="toc-link toc-h2" href="#2-文本协议长什么样">2. 文本协议长什么样</a><a class="toc-link toc-h2" href="#3-手搓一个文本协议-react">3. 手搓一个文本协议 ReAct</a><a class="toc-link toc-h2" href="#4-从文本协议到原生-tool-calling">4. 从文本协议到原生 Tool Calling</a><a class="toc-link toc-h2" href="#5-react-之外三种循环变体">5. ReAct 之外：三种循环变体</a><a class="toc-link toc-h2" href="#6-心脏十行的核心循环">6. 心脏：十行的核心循环</a><a class="toc-link toc-h2" href="#7-终止条件四道闸门">7. 终止条件：四道闸门</a><a class="toc-link toc-h2" href="#8-事件系统给循环装上仪表盘">8. 事件系统：给循环装上仪表盘</a><a class="toc-link toc-h2" href="#9-完整的-agent-类">9. 完整的 Agent 类</a><a class="toc-link toc-h2" href="#10-循环里的边角案例">10. 循环里的边角案例</a><a class="toc-link toc-h2" href="#11-这个设计的边界">11. 这个设计的边界</a><a class="toc-link toc-h2" href="#本章小结">本章小结</a></nav>

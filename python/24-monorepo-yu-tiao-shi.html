@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>24 · monorepo 与调试 · 深栈 DeepStack 课程文档</title>
+<title>24 · monorepo 与调试 · 无限空间 InfiSpace 课程文档</title>
 <meta name="description" content="工程化的最后一课，收两个尾。其一，项目做大了会「裂变」——对外一个应用，底下还养着工具库、算法库、若干脚本，仓库该怎么组织才不乱？其二，代码一多难免出岔子，全靠 print 排查既慢又伤士气，得学会让程序停在出问题的那一…">
 <link rel="stylesheet" href="../assets/style.css">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%23d9c39a' text-anchor='middle'%3EDS%3C/text%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%23d9c39a' text-anchor='middle'%3E%E2%88%9E%3C/text%3E%3C/svg%3E">
 </head>
 <body>
 <div class="progress" id="progress"></div>
@@ -15,8 +15,8 @@
 <aside class="sidebar" id="sidebar">
   <div class="sb-head">
     <a class="brand" href="../index.html">
-      <span class="brand-mark">DS</span>
-      <span class="brand-text"><b>深栈 DeepStack</b><i>AI Agent 工程师转型训练营</i></span>
+      <img class="brand-mark" src="../assets/infispace-logo-1.jpg" alt="无限空间 InfiSpace">
+      <span class="brand-text"><b>无限空间 InfiSpace</b><i>AI Agent 工程师转型训练营</i></span>
     </a>
     <button class="sb-close" id="sbClose" aria-label="关闭目录">✕</button>
   </div>
@@ -587,7 +587,7 @@ uv<span class="w"> </span>tree<span class="w">                        </span><sp
 <nav class="pager"><a class="pg-card pg-prev" href="../python/23-gong-cheng-hua-gong-ju-lian.html"><span class="pg-label">← 上一篇</span><span class="pg-title">工程化工具链</span><span class="pg-mod">Python 与数据实践</span></a><a class="pg-card pg-next" href="../python/25-jupyter-jiao-hu-huan-jing.html"><span class="pg-label">下一篇 →</span><span class="pg-title">Jupyter 交互环境</span><span class="pg-mod">Python 与数据实践</span></a></nav>
     </div>
     <footer class="foot">
-      <span>深栈 DeepStack · AI Agent 工程师转型训练营配套文档</span>
+      <span>无限空间 InfiSpace · AI Agent 工程师转型训练营配套文档</span>
     </footer>
   </main>
 <nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#1-一个仓库装下一窝项目">1. 一个仓库装下一窝项目</a><a class="toc-link toc-h3" href="#11-monorepo-长什么样">1.1 monorepo 长什么样</a><a class="toc-link toc-h3" href="#12-和多仓库比一比">1.2 和多仓库比一比</a><a class="toc-link toc-h2" href="#2-用-uv-workspace-搭骨架">2. 用 uv workspace 搭骨架</a><a class="toc-link toc-h3" href="#21-根项目先立起来">2.1 根项目先立起来</a><a class="toc-link toc-h3" href="#22-members-的通配写法">2.2 members 的通配写法</a><a class="toc-link toc-h3" href="#23-创建成员包">2.3 创建成员包</a><a class="toc-link toc-h3" href="#24-sources把成员连起来">2.4 sources：把成员连起来</a><a class="toc-link toc-h3" href="#25-一条命令装齐">2.5 一条命令装齐</a><a class="toc-link toc-h3" href="#26-跑起来">2.6 跑起来</a><a class="toc-link toc-h2" href="#3-workspace-日常速查">3. workspace 日常速查</a><a class="toc-link toc-h3" href="#31-makefile-收纳长命令">3.1 Makefile 收纳长命令</a><a class="toc-link toc-h3" href="#32-加第三方依赖">3.2 加第三方依赖</a><a class="toc-link toc-h3" href="#33-构建">3.3 构建</a><a class="toc-link toc-h3" href="#34-看依赖网uv-tree">3.4 看依赖网：uv tree</a><a class="toc-link toc-h2" href="#4-引用成员包的三种姿势">4. 引用成员包的三种姿势</a><a class="toc-link toc-h3" href="#41-源码链接workspace-模式">4.1 源码链接（workspace 模式）</a><a class="toc-link toc-h3" href="#42-路径引用">4.2 路径引用</a><a class="toc-link toc-h3" href="#43-git-引用">4.3 Git 引用</a><a class="toc-link toc-h2" href="#5-断点凭什么能让程序说停就停">5. 断点凭什么能让程序说停就停</a><a class="toc-link toc-h3" href="#51-解释器留的后门syssettrace">5.1 解释器留的后门：sys.settrace</a><a class="toc-link toc-h3" href="#52-一场调试里的四个角色">5.2 一场调试里的四个角色</a><a class="toc-link toc-h2" href="#6-单文件调试launch-模式">6. 单文件调试：launch 模式</a><a class="toc-link toc-h2" href="#7-工程调试attach-模式">7. 工程调试：attach 模式</a><a class="toc-link toc-h3" href="#71-第一步装上调试器">7.1 第一步：装上调试器</a><a class="toc-link toc-h3" href="#72-第二步让应用挂起待命">7.2 第二步：让应用「挂起待命」</a><a class="toc-link toc-h3" href="#73-第三步编辑器侧的附加配置">7.3 第三步：编辑器侧的附加配置</a><a class="toc-link toc-h3" href="#74-两步启动">7.4 两步启动</a><a class="toc-link toc-h2" href="#8-作业">8. 作业</a><a class="toc-link toc-h3" href="#习题一复刻一个自己的-monorepo">习题一：复刻一个自己的 monorepo</a><a class="toc-link toc-h3" href="#习题二把断点调试接进-monorepo">习题二：把断点调试接进 monorepo</a></nav>

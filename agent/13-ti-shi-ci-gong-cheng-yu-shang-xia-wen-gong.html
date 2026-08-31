@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>13 · 提示词工程与上下文工程 · 深栈 DeepStack 课程文档</title>
+<title>13 · 提示词工程与上下文工程 · 无限空间 InfiSpace 课程文档</title>
 <meta name="description" content="这里是第五章「怎么做得可靠」的第一章。前四章解决了&quot;能干活&quot;：模型接上了工具、跑起了自主循环、长出了文档能力、说起了通用协议。但把一个 Agent 从&quot;能跑&quot;带到&quot;可靠&quot;，第一站不在模型、也不在工具，而在一个容易被忽视的…">
 <link rel="stylesheet" href="../assets/style.css">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%23d9c39a' text-anchor='middle'%3EDS%3C/text%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%23d9c39a' text-anchor='middle'%3E%E2%88%9E%3C/text%3E%3C/svg%3E">
 </head>
 <body>
 <div class="progress" id="progress"></div>
@@ -15,8 +15,8 @@
 <aside class="sidebar" id="sidebar">
   <div class="sb-head">
     <a class="brand" href="../index.html">
-      <span class="brand-mark">DS</span>
-      <span class="brand-text"><b>深栈 DeepStack</b><i>AI Agent 工程师转型训练营</i></span>
+      <img class="brand-mark" src="../assets/infispace-logo-1.jpg" alt="无限空间 InfiSpace">
+      <span class="brand-text"><b>无限空间 InfiSpace</b><i>AI Agent 工程师转型训练营</i></span>
     </a>
     <button class="sb-close" id="sbClose" aria-label="关闭目录">✕</button>
   </div>
@@ -545,7 +545,7 @@
 <nav class="pager"><a class="pg-card pg-prev" href="../agent/12-duo-agent-yu-xuan-xing-ce-lve.html"><span class="pg-label">← 上一篇</span><span class="pg-title">多 Agent 与选型策略</span><span class="pg-mod">Agent 核心</span></a><a class="pg-card pg-next" href="../agent/14-xun-huan-tu-yu-gu-jia-gong-cheng.html"><span class="pg-label">下一篇 →</span><span class="pg-title">循环、图与骨架工程</span><span class="pg-mod">Agent 核心</span></a></nav>
     </div>
     <footer class="foot">
-      <span>深栈 DeepStack · AI Agent 工程师转型训练营配套文档</span>
+      <span>无限空间 InfiSpace · AI Agent 工程师转型训练营配套文档</span>
     </footer>
   </main>
 <nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#1-先祛魅提示词的边界">1. 先祛魅：提示词的边界</a><a class="toc-link toc-h2" href="#2-五个已被验证的模式">2. 五个已被验证的模式</a><a class="toc-link toc-h3" href="#21-角色设定persona">2.1 角色设定（Persona）</a><a class="toc-link toc-h3" href="#22-few-shot-示例少样本学习">2.2 Few-shot 示例（少样本学习）</a><a class="toc-link toc-h3" href="#23-思维链cot">2.3 思维链（CoT）</a><a class="toc-link toc-h3" href="#24-结构化模板xmlmarkdown-分区">2.4 结构化模板（XML/Markdown 分区）</a><a class="toc-link toc-h3" href="#25-分而治之任务分解">2.5 分而治之（任务分解）</a><a class="toc-link toc-h2" href="#3-反模式清单">3. 反模式清单</a><a class="toc-link toc-h2" href="#4-提示词的工程化管理">4. 提示词的工程化管理</a><a class="toc-link toc-h3" href="#41-模板分离第-5-章的进阶版">4.1 模板分离（第 5 章的进阶版）</a><a class="toc-link toc-h3" href="#42-版本化与评测">4.2 版本化与评测</a><a class="toc-link toc-h2" href="#5-站位提示词技巧的黄昏">5. 站位：提示词技巧的黄昏</a><a class="toc-link toc-h2" href="#6-视角升级上下文的总账本">6. 视角升级：上下文的总账本</a><a class="toc-link toc-h2" href="#7-注意力经济学两条核心原则">7. 注意力经济学：两条核心原则</a><a class="toc-link toc-h3" href="#71-每个-token-都在付费以注意力学计价">7.1 每个 token 都在付费——以&quot;注意力学&quot;计价</a><a class="toc-link toc-h3" href="#72-结构决定命运位置敏感的排版">7.2 结构决定命运——位置敏感的排版</a><a class="toc-link toc-h2" href="#8-各组分的经营策略汇总">8. 各组分的经营策略汇总</a><a class="toc-link toc-h2" href="#9-工具结果最大的隐形杀手">9. 工具结果：最大的隐形杀手</a><a class="toc-link toc-h2" href="#10-预算分配一个实操框架">10. 预算分配：一个实操框架</a><a class="toc-link toc-h2" href="#11-什么时候该满窗口">11. 什么时候该&quot;满窗口&quot;</a><a class="toc-link toc-h2" href="#12-分界线说清楚事-vs-装对东西">12. 分界线：说清楚事 vs 装对东西</a><a class="toc-link toc-h2" href="#本章小结">本章小结</a></nav>

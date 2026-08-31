@@ -3,13 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>06 · 文档加载与切割 · 深栈 DeepStack 课程文档</title>
+<title>06 · 文档加载与切割 · 无限空间 InfiSpace 课程文档</title>
 <meta name="description" content="本章你将学会
 
  - Document 对象：LangChain 的「统一集装箱」——不管数据来自 txt、PDF、CSV 还是网页，装进箱子后长一个样
  - 本地 Loader：TextLoader、PyPDFLoad…">
 <link rel="stylesheet" href="../assets/style.css">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%23d9c39a' text-anchor='middle'%3EDS%3C/text%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%23d9c39a' text-anchor='middle'%3E%E2%88%9E%3C/text%3E%3C/svg%3E">
 </head>
 <body>
 <div class="progress" id="progress"></div>
@@ -18,8 +18,8 @@
 <aside class="sidebar" id="sidebar">
   <div class="sb-head">
     <a class="brand" href="../index.html">
-      <span class="brand-mark">DS</span>
-      <span class="brand-text"><b>深栈 DeepStack</b><i>AI Agent 工程师转型训练营</i></span>
+      <img class="brand-mark" src="../assets/infispace-logo-1.jpg" alt="无限空间 InfiSpace">
+      <span class="brand-text"><b>无限空间 InfiSpace</b><i>AI Agent 工程师转型训练营</i></span>
     </a>
     <button class="sb-close" id="sbClose" aria-label="关闭目录">✕</button>
   </div>
@@ -873,7 +873,7 @@
 <nav class="pager"><a class="pg-card pg-prev" href="../langchain/05-shu-chu-jie-xi-qi.html"><span class="pg-label">← 上一篇</span><span class="pg-title">输出解析器</span><span class="pg-mod">LangChain 指南</span></a><a class="pg-card pg-next" href="../langchain/07-qian-ru-yu-xiang-liang-ku.html"><span class="pg-label">下一篇 →</span><span class="pg-title">嵌入与向量库</span><span class="pg-mod">LangChain 指南</span></a></nav>
     </div>
     <footer class="foot">
-      <span>深栈 DeepStack · AI Agent 工程师转型训练营配套文档</span>
+      <span>无限空间 InfiSpace · AI Agent 工程师转型训练营配套文档</span>
     </footer>
   </main>
 <nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#1-document-对象一切数据的统一集装箱">1. Document 对象：一切数据的统一集装箱</a><a class="toc-link toc-h2" href="#2-本地-loader把硬盘上的文件装进集装箱">2. 本地 Loader：把硬盘上的文件装进集装箱</a><a class="toc-link toc-h3" href="#21-textloader一个-txt一张单">2.1 TextLoader：一个 txt，一张单</a><a class="toc-link toc-h3" href="#22-pypdfloader一页一张单">2.2 PyPDFLoader：一页一张单</a><a class="toc-link toc-h3" href="#23-csvloader一行一张单">2.3 CSVLoader：一行一张单</a><a class="toc-link toc-h3" href="#24-directoryloader整仓扫货">2.4 DirectoryLoader：整仓扫货</a><a class="toc-link toc-h3" href="#25-unstructuredmarkdownloader-的思路">2.5 UnstructuredMarkdownLoader 的思路</a><a class="toc-link toc-h2" href="#3-web-loader把网页装进集装箱">3. Web Loader：把网页装进集装箱</a><a class="toc-link toc-h3" href="#31-webbaseloader抓网页提正文">3.1 WebBaseLoader：抓网页、提正文</a><a class="toc-link toc-h3" href="#32-更多抓取思路代码仓库与搜索结果">3.2 更多抓取思路：代码仓库与搜索结果</a><a class="toc-link toc-h2" href="#4-文本切割把整头牛切成牛排">4. 文本切割：把整头牛切成牛排</a><a class="toc-link toc-h3" href="#41-为什么必须切">4.1 为什么必须切</a><a class="toc-link toc-h3" href="#42-两个核心旋钮chunk_size-与-chunk_overlap">4.2 两个核心旋钮：chunk_size 与 chunk_overlap</a><a class="toc-link toc-h3" href="#43-separators分隔符的层级">4.3 separators：分隔符的层级</a><a class="toc-link toc-h3" href="#44-三个入口split_text-create_documents-split_documents">4.4 三个入口：split_text / create_documents / split_documents</a><a class="toc-link toc-h3" href="#45-按字符切-vs-按-token-切">4.5 按字符切 vs 按 token 切</a><a class="toc-link toc-h3" href="#46-代码切割from_language">4.6 代码切割：from_language</a><a class="toc-link toc-h2" href="#5-markdown-结构化切割markdownheadertextsplitter">5. Markdown 结构化切割：MarkdownHeaderTextSplitter</a><a class="toc-link toc-h3" href="#51-按标题切标题进-metadata">5.1 按标题切，标题进 metadata</a><a class="toc-link toc-h3" href="#52-组合拳先按结构粗切再按长度细切">5.2 组合拳：先按结构粗切，再按长度细切</a><a class="toc-link toc-h2" href="#6-本章小结">6. 本章小结</a></nav>

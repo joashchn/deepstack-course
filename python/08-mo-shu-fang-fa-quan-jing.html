@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>08 · 魔术方法全景 · 深栈 DeepStack 课程文档</title>
+<title>08 · 魔术方法全景 · 无限空间 InfiSpace 课程文档</title>
 <meta name="description" content="平时写 Python，我们其实一直在和一套&quot;看不见的约定&quot;打交道：print(obj) 能打印出东西、obj[0] 能按下标取值、a + b 能做加法、len(obj) 能算长度。这些写法之所以对自定义类也照样好使，是因…">
 <link rel="stylesheet" href="../assets/style.css">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%23d9c39a' text-anchor='middle'%3EDS%3C/text%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%23d9c39a' text-anchor='middle'%3E%E2%88%9E%3C/text%3E%3C/svg%3E">
 </head>
 <body>
 <div class="progress" id="progress"></div>
@@ -15,8 +15,8 @@
 <aside class="sidebar" id="sidebar">
   <div class="sb-head">
     <a class="brand" href="../index.html">
-      <span class="brand-mark">DS</span>
-      <span class="brand-text"><b>深栈 DeepStack</b><i>AI Agent 工程师转型训练营</i></span>
+      <img class="brand-mark" src="../assets/infispace-logo-1.jpg" alt="无限空间 InfiSpace">
+      <span class="brand-text"><b>无限空间 InfiSpace</b><i>AI Agent 工程师转型训练营</i></span>
     </a>
     <button class="sb-close" id="sbClose" aria-label="关闭目录">✕</button>
   </div>
@@ -1014,7 +1014,7 @@
 <nav class="pager"><a class="pg-card pg-prev" href="../python/07-lei-xing-pan-ding-yu-chou-xiang-ji-lei.html"><span class="pg-label">← 上一篇</span><span class="pg-title">类型判定与抽象基类</span><span class="pg-mod">Python 与数据实践</span></a><a class="pg-card pg-next" href="../python/09-miao-shu-fu-yu-yuan-lei.html"><span class="pg-label">下一篇 →</span><span class="pg-title">描述符与元类</span><span class="pg-mod">Python 与数据实践</span></a></nav>
     </div>
     <footer class="foot">
-      <span>深栈 DeepStack · AI Agent 工程师转型训练营配套文档</span>
+      <span>无限空间 InfiSpace · AI Agent 工程师转型训练营配套文档</span>
     </footer>
   </main>
 <nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#1-对象的诞生先造壳再装修">1. 对象的诞生：先造壳，再装修</a><a class="toc-link toc-h2" href="#2-重写-__new__-的三种经典玩法">2. 重写 __new__ 的三种经典玩法</a><a class="toc-link toc-h3" href="#21-全局只此一个单例模式">2.1 全局只此一个：单例模式</a><a class="toc-link toc-h3" href="#22-造过就不重造对象池">2.2 造过就不重造：对象池</a><a class="toc-link toc-h3" href="#23-偷梁换柱让-__new__-返回别的东西">2.3 偷梁换柱：让 __new__ 返回别的东西</a><a class="toc-link toc-h2" href="#3-让实例像函数一样被调用__call__">3. 让实例像函数一样被调用：__call__</a><a class="toc-link toc-h3" href="#31-玩法一造出预配置的函数">3.1 玩法一：造出&quot;预配置&quot;的函数</a><a class="toc-link toc-h3" href="#32-玩法二自带记忆的回调">3.2 玩法二：自带记忆的回调</a><a class="toc-link toc-h2" href="#4-把对象打印得体面一点__str__-与-__repr__">4. 把对象打印得体面一点：__str__ 与 __repr__</a><a class="toc-link toc-h2" href="#5-让对象支持比较-一家人">5. 让对象支持比较：==、&amp;lt; 一家人</a><a class="toc-link toc-h3" href="#偷懒的办法total_ordering">偷懒的办法：total_ordering</a><a class="toc-link toc-h2" href="#6-让对象参与四则运算">6. 让对象参与四则运算</a><a class="toc-link toc-h2" href="#7-让对象像容器一样工作">7. 让对象像容器一样工作</a><a class="toc-link toc-h2" href="#8-类型转换三件套">8. 类型转换三件套</a><a class="toc-link toc-h2" href="#9-属性访问的安检门">9. 属性访问的&quot;安检门&quot;</a><a class="toc-link toc-h3" href="#__getattr__-与-__getattribute__-的分工">__getattr__ 与 __getattribute__ 的分工</a><a class="toc-link toc-h2" href="#10-对象的谢幕__del__">10. 对象的谢幕：__del__</a><a class="toc-link toc-h2" href="#11-常用魔术方法速查表">11. 常用魔术方法速查表</a><a class="toc-link toc-h2" href="#习题">习题</a><a class="toc-link toc-h3" href="#一全局唯一的事件总线">一、全局唯一的事件总线</a><a class="toc-link toc-h3" href="#二带记忆的里程表">二、带记忆的里程表</a><a class="toc-link toc-h3" href="#三思考题">三、思考题</a><a class="toc-link toc-h3" href="#四频率类综合练习可借助-ai">四、频率类（综合练习，可借助 AI）</a></nav>

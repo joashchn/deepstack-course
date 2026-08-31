@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>03 · LCEL 与 Runnable · 深栈 DeepStack 课程文档</title>
+<title>03 · LCEL 与 Runnable · 无限空间 InfiSpace 课程文档</title>
 <meta name="description" content="本章配套可运行示例：demo/demolcel.py。demo 全程用纯数据变换，不启动 Ollama 也能跑；文末留了一段带模型的完整链，想体验的话设 USEMODEL=1 再运行">
 <link rel="stylesheet" href="../assets/style.css">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%23d9c39a' text-anchor='middle'%3EDS%3C/text%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%23d9c39a' text-anchor='middle'%3E%E2%88%9E%3C/text%3E%3C/svg%3E">
 </head>
 <body>
 <div class="progress" id="progress"></div>
@@ -15,8 +15,8 @@
 <aside class="sidebar" id="sidebar">
   <div class="sb-head">
     <a class="brand" href="../index.html">
-      <span class="brand-mark">DS</span>
-      <span class="brand-text"><b>深栈 DeepStack</b><i>AI Agent 工程师转型训练营</i></span>
+      <img class="brand-mark" src="../assets/infispace-logo-1.jpg" alt="无限空间 InfiSpace">
+      <span class="brand-text"><b>无限空间 InfiSpace</b><i>AI Agent 工程师转型训练营</i></span>
     </a>
     <button class="sb-close" id="sbClose" aria-label="关闭目录">✕</button>
   </div>
@@ -693,7 +693,7 @@
 <nav class="pager"><a class="pg-card pg-prev" href="../langchain/02-ti-shi-ci-mu-ban-yu-xiao-xi.html"><span class="pg-label">← 上一篇</span><span class="pg-title">提示词模板与消息</span><span class="pg-mod">LangChain 指南</span></a><a class="pg-card pg-next" href="../langchain/04-liu-shi-yu-bing-fa.html"><span class="pg-label">下一篇 →</span><span class="pg-title">流式与并发</span><span class="pg-mod">LangChain 指南</span></a></nav>
     </div>
     <footer class="foot">
-      <span>深栈 DeepStack · AI Agent 工程师转型训练营配套文档</span>
+      <span>无限空间 InfiSpace · AI Agent 工程师转型训练营配套文档</span>
     </footer>
   </main>
 <nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#开场从接龙到流水线">开场：从「接龙」到「流水线」</a><a class="toc-link toc-h2" href="#1-lcel-管道-与-pipe">1. LCEL 管道：| 与 .pipe()</a><a class="toc-link toc-h3" href="#作用">作用</a><a class="toc-link toc-h3" href="#签名两种等价写法">签名（两种等价写法）</a><a class="toc-link toc-h3" href="#最小示例">最小示例</a><a class="toc-link toc-h3" href="#常见坑">常见坑</a><a class="toc-link toc-h2" href="#2-runnable-统一接口invoke-stream-batch-三兄弟">2. Runnable 统一接口：invoke / stream / batch 三兄弟</a><a class="toc-link toc-h3" href="#作用_1">作用</a><a class="toc-link toc-h3" href="#签名">签名</a><a class="toc-link toc-h3" href="#最小示例_1">最小示例</a><a class="toc-link toc-h3" href="#输入输出类型检查">输入输出类型检查</a><a class="toc-link toc-h3" href="#常见坑_1">常见坑</a><a class="toc-link toc-h2" href="#3-runnablelambda给普通函数发上岗证">3. RunnableLambda：给普通函数发上岗证</a><a class="toc-link toc-h3" href="#作用_2">作用</a><a class="toc-link toc-h3" href="#签名_1">签名</a><a class="toc-link toc-h3" href="#最小示例_2">最小示例</a><a class="toc-link toc-h3" href="#常见坑_2">常见坑</a><a class="toc-link toc-h2" href="#4-runnablepassthrough原样放行与顺手塞便签">4. RunnablePassthrough：原样放行与顺手塞便签</a><a class="toc-link toc-h3" href="#作用_3">作用</a><a class="toc-link toc-h3" href="#签名_2">签名</a><a class="toc-link toc-h3" href="#最小示例_3">最小示例</a><a class="toc-link toc-h3" href="#常见坑_3">常见坑</a><a class="toc-link toc-h2" href="#5-runnableparallel一变多的分身术">5. RunnableParallel：一变多的分身术</a><a class="toc-link toc-h3" href="#作用_4">作用</a><a class="toc-link toc-h3" href="#签名_3">签名</a><a class="toc-link toc-h3" href="#最小示例_4">最小示例</a><a class="toc-link toc-h3" href="#常见坑_4">常见坑</a><a class="toc-link toc-h2" href="#6-条件路由流水线上的分诊台">6. 条件路由：流水线上的分诊台</a><a class="toc-link toc-h3" href="#作用_5">作用</a><a class="toc-link toc-h3" href="#签名_4">签名</a><a class="toc-link toc-h3" href="#最小示例_5">最小示例</a><a class="toc-link toc-h3" href="#常见坑_5">常见坑</a><a class="toc-link toc-h2" href="#7-链的嵌套组合拼好的积木继续当零件">7. 链的嵌套组合：拼好的积木继续当零件</a><a class="toc-link toc-h3" href="#作用_6">作用</a><a class="toc-link toc-h3" href="#签名_5">签名</a><a class="toc-link toc-h3" href="#最小示例_6">最小示例</a><a class="toc-link toc-h3" href="#常见坑_6">常见坑</a><a class="toc-link toc-h2" href="#8-runnable-到底统一了什么">8. Runnable 到底统一了什么</a><a class="toc-link toc-h2" href="#小结">小结</a></nav>

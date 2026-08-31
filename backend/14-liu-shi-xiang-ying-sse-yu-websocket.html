@@ -3,13 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>14 · 流式响应 SSE 与 WebSocket · 深栈 DeepStack 课程文档</title>
+<title>14 · 流式响应 SSE 与 WebSocket · 无限空间 InfiSpace 课程文档</title>
 <meta name="description" content="本章你将学会
 
  - 为什么需要流式：大文件下载、慢生成任务、AI 逐字输出——一次性响应撑不住的三种场面
  - StreamingResponse 全套用法：同步/异步生成器、mediatype、Content-Dis…">
 <link rel="stylesheet" href="../assets/style.css">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%23d9c39a' text-anchor='middle'%3EDS%3C/text%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%23d9c39a' text-anchor='middle'%3E%E2%88%9E%3C/text%3E%3C/svg%3E">
 </head>
 <body>
 <div class="progress" id="progress"></div>
@@ -18,8 +18,8 @@
 <aside class="sidebar" id="sidebar">
   <div class="sb-head">
     <a class="brand" href="../index.html">
-      <span class="brand-mark">DS</span>
-      <span class="brand-text"><b>深栈 DeepStack</b><i>AI Agent 工程师转型训练营</i></span>
+      <img class="brand-mark" src="../assets/infispace-logo-1.jpg" alt="无限空间 InfiSpace">
+      <span class="brand-text"><b>无限空间 InfiSpace</b><i>AI Agent 工程师转型训练营</i></span>
     </a>
     <button class="sb-close" id="sbClose" aria-label="关闭目录">✕</button>
   </div>
@@ -899,7 +899,7 @@ curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </spa
 <nav class="pager"><a class="pg-card pg-prev" href="../backend/13-ri-zhi-loguru.html"><span class="pg-label">← 上一篇</span><span class="pg-title">日志 loguru</span><span class="pg-mod">Python 框架指南</span></a><a class="pg-card pg-next" href="../modules/interview.html"><span class="pg-label">下一篇 →</span><span class="pg-title">面试题库 · 使用指南</span><span class="pg-mod">面试题库</span></a></nav>
     </div>
     <footer class="foot">
-      <span>深栈 DeepStack · AI Agent 工程师转型训练营配套文档</span>
+      <span>无限空间 InfiSpace · AI Agent 工程师转型训练营配套文档</span>
     </footer>
   </main>
 <nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#1-为什么需要流式一次性响应的三种翻车现场">1. 为什么需要流式：一次性响应的三种翻车现场</a><a class="toc-link toc-h2" href="#2-streamingresponse边做边给的基本功">2. StreamingResponse：边做边给的基本功</a><a class="toc-link toc-h3" href="#21-异步生成器首选">2.1 异步生成器（首选）</a><a class="toc-link toc-h3" href="#22-同步生成器也能跑但要知道它在哪跑">2.2 同步生成器：也能跑，但要知道它在哪跑</a><a class="toc-link toc-h3" href="#23-media_type不写就没有-content-type">2.3 media_type：不写就没有 content-type</a><a class="toc-link toc-h3" href="#24-文件下载content-disposition">2.4 文件下载：Content-Disposition</a><a class="toc-link toc-h3" href="#25-常见坑">2.5 常见坑</a><a class="toc-link toc-h2" href="#3-ssehttp-长连接上的单向广播">3. SSE：HTTP 长连接上的单向广播</a><a class="toc-link toc-h3" href="#31-sse-是什么">3.1 SSE 是什么</a><a class="toc-link toc-h3" href="#32-报文格式四类字段-一个空行">3.2 报文格式：四类字段 + 一个空行</a><a class="toc-link toc-h3" href="#33-浏览器端eventsource">3.3 浏览器端：EventSource</a><a class="toc-link toc-h3" href="#34-断线重连last-event-id-断点续传">3.4 断线重连：Last-Event-ID 断点续传</a><a class="toc-link toc-h3" href="#35-eventsourceresponsesse-starlette-替你把脏活干了">3.5 EventSourceResponse：sse-starlette 替你把脏活干了</a><a class="toc-link toc-h3" href="#36-常见坑">3.6 常见坑</a><a class="toc-link toc-h2" href="#4-ai-场景实战墨集-ai-写作助手逐字生成">4. AI 场景实战：墨集 AI 写作助手逐字生成</a><a class="toc-link toc-h3" href="#41-端点设计">4.1 端点设计</a><a class="toc-link toc-h3" href="#42-核心代码节选自-demodemo_streampy">4.2 核心代码（节选自 demo/demo_stream.py）</a><a class="toc-link toc-h3" href="#43-实测">4.3 实测</a><a class="toc-link toc-h3" href="#44-前端打字机">4.4 前端打字机</a><a class="toc-link toc-h3" href="#45-接真模型只差一步">4.5 接真模型只差一步</a><a class="toc-link toc-h2" href="#5-websocket全双工对讲机">5. WebSocket：全双工对讲机</a><a class="toc-link toc-h3" href="#51-和-sse-的本质区别">5.1 和 SSE 的本质区别</a><a class="toc-link toc-h3" href="#52-签名与最小示例">5.2 签名与最小示例</a><a class="toc-link toc-h3" href="#53-连接生命周期accept-receivesend-close">5.3 连接生命周期：accept → receive/send → close</a><a class="toc-link toc-h3" href="#54-常见坑">5.4 常见坑</a><a class="toc-link toc-h3" href="#55-前端对照new-websocket">5.5 前端对照：new WebSocket()</a><a class="toc-link toc-h2" href="#6-connectionmanager聊天室的广播台">6. ConnectionManager：聊天室的广播台</a><a class="toc-link toc-h3" href="#61-为什么需要它">6.1 为什么需要它</a><a class="toc-link toc-h3" href="#62-代码节选自-demodemo_wspy">6.2 代码（节选自 demo/demo_ws.py）</a><a class="toc-link toc-h3" href="#63-聊天室主循环-http-配合">6.3 聊天室主循环 + HTTP 配合</a><a class="toc-link toc-h3" href="#64-常见坑">6.4 常见坑</a><a class="toc-link toc-h2" href="#7-选型对比sse-还是-websocket">7. 选型对比：SSE 还是 WebSocket</a><a class="toc-link toc-h2" href="#8-跑一下本章-demo">8. 跑一下本章 demo</a><a class="toc-link toc-h2" href="#9-小结速查">9. 小结速查</a><a class="toc-link toc-h2" href="#10-全课程收官">10. 全课程收官</a></nav>

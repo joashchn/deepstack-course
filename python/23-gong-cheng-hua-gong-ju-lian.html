@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>23 · 工程化工具链 · 深栈 DeepStack 课程文档</title>
+<title>23 · 工程化工具链 · 无限空间 InfiSpace 课程文档</title>
 <meta name="description" content="上一章走完发布全流程的同学应该有体感：为了发布一个小小的库，我们动用了 venv 建环境、pip 装工具、build 做打包、twine 传产物……工具四散、命令一长串，换个工程还得从头再来一遍。多版本 Python 的…">
 <link rel="stylesheet" href="../assets/style.css">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%23d9c39a' text-anchor='middle'%3EDS%3C/text%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%23d9c39a' text-anchor='middle'%3E%E2%88%9E%3C/text%3E%3C/svg%3E">
 </head>
 <body>
 <div class="progress" id="progress"></div>
@@ -15,8 +15,8 @@
 <aside class="sidebar" id="sidebar">
   <div class="sb-head">
     <a class="brand" href="../index.html">
-      <span class="brand-mark">DS</span>
-      <span class="brand-text"><b>深栈 DeepStack</b><i>AI Agent 工程师转型训练营</i></span>
+      <img class="brand-mark" src="../assets/infispace-logo-1.jpg" alt="无限空间 InfiSpace">
+      <span class="brand-text"><b>无限空间 InfiSpace</b><i>AI Agent 工程师转型训练营</i></span>
     </a>
     <button class="sb-close" id="sbClose" aria-label="关闭目录">✕</button>
   </div>
@@ -739,7 +739,7 @@ make<span class="w"> </span>clean<span class="w">     </span><span class="c1"># 
 <nav class="pager"><a class="pg-card pg-prev" href="../python/22-gou-jian-yu-fa-bu.html"><span class="pg-label">← 上一篇</span><span class="pg-title">构建与发布</span><span class="pg-mod">Python 与数据实践</span></a><a class="pg-card pg-next" href="../python/24-monorepo-yu-tiao-shi.html"><span class="pg-label">下一篇 →</span><span class="pg-title">monorepo 与调试</span><span class="pg-mod">Python 与数据实践</span></a></nav>
     </div>
     <footer class="foot">
-      <span>深栈 DeepStack · AI Agent 工程师转型训练营配套文档</span>
+      <span>无限空间 InfiSpace · AI Agent 工程师转型训练营配套文档</span>
     </footer>
   </main>
 <nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#1-可选先送走-pyenv">1. 【可选】先送走 pyenv</a><a class="toc-link toc-h3" href="#macoshomebrew-装的">macOS（Homebrew 装的）</a><a class="toc-link toc-h3" href="#windowspyenv-win">Windows（pyenv-win）</a><a class="toc-link toc-h3" href="#确认送走了">确认送走了</a><a class="toc-link toc-h2" href="#2-uv-是何方神圣">2. uv 是何方神圣</a><a class="toc-link toc-h2" href="#3-安装">3. 安装</a><a class="toc-link toc-h3" href="#给下载提速镜像源">给下载提速：镜像源</a><a class="toc-link toc-h3" href="#顺手改一下-code-runner">顺手改一下 Code Runner</a><a class="toc-link toc-h2" href="#4-python-版本管理pyenv-的班-uv-来接">4. Python 版本管理：pyenv 的班 uv 来接</a><a class="toc-link toc-h2" href="#5-五分钟起一个新工程">5. 五分钟起一个新工程</a><a class="toc-link toc-h3" href="#初始化">初始化</a><a class="toc-link toc-h3" href="#配一个命令行入口">配一个命令行入口</a><a class="toc-link toc-h3" href="#加依赖">加依赖</a><a class="toc-link toc-h3" href="#删依赖">删依赖</a><a class="toc-link toc-h3" href="#对齐环境">对齐环境</a><a class="toc-link toc-h3" href="#跑起来">跑起来</a><a class="toc-link toc-h2" href="#6-虚拟环境项目内-vs-项目外">6. 虚拟环境：项目内 vs 项目外</a><a class="toc-link toc-h3" href="#两种模式对照">两种模式对照</a><a class="toc-link toc-h3" href="#全局缓存">全局缓存</a><a class="toc-link toc-h2" href="#7-临时工具与常驻工具">7. 临时工具与常驻工具</a><a class="toc-link toc-h3" href="#uvx用完即走">uvx：用完即走</a><a class="toc-link toc-h3" href="#uv-tool常驻安装">uv tool：常驻安装</a><a class="toc-link toc-h3" href="#第三条路作为开发依赖进工程">第三条路：作为开发依赖进工程</a><a class="toc-link toc-h2" href="#8-构建与发布一条命令的事">8. 构建与发布：一条命令的事</a><a class="toc-link toc-h3" href="#构建">构建</a><a class="toc-link toc-h3" href="#发布">发布</a><a class="toc-link toc-h2" href="#9-makefile把常用命令钉在墙上">9. Makefile：把常用命令钉在墙上</a><a class="toc-link toc-h3" href="#一份够用的工程-makefile">一份够用的工程 Makefile</a><a class="toc-link toc-h3" href="#接收参数的目标">接收参数的目标</a><a class="toc-link toc-h3" href="#目标串目标">目标串目标</a><a class="toc-link toc-h2" href="#10-常用命令速查">10. 常用命令速查</a><a class="toc-link toc-h2" href="#作业">作业</a></nav>

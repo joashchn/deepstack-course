@@ -39,8 +39,7 @@ code{font-family:var(--mono)}
 .sb-head{display:flex;align-items:center;gap:10px;padding:16px 16px 12px;
   border-bottom:1px solid var(--line-soft)}
 .brand{display:flex;align-items:center;gap:10px;flex:1;min-width:0}
-.brand-mark{width:30px;height:30px;flex:0 0 30px;border-radius:8px;background:#1A1A1A;
-  color:#D9C39A;display:grid;place-items:center;font-size:12px;font-weight:700;letter-spacing:.5px}
+.brand-mark{height:30px;width:auto;flex:0 0 auto;border-radius:6px;display:block}
 [data-theme="dark"] .brand-mark{background:#D9C39A;color:#1A1A1A}
 .brand-text{display:flex;flex-direction:column;line-height:1.25;min-width:0}
 .brand-text b{font-size:14px;font-weight:650}

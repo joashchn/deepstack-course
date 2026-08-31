@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>10 · FastAPI 与后端篇 · 深栈 DeepStack 课程文档</title>
+<title>10 · FastAPI 与后端篇 · 无限空间 InfiSpace 课程文档</title>
 <meta name="description" content="对应课件：Python框架指南/01-14。AI 应用开发岗的 JD 里几乎都写着&quot;会 FastAPI/会后端&quot;——面试官要确认你能独立交付服务，而不只是跑脚本。本篇 6 题对准 AI 岗最常考的后端点：异步路由（阻塞事…">
 <link rel="stylesheet" href="../assets/style.css">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%23d9c39a' text-anchor='middle'%3EDS%3C/text%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%23d9c39a' text-anchor='middle'%3E%E2%88%9E%3C/text%3E%3C/svg%3E">
 </head>
 <body>
 <div class="progress" id="progress"></div>
@@ -15,8 +15,8 @@
 <aside class="sidebar" id="sidebar">
   <div class="sb-head">
     <a class="brand" href="../index.html">
-      <span class="brand-mark">DS</span>
-      <span class="brand-text"><b>深栈 DeepStack</b><i>AI Agent 工程师转型训练营</i></span>
+      <img class="brand-mark" src="../assets/infispace-logo-1.jpg" alt="无限空间 InfiSpace">
+      <span class="brand-text"><b>无限空间 InfiSpace</b><i>AI Agent 工程师转型训练营</i></span>
     </a>
     <button class="sb-close" id="sbClose" aria-label="关闭目录">✕</button>
   </div>
@@ -454,7 +454,7 @@
 <nav class="pager"><a class="pg-card pg-prev" href="../interview/09-python-ji-chu-pian.html"><span class="pg-label">← 上一篇</span><span class="pg-title">Python 基础篇</span><span class="pg-mod">面试题库</span></a><a class="pg-card pg-next" href="../interview/11-ti-shi-ci-gong-cheng-yu-an-quan-pian.html"><span class="pg-label">下一篇 →</span><span class="pg-title">提示词工程与安全篇</span><span class="pg-mod">面试题库</span></a></nav>
     </div>
     <footer class="foot">
-      <span>深栈 DeepStack · AI Agent 工程师转型训练营配套文档</span>
+      <span>无限空间 InfiSpace · AI Agent 工程师转型训练营配套文档</span>
     </footer>
   </main>
 <nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#q01-fastapi-的路由什么时候必须写-async-def写错了会怎样">Q01 · FastAPI 的路由什么时候必须写 async def？写错了会怎样？</a><a class="toc-link toc-h3" href="#考察意图与踩坑点">考察意图与踩坑点</a><a class="toc-link toc-h2" href="#q02-pydantic-在-fastapi-里起什么作用和-llm-应用有什么关系">Q02 · Pydantic 在 FastAPI 里起什么作用？和 LLM 应用有什么关系？</a><a class="toc-link toc-h3" href="#考察意图与踩坑点_1">考察意图与踩坑点</a><a class="toc-link toc-h2" href="#q03-依赖注入是什么fastapi-的-depends-解决什么问题">Q03 · 依赖注入是什么？FastAPI 的 Depends 解决什么问题？</a><a class="toc-link toc-h3" href="#考察意图与踩坑点_2">考察意图与踩坑点</a><a class="toc-link toc-h2" href="#q04-llm-流式接口为什么用-sse-而不是-websocket">Q04 · LLM 流式接口为什么用 SSE 而不是 WebSocket？</a><a class="toc-link toc-h3" href="#考察意图与踩坑点_3">考察意图与踩坑点</a><a class="toc-link toc-h2" href="#q05-中间件的执行顺序统一异常处理怎么设计">Q05 · 中间件的执行顺序？统一异常处理怎么设计？</a><a class="toc-link toc-h3" href="#考察意图与踩坑点_4">考察意图与踩坑点</a><a class="toc-link toc-h2" href="#q06-jwt-认证的原理过期了怎么办">Q06 · JWT 认证的原理？过期了怎么办？</a><a class="toc-link toc-h3" href="#考察意图与踩坑点_5">考察意图与踩坑点</a><a class="toc-link toc-h2" href="#本篇速记卡">本篇速记卡</a></nav>
