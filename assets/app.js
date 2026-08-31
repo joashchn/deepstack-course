@@ -3,20 +3,6 @@
   'use strict';
   var root = document.documentElement;
 
-  /* ---- 主题 ---- */
-  var saved = null;
-  try { saved = localStorage.getItem('aidoc-theme'); } catch(e){}
-  if (saved) { root.dataset.theme = saved; }
-  else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-    root.dataset.theme = 'dark';
-  }
-  var themeBtn = document.getElementById('themeBtn');
-  if (themeBtn) themeBtn.addEventListener('click', function(){
-    root.dataset.theme = root.dataset.theme === 'dark' ? 'light' : 'dark';
-    try { localStorage.setItem('aidoc-theme', root.dataset.theme); } catch(e){}
-    renderMermaid(true);
-  });
-
   /* ---- 侧边栏 ---- */
   var sidebar = document.getElementById('sidebar');
   var mask = document.getElementById('sbMask');
@@ -90,14 +76,10 @@
       window.mermaid.initialize({
         startOnLoad: false,
         securityLevel: 'loose',
-        theme: root.dataset.theme === 'dark' ? 'dark' : 'default',
-        themeVariables: root.dataset.theme === 'dark'
-          ? { background: '#0E1730', primaryColor: '#16233F', primaryTextColor: '#E6EDF3',
-              primaryBorderColor: '#14B8C2', lineColor: '#3A4A66', secondaryColor: '#0B1124',
-              tertiaryColor: '#0A1228' }
-          : { background: '#FFFFFF', primaryColor: '#E3F7F8', primaryTextColor: '#0E1B33',
-              primaryBorderColor: '#14B8C2', lineColor: '#6B7894', secondaryColor: '#E3F7F8',
-              tertiaryColor: '#F7F9FC' }
+        theme: 'default',
+        themeVariables: { background: '#FFFFFF', primaryColor: '#E3F7F8', primaryTextColor: '#0E1B33',
+            primaryBorderColor: '#14B8C2', lineColor: '#6B7894', secondaryColor: '#E3F7F8',
+            tertiaryColor: '#F7F9FC' }
       });
       window.mermaid.run({ querySelector: '.mermaid' });
       mermaidReady = true;
