@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>01 · LLM 与 Transformer · InfiSpace 课程文档</title>
+<meta name="description" content="一切 AI 应用技术——提示词、RAG、Agent、MCP、Harness——都建立在一个底座之上：大语言模型（LLM）。而 LLM 的起点是 2017 年那篇标题像宣言一样的论文《Attention Is All Yo…">
+<link rel="stylesheet" href="../assets/style.css?v=c163153b">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%232DD4D4' text-anchor='middle'%3E%E2%88%9E%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+<div class="progress" id="progress"></div>
+
+<div class="layout">
+<aside class="sidebar" id="sidebar">
+  <div class="sb-head">
+    <a class="brand" href="../index.html">
+      <img class="brand-mark" src="../assets/infispace-logo-1.png" alt="InfiSpace">
+    </a>
+    <button class="sb-close" id="sbClose" aria-label="关闭目录">✕</button>
+  </div>
+  <div class="sb-search"><input type="search" id="searchInput" placeholder="搜索 113 篇文档… ( / )" autocomplete="off">
+    <div class="sb-results" id="searchResults"></div></div>
+  <nav class="sb-nav">
+    <section class="sb-group">
+      <a class="sb-group-title" href="../index.html">
+        <span class="sb-num">00</span>
+        <span class="sb-group-text"><b>学习导航</b><i>课程首页</i></span>
+      </a>
+    </section>
+    <section class="sb-group" data-mod="python">
+      <a class="sb-group-title" href="../modules/python.html" data-toggle="python">
+        <span class="sb-num">01</span>
+        <span class="sb-group-text"><b>Python 与数据实践</b><i>31 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../python/01-huan-jing-da-jian-yu-ban-ben-guan-li.html"><span class="sb-item-num">01</span><span class="sb-item-title">环境搭建与版本管理</span></a>
+        <a class="sb-item" href="../python/02-bian-liang-biao-da-shi-yu-liu-cheng-kong-zhi.html"><span class="sb-item-num">02</span><span class="sb-item-title">变量、表达式与流程控制</span></a>
+        <a class="sb-item" href="../python/03-xu-lie-zi-dian-yu-ji-he.html"><span class="sb-item-num">03</span><span class="sb-item-title">序列、字典与集合</span></a>
+        <a class="sb-item" href="../python/04-han-shu-she-ji-yu-lambda.html"><span class="sb-item-num">04</span><span class="sb-item-title">函数设计与 lambda</span></a>
+        <a class="sb-item" href="../python/05-zuo-yong-yu-gui-ze-yu-bi-bao.html"><span class="sb-item-num">05</span><span class="sb-item-title">作用域规则与闭包</span></a>
+        <a class="sb-item" href="../python/06-lei-de-ding-yi-yu-shi-li-hua.html"><span class="sb-item-num">06</span><span class="sb-item-title">类的定义与实例化</span></a>
+        <a class="sb-item" href="../python/07-lei-xing-pan-ding-yu-chou-xiang-ji-lei.html"><span class="sb-item-num">07</span><span class="sb-item-title">类型判定与抽象基类</span></a>
+        <a class="sb-item" href="../python/08-mo-shu-fang-fa-quan-jing.html"><span class="sb-item-num">08</span><span class="sb-item-title">魔术方法全景</span></a>
+        <a class="sb-item" href="../python/09-miao-shu-fu-yu-yuan-lei.html"><span class="sb-item-num">09</span><span class="sb-item-title">描述符与元类</span></a>
+        <a class="sb-item" href="../python/10-zhuang-shi-qi.html"><span class="sb-item-num">10</span><span class="sb-item-title">装饰器</span></a>
+        <a class="sb-item" href="../python/11-die-dai-xie-yi-yu-sheng-cheng-qi.html"><span class="sb-item-num">11</span><span class="sb-item-title">迭代协议与生成器</span></a>
+        <a class="sb-item" href="../python/12-with-yu-shang-xia-wen-xie-yi.html"><span class="sb-item-num">12</span><span class="sb-item-title">with 与上下文协议</span></a>
+        <a class="sb-item" href="../python/13-yi-chang-ti-xi-yu-chu-li.html"><span class="sb-item-num">13</span><span class="sb-item-title">异常体系与处理</span></a>
+        <a class="sb-item" href="../python/14-lei-xing-biao-zhu.html"><span class="sb-item-num">14</span><span class="sb-item-title">类型标注</span></a>
+        <a class="sb-item" href="../python/15-mo-kuai-yu-bao-de-zu-zhi.html"><span class="sb-item-num">15</span><span class="sb-item-title">模块与包的组织</span></a>
+        <a class="sb-item" href="../python/16-biao-zhun-ku-xun-li.html"><span class="sb-item-num">16</span><span class="sb-item-title">标准库巡礼</span></a>
+        <a class="sb-item" href="../python/17-yi-lai-guan-li-yu-di-san-fang-ku.html"><span class="sb-item-num">17</span><span class="sb-item-title">依赖管理与第三方库</span></a>
+        <a class="sb-item" href="../python/18-xian-cheng-yu-jin-cheng.html"><span class="sb-item-num">18</span><span class="sb-item-title">线程与进程</span></a>
+        <a class="sb-item" href="../python/19-shi-jian-xun-huan.html"><span class="sb-item-num">19</span><span class="sb-item-title">事件循环</span></a>
+        <a class="sb-item" href="../python/20-future-yu-xie-cheng.html"><span class="sb-item-num">20</span><span class="sb-item-title">Future 与协程</span></a>
+        <a class="sb-item" href="../python/21-asyncio-shi-zhan.html"><span class="sb-item-num">21</span><span class="sb-item-title">asyncio 实战</span></a>
+        <a class="sb-item" href="../python/22-gou-jian-yu-fa-bu.html"><span class="sb-item-num">22</span><span class="sb-item-title">构建与发布</span></a>
+        <a class="sb-item" href="../python/23-gong-cheng-hua-gong-ju-lian.html"><span class="sb-item-num">23</span><span class="sb-item-title">工程化工具链</span></a>
+        <a class="sb-item" href="../python/24-monorepo-yu-tiao-shi.html"><span class="sb-item-num">24</span><span class="sb-item-title">monorepo 与调试</span></a>
+        <a class="sb-item" href="../python/25-jupyter-jiao-hu-huan-jing.html"><span class="sb-item-num">25</span><span class="sb-item-title">Jupyter 交互环境</span></a>
+        <a class="sb-item" href="../python/26-numpy-shu-zu-yu-xiang-liang-hua.html"><span class="sb-item-num">26</span><span class="sb-item-title">NumPy 数组与向量化</span></a>
+        <a class="sb-item" href="../python/27-pandas-shu-ju-jie-gou.html"><span class="sb-item-num">27</span><span class="sb-item-title">Pandas 数据结构</span></a>
+        <a class="sb-item" href="../python/28-pandas-shu-ju-qing-xi.html"><span class="sb-item-num">28</span><span class="sb-item-title">Pandas 数据清洗</span></a>
+        <a class="sb-item" href="../python/29-matplotlib-hui-tu-ti-xi.html"><span class="sb-item-num">29</span><span class="sb-item-title">Matplotlib 绘图体系</span></a>
+        <a class="sb-item" href="../python/30-matplotlib-dong-hua-yu-jiao-hu.html"><span class="sb-item-num">30</span><span class="sb-item-title">Matplotlib 动画与交互</span></a>
+        <a class="sb-item" href="../python/31-seaborn-tong-ji-ke-shi-hua.html"><span class="sb-item-num">31</span><span class="sb-item-title">Seaborn 统计可视化</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="agent">
+      <a class="sb-group-title" href="../modules/agent.html" data-toggle="agent">
+        <span class="sb-num">02</span>
+        <span class="sb-group-text"><b>Agent 核心</b><i>15 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../agent/01-token-yu-ci-qian-ru.html"><span class="sb-item-num">01</span><span class="sb-item-title">Token 与词嵌入</span></a>
+        <a class="sb-item" href="../agent/02-qian-xiang-chuan-bo-yu-fan-xiang-chuan-bo.html"><span class="sb-item-num">02</span><span class="sb-item-title">前向传播与反向传播</span></a>
+        <a class="sb-item" href="../agent/03-zhu-yi-li-ji-zhi-yu-transformer-jia-gou.html"><span class="sb-item-num">03</span><span class="sb-item-title">注意力机制与 Transformer 架构</span></a>
+        <a class="sb-item" href="../agent/04-yu-xun-lian-rlhf-yu-cai-yang-kv-cache.html"><span class="sb-item-num">04</span><span class="sb-item-title">预训练、RLHF 与采样（KV Cache）</span></a>
+        <a class="sb-item" href="../agent/05-ben-di-mo-xing-yu-xiao-xi-jie-gou.html"><span class="sb-item-num">05</span><span class="sb-item-title">本地模型与消息结构</span></a>
+        <a class="sb-item" href="../agent/06-hui-hua-guan-li-yu-json-shu-chu.html"><span class="sb-item-num">06</span><span class="sb-item-title">会话管理与 JSON 输出</span></a>
+        <a class="sb-item" href="../agent/07-tool-calling-xie-yi-yu-feng-zhuang.html"><span class="sb-item-num">07</span><span class="sb-item-title">Tool Calling：协议与封装</span></a>
+        <a class="sb-item" href="../agent/08-react-mo-shi-yu-zhu-xun-huan.html"><span class="sb-item-num">08</span><span class="sb-item-title">ReAct 模式与主循环</span></a>
+        <a class="sb-item" href="../agent/09-shi-zhan-deep-research-agent.html"><span class="sb-item-num">09</span><span class="sb-item-title">实战：Deep Research Agent</span></a>
+        <a class="sb-item" href="../agent/10-skill-yu-jian-jin-shi-pi-lu.html"><span class="sb-item-num">10</span><span class="sb-item-title">Skill 与渐进式披露</span></a>
+        <a class="sb-item" href="../agent/11-mcp-quan-jing.html"><span class="sb-item-num">11</span><span class="sb-item-title">MCP 全景</span></a>
+        <a class="sb-item" href="../agent/12-duo-agent-yu-xuan-xing-ce-lve.html"><span class="sb-item-num">12</span><span class="sb-item-title">多 Agent 与选型策略</span></a>
+        <a class="sb-item" href="../agent/13-ti-shi-ci-gong-cheng-yu-shang-xia-wen-gong.html"><span class="sb-item-num">13</span><span class="sb-item-title">提示词工程与上下文工程</span></a>
+        <a class="sb-item" href="../agent/14-xun-huan-tu-yu-gu-jia-gong-cheng.html"><span class="sb-item-num">14</span><span class="sb-item-title">循环、图与骨架工程</span></a>
+        <a class="sb-item" href="../agent/15-ji-yi-quan-xian-yu-ping-ce.html"><span class="sb-item-num">15</span><span class="sb-item-title">记忆、权限与评测</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="langchain">
+      <a class="sb-group-title" href="../modules/langchain.html" data-toggle="langchain">
+        <span class="sb-num">03</span>
+        <span class="sb-group-text"><b>LangChain 指南</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langchain/01-ren-shi-langchain.html"><span class="sb-item-num">01</span><span class="sb-item-title">认识 LangChain</span></a>
+        <a class="sb-item" href="../langchain/02-ti-shi-ci-mu-ban-yu-xiao-xi.html"><span class="sb-item-num">02</span><span class="sb-item-title">提示词模板与消息</span></a>
+        <a class="sb-item" href="../langchain/03-lcel-yu-runnable.html"><span class="sb-item-num">03</span><span class="sb-item-title">LCEL 与 Runnable</span></a>
+        <a class="sb-item" href="../langchain/04-liu-shi-yu-bing-fa.html"><span class="sb-item-num">04</span><span class="sb-item-title">流式与并发</span></a>
+        <a class="sb-item" href="../langchain/05-shu-chu-jie-xi-qi.html"><span class="sb-item-num">05</span><span class="sb-item-title">输出解析器</span></a>
+        <a class="sb-item" href="../langchain/06-wen-dang-jia-zai-yu-qie-ge.html"><span class="sb-item-num">06</span><span class="sb-item-title">文档加载与切割</span></a>
+        <a class="sb-item" href="../langchain/07-qian-ru-yu-xiang-liang-ku.html"><span class="sb-item-num">07</span><span class="sb-item-title">嵌入与向量库</span></a>
+        <a class="sb-item" href="../langchain/08-jian-suo-yu-rag.html"><span class="sb-item-num">08</span><span class="sb-item-title">检索与RAG</span></a>
+        <a class="sb-item" href="../langchain/09-dui-hua-ji-yi.html"><span class="sb-item-num">09</span><span class="sb-item-title">对话记忆</span></a>
+        <a class="sb-item" href="../langchain/10-gong-ju-diao-yong.html"><span class="sb-item-num">10</span><span class="sb-item-title">工具调用</span></a>
+        <a class="sb-item" href="../langchain/11-agent.html"><span class="sb-item-num">11</span><span class="sb-item-title">Agent</span></a>
+        <a class="sb-item" href="../langchain/12-hui-diao-yu-tiao-shi-quan-ke-cheng-shou-guan.html"><span class="sb-item-num">12</span><span class="sb-item-title">回调与调试（全课程收官章）</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="langgraph">
+      <a class="sb-group-title" href="../modules/langgraph.html" data-toggle="langgraph">
+        <span class="sb-num">04</span>
+        <span class="sb-group-text"><b>LangGraph 框架指南</b><i>17 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../langgraph/01-di-1-zhang-cong-yi-ge-shi-kong-de-jiao.html"><span class="sb-item-num">01</span><span class="sb-item-title">第 1 章 从一个失控的脚本说起</span></a>
+        <a class="sb-item" href="../langgraph/02-di-2-zhang-zui-xiao-ke-yun-xing-tu.html"><span class="sb-item-num">02</span><span class="sb-item-title">第 2 章 最小可运行图</span></a>
+        <a class="sb-item" href="../langgraph/03-di-3-zhang-zhuang-tai-tu-de-shu-ju-xin.html"><span class="sb-item-num">03</span><span class="sb-item-title">第 3 章 状态：图的数据心脏</span></a>
+        <a class="sb-item" href="../langgraph/04-di-4-zhang-rang-liu-cheng-xue-hui-jue-ce.html"><span class="sb-item-num">04</span><span class="sb-item-title">第 4 章 让流程学会决策</span></a>
+        <a class="sb-item" href="../langgraph/05-di-5-zhang-bing-xing-shi-jie-chao-bu-zhi.html"><span class="sb-item-num">05</span><span class="sb-item-title">第 5 章 并行世界：超步执行模型</span></a>
+        <a class="sb-item" href="../langgraph/06-di-6-zhang-command-ba-kong-zhi-quan-jiao-jin.html"><span class="sb-item-num">06</span><span class="sb-item-title">第 6 章 Command：把控制权交进节点</span></a>
+        <a class="sb-item" href="../langgraph/07-di-7-zhang-dong-tai-bing-xing-send-yu-mapreduce.html"><span class="sb-item-num">07</span><span class="sb-item-title">第 7 章 动态并行：Send 与 MapReduce</span></a>
+        <a class="sb-item" href="../langgraph/08-di-8-zhang-gei-tu-zhuang-shang-shou-jiao-gong.html"><span class="sb-item-num">08</span><span class="sb-item-title">第 8 章 给图装上手脚：工具调用</span></a>
+        <a class="sb-item" href="../langgraph/09-di-9-zhang-fu-yong-yu-feng-zhuang-zi-tu.html"><span class="sb-item-num">09</span><span class="sb-item-title">第 9 章 复用与封装：子图</span></a>
+        <a class="sb-item" href="../langgraph/10-di-10-zhang-cong-dan-tu-dao-tuan-dui-duo.html"><span class="sb-item-num">10</span><span class="sb-item-title">第 10 章 从单图到团队：多 Agent 架构</span></a>
+        <a class="sb-item" href="../langgraph/11-di-11-zhang-liu-shi-shu-chu.html"><span class="sb-item-num">11</span><span class="sb-item-title">第 11 章 流式输出</span></a>
+        <a class="sb-item" href="../langgraph/12-di-12-zhang-chi-jiu-hua-checkpointer-yu-xian-cheng.html"><span class="sb-item-num">12</span><span class="sb-item-title">第 12 章 持久化：Checkpointer 与线程</span></a>
+        <a class="sb-item" href="../langgraph/13-di-13-zhang-shi-jian-lv-xing.html"><span class="sb-item-num">13</span><span class="sb-item-title">第 13 章 时间旅行</span></a>
+        <a class="sb-item" href="../langgraph/14-di-14-zhang-zhong-duan-yu-ren-zai-hui-lu.html"><span class="sb-item-num">14</span><span class="sb-item-title">第 14 章 中断与人在回路</span></a>
+        <a class="sb-item" href="../langgraph/15-di-15-zhang-ji-yi-guan-li.html"><span class="sb-item-num">15</span><span class="sb-item-title">第 15 章 记忆管理</span></a>
+        <a class="sb-item" href="../langgraph/16-di-16-zhang-rong-cuo-zhong-shi-chao-shi-yu.html"><span class="sb-item-num">16</span><span class="sb-item-title">第 16 章 容错：重试、超时与兜底</span></a>
+        <a class="sb-item" href="../langgraph/17-di-17-zhang-quan-jing-hui-gu.html"><span class="sb-item-num">17</span><span class="sb-item-title">第 17 章 全景回顾</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="backend">
+      <a class="sb-group-title" href="../modules/backend.html" data-toggle="backend">
+        <span class="sb-num">05</span>
+        <span class="sb-group-text"><b>Python 框架指南</b><i>14 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../backend/01-fastapi-ru-men-yu-asgi.html"><span class="sb-item-num">01</span><span class="sb-item-title">FastAPI 入门与 ASGI</span></a>
+        <a class="sb-item" href="../backend/02-lu-you-yu-qing-qiu-xiang-ying.html"><span class="sb-item-num">02</span><span class="sb-item-title">路由与请求响应</span></a>
+        <a class="sb-item" href="../backend/03-pydantic-shu-ju-jiao-yan-yu-pei-zhi.html"><span class="sb-item-num">03</span><span class="sb-item-title">Pydantic 数据校验与配置</span></a>
+        <a class="sb-item" href="../backend/04-sqlalchemy-yi-bu-yin-qing-yu-hui-hua.html"><span class="sb-item-num">04</span><span class="sb-item-title">SQLAlchemy 异步引擎与会话</span></a>
+        <a class="sb-item" href="../backend/05-orm-jian-mo.html"><span class="sb-item-num">05</span><span class="sb-item-title">ORM 建模</span></a>
+        <a class="sb-item" href="../backend/06-sql-biao-da-shi-yu-shu-ju-cao-zuo.html"><span class="sb-item-num">06</span><span class="sb-item-title">SQL 表达式与数据操作</span></a>
+        <a class="sb-item" href="../backend/07-alembic-shu-ju-qian-yi.html"><span class="sb-item-num">07</span><span class="sb-item-title">Alembic 数据迁移</span></a>
+        <a class="sb-item" href="../backend/08-yi-lai-zhu-ru.html"><span class="sb-item-num">08</span><span class="sb-item-title">依赖注入</span></a>
+        <a class="sb-item" href="../backend/09-tong-yi-yi-chang-chu-li.html"><span class="sb-item-num">09</span><span class="sb-item-title">统一异常处理</span></a>
+        <a class="sb-item" href="../backend/10-zhong-jian-jian.html"><span class="sb-item-num">10</span><span class="sb-item-title">中间件</span></a>
+        <a class="sb-item" href="../backend/11-ren-zheng-yu-jwt.html"><span class="sb-item-num">11</span><span class="sb-item-title">认证与 JWT</span></a>
+        <a class="sb-item" href="../backend/12-pytest-ce-shi.html"><span class="sb-item-num">12</span><span class="sb-item-title">pytest 测试</span></a>
+        <a class="sb-item" href="../backend/13-ri-zhi-loguru.html"><span class="sb-item-num">13</span><span class="sb-item-title">日志 loguru</span></a>
+        <a class="sb-item" href="../backend/14-liu-shi-xiang-ying-sse-yu-websocket.html"><span class="sb-item-num">14</span><span class="sb-item-title">流式响应 SSE 与 WebSocket</span></a>
+      </div>
+    </section>
+    <section class="sb-group" data-mod="interview">
+      <a class="sb-group-title" href="../modules/interview.html" data-toggle="interview">
+        <span class="sb-num">06</span>
+        <span class="sb-group-text"><b>面试题库</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item" href="../interview/01-llm-yuan-li-pian.html"><span class="sb-item-num">01</span><span class="sb-item-title">LLM 原理篇</span></a>
+        <a class="sb-item" href="../interview/02-rag-yu-jian-suo-pian.html"><span class="sb-item-num">02</span><span class="sb-item-title">RAG 与检索篇</span></a>
+        <a class="sb-item" href="../interview/03-agent-he-xin-pian.html"><span class="sb-item-num">03</span><span class="sb-item-title">Agent 核心篇</span></a>
+        <a class="sb-item" href="../interview/04-langgraph-pian.html"><span class="sb-item-num">04</span><span class="sb-item-title">LangGraph 篇</span></a>
+        <a class="sb-item" href="../interview/05-langchain-pian.html"><span class="sb-item-num">05</span><span class="sb-item-title">LangChain 篇</span></a>
+        <a class="sb-item" href="../interview/06-xi-tong-she-ji-pian.html"><span class="sb-item-num">06</span><span class="sb-item-title">系统设计篇</span></a>
+        <a class="sb-item" href="../interview/07-xiang-mu-shen-wa-pian.html"><span class="sb-item-num">07</span><span class="sb-item-title">项目深挖篇</span></a>
+        <a class="sb-item" href="../interview/08-gu-zhang-pai-cha-pian.html"><span class="sb-item-num">08</span><span class="sb-item-title">故障排查篇</span></a>
+        <a class="sb-item" href="../interview/09-python-ji-chu-pian.html"><span class="sb-item-num">09</span><span class="sb-item-title">Python 基础篇</span></a>
+        <a class="sb-item" href="../interview/10-fastapi-yu-hou-duan-pian.html"><span class="sb-item-num">10</span><span class="sb-item-title">FastAPI 与后端篇</span></a>
+        <a class="sb-item" href="../interview/11-ti-shi-ci-gong-cheng-yu-an-quan-pian.html"><span class="sb-item-num">11</span><span class="sb-item-title">提示词工程与安全篇</span></a>
+        <a class="sb-item" href="../interview/12-mo-xing-xuan-xing-yu-jiang-ben-pian.html"><span class="sb-item-num">12</span><span class="sb-item-title">模型选型与降本篇</span></a>
+      </div>
+    </section>
+    <section class="sb-group open" data-mod="evolution">
+      <a class="sb-group-title" href="../modules/evolution.html" data-toggle="evolution">
+        <span class="sb-num">07</span>
+        <span class="sb-group-text"><b>AI 应用技术演进</b><i>12 篇</i></span>
+        <span class="sb-caret">▾</span>
+      </a>
+      <div class="sb-items">
+        <a class="sb-item current" href="../evolution/01-llm-yu-transformer.html"><span class="sb-item-num">01</span><span class="sb-item-title">LLM 与 Transformer</span></a>
+        <a class="sb-item" href="../evolution/02-ti-shi-ci-gong-cheng.html"><span class="sb-item-num">02</span><span class="sb-item-title">提示词工程</span></a>
+        <a class="sb-item" href="../evolution/03-wei-diao-yu-lora.html"><span class="sb-item-num">03</span><span class="sb-item-title">微调与 LoRA</span></a>
+        <a class="sb-item" href="../evolution/04-rag-jian-suo-zeng-qiang-sheng-cheng.html"><span class="sb-item-num">04</span><span class="sb-item-title">RAG 检索增强生成</span></a>
+        <a class="sb-item" href="../evolution/05-function-calling.html"><span class="sb-item-num">05</span><span class="sb-item-title">Function Calling</span></a>
+        <a class="sb-item" href="../evolution/06-mcp-mo-xing-shang-xia-wen-xie-yi.html"><span class="sb-item-num">06</span><span class="sb-item-title">MCP 模型上下文协议</span></a>
+        <a class="sb-item" href="../evolution/07-agent-zhi-neng-ti.html"><span class="sb-item-num">07</span><span class="sb-item-title">Agent 智能体</span></a>
+        <a class="sb-item" href="../evolution/08-multi-agent-duo-zhi-neng-ti.html"><span class="sb-item-num">08</span><span class="sb-item-title">Multi-Agent 多智能体</span></a>
+        <a class="sb-item" href="../evolution/09-shang-xia-wen-gong-cheng.html"><span class="sb-item-num">09</span><span class="sb-item-title">上下文工程</span></a>
+        <a class="sb-item" href="../evolution/10-agent-skill-ji-neng-feng-zhuang.html"><span class="sb-item-num">10</span><span class="sb-item-title">Agent Skill 技能封装</span></a>
+        <a class="sb-item" href="../evolution/11-openclaw-yu-ge-ren-ai-zhu-shou.html"><span class="sb-item-num">11</span><span class="sb-item-title">OpenClaw 与个人 AI 助手</span></a>
+        <a class="sb-item" href="../evolution/12-harness-engineering-yue-shu-gong-cheng.html"><span class="sb-item-num">12</span><span class="sb-item-title">Harness Engineering 约束工程</span></a>
+      </div>
+    </section>
+    <div class="sb-sep"></div>
+    <a class="sb-home" href="../camp.html">
+      <span class="sb-home-ico">◆</span>
+      <span class="sb-home-text"><b>训练营介绍</b><i>课程总览</i></span>
+    </a>
+  </nav>
+</aside>
+  <main class="main">
+    <header class="topbar">
+      <button class="menu-btn" id="menuBtn" aria-label="目录">☰</button>
+      <div class="crumbs"><a href="../index.html">首页</a><span>/</span><a href="../modules/evolution.html">AI 应用技术演进</a><span>/</span><span class="cur">LLM 与 Transformer</span></div>
+    </header>
+    <div class="content">
+      <article class="article">
+
+<header class="page-head">
+  <div class="page-kicker">AI 应用技术演进 · 第 01 章</div>
+  <h1 class="page-title">LLM 与 Transformer</h1>
+  <p class="page-desc">一切 AI 应用技术——提示词、RAG、Agent、MCP、Harness——都建立在一个底座之上：大语言模型（LLM）。而 LLM 的起点是 2017 年那篇标题像宣言一样的论文《Attention Is All Yo…</p>
+  <div class="page-meta">
+    <span>约 8 分钟</span><span>3,111 字</span><span>0 个代码示例</span>
+  </div>
+</header>
+<div class="md"><blockquote>
+<p>一切 AI 应用技术——提示词、RAG、Agent、MCP、Harness——都建立在一个底座之上：<strong>大语言模型（LLM）</strong>。而 LLM 的起点是 2017 年那篇标题像宣言一样的论文《Attention Is All You Need》。它提出 Transformer 架构，用注意力机制取代了循环神经网络，从此「基于注意力机制的生成模型」成为主流。这一章讲清楚三件事：Transformer 是什么、三种架构变体如何演化、为什么最终 <strong>Decoder-Only（仅解码器）</strong> 一统天下。这是本模块十二个节点的第一个——后面的每一章，都是在为这个底座接上新的能力。</p>
+</blockquote>
+<h2 id="1-演进起点2017-年那篇论文">1. 演进起点：2017 年那篇论文</h2>
+<p>在 Transformer 出现之前，处理序列数据的标准架构是循环神经网络（RNN/LSTM）：逐字读入，把历史信息压进一个隐藏状态向量。它的致命伤是<strong>串行</strong>——读第 1000 个字时，必须等前 999 个字算完；而且长距离依赖会随着步数衰减（梯度消失）。</p>
+<p>2017 年 6 月，Google 团队发表《<a href="https://arxiv.org/abs/1706.03762">Attention Is All You Need</a>》，核心主张可以浓缩为一句话：</p>
+<blockquote>
+<p>序列建模不需要循环，<strong>注意力机制本身就够了</strong>。</p>
+</blockquote>
+<p>注意力机制让模型在生成某个词时，可以直接「回看」序列中的任意位置并分配权重——距离不再是问题，而且所有位置可以<strong>并行计算</strong>。这在两个维度上是革命性的：</p>
+<ul>
+<li><strong>并行性</strong>：GPU 终于可以被喂饱，训练规模第一次真正意义上可以「大力出奇迹」</li>
+<li><strong>可扩展性</strong>：模型越大、数据越多，效果越好——这条「规模化法则」（Scaling Law）决定了后来十年的路线</li>
+</ul>
+<p>Transformer 提出时用于机器翻译（Encoder-Decoder 结构），但真正让 AI 应用爆发的，是它的后续演化。</p>
+<h2 id="2-三种架构变体一场自然选择">2. 三种架构变体：一场自然选择</h2>
+<p>Transformer 论文定义了编码器（Encoder）和解码器（Decoder）两个组件，后续研究把它们拆开、重组，演化出三条分支：</p>
+<table>
+<thead>
+<tr>
+<th>变体</th>
+<th>代表模型</th>
+<th>定位</th>
+<th>命运</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Encoder-Only</strong>（粉色）</td>
+<td>BERT（2018）</td>
+<td>双向理解，擅长分类/检索</td>
+<td>在理解任务上很强，但不会「生成」，逐渐边缘化</td>
+</tr>
+<tr>
+<td><strong>Encoder-Decoder</strong>（绿色）</td>
+<td>T5（2019）、BART</td>
+<td>编码后再解码，经典序列生成</td>
+<td>翻译/摘要仍是好选择，但训练成本高、工程复杂</td>
+</tr>
+<tr>
+<td><strong>Decoder-Only</strong>（蓝色）</td>
+<td>GPT 系列、LLaMA、Qwen</td>
+<td>自回归生成：一个词一个词往后接</td>
+<td><strong>当前绝对主流</strong></td>
+</tr>
+</tbody>
+</table>
+<p>为什么 Decoder-Only 赢了？三个原因层层递进：</p>
+<ol>
+<li><strong>上下文学习（In-Context Learning）</strong>：2020 年 GPT-3 论文发现，仅仅把示例写进提示词，模型就能学会新任务——不需要改任何参数。这种能力在 Encoder-Decoder 上明显更弱。生成式预训练天然适配「预测下一个词」式的学习</li>
+<li><strong>架构更简单</strong>：只有解码器堆叠，工程实现、分布式训练、推理优化都更省事。同一套代码能同时服务训练和推理</li>
+<li><strong>对话范式的胜利</strong>：ChatGPT 让「对话」成为 AI 应用的主交互形态，而对话本质上就是自回归生成——Decoder-Only 是它的天然形态</li>
+</ol>
+<p>到 2023 年之后，几乎所有新一代开源模型（LLaMA、Mistral、Qwen、DeepSeek）都选择了 Decoder-Only。<strong>这不是技术路线之争的侥幸胜利，而是「生成能力 + 架构简洁」的组合拳。</strong></p>
+<h2 id="3-核心概念注意力与自回归">3. 核心概念：注意力与自回归</h2>
+<p>这一章只做概念级建立，数学细节和代码实现请读深度版章节 <a href="../agent/03-zhu-yi-li-ji-zhi-yu-transformer-jia-gou.html">Agent 核心 03 · 注意力机制与 Transformer 架构</a>。这里用一个直觉帮你锚定两个核心概念：</p>
+<h3 id="31-注意力机制attention">3.1 注意力机制（Attention）</h3>
+<p>注意力回答的问题是：<strong>生成下一个词时，应该重点看输入里的哪些部分？</strong></p>
+<p>想象你在翻译「The animal didn't cross the street <strong>because it</strong> was too tired」——理解 <code>it</code> 指代 <code>animal</code> 还是 <code>street</code>，模型需要「把注意力」放到句子中相关的位置。注意力机制就是为每个位置计算一组权重（Query/Key/Value），让模型在生成时动态决定「看哪里」。</p>
+<h3 id="32-自回归autoregressive">3.2 自回归（Autoregressive）</h3>
+<p>Decoder-Only 的生成方式是<strong>自回归</strong>：把已生成的内容接回输入，预测下一个 token，再把这个 token 拼回去继续预测，直到输出结束标记。这个「生成即上下文」的循环看似简单，却是后续一切能力的基石——<strong>Agent 的思考-行动循环、工具调用、上下文工程，本质上都在利用「模型看到什么，就基于什么继续生成」这个性质。</strong></p>
+<h2 id="4-从-llm-到-ai-应用的接力">4. 从 LLM 到 AI 应用的接力</h2>
+<p>Transformer 奠定生成能力之后，预训练-微调范式确立：先在海量文本上预训练（学会语言与知识），再针对任务微调（学会行为）。2018-2022 年，这条路从 GPT-1 走到 GPT-3 的 1750 亿参数，再到 2022 年 11 月 ChatGPT 发布——AI 应用从研究走向大众。</p>
+<p>站在 2026 年回头看，LLM 之后的每一次技术跃迁，都在回答同一个问题：<strong>如何让这个「会说话的模型」在真实世界里可靠地干活？</strong></p>
+<ul>
+<li>提示词工程（第 02 章）：不改变模型，只改变输入</li>
+<li>微调（第 03 章）：用特定数据定制模型参数</li>
+<li>RAG（第 04 章）：把知识外挂到模型外部</li>
+<li>Function Calling（第 05 章）：让模型能调用工具</li>
+<li>后面的每一章，都是这条接力赛的下一棒</li>
+</ul>
+<h2 id="5-现状与关键认知">5. 现状与关键认知</h2>
+<p><strong>现状（2026）：</strong> 开源与闭源模型共同把「能力上限」推到前所未有的高度。长上下文（百万 token 级别）、多模态、推理模型（Reasoning Models）成为标配。Decoder-Only 依然是绝对主流，但架构探索并未停止——状态空间模型（如 Mamba）、混合架构（MoE）等在特定场景崭露头角。</p>
+<p><strong>三个关键认知：</strong></p>
+<ol>
+<li><strong>模型能力是天花板</strong>：提示词、RAG、Agent 都是「围绕天花板做文章」——发挥、引导、补足，但都无法突破模型本身的推理上限。选对模型（尺寸、能力、成本）是最大的杠杆</li>
+<li><strong>生成即上下文</strong>：模型的一切行为都发生在「看到什么就基于什么继续生成」的框架里。理解这一点，才能理解后面所有章节的设计动机</li>
+<li><strong>演进没有终点</strong>：2026 年的 Harness Engineering 讨论的不是「换个更好的模型」，而是「在既有模型能力上，如何通过工程手段榨出可靠性」——这正是 AI 应用技术演进的总体方向</li>
+</ol>
+<h2 id="延伸阅读">延伸阅读</h2>
+<ul>
+<li>原始论文：《<a href="https://arxiv.org/abs/1706.03762">Attention Is All You Need</a>》（2017）——一切的基础，值得精读引言与结论</li>
+<li>《<a href="https://arxiv.org/abs/2005.14165">GPT-3: Language Models are Few-Shot Learners</a>》（2020）——上下文学习的起点，理解提示词工程为何可能</li>
+<li>深度版：<a href="../agent/03-zhu-yi-li-ji-zhi-yu-transformer-jia-gou.html">Agent 核心 03 · 注意力机制与 Transformer 架构</a>、<a href="../agent/04-yu-xun-lian-rlhf-yu-cai-yang-kv-cache.html">04 · 预训练、RLHF 与采样</a></li>
+</ul></div>
+
+      </article>
+<nav class="pager"><a class="pg-card pg-prev" href="../modules/evolution.html"><span class="pg-label">← 上一篇</span><span class="pg-title">AI 应用技术演进 · 使用指南</span><span class="pg-mod">AI 应用技术演进</span></a><a class="pg-card pg-next" href="../evolution/02-ti-shi-ci-gong-cheng.html"><span class="pg-label">下一篇 →</span><span class="pg-title">提示词工程</span><span class="pg-mod">AI 应用技术演进</span></a></nav>
+    </div>
+  </main>
+<nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#1-演进起点2017-年那篇论文">1. 演进起点：2017 年那篇论文</a><a class="toc-link toc-h2" href="#2-三种架构变体一场自然选择">2. 三种架构变体：一场自然选择</a><a class="toc-link toc-h2" href="#3-核心概念注意力与自回归">3. 核心概念：注意力与自回归</a><a class="toc-link toc-h3" href="#31-注意力机制attention">3.1 注意力机制（Attention）</a><a class="toc-link toc-h3" href="#32-自回归autoregressive">3.2 自回归（Autoregressive）</a><a class="toc-link toc-h2" href="#4-从-llm-到-ai-应用的接力">4. 从 LLM 到 AI 应用的接力</a><a class="toc-link toc-h2" href="#5-现状与关键认知">5. 现状与关键认知</a><a class="toc-link toc-h2" href="#延伸阅读">延伸阅读</a></nav>
+</div>
+<div class="sb-mask" id="sbMask"></div>
+<script src="../assets/app.js?v=e6b97c57"></script>
+</body>
+</html>
