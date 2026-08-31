@@ -135,7 +135,7 @@
     if (INDEX) { cb(INDEX); return; }
     if (loading) { return; }
     loading = true;
-    var base = document.querySelector('script[src$="app.js"]').getAttribute('src').replace('app.js','');
+    var base = document.querySelector('script[src*="app.js"]').getAttribute('src').replace(/app\.js\?v=.*$/, '');
     fetch(base + 'search-index.json').then(function(r){ return r.json(); })
       .then(function(d){ INDEX = d; loading = false; cb(d); })
       .catch(function(){ loading = false; cb([]); });

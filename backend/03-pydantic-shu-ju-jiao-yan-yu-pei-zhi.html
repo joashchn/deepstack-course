@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>03 · Pydantic 数据校验与配置 · InfiSpace 课程文档</title>
 <meta name="description" content="本章定位：把 Pydantic v2 的常用&quot;零件&quot;一个个拆开讲——怎么定义模型、怎么加约束、怎么写自定义校验、怎么导出数据、怎么读配置、怎么组织 DTO。不搞贯穿工程，目标是学完之后，任何 FastAPI 项目 sch…">
-<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/style.css?v=fa745fc2">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%232DD4D4' text-anchor='middle'%3E%E2%88%9E%3C/text%3E%3C/svg%3E">
 </head>
 <body>
@@ -765,6 +765,6 @@
 <nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#1-basemodel给数据做个模具">1. BaseModel：给数据做个模具</a><a class="toc-link toc-h2" href="#2-field给字段挂一块规则标牌">2. Field：给字段挂一块规则标牌</a><a class="toc-link toc-h2" href="#3-类型转换一位宽松的翻译官">3. 类型转换：一位宽松的翻译官</a><a class="toc-link toc-h2" href="#4-optional-与默认值字段可以缺席吗">4. Optional 与默认值：字段可以缺席吗</a><a class="toc-link toc-h2" href="#5-嵌套模型大箱套小盒">5. 嵌套模型：大箱套小盒</a><a class="toc-link toc-h2" href="#6-自定义校验器内置规则不够用了">6. 自定义校验器：内置规则不够用了</a><a class="toc-link toc-h3" href="#61-field_validator管一个字段">6.1 @field_validator：管一个字段</a><a class="toc-link toc-h3" href="#62-model_validator字段之间要联动">6.2 @model_validator：字段之间要联动</a><a class="toc-link toc-h2" href="#7-导出model_dump-exclude_unset-from_attributes">7. 导出：model_dump / exclude_unset / from_attributes</a><a class="toc-link toc-h3" href="#71-model_dump模型-字典">7.1 model_dump：模型 → 字典</a><a class="toc-link toc-h3" href="#72-exclude_unsetpatch-接口的灵魂">7.2 exclude_unset：PATCH 接口的灵魂</a><a class="toc-link toc-h3" href="#73-from_attributes从-orm-对象直接吸数据">7.3 from_attributes：从 ORM 对象直接&quot;吸&quot;数据</a><a class="toc-link toc-h2" href="#8-pydantic-settings把配置也交给-pydantic-管">8. pydantic-settings：把配置也交给 Pydantic 管</a><a class="toc-link toc-h3" href="#81-读-env-文件">8.1 读 .env 文件</a><a class="toc-link toc-h3" href="#82-env_prefix多项目共处一室">8.2 env_prefix：多项目共处一室</a><a class="toc-link toc-h3" href="#83-嵌套配置分组管理">8.3 嵌套配置：分组管理</a><a class="toc-link toc-h2" href="#9-dto-设计模式create-update-response-三兄弟">9. DTO 设计模式：Create / Update / Response 三兄弟</a><a class="toc-link toc-h2" href="#10-小结">10. 小结</a></nav>
 </div>
 <div class="sb-mask" id="sbMask"></div>
-<script src="../assets/app.js"></script>
+<script src="../assets/app.js?v=e6b97c57"></script>
 </body>
 </html>

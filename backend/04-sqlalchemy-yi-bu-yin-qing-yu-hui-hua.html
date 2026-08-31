@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>04 · SQLAlchemy 异步引擎与会话 · InfiSpace 课程文档</title>
 <meta name="description" content="FastAPI 是异步框架，数据库这一层自然也得「异步到底」。本章搞定两件事：">
-<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/style.css?v=fa745fc2">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%232DD4D4' text-anchor='middle'%3E%E2%88%9E%3C/text%3E%3C/svg%3E">
 </head>
 <body>
@@ -730,6 +730,6 @@ pip<span class="w"> </span>install<span class="w"> </span><span class="s2">"sqla
 <nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#1-安装一个方括号引发的血案">1. 安装：一个方括号引发的血案</a><a class="toc-link toc-h2" href="#2-create_async_engine先把调度中心建起来">2. create_async_engine：先把调度中心建起来</a><a class="toc-link toc-h2" href="#3-引擎连接池驱动一个柜台三家店">3. 引擎、连接池、驱动：一个柜台三家店</a><a class="toc-link toc-h2" href="#4-text裸-sql-的正确姿势">4. text()：裸 SQL 的正确姿势</a><a class="toc-link toc-h2" href="#5-connect-vs-begin借连接的两种方式">5. connect() vs begin()：借连接的两种方式</a><a class="toc-link toc-h2" href="#6-async_sessionmaker会话工厂">6. async_sessionmaker：会话工厂</a><a class="toc-link toc-h2" href="#7-会话上的增删查改">7. 会话上的增删查改</a><a class="toc-link toc-h3" href="#增add">增：add()</a><a class="toc-link toc-h3" href="#查execute-scalars">查：execute() + scalars()</a><a class="toc-link toc-h3" href="#查一个scalar_one-scalar_one_or_none">查一个：scalar_one() / scalar_one_or_none()</a><a class="toc-link toc-h3" href="#改查出来直接改属性">改：查出来，直接改属性</a><a class="toc-link toc-h3" href="#删delete">删：delete()</a><a class="toc-link toc-h2" href="#8-三种提交方式从手动挡到自动挡">8. 三种提交方式：从手动挡到自动挡</a><a class="toc-link toc-h3" href="#方式一手动挡commit-rollback-close-全自己管">方式一：手动挡——commit / rollback / close 全自己管</a><a class="toc-link toc-h3" href="#方式二上下文管关闭事务仍手动">方式二：上下文管关闭——事务仍手动</a><a class="toc-link toc-h3" href="#方式三自动挡begin-一起管">方式三：自动挡——begin() 一起管</a><a class="toc-link toc-h2" href="#9-flush-vs-commit先发-sql-先落库">9. flush vs commit：先发 SQL ≠ 先落库</a><a class="toc-link toc-h2" href="#10-字段过期与-refreshcommit-之后属性还能读吗">10. 字段过期与 refresh：commit 之后属性还能读吗</a><a class="toc-link toc-h2" href="#11-get_db-依赖的雏形">11. get_db 依赖的雏形</a><a class="toc-link toc-h2" href="#12-本章速查表">12. 本章速查表</a></nav>
 </div>
 <div class="sb-mask" id="sbMask"></div>
-<script src="../assets/app.js"></script>
+<script src="../assets/app.js?v=e6b97c57"></script>
 </body>
 </html>
