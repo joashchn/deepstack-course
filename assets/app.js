@@ -19,18 +19,32 @@
   if (nav) {
     var savedOpen = {};
     try { savedOpen = JSON.parse(localStorage.getItem('aidoc-open') || '{}'); } catch(e){}
+
+    // 恢复用户手动展开/折叠的状态（服务端已为当前模块加过 open）
     Array.prototype.forEach.call(nav.querySelectorAll('.sb-group'), function(g){
       var key = g.dataset.mod;
+      if (!key) return;
       if (savedOpen[key] === true) g.classList.add('open');
       if (savedOpen[key] === false) g.classList.remove('open');
-      g.querySelector('.sb-group-title').addEventListener('click', function(e){
-        if (e.metaKey || e.ctrlKey || e.shiftKey) return;
+    });
+
+    // 只有带 data-toggle 的分组标题才拦截点击做展开/折叠。
+    // 没有子项的入口（如「学习导航」/「训练营介绍」）保持普通链接，正常跳转。
+    Array.prototype.forEach.call(nav.querySelectorAll('.sb-group-title[data-toggle]'), function(title){
+      var g = title.closest ? title.closest('.sb-group') : title.parentNode;
+      if (!g) return;
+      var key = g.dataset.mod;
+      title.addEventListener('click', function(e){
+        if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
         e.preventDefault();
         g.classList.toggle('open');
-        savedOpen[key] = g.classList.contains('open');
-        try { localStorage.setItem('aidoc-open', JSON.stringify(savedOpen)); } catch(err){}
+        if (key) {
+          savedOpen[key] = g.classList.contains('open');
+          try { localStorage.setItem('aidoc-open', JSON.stringify(savedOpen)); } catch(err){}
+        }
       });
     });
+
     var cur = nav.querySelector('.sb-item.current');
     if (cur) {
       cur.scrollIntoView({block:'center'});
