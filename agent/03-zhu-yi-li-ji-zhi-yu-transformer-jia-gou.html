@@ -6,6 +6,7 @@
 <title>03 · 注意力机制与 Transformer 架构 · InfiSpace 课程文档</title>
 <meta name="description" content="第 2 章搭好的神经网络已经就位：它有了嵌入表和可训练的权重。但一个先天缺陷还没解决——嵌入表是一词一向量，静态不变的。&quot;苹果发布了新手机&quot;和&quot;我吃了个苹果&quot;里，&quot;苹果&quot;查的是嵌入表的同一行，含义却天差地别。本章讲 Tr…">
 <link rel="stylesheet" href="../assets/style.css?v=c163153b">
+<link rel="stylesheet" href="../assets/katex/katex.min.css?v=1">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1a'/%3E%3Ctext x='16' y='22' font-size='14' font-family='sans-serif' font-weight='700' fill='%232DD4D4' text-anchor='middle'%3E%E2%88%9E%3C/text%3E%3C/svg%3E">
 </head>
 <body>
@@ -254,8 +255,8 @@
 $$</p>
 <p>对于某个 token 的查询 $\mathbf{q}_i$，它和所有位置的 $\mathbf{k}_j$ 做点积（点积大 = 匹配强），再经过 softmax 归一化成一组和为 1 的权重，然后对所有的 $\mathbf{v}_j$ 加权平均：</p>
 <p>$$
-\text{Attention}(\mathbf{q}<em _text_权重：我有多关注位置="\text{权重：我有多关注位置">i) = \sum_j \underbrace{\text{softmax}\left(\frac{\mathbf{q}_i \cdot \mathbf{k}_j}{\sqrt{d_k}}\right)_j}</em>_j
-$$} j} \cdot \mathbf{v</p>
+\text{Attention}(\mathbf{q}_i) = \sum_j \underbrace{\text{softmax}\left(\frac{\mathbf{q}_i \cdot \mathbf{k}_j}{\sqrt{d_k}}\right)}_{\text{权重：我有多关注位置 }j} \cdot \mathbf{v}_j
+$$</p>
 <p>三个设计细节值得说透：</p>
 <p><strong>① 点积 = 匹配度</strong>。两个向量越"同向"，点积越大。Q 和 K 的维度故意设计成一致，就是为了能逐对点积算匹配分。</p>
 <p><strong>② softmax = 软选择</strong>。权重是 0.3 / 0.6 / 0.1 这种"软"分配，不是硬性的二选一。模型可以同时从多个位置吸收信息，比例由匹配度决定。所有权重加起来恰好等于 1（softmax 的性质）。</p>
@@ -544,6 +545,34 @@ $$</p>
 <nav class="toc" id="toc"><div class="toc-title">本页目录</div><a class="toc-link toc-h2" href="#1-问题静态向量不够用">1. 问题：静态向量不够用</a><a class="toc-link toc-h2" href="#2-直觉一场信息撮合会">2. 直觉：一场信息撮合会</a><a class="toc-link toc-h2" href="#3-数学一次软性加权平均">3. 数学：一次软性加权平均</a><a class="toc-link toc-h2" href="#4-动手手写一遍注意力">4. 动手：手写一遍注意力</a><a class="toc-link toc-h2" href="#5-因果掩码只许看过去">5. 因果掩码：只许看过去</a><a class="toc-link toc-h2" href="#6-多头注意力多视角并行">6. 多头注意力：多视角并行</a><a class="toc-link toc-h2" href="#7-位置编码注意力不知道顺序">7. 位置编码：注意力不知道顺序</a><a class="toc-link toc-h2" href="#8-一个-transformer-层的全貌">8. 一个 Transformer 层的全貌</a><a class="toc-link toc-h2" href="#9-前馈网络-ffn两层矩阵-激活">9. 前馈网络 FFN：两层矩阵 + 激活</a><a class="toc-link toc-h2" href="#10-残差连接深度的生命线">10. 残差连接：深度的生命线</a><a class="toc-link toc-h2" href="#11-层归一化-layernorm">11. 层归一化 LayerNorm</a><a class="toc-link toc-h2" href="#12-动手拼一个最小-transformer">12. 动手：拼一个最小 Transformer</a><a class="toc-link toc-h2" href="#13-为什么-decoder-only-赢了">13. 为什么 decoder-only 赢了</a><a class="toc-link toc-h2" href="#14-参数都花在哪了">14. 参数都花在哪了</a><a class="toc-link toc-h2" href="#本章小结">本章小结</a></nav>
 </div>
 <div class="sb-mask" id="sbMask"></div>
+<script src="../assets/katex/katex.min.js?v=1"></script>
+<script src="../assets/katex/auto-render.min.js?v=1"></script>
+<script>
+(function () {
+  function renderMath() {
+    if (!window.renderMathInElement) return;
+    var el = document.querySelector('.article');
+    if (!el) return;
+    try {
+      renderMathInElement(el, {
+        delimiters: [
+          {left: '$$', right: '$$', display: true},
+          {left: '$', right: '$', display: false}
+        ],
+        ignoredTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code', 'option'],
+        throwOnError: false,
+        strict: false,
+        errorCallback: function () {}
+      });
+    } catch (e) {}
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', renderMath);
+  } else {
+    renderMath();
+  }
+})();
+</script>
 <script src="../assets/app.js?v=371d5c4c"></script>
 </body>
 </html>
